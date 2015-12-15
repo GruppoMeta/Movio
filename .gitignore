@@ -1,0 +1,8 @@
+wwwRoot/cache/*
+wwwRoot/admin/cache/*
+wwwRoot/admin/application/config/config_localhost.xml
+wwwRoot/application/mediaArchive/*
+wwwRoot/application/classes/userModules/*
+wwwRoot/application/config/config_localhost.xml
+wwwRoot/export/*
+wwwRoot/admin/application/libs/phpqrcode/cache/*
