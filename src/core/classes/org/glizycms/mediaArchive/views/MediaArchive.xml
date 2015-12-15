@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:cms="org.glizycms.views.components.*"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:ma="org.glizycms.mediaArchive.views.components.*"
+    controllerName="org.glizycms.mediaArchive.controllers.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="Page.php">
+    <glz:Import src="_common.xml" />
+
+    <mvc:StateTabNavigation id="tab" cssClass="nav nav-tabs" cssClassCurrent="active" visible="false" />
+
+    <mvc:State name="index">
+        <glz:TabGroup id="tabs" defaultState="allMedia" cssClass="nav nav-pills" rememberState="true">
+            <glz:Tab name="allMedia" label="{i18n:MW_SM_SHOW_ALL_MEDIA}"></glz:Tab>
+            <glz:Tab name="allImage" label="{i18n:MW_SM_SHOW_IMAGES}"></glz:Tab>
+            <glz:Tab name="allOffice" label="{i18n:MW_SM_SHOW_DOCUMENTS}"></glz:Tab>
+            <glz:Tab name="allPdf" label="{i18n:MW_SM_SHOW_PDF}"></glz:Tab>
+            <glz:Tab name="allArchive" label="{i18n:MW_SM_SHOW_COMPRESSED}"></glz:Tab>
+            <glz:Tab name="allAudio" label="{i18n:MW_SM_SHOW_AUDIO_FILES}"></glz:Tab>
+            <glz:Tab name="allVideo" label="{i18n:MW_SM_SHOW_VIDEO}"></glz:Tab>
+        </glz:TabGroup>
+
+        <cms:VisualSearch id="filters" label="{i18n:Search}" cssClass="row-fluid clearfix my-filters" model="org.glizycms.models.Media">
+            <cms:VisualSearchItem id="media_author" label="{i18n:Author}" type="facet" />
+            <cms:VisualSearchItem id="media_category" label="{i18n:Category}" type="facet" />
+            <cms:VisualSearchItem id="media_description" label="{i18n:Description}" />
+            <cms:VisualSearchItem id="media_originalFileName" label="{i18n:File name}" />
+            <cms:VisualSearchItem id="media_title" label="{i18n:Title}" />
+
+            <glz:Panel cssClass="pull-left">
+                <glz:HtmlButton label="{i18n:GLZ_SEARCH}" value="SEARCH" target="{filters}" cssClass="btn btn-primary" />
+                <glz:HtmlButton label="{i18n:GLZ_RESET}" value="RESET" target="{filters}" cssClass="btn" />
+            </glz:Panel>
+        </cms:VisualSearch>
+
+        <glz:Panel cssClass="row-fluid">
+            <glz:Script extendParent="true"><![CDATA[
+public function render_html_onStart()
+{
+    $this->_application->addLightboxJsCode();
+    parent::render_html_onStart();
+}
+            ]]></glz:Script>
+
+            <glz:DataProvider id="dp" recordClassName="org.glizycms.models.Media" order="media_title" queryOperator="OR" />
+            <glz:RecordSetList id="list" dataProvider="{dp}" processCell="org.glizycms.mediaArchive.views.renderer.CellMediaArchive" paginate="{paginate}" filters="{filters}" skin="{listSKIN}" />
+            <glz:PaginateResult id="paginate" pageLength="42" cssClass="pagination" showTotal="true" />
+        </glz:Panel>
+
+        <glz:Link id="deleteSelectedButton" label="{i18n:Delete selected}" cssClass="{config:glizycms.form.actionLink.cssClass}" icon="icon-remove" routeUrl="" editableRegion="actions" acl="*,delete"/>
+        <glz:Link label="{i18n:MW_MEDIA_ADD}" cssClass="{config:glizycms.form.actionLink.cssClass}" icon="icon-plus" routeUrl="glizycmsMediaArchiveAdd" editableRegion="actions" acl="*,new"/>
+
+        <glz:JSscript><![CDATA[
+        $(document).ready(function() {
+            $('#deleteSelectedButton').addClass('disabled');
+
+            $('#deleteSelectedButton').on('click', function() {
+                var pattern = new RegExp("disabled");
+                if (!pattern.test($(this).prop('class'))) {
+                    if (confirm('{i18n:Do you want to confirm the deletion?}')) {
+                        var removalList = new Array();
+                        $('[id^=mediacheckbox]').each(function() {
+                            if ($(this).is(':checked')) {
+                                removalList.push($(this).prop('id').split('_')[1]);
+                            }
+                        });
+
+                        if (removalList.length) {
+                            $('#deleteSelectedButton').addClass('disabled');
+                            var ids = removalList.join(',');
+                            $.ajax({
+                                type: 'POST',
+                                url: Glizy.ajaxUrl + 'Delete',
+                                data: 'ids=' + ids,
+                                success: function(data) {
+                                    location.reload();
+                                },
+                                error: function() {
+                                    alert('{i18n:Error}');
+                                    $('#deleteSelectedButton').removeClass('disabled');
+                                }
+                            });
+                        }
+                    }
+                } else {
+
+                }
+
+                return false;
+            });
+
+            $('[id^=mediacheckbox]').on('change', function() {
+                var oneChecked = false;
+                $('[id^=mediacheckbox]').each(function() {
+                    if ($(this).is(':checked')) {
+                        oneChecked = true;
+                        return;
+                    }
+                });
+
+                if (oneChecked) {
+                    $('#deleteSelectedButton').removeClass('disabled');
+               } else {
+                    $('#deleteSelectedButton').addClass('disabled');
+               }
+            });
+        });
+        ]]></glz:JSscript>
+    </mvc:State>
+
+    <mvc:State name="add" label="{i18n:MW_MEDIA_ADD}">
+        <glz:Modifier target="tab" attribute="visible" value="true" />
+        <cms:FormEdit id="myForm" controllerName="org.glizycms.mediaArchive.controllers.mediaEdit.*" >
+            <glz:Input id="fileuploader" label="{i18n:GLZ_UPLOAD}" data="type=file;fieldsetid=medias" />
+            <glz:Fieldset id="medias" label="Media" data="type=repeat;collapsable=false;noAddRowButton=true">
+                <glz:Hidden id="__uploadFilename" />
+                <glz:Hidden id="__originalFileName" />
+                <glz:Input id="media_title" label="{i18n:Title}" size="90" required="true" />
+                <glz:Input id="media_category" label="{i18n:Category}" data="type=selectfrom;multiple=true;add_new_values=true;model=org.glizycms.models.Media" size="255" />
+                <glz:Input id="media_author" label="{i18n:Author}" data="type=selectfrom;multiple=false;add_new_values=true;model=org.glizycms.models.Media" size="255" />
+                <glz:Input id="media_date" label="{i18n:Date}" size="90" />
+                <glz:Input id="media_copyright" label="{i18n:Copyright}" data="type=selectfrom;multiple=false;add_new_values=true;model=org.glizycms.models.Media" size="255" />
+                <glz:Input id="media_description" label="{i18n:Description}" size="90" type="multiline" rows="10" cols="70" htmlEditor="true" data="type=tinymce" />
+                <glz:Checkbox id="media_zoom" label="{i18n:Show zoom}" />
+                <glz:Checkbox id="media_allowDownload" label="{i18n:Allow download}" />
+                <glz:Checkbox id="media_watermark" label="{i18n:Insert watermark}" />
+            </glz:Fieldset>
+            <cms:FormButtonsPanel>
+                <!--<glz:HtmlButton label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />-->
+                <glz:HtmlButton label="{i18n:GLZ_SAVE_CLOSE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=saveClose" />
+                <glz:HtmlButton label="{i18n:GLZ_CLOSE}" type="button" cssClass="btn js-glizycms-cancel" data="action=cancel" />
+            </cms:FormButtonsPanel>
+        </cms:FormEdit>
+    </mvc:State>
+
+    <mvc:State id="addFromServer" name="addFromServer" label="Aggiungi file da server">
+        <glz:Modifier target="tab" attribute="visible" value="true" />
+        <cms:FormEdit id="myForm" controllerName="org.glizycms.mediaArchive.controllers.mediaEdit.*" >
+            <ma:FilePicker id="mediaFileServer" pageId="MediaStorageBrowser" label="{i18n:File}" required="true"/>
+            <glz:Input id="media_title" label="{i18n:Title}" size="90" required="true" />
+            <glz:Input id="media_category" label="{i18n:Category}" data="type=selectfrom;multiple=true;add_new_values=true;model=org.glizycms.models.Media" size="255" />
+            <glz:Input id="media_author" label="{i18n:Author}" data="type=selectfrom;multiple=false;add_new_values=true;model=org.glizycms.models.Media" size="255" />
+            <glz:Input id="media_date" label="{i18n:Date}" size="90" />
+            <glz:Input id="media_copyright" label="{i18n:Copyright}" data="type=selectfrom;multiple=false;add_new_values=true;model=org.glizycms.models.Media" size="255" />
+            <glz:Input id="media_description" label="{i18n:Description}" size="90" type="multiline" rows="10" cols="70" htmlEditor="true" data="type=tinymce" />
+            <glz:Checkbox id="media_zoom" label="{i18n:Show zoom}" />
+            <glz:Checkbox id="media_allowDownload" label="{i18n:Allow download}" data="type=checkbox" defaultValue="1" />
+            <glz:Checkbox id="media_watermark" label="{i18n:Insert watermark}" />
+            <glz:Panel cssClass="formButtons">
+                <glz:HtmlButton label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
+                <glz:HtmlButton label="{i18n:GLZ_SAVE_CLOSE}" type="button" cssClass="btn js-glizycms-save" data="action=saveClose" />
+                <glz:HtmlButton label="{i18n:GLZ_CLOSE}" type="button" cssClass="btn js-glizycms-cancel" data="action=cancel" />
+            </glz:Panel>
+        </cms:FormEdit>
+    </mvc:State>
+
+    <mvc:State name="edit,delete">
+        <cms:FormEdit id="myForm" controllerName="org.glizycms.mediaArchive.controllers.mediaEdit.*" >
+            <glz:Hidden id='media_id' />
+            <glz:Input id="media_originalFileName" label="{i18n:File name}" size="90" disabled="true"/>
+          <glz:JSTabGroup id="editImage" visible="true">
+                <glz:JSTab id="generalData" label="{i18n:General data}">
+                    <glz:Input id="media_title" label="{i18n:Title}" size="90" required="true" />
+                    <glz:Input id="media_category" label="{i18n:Category}" data="type=selectfrom;multiple=true;add_new_values=true;model=org.glizycms.models.Media" size="255" />
+                    <glz:Input id="media_author" label="{i18n:Author}" data="type=selectfrom;multiple=false;add_new_values=true;model=org.glizycms.models.Media" size="255" />
+                    <glz:Input id="media_date" label="{i18n:Date}" size="90" />
+                    <glz:Input id="media_copyright" label="{i18n:Copyright}" data="type=selectfrom;multiple=false;add_new_values=true;model=org.glizycms.models.Media" size="255" />
+                    <glz:Input id="media_description" label="{i18n:Description}" size="90" type="multiline" rows="10" cols="70" htmlEditor="true" data="type=tinymce" />
+                    <glz:Checkbox id="media_zoom" label="{i18n:Show zoom}" />
+                    <glz:Checkbox id="media_allowDownload" label="{i18n:Allow download}" data="type=checkbox" defaultValue="1"/>
+                    <glz:Checkbox id="media_watermark" label="{i18n:Insert watermark}" />
+                    <glz:Input id="media_download" label="{i18n:Downloads}" size="90" disabled="true"/>
+                </glz:JSTab>
+                <glz:JSTab id="exifData" label="{i18n:Exif data}">
+                    <ma:ShowExif imageId="{php:__Request::get(id)}"/>
+                </glz:JSTab>
+            </glz:JSTabGroup>
+            <cms:FormButtonsPanel>
+                <glz:HtmlButton label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
+                <glz:HtmlButton label="{i18n:GLZ_SAVE_CLOSE}" type="button" cssClass="btn js-glizycms-save" data="action=saveClose" />
+                <glz:HtmlButton label="{i18n:GLZ_CLOSE}" type="button" cssClass="btn js-glizycms-cancel" data="action=cancel" />
+            </cms:FormButtonsPanel>
+        </cms:FormEdit>
+    </mvc:State>
+
+
+    <glz:SkinDefine id="listSKIN"><![CDATA[
+<span tal:omit-tag="">
+    <script>
+$("a.lightbox").colorbox({photo:true, maxHeight: 300, maxWidth: 300, scalePhotos: true});
+    </script>
+    <div class="row-fluid">
+    <ul class="thumbnails">
+        <li class="span2" tal:repeat="item Component/records">
+            <input type="checkbox" tal:attributes="id php: 'mediacheckbox_' . item.media_id" class="delete-media js-delete-media" />
+            <a class="thumbnail" tal:attributes="href item/__url__; title php:__T('Edit')">
+                <img class="js-glizyMediaPicker" tal:attributes="src item/thumb_filename; id item/media_id; fileName item/media_fileName; title item/media_title; data-type item/media_type" />
+            </a>
+            <div class="title">
+                <div class="inner" tal:content="php: glz_strtrim(item.media_title, 20)"></div>
+            </div>
+            <div class="actions">
+                <a tal:attributes="href item/__urlPreview__; title php:__T('Preview')" class="lightbox"><i class="icon-eye-open icon-white"></i></a>
+                <a tal:attributes="href item/__urlDownload__; title php:__T('Download')"><i class="icon-download-alt icon-white"></i></a>
+                <a tal:condition="item/__url__" tal:attributes="href item/__url__; title php:__T('Edit')"><i class="icon-pencil icon-white"></i></a>
+                <a tal:condition="item/__urlDelete__" onclick="if (!confirm('conferma cancellazione record')){return false;}" tal:attributes="href item/__urlDelete__; title php:__T('Delete')"><i class="icon-remove icon-white"></i></a>
+            </div>
+        </li>
+    </ul>
+</div>
+</span>
+    ]]></glz:SkinDefine>
+
+</mvc:Page>

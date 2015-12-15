@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cms="org.glizycms.views.components.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="2cols.php"
+    adm:editComponents="text,confirm"
+    controllerName="org.glizycms.userManager.fe.controllers.user.*"
+    defaultAction="modify">
+<!--
+TODO localizzare
+-->
+	<glz:Import src="Common.xml" />
+	<glz:LoginCheck text="{i18n:MW_LOGIN_REQUIRED}" cssClass="error" />
+	<mvc:State name="modify">
+		<glz:LongText id="text" label="{i18n:Text}" forceP="true" adm:rows="20" adm:cols="75" adm:htmlEditor="true" />
+		<glz:MessageBox type="ERROR" cssClass="message error" message="{i18n:Controllare i seguenti errori:}" />
+		<glz:Form id="registration" cssClass="form-horizontal my-form">
+			<glz:Input id="name" label="{i18n:MW_USER_NAME}" size="50" required="true" validationType="not_empty" bindTo="user_firstName" />
+            <glz:Input id="surname" label="{i18n:MW_USER_SURNAME}" size="50" required="true" validationType="not_empty" bindTo="user_lastName" />
+            <glz:Input id="email" label="{i18n:MW_USER_EMAIL}" size="50" required="true" validationType="email" bindTo="user_email" />
+            <glz:Input id="psw" label="{i18n:MW_USER_PSW}" size="50" type="password" validationType="not_empty" bindTo="user_password" />
+
+            <glz:DataDictionary id="usergroupsDP" recordClassName="org.glizycms.userManager.models.UserGroup" query="userGroups" />
+            <glz:List id="profile" bindTo="user_FK_usergroup_id" label="{i18n:User Profile}" dataProvider="{usergroupsDP}" emptyValue="-" required="true" />
+
+			<glz:Panel cssClass="formButtons" >
+				<glz:HtmlButton label="{i18n:MW_SUBMIT}" value="submit" name="submit" cssClass="submitButton" />
+			</glz:Panel>
+		</glz:Form>
+		<glz:Text text="{i18n:MW_REGISTRATION_REQUIRED}" wrapTag="p" />
+	</mvc:State>
+	<mvc:State name="modifyConfirm">
+		<glz:LongText id="confirm" label="{i18n:MW_REGISTRATION_CONFIRM}" forceP="true" adm:rows="10" adm:cols="75" adm:htmlEditor="true" />
+	</mvc:State>
+</mvc:Page>

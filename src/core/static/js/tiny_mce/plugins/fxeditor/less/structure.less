@@ -1,0 +1,202 @@
+#outer {
+	padding:10px;
+	}
+
+.content {
+	width:@content-width;	
+	margin:0 auto;
+	position:relative;
+	background:url(../images/bg/content.png) repeat-y center;
+		
+	#tab-menu {
+		height:27px;
+		float:left;
+		width:@content-width;
+		padding:0px 0 0 0;
+		border-bottom:1px solid #ccc;
+		background-color:#fff;
+			
+				
+		ul.tab {
+			.padding-margin-reset();
+			margin-top:4px;
+			margin-left:8px;		
+					
+			li {
+				display:inline;
+				float:left;
+				
+				a {
+					display:inline-block;
+					background-color:#E0E0E0;
+					font-size:13px;
+					padding:2px 6px 2px 6px;
+					margin-right:1px;					
+					border:1px solid #ccc;
+					height:18px;
+					
+					&:hover, &.active {
+						background-color:#fff;
+						text-decoration:none;
+						border-bottom:1px solid #fff;												
+						}
+						
+					&.active {						
+						font-weight:bold;					
+						}	
+					
+					}
+				
+				}
+			
+			}
+		
+		}
+	
+	.side-sx {
+		width:@side-width;
+		display: none;
+		min-height:276px;		
+		float:left;
+		padding:10px;			
+		-webkit-box-sizing: border-box;
+    	-moz-box-sizing: border-box;  
+   		 box-sizing: border-box;  
+		 border-left:1px solid #ccc;		
+		 
+		 .formula {
+			 .padding-margin-reset();
+			 
+			 li {
+				 display: inline;
+				 list-style:none;
+				 
+				 a {
+					 display:inline-block;
+					 margin:0 5px 5px 0;
+					 }
+				 
+				 }
+			 	 
+			 }
+		 
+		}
+		
+	.side-dx {
+		float:right;		
+		width:@side-width;	
+		padding:10px;	
+		-webkit-box-sizing: border-box;
+    	-moz-box-sizing: border-box;  
+    	box-sizing: border-box;  
+		border-right:1px solid #ccc;
+		min-height:276px;	
+		
+		.editor-box {
+			
+			textarea {
+				border:1px solid #ccc;
+				width:368px;
+				height:166px;
+				}			
+				
+			.results {
+				text-align:center;				
+				margin-top:20px;
+				}	
+			
+			}
+		
+		}	
+		
+	.row-button {
+		height:43px;
+		display:block;		
+		width:@content-width;
+		float:left;
+		border-top:1px solid #ccc;
+		-webkit-box-sizing: border-box;
+    	-moz-box-sizing: border-box;  
+   		 box-sizing: border-box;
+		 padding:8px;
+		 text-align:right;
+		 background-color:#fff;
+		}	
+		
+		/* START add by other developer no MaMa */
+		
+		.editor-toolbar ul li {
+		  display: inline;
+		  list-style: none;
+		}
+		
+		ul.toolbar {
+		  background-color: #E0E0E0;
+		  border: 1px solid #ccc;
+		  padding: 0 0 0 0;
+		  margin: 0px;
+		  margin-top: 2px;
+		  margin-left: 440px;
+		  margin-right:0;
+		  height: 22px;
+		
+			li {
+			display: inline;
+  			float: left;
+			
+				a {
+				  display: inline-block;
+				  background-color: #E0E0E0;
+				  font-size: 13px;
+				  padding: 2px 6px 2px 20px;
+				  margin-right: 1px;		
+				  
+				  &#undo-command {
+					  background:url(../images/ico/ico.png) -4px 4px no-repeat;
+					  }
+					  
+				 &#redo-command {
+					  background:url(../images/ico/ico.png) -4px -39px no-repeat;
+					  }	
+					  
+				 &#cut-command {
+					  background:url(../images/ico/ico.png) -2px -215px no-repeat;
+					  }
+					  
+				 &#copy-command {
+					  background:url(../images/ico/ico.png) -4px -130px no-repeat;
+					  }
+					  
+			     &#paste-command {
+					  background:url(../images/ico/ico.png) -4px -83px no-repeat;
+					  }	
+					  
+				 &#delete-command {
+					  background:url(../images/ico/ico.png) -4px -170px no-repeat;
+					  }	
+					  
+				 &:hover {
+					 background-color:#ccc!important;
+					 text-decoration:none;
+					 }	  
+				
+				}
+			
+			
+			}		
+			
+		
+		}
+		
+		ul.toolbar li a.active {
+		  font-weight: bold;
+		}
+		
+		ul.toolbar li select {
+			position:absolute;
+			margin-top:2px;
+			}
+		
+		/* END add by other developer no MaMa */
+	
+}	

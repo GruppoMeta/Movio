@@ -1,0 +1,132 @@
+/* slick */
+.slider {
+	margin-bottom:0;						
+	}	
+
+	/* dots */
+	.slick-dots {
+		
+		li.slick-active {
+			
+				button {
+					background-color:@slider-bullet-background-selected;
+					border:1px solid @slider-bullet-background;
+				}
+			
+			}
+		
+		li button {			
+			width:12px;
+			height:12px;
+			padding:0;
+			.border-radius(100px);
+			background-color:@slider-bullet-background;
+			border:1px solid @slider-bullet-background;
+			
+			&:hover {
+				background:#E3001B;
+			}
+			
+			&:before {
+				display:none;
+			}
+			
+		}
+	}
+	
+	/* Arrows */	
+	
+	.slick-prev:before, .slick-next:before {	
+		font-family: 'FontAwesome';
+		content:@fa-var-caret-left;
+		color:@color-arrow-button-slider;
+		opacity:1;
+		font-size:25px;
+		font-weight:lighter;	
+		
+	}
+	
+	.slick-disabled {
+		display:none!important;
+		}
+	
+	.slick-next:before {
+		content:@fa-var-caret-right;
+		margin-right:-3px;
+        color:@form-buttonPrimary-text;
+		}
+	
+	.slick-prev, .slick-next {
+		width:20px;
+		height:40px;
+		padding-top:4px;
+		top:50%;
+		margin-top:-23px;		
+		border:0;
+		.border-radius(0);
+		background:@form-button-primary;	
+		
+        
+		&:hover {
+            background:@form-button-primary;	
+			
+			&:before {			
+			color:@form-buttonPrimary-text;	
+			}
+		}
+			
+		
+	}
+	
+	.slick-prev {
+		left:0;	
+	}
+	
+	.slick-next {
+		right:0;	
+	}
+	
+	.slideshow {
+		
+		.slick-prev, .slick-next {
+			width:20px;
+			height:40px;
+			padding-top:4px;
+			top:auto;
+            bottom: 0;
+			margin-bottom:15px;		
+			border:0;
+			.border-radius(0);
+			background:none;
+            background:fade(@bg-desc-slider,80%);
+            border:1px solid @border-slider;
+		}
+		
+		.slick-prev {
+			margin-left:15px;
+			}
+			
+		.slick-next {
+			margin-left:40px;
+			left:0;
+			
+
+			}	
+		
+		.slick-prev:before, .slick-next:before {		
+			font-family: 'FontAwesome';
+			content:"\f053";
+			color:@color-arrow-button-slider;
+			opacity:1;			
+			font-weight:lighter;
+			color:@slider-text;
+		    font-size:20px;		    
+			
+		}
+	
+	.slick-next:before {
+		content:"\f054";
+		}
+				
+	}
+	

@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(ajax\.php|static/|cache/|favicon\.ico) - [L]
+
+    RewriteRule ^application/.*\.js - [L]
+    RewriteRule ^application/mediaArchive - [L]
+    RewriteRule ^application(/|$) - [F,NC]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>

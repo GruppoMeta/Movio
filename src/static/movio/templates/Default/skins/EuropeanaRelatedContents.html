@@ -1,0 +1,46 @@
+<span tal:omit-tag="" tal:condition="php: Component['ajax']">
+  <span tal:omit-tag="" tal:condition="php: !Component['error']" class="wrapper-box-summary no-padding clearfix">
+    <div class="slider js-europeanaRalated clearfix">
+      <div class="slide" tal:repeat="item Component/records">
+        <a target="_blank" tal:attributes="href item/url; title item/title">
+          <img tal:attributes="src item/image; title item/title" width="56" height="56" />
+          <span class="popup" >
+            <span class="popup-text">Nascita di diversi stati in Europa
+              <span class="popup-arrow"></span>
+            </span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </span>
+  <span tal:omit-tag="" tal:condition="php: Component['error']" class="wrapper-box-summary no-padding clearfix">
+    <h1 tal:content="structure Component/error" />
+  </span>
+</span>
+
+<span tal:omit-tag="" tal:condition="php: !Component['ajax'] ">
+  <article class="box collapsible big relationImage" tal:condition="php: Component">
+      <h1><span tal:omit-tag="" tal:content="structure Component/label" /></h1>
+      <button data-toggle="collapse" class="show-content-box" type="button" tal:attributes="data-target php: '#' . Component['id']"></button>
+      <div class="collapse" tal:attributes="id Component/id">
+          <div class="container">
+            <div style="text-align: center">
+                <img src="static/movio/assets/img/loader_white.gif" style="border: 0; margin: 20px" />
+            </div>
+          </div>
+      </div>
+  </article>
+  <script>
+$(function() {
+  var targetId = '#<span tal:omit-tag="" tal:content="Component/id" />';
+  jQuery.ajax({
+        url: '<span tal:omit-tag="" tal:content="structure Component/ajaxUrl" />',
+        dataType: 'json',
+        success: function( data ) {
+          $(targetId+' div.container').html(data.content);
+          Movio.initImageSlider(targetId+' .js-europeanaRalated');
+        }
+    });
+});
+  </script>
+</span>

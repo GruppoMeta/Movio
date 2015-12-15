@@ -1,0 +1,25 @@
+<div class="slideshow big">
+    <div class="slider single-item js-sliderhome">
+        <div class="slide" tal:attributes="style php:Template::homeSliderImage(item)" tal:repeat="item Component">
+            <div class="description">
+                <h1><a tal:attributes="href item/pageId" tal:content="item/title"></a></h1>
+                <span tal:omit-tag="" tal:content="structure item/text" />
+                <a class="link-continue" tal:attributes="href item/pageId" tal:content="php: __T('read more')"></a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(function() {
+    $('.js-sliderhome').slick({
+          dots: false,
+          autoplay: true,
+          arrows:true,
+          infinite: true,
+          speed: 700,
+          pauseOnDotsHover: true,
+          slidesToShow: 1,
+          slidesToScroll: 1
+    });
+});
+</script>

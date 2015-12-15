@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cmp="movio.modules.ontologybuilder.views.components.*"
+    controllerName="movio.modules.codes.controllers.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="Page.php">
+    <glz:Import src="_common.xml" />
+    <glz:JSscript folder="movio.modules.codes.views.js" />
+
+    <glz:CSS src="../static/jquery/select2-3.4.6/select2.css" />
+    <glz:JSscript src="../static/jquery/select2-3.4.6/select2.min.js" />
+    <glz:CSS src="../static/jquery/bootstrap-editable-1.5.1/bootstrap-editable/css/bootstrap-editable.css" />
+    <glz:JSscript src="../static/jquery/bootstrap-editable-1.5.1/bootstrap-editable/js/bootstrap-editable.min.js" />
+    <glz:JSscript src="application/classes/movio/modules/codes/views/js/locale/##LANG2##.js"/>
+    <glz:JSscript src="../static/handlebars/handlebars-1.0.rc.1.js" />
+    <glz:JSscript folder="movio.modules.codes.views.skins" inline="true" extension=".html"/>
+</mvc:Page>

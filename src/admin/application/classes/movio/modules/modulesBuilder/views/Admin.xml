@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:Page id="Page"
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+	xmlns:glza="org.glizy.admin.components.*"
+	xmlns:mb="movio.modules.modulesBuilder.views.components.*"
+	xmlns:cms="org.glizycms.views.components.*"
+	templateType="php"
+	templateFileName="Page.php"
+	defaultEditableRegion="content">
+	<glz:Import src="_common.xml" />
+	<glz:MessageBox type="ERROR" cssClass="alert alert-danger"/>
+    <glz:PageTitle id="pageTitle" menuDepth="3" cssClass="title" />
+
+	<!-- TODO: convert in mvc:Page -->
+	<glz:StateSwitch id="state" defaultState="step1" rememberState="false" customClass="movio.modules.modulesBuilder.controllers.StateController">
+		<glz:State name="step1">
+			<glz:Panel cssClass="modulesBuilderStep1Panel">
+				<glz:LongText text="{i18n:Creating a new module from file}" />
+				<glz:Button value="{i18n:Next}" id="next" target="{state}" action="step2Csv" actionType="location" cssClass="btn pull-right" />
+			</glz:Panel>
+			<glz:Panel cssClass="modulesBuilderStep1Panel">
+				<glz:LongText text="{i18n:Creating a new module from database}" />
+				<glz:Button value="{i18n:Next}" id="next" target="{state}" action="step2DB" actionType="location" cssClass="btn pull-right" />
+			</glz:Panel>
+			<glz:Panel cssClass="modulesBuilderStep1Panel">
+				<glz:LongText text="{i18n:Creating a new module}" />
+				<glz:Button value="{i18n:Next}" id="next" target="{state}" action="step3new" actionType="location" cssClass="btn" />
+			</glz:Panel>
+		</glz:State>
+		<glz:State name="step2Csv">
+			<glz:LongText text="{i18n:Select the file to import}" />
+			<glz:Form id="myForm" removeGetValues="false" enctype="multipart/form-data">
+<!-- todo verificare validazione-->
+				<glz:Input id="mbCsvFile" type="file" label="{i18n:File to import}" size="50" required="true" cssClass="validate['required']" />
+				<glz:Input id="mbCsvSeparate" label="{i18n:End caracter}" size="4" maxLength="1" value=";" required="true" cssClass="validate['required']" />
+				<glz:Input id="mbCsvEnclose" label="{i18n:Field delimiter}" size="4" maxLength="1" value="&amp;quot;" required="true" cssClass="validate['required']" />
+				<glz:Input id="mbCsvEscape" label="{i18n:Escape character}" size="4" maxLength="1" value="\\" required="true" cssClass="validate['required']" />
+				<cms:FormButtonsPanel>
+					<glz:Button value="{i18n:Back}" id="next" target="{state}" action="step1" actionType="location" cssClass="btn" />
+					<glz:HtmlButton label="{i18n:Next}" id="next" value="next" name="action" cssClass="btn btn-primary" />
+				</cms:FormButtonsPanel>
+			</glz:Form>
+		</glz:State>
+		<glz:State name="step2DB">
+			<glz:Form id="myForm" removeGetValues="false">
+				<glz:LongText adm:htmlEditor="true"><![CDATA[
+				Select the table from the database.
+				]]></glz:LongText>
+				<mb:SelectTable id="table" label="{i18n:Table}" emptyValue="-" required="true" />
+				<cms:FormButtonsPanel>
+					<glz:Button value="{i18n:Back}" id="back" target="{state}" action="step1" actionType="location" cssClass="btn" />
+					<glz:HtmlButton label="{i18n:Next}" id="next" value="next" name="action" cssClass="btn btn-primary" />
+				</cms:FormButtonsPanel>
+			</glz:Form>
+		</glz:State>
+		<glz:State name="step2DBnew">
+			<glz:Form id="myForm" removeGetValues="false">
+				<glz:LongText adm:htmlEditor="true"><![CDATA[
+				Select the table from the database.
+				]]></glz:LongText>
+				<mb:SelectTable id="table" label="{i18n:Table}" emptyValue="-" required="true" />
+				<cms:FormButtonsPanel>
+					<glz:Button value="{i18n:Back}" id="back" target="{state}" action="step1" actionType="location" cssClass="submit" />
+					<glz:HtmlButton label="{i18n:Next}" id="next" value="next" name="action" cssClass="submit" />
+				</cms:FormButtonsPanel>
+			</glz:Form>
+		</glz:State>
+		<glz:State name="step3">
+			<glz:Form id="myForm" removeGetValues="false">
+				<glz:LongText adm:htmlEditor="true"><![CDATA[
+Indicate for every field of the table:
+<ul>
+    <li>the lable that  will appear  in administrative panel and on the site page</li>
+    <li>field type</li>
+    <li>if the field is mandatory</li>
+    <li>if the field is searchable on the site page</li>
+    <li> if the field is present in the search results </li>
+    <li> if the field is present in the list in the administrative panel</li>
+</ul>
+The order in which the fields will appear on the site page and in the administrative panel may be changed by dragging the row of the table
+				]]></glz:LongText>
+				<glz:Input id="mbName" label="{i18n:Module name}" size="50" required="true" />
+				<glz:Checkbox id="mbAddPage" label="{i18n:Add a page to the site}" />
+				<mb:EditTableFields id="tableFields" />
+				<cms:FormButtonsPanel>
+					<glz:HtmlButton label="{i18n:Next}" id="next" value="next" name="action" cssClass="btn btn-primary" />
+				</cms:FormButtonsPanel>
+				<glz:JSscript><![CDATA[
+$(function(){
+	var setOrder = function() {
+		$("#editTable tr img.delete").show();
+		$("#editTable tr img.delete").first().hide();
+
+		var orderList = [];
+		$("#editTable tbody tr" ).each( function (index, element) {
+			orderList.push( element.id );
+		});
+		$("#fieldOrder").val(orderList.join(','));
+	}
+
+	var fixHelper = function(e, ui) {
+		ui.children().each(function() {
+			$(this).width($(this).width());
+		});
+		return ui;
+	};
+
+	$("#editTable tbody").sortable({
+		helper: fixHelper,
+		stop: function( event, ui ) {
+			setOrder();
+		}
+	});
+
+	setOrder();
+});
+				]]></glz:JSscript>
+			</glz:Form>
+		</glz:State>
+		<glz:State name="step3new">
+			<glz:Form id="myForm" removeGetValues="false">
+				<glz:LongText adm:htmlEditor="true"><![CDATA[
+Indicate for every field of the table:
+<ul>
+    <li>the lable that  will appear  in administrative panel and on the site page</li>
+    <li>field type</li>
+    <li>if the field is mandatory</li>
+    <li>if the field is searchable on the site page</li>
+    <li> if the field is present in the search results </li>
+    <li> if the field is present in the list in the administrative panel</li>
+</ul>
+The order in which the fields will appear on the site page and in the administrative panel may be changed by dragging the row of the table
+				]]></glz:LongText>
+				<glz:Input id="mbName" label="{i18n:Module name}" size="50" required="true" />
+				<glz:Checkbox id="mbAddPage" label="{i18n:Add a page to the site}" />
+				<mb:NewTableFields id="tableFields" />
+				<cms:FormButtonsPanel>
+					<glz:HtmlButton label="{i18n:Next}" id="next" value="next" name="action" cssClass="btn btn-primary" />
+				</cms:FormButtonsPanel>
+				<glz:JSscript><![CDATA[
+$(function(){
+	var nextRow = 1;
+
+	var setOrder = function() {
+		$("#editTable tr img.delete").show();
+		$("#editTable tr img.delete").first().hide();
+
+		var orderList = [];
+		$("#editTable tbody tr" ).each( function (index, element) {
+			orderList.push( element.id );
+		});
+		$("#fieldOrder").val(orderList.join(','));
+	}
+
+	var fixHelper = function(e, ui) {
+		ui.children().each(function() {
+			$(this).width($(this).width());
+		});
+		return ui;
+	};
+
+	$("#editTable tbody").sortable({
+		helper: fixHelper,
+		stop: function( event, ui ) {
+			setOrder();
+		}
+	});
+
+
+	$("#newTableBtnAdd").click(function(e){
+		e.preventDefault();
+		var firstRow = $('#row_0');
+		var newRow = firstRow.clone();
+		var id = "row_" + nextRow;
+		newRow.attr('id', "row_" + nextRow);
+		nextRow++;
+		newRow.find('input:text').each(function(index, element){
+			$(element).val('');
+
+		});
+
+		newRow.find('input:checkbox').each(function(index, element){
+			$(element).val(id);
+			$(element).removeAttr('checked');
+		});
+
+		newRow.find("img.delete").show();
+		firstRow.parent().append(newRow);
+	});
+
+	$("#editTable").on("click", "img.delete", function(e){
+		e.preventDefault();
+
+		if ( confirm( 'Sei sicuro di cancellare il campo?' ) ) {
+			$(this).parent().parent().remove();
+			setOrder();
+		}
+	})
+
+	$("#next").click(function(e){
+		if (!$("#mbName").val()) {
+			alert( "Il nome del modulo non è valido.")
+			return false;
+		}
+		setOrder();
+
+		// controlla la validità dei campi
+		var valid = true;
+		var checkValid = [ 0, 0, 0 ];
+		var fieldsName = [];
+		var rows = $("#editTable tbody tr" );
+		rows.each( function( index, element ) {
+			var $el = $(element).children().first();
+			var node = $el.next().children().first();
+			var name = node.val();
+			if ( name == '' || name == 'id')
+			{
+				valid = false;
+			}
+
+			node = $el.next().next().next().next().children().first();
+			checkValid[ 0 ] = checkValid[ 0 ] + ( node.prop('checked') ? 1 : 0 );
+			node = $el.next().next().next().next().next().children().first();
+			checkValid[ 1 ] = checkValid[ 1 ] + ( node.prop('checked') ? 1 : 0 );
+			node = $el.next().next().next().next().next().children().first();
+			checkValid[ 2 ] = checkValid[ 2 ] + ( node.prop('checked') ? 1 : 0 );
+
+			fieldsName.push( name );
+		});
+
+		if ( !valid )
+		{
+			alert( "Controllare i nomi dei campi, tutti i campi devono avere un nome e non possono esserci campi con lo stesso nome.")
+			return false;
+		}
+		else if ( checkValid[ 0 ] == 0 )
+		{
+			alert( "Selezionare i campo da usare per la \"Ricerca\".")
+			return false;
+		}
+		else if ( checkValid[ 1 ] == 0 )
+		{
+			alert( "Selezionare i campo da usare per la \"Lista ricerca\".")
+			return false;
+		}
+		else if ( checkValid[ 2 ] == 0 )
+		{
+			alert( "Selezionare i campo da usare per la \"Lista amministrazione\".")
+			return false;
+		}
+
+		if ( $('mbName').get( 'value' ) == '' )
+		{
+			alert( "Inserire il nome del modulo.")
+			return false;
+		}
+	});
+
+
+	setOrder();
+});
+				]]></glz:JSscript>
+			</glz:Form>
+		</glz:State>
+		<glz:State name="step4">
+			<glz:Form id="myForm" removeGetValues="false">
+				<glz:LongText adm:htmlEditor="true"><![CDATA[
+				Module create with success.
+				]]></glz:LongText>
+			</glz:Form>
+		</glz:State>
+	</glz:StateSwitch>
+</glz:Page>

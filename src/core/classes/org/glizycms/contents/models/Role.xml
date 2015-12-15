@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+    model:type="2tables"
+    model:tableName="joins_tbl,roles_tbl"
+    model:joinFields="join_FK_dest_id,role_id"
+    model:usePrefix="true">
+
+    <model:Query name="getAclBack" type="function" arguments="menuId,tableName">
+    <![CDATA[
+        $iterator->where('join_FK_source_id', $menuId)
+                 ->where('join_objectName', $tableName.'#rel_aclBack');
+    ]]>
+    </model:Query>
+ 
+    <model:Query name="getAclFront" type="function" arguments="menuId,tableName">
+    <![CDATA[
+        $iterator->where('join_FK_source_id', $menuId)
+                 ->where('join_objectName', $tableName.'#rel_aclFront');
+    ]]>
+    </model:Query>
+ 
+</model:Model>

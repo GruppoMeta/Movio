@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:Routing>
+    <glz:Route name="glizycms.userManager.registration" value="{pageId=registration}" />
+    <glz:Route name="glizycms.userManager.lostpassword" value="{pageId=lostpassword}" />
+    <glz:Route name="glizycms.userManager.userdetails" value="{pageId=userdetails}" />
+    <glz:Route name="glizycms.userManager.logout" value="logout" pageId="login" action="logout" />
+</glz:Routing>

@@ -1,0 +1,16 @@
+<article class="box collapsible big relationImageLink" tal:condition="php: Component">
+    <h1><span tal:omit-tag="" tal:content="structure Component/relation" /> <i class="ico-box fa fa-link"></i></h1>
+    <button data-toggle="collapse" class="show-content-box" type="button" tal:attributes="data-target php: '#' . Component['id']"></button>
+    <div class="collapse" tal:attributes="id Component/id">
+        <div class="container">
+            <span tal:omit-tag="" tal:repeat="item Component/content">
+                <span tal:omit-tag="" tal:condition="php: (repeat.item.index % 3) == 0" tal:content="structure php: ('<div class=\'row-fluid\'>')" />
+                    <div class="item col-md-4" >
+                        <figure tal:condition= "exists:item/__image"><a tal:attributes="href item/url; title item/title" tal:content="structure item/__image/__html__"></a></figure>
+                        <h2><a tal:attributes="href item/url; title item/title" tal:content="structure item/title"></a></h2>
+                    </div>
+                <span tal:omit-tag="" tal:condition="php: (repeat.item.index % 3) == 2 || repeat.item.end" tal:content="structure php:('</div>') "  />
+            </span>
+        </div>
+    </div>
+</article>

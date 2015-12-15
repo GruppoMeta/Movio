@@ -1,0 +1,323 @@
+<div class="storyteller">
+    <nav id="nav-bar">
+        <ul class="js-storytellerNav">
+            <li class="active"><a href="" tal:content="php: __T('Full history')"></a></li>
+            <li><a href="" class="js-audio" tal:content="php: __T('Audio')"></a></li>
+            <li><a href="" class="js-video" tal:content="php: __T('Video')"></a></li>
+            <li><a href="" class="js-image" tal:content="php: __T('Images')"></a></li>
+            <li><a href="" class="js-text" tal:content="php: __T('Texts')"></a></li>
+        </ul>
+    </nav>
+    <script src="static/galleria/galleria-1.4.2.min.js"></script>
+    <script>
+var galleries = [];
+function galleriaio_loadNext() {
+    if (galleries.length) {
+        var callback = galleries.shift();
+        callback();
+    }
+}
+
+$(function(){
+    $(".js-storytellerNav a").each(function(index, el){
+        var el = $(el);
+        var cssClass = el.attr("class");
+        if (cssClass && $("div.content-story > article."+cssClass).length==0) {
+            el.parent().hide();
+        }
+    });
+    $(".js-storytellerNav a").click(function(e){
+        e.preventDefault();
+        var el = $(this);
+        el.parent().siblings().removeClass("active");
+        el.parent().addClass("active");
+
+
+        var cssClass = el.attr("class");
+        if (cssClass) {
+            $("div.content-story > article."+cssClass).slideDown(300);
+            $("div.content-story > article:not(."+cssClass+")").addClass("js-itemHidden").slideUp(300);
+        } else {
+            $("div.content-story > article.js-itemHidden").slideDown(300);
+        }
+        $("div.content-story > article.js-formComment").slideUp(300);
+    })
+
+    $("a.js-writeComment").click(function(e){
+        e.preventDefault();
+        $(this).closest("article.item-box").next().slideDown(300);
+    });
+
+    $(".js-formCommentCancel").click(function(e){
+        e.preventDefault();
+        $(this).closest("article.item-box").slideUp(300);
+    });
+
+    $(".js-formComment form").submit(function(){
+        var form = $(this);
+        if (!form.find("input#authorName").val()) {
+            alert("Insert the name");
+            return false;
+        }
+        if (!form.find("input#authorEmail").val()) {
+            alert("Insert the email");
+            return false;
+        }
+        if (!form.find("textarea#text").val()) {
+            alert("Insert the comment text");
+            return false;
+        }
+
+    });
+
+    $("a.js-commentsMoreLink").click(function(e){
+        e.preventDefault();
+        $(this).parent().parent().find(".js-commentsMore").slideDown(300);
+        $(this).hide();
+    });
+
+    jQuery('video,audio').mediaelementplayer();
+    galleriaio_loadNext();
+
+    if (location.hash.indexOf('form') || location.hash.indexOf('comments')) {
+        $('a[name='+location.hash.substr(1)+']').parent().slideDown(300);
+    }
+});
+    </script>
+
+    <div class="content-story">
+
+        <span tal:omit-tag="" tal:repeat="item Component">
+            <a tal:attributes="name item/hash"></a>
+            <article class="item-box link js-text" tal:condition="php:item.type=='text'">
+                <span tal:condition="item/showArrow" class="arrow-big"></span>
+                <div class="content-box-item">
+                    <article class="item-linked">
+                        <div class="clearfix">
+                            <figure class="main-img align-right" tal:condition="item/image" tal:content="structure php:org_glizy_helpers_Media::getResizedImageById(item.image, false, 320, 320)">
+                            </figure>
+
+                            <div tal:condition="item/audio" style="float:right; margin: 30px 0 0 15px;">
+                                <audio controls="" tal:attributes="src php:org_glizy_helpers_Media::getFileUrlById(item.audio, true)" />
+                            </div>
+                            <div tal:condition="item/video" style="float:right; margin: 0 15px 0 0;">
+                                <video width="300"  height="200" controls="" tal:attributes="src php:org_glizy_helpers_Media::getFileUrlById(item.video, true)" />
+                            </div>
+
+                            <h1 class="title" tal:condition="item/title" tal:content="item/title"></h1>
+                            <h2 class="tipe-box" tal:condition="item/subtitle" tal:content="item/subtitle"></h2>
+                            <span tal:omit-tag="" tal:content="structure item/text" />
+                        </div>
+                        <span tal:omit-tag="" tal:content="structure item/textAfter" />
+                        <span tal:omit-tag="" metal:use-macro="functions" tal:define="item item; from ''" />
+                    </article>
+                </div>
+            </article>
+
+            <article class="item-box js-video" tal:condition="php:item.type=='youtube'">
+                <span tal:condition="item/showArrow" class="arrow-big"></span>
+                <div class="content-box-item">
+                     <article class="item-linked">
+                        <h1 class="title" tal:condition="item/title" tal:content="item/title"></h1>
+                        <span tal:omit-tag="" tal:content="structure item/text" />
+                        <iframe width="640" height="360" frameborder="0" allowfullscreen="" tal:attributes="src item/url"></iframe>
+                        <span tal:omit-tag="" tal:content="structure item/textAfter" />
+                        <span tal:omit-tag="" metal:use-macro="functions" tal:define="item item; from 'Youtube'" />
+                    </article>
+                </div>
+            </article>
+
+            <article class="item-box js-video" tal:condition="php:item.type=='vimeo'">
+                <span tal:condition="item/showArrow" class="arrow-big"></span>
+                <div class="content-box-item">
+                     <article class="item-linked">
+                        <h1 class="title" tal:condition="item/title" tal:content="item/title"></h1>
+                        <span tal:omit-tag="" tal:content="structure item/text" />
+                        <iframe width="640" height="360" frameborder="0" allowfullscreen="" tal:attributes="src item/url"></iframe>
+                        <span tal:omit-tag="" tal:content="structure item/textAfter" />
+                        <span tal:omit-tag="" metal:use-macro="functions" tal:define="item item; from 'Vimeo'" />
+                    </article>
+                </div>
+            </article>
+
+            <article class="item-box link js-image" tal:condition="php:item.type=='image'">
+                <span tal:condition="item/showArrow" class="arrow-big"></span>
+                <div class="content-box-item">
+                    <article class="item-linked">
+                        <div class="clearfix">
+                            <h1 class="title" tal:condition="item/title" tal:content="item/title"></h1>
+                            <span tal:omit-tag="" tal:content="structure item/text" />
+                            <figure tal:condition="item/image" style="max-width:100%" tal:content="structure php:org_glizy_helpers_Media::getImageById(item.image)">
+                            </figure>
+                        </div>
+                        <span tal:omit-tag="" tal:content="structure item/textAfter" />
+                        <span tal:omit-tag="" metal:use-macro="functions" tal:define="item item; from ''" />
+                    </article>
+                </div>
+            </article>
+
+            <article class="item-box link js-audio" tal:condition="php:item.type=='audio'">
+                <span tal:condition="item/showArrow" class="arrow-big"></span>
+                <div class="content-box-item">
+                    <article class="item-linked">
+                        <div class="clearfix">
+                            <h1 class="title" tal:condition="item/title" tal:content="item/title"></h1>
+                            <span tal:omit-tag="" tal:content="structure item/text" />
+                            <audio controls="" width="100%" tal:attributes="src php:org_glizy_helpers_Media::getFileUrlById(item.audio, true)" />
+                        </div>
+                        <span tal:omit-tag="" tal:content="structure item/textAfter" />
+                        <span tal:omit-tag="" metal:use-macro="functions" tal:define="item item; from ''" />
+                    </article>
+                </div>
+            </article>
+
+            <article class="item-box link js-video" tal:condition="php:item.type=='video'">
+                <span tal:condition="item/showArrow" class="arrow-big"></span>
+                <div class="content-box-item">
+                    <article class="item-linked">
+                        <div class="clearfix">
+                            <h1 class="title" tal:condition="item/title" tal:content="item/title"></h1>
+                            <span tal:omit-tag="" tal:content="structure item/text" />
+                            <video controls="" width="100%" style="max-width: 100%" tal:attributes="src php:org_glizy_helpers_Media::getFileUrlById(item.video, true)" />
+                        </div>
+                        <span tal:omit-tag="" tal:content="structure item/textAfter" />
+                        <span tal:omit-tag="" metal:use-macro="functions" tal:define="item item; from ''" />
+                    </article>
+                </div>
+            </article>
+
+           <article class="item-box gallery js-image" tal:condition="php:item.type=='photogallery'">
+                <span tal:condition="item/showArrow" class="arrow-big"></span>
+                <div class="content-box-item">
+                    <h4 class="tipe-box big"><span tal:omit-tag="" tal:content="item/title"/><i class="ico gallery"></i></h4>
+                    <span tal:omit-tag="" tal:content="structure item/text" />
+                    <div tal:attributes="class php: 'wrapper-galleria-io ' . item.galleryType" tal:condition="php: item.gallery AND item.gallery.count()">
+                        <div class="content-galleria-io" >
+                            <div tal:attributes="id php: 'galleria' . item.hash" style="height: 500px"></div>
+                            <script>
+galleries.push(function(){
+    var data = [];
+    <span tal:omit-tag="" tal:repeat="subitem item/gallery">
+    data.push({ "title": "<span tal:omit-tag="" tal:content="structure php: glz_stringToJs(subitem.media_title)" />",
+                "description": "<span tal:omit-tag="" tal:content="structure php: glz_stringToJs(subitem.media_description, true)" />",
+                "thumb": "<span tal:omit-tag="" tal:content="php:org_glizy_helpers_Media::getResizedImageUrlById(subitem.media_id, false, __Config::get('THUMB_WIDTH'), __Config::get('THUMB_HEIGHT'), true)" />",
+                "image": "<span tal:omit-tag="" tal:content="php:org_glizy_helpers_Media::getUrlById(subitem.media_id)" />"
+            });
+    </span>
+    Galleria.loadTheme('static/galleria/themes/movio/galleria.<span tal:omit-tag="" tal:content="item/galleryType" />.js');
+    Galleria.run('<span tal:omit-tag="" tal:content="php: '#galleria' . item.hash" />', {
+        dataSource: data, imageCrop: <span tal:omit-tag="" tal:content="item/galleryImageCrop" />, imagePan: <span tal:omit-tag="" tal:content="item/galleryImagePan" />, imagePosition: '<span tal:omit-tag="" tal:content="item/galleryImagePosition" />'
+    });
+
+    Galleria.ready(function() {
+        galleriaio_loadNext();
+    });
+});
+                        </script>
+                        </div>
+                    </div>
+                    <span tal:omit-tag="" tal:content="structure item/textAfter" />
+                    <span tal:omit-tag="" metal:use-macro="functions" tal:define="item item; from ''" />
+                </div>
+            </article>
+
+            <span tal:omit-tag="" tal:condition="item/commentsEnabled" metal:use-macro="formComments" tal:define="item item" />
+            <span tal:omit-tag="" tal:condition="item/commentsEnabled" metal:use-macro="comments" tal:define="item item" />
+        </span>
+    </div>
+
+</div>
+
+
+<div class="functions" metal:define-macro="functions">
+    <span tal:omit-tag="" tal:condition="php:count(item.documents)">
+        <h4 tal:content="php: __T('Insights')"></h4>
+        <ul class="insights clearfix" tal:condition="item/documents" >
+            <span tal:omit-tag="" tal:repeat="subItem item/documents">
+                <li tal:condition="subItem" tal:content="structure subItem"></li>
+            </span>
+        </ul>
+    </span>
+    <div class="from" tal:condition="from"><span>FROM:</span> <span tal:omit-tag="" tal:content="from" /></div>
+    <div class="actions clearfix">
+        <ul class="sx" tal:condition="item/commentsEnabled">
+            <li tal:condition="item/externalLink"><a tal:attributes="href item/externalLink" target="_blank"><i class="fa fa-external-link"></i></a></li>
+            <li tal:condition="item/numComments"><i class="fa fa-comment"></i><a tal:attributes="href php: '#comments_' . item.hash"> <span tal:omit-tag="" tal:content="item/numComments" /> comments</a></li>
+            <li><i class="fa fa-pencil"></i><a class="js-writeComment" href="" tal:content="php: __T('Write comment')"></a></li>
+        </ul>
+
+        <ul class="dx">
+            <li><a tal:attributes="href item/urlPermalink">permalink</a></li>
+            <li><a target="_blank" tal:attributes="href item/urlFacebook"><i class="fa fa-facebook"></i></a></li>
+            <li><a target="_blank" tal:attributes="href item/urlTwitter"><i class="fa fa-twitter"></i> </a></li>
+        </ul>
+
+    </div>
+</div>
+
+<article class="item-box comment js-comments" metal:define-macro="comments" tal:condition="item/numComments">
+    <a tal:attributes="name php: 'comments_' . item.hash"></a>
+    <span class="arrow-big"></span>
+
+    <div class="content-box-item">
+        <h4 class="tipe-box">Comments</h4>
+        <span tal:omit-tag="" tal:repeat="subItem item/comments">
+            <article class="item-comment"  tal:condition="php: repeat.subItem.number <= 5">
+                <h2 class="title" tal:content="subItem/authorName"></h2>
+                <div tal:content="structure subItem/text"></div>
+            </article>
+        </span>
+        <span tal:condition="php: item.comments.count() > 5">
+            <div class="archive-link">
+                <a href="" class="js-commentsMoreLink">show more comments</a>
+            </div>
+            <div style="display:none;" class="js-commentsMore">
+                <span tal:omit-tag="" tal:repeat="subItem item/comments">
+                    <article class="item-comment" tal:condition="php: repeat.subItem.number > 5">
+                        <h2 class="title" tal:content="subItem/authorName"></h2>
+                        <div tal:content="structure subItem/text"></div>
+                    </article>
+                </span>
+            </div>
+        </span>
+    </div>
+</article>
+
+<article class="item-box comment js-formComment" style="display: none" metal:define-macro="formComments">
+    <a tal:attributes="name php: 'form_' . item.hash"></a>
+    <span class="arrow-big"></span>
+
+    <div class="alert error" tal:condition="item/formError">
+        <h4 tal:content="structure item/formError" />
+        <p>&nbsp;</p>
+    </div>
+
+    <form action="" method="POST">
+        <input type="hidden" name="hash" tal:attributes="value item/hash"/>
+        <input type="hidden" name="action" value="PostComment"/>
+        <p><label><span>Name</span>
+            <input type="text" value="" id="authorName" name="authorName" tal:attributes="value item/formAuthor" />
+        </label>
+        </p>
+        <p>
+        <label><span>Email</span>
+            <input type="text" value="" id="authorEmail" name="authorEmail" tal:attributes="value item/formEmail" />
+        </label>
+        </p>
+        <p>
+        <label><span>Comment text</span>
+            <textarea name="text" id="text" tal:content="item/formText"></textarea>
+        </label>
+        </p>
+        <p>
+            <span tal:omit-tag="" tal:content="structure item/captcha" />
+            <label><span>Verify code</span>
+                <input type="text" value="" id="captcha" name="captcha"/>
+            </label>
+        </p>
+        <p class="align-center">
+        <input type="submit" value="Post"/>
+        <input type="reset" value="Cancel" class="js-formCommentCancel"/>
+        </p>
+    </form>
+</article>

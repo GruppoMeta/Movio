@@ -1,0 +1,99 @@
+<div class="clearfix">
+  <div class="col-md-5 block-inner-aside pull-right col-xs-12">
+    <span tal:omit-tag="" tal:condition="php: count(Component['attributes'].properties)">
+      <dl class="new-properties new-dl clearfix">
+        <span tal:omit-tag="" tal:repeat="attribute Component/attributes/properties">
+
+          <span tal:omit-tag="" tal:condition="php: attribute['type'] == 'property'">
+            <span tal:omit-tag="" tal:condition="php: Component[attribute['name']] != ''">
+            <dt tal:condition="php: attribute['label']" tal:content="php: attribute['label']"></dt>
+            <dd tal:content="structure php:Component[attribute['name']]"></dd>
+            </span>
+          </span>
+
+          <span tal:omit-tag="" tal:condition="php: attribute['type'] == 'date'">
+            <span tal:omit-tag="" tal:condition="php: Component[attribute['name']] != ''">
+            <dt tal:condition="php: attribute['label']" tal:content="php: attribute['label']"></dt>
+            <dd tal:content="php:glz_defaultDate2locale( __T('GLZ_DATE_FORMAT'), Component[attribute['name']])"></dd>
+            </span>
+          </span>
+
+          <span tal:omit-tag="" tal:condition="php: attribute['type'] == 'thesaurus'">
+            <span tal:omit-tag="" tal:condition="php: count(Component[attribute['name']])">
+              <dt tal:condition="php: attribute['label']" tal:content="php: attribute['label']"></dt>
+              <dd>
+                <ul class="tag-list">
+                    <li tal:repeat="item php:Component[attribute['name']]"><a href="#" class="js-thesaurus" tal:attributes="data-url item/url; title item/title; data-type item/type" tal:content="structure item/title"></a>&nbsp;</li>
+                </ul>
+              </dd>
+            </span>
+          </span>
+
+        </span>
+      </dl>
+    </span>
+
+    <span tal:omit-tag="" tal:repeat="attribute Component/attributes/figure">
+      <figure class="main-img align-right clearfix" tal:condition="php: Component[attribute['name']]['mediaId']">
+        <span tal:omit-tag="" tal:content="structure php:Component[attribute['name']]['__html__']" />
+        <figcaption class="description" tal:attributes="style php: 'max-width:' . Component[attribute['name']]['width'] . 'px'" tal:content="structure php:Component[attribute['name']]['title']"></figcaption>
+      </figure>
+    </span>
+
+    <div style="width:490px;display:none" class="block-my-pop-up js-thesaurus-popup">
+      <div style="top:0;right:0;margin:-15px 15px 0 0;" class="arrow"></div>
+        <h2 class="block-title js-thesaurus-title"></h2>
+        <div class="block-my-pop-up-container js-thesaurus-result" style="height: 400px;overflow:auto;">
+            <div class="results-content"></div>
+        </div>
+    </div>
+  </div>
+
+  <span tal:omit-tag="" tal:condition="php: count(Component['attributes'].body)">
+    <span tal:omit-tag="" tal:repeat="attribute Component/attributes/body">
+
+      <span tal:omit-tag="" tal:condition="php: attribute['type'] == 'longtext'">
+        <span tal:omit-tag="" tal:condition="php: !glz_empty(Component[attribute['name']])">
+          <h3 tal:condition="php: attribute['label']"  tal:content="php: attribute['label']" />
+          <span tal:omit-tag="" tal:content="structure php:Component[attribute['name']]" />
+        </span>
+      </span>
+
+      <span tal:omit-tag="" tal:condition="php: attribute['type'] == 'imagelist'">
+        <span tal:omit-tag="" tal:condition="php: count(Component[attribute['name']]['content'])">
+          <div class="clearfix-left clearfix-right">
+            <h3 tal:condition="php: attribute['label']"  tal:content="php: attribute['label']" />
+            <div class="slider imageList clearfix js-imageList">
+              <div class="slide" tal:repeat="item php:Component[attribute['name']]['content']" tal:content="structure item/__html__" />
+            </div>
+          </div>
+        </span>
+      </span>
+
+      <span tal:omit-tag="" tal:condition="php: attribute['type'] == 'media'">
+        <span tal:omit-tag="" tal:condition="php: Component[attribute['name']]['__html__'] != ''">
+          <h3 tal:condition="php: attribute['label']"  tal:content="php: attribute['label']" />
+          <span tal:omit-tag="" tal:content="structure php:Component[attribute['name']]['__html__']" />
+        </span>
+      </span>
+
+      <span tal:omit-tag="" tal:condition="php: attribute['type'] == 'medialist'">
+        <span tal:omit-tag="" tal:condition="php: count(Component[attribute['name']]['content'])">
+          <h3 tal:condition="php: attribute['label']"  tal:content="php: attribute['label']" />
+          <ul class="downloadList">
+            <li tal:repeat="item php:Component[attribute['name']]['content']" tal:content="structure item/__html__" />
+          </ul>
+        </span>
+      </span>
+
+    </span>
+  </span>
+
+  <span tal:condition="php: property_exists(Component['relations'], 'photogallery')" tal:content="structure Component/relations/photogallery" />
+  <span tal:condition="php: property_exists(Component['relations'], 'europeanaRelatedContents')" tal:content="structure Component/relations/europeanaRelatedContents" />
+  <span tal:condition="php: property_exists(Component['relations'], 'relations')" tal:content="structure Component/relations/relations" />
+  <span tal:condition="php: property_exists(Component['relations'], 'referenceRelations')" tal:content="structure Component/relations/referenceRelations" />
+  <span tal:condition="php: property_exists(Component['relations'], 'relationsGraph')" tal:content="structure Component/relations/relationsGraph" />
+
+
+</div>

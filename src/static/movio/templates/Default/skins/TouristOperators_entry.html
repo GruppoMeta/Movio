@@ -1,0 +1,38 @@
+<div class="col-md-5 block-inner-aside pull-right col-xs-12" tal:condition="php: Component.images[0]">
+  <figure  class="main-img align-right" tal:content="structure php: Component.images[0].image['__html__']" />
+</div>
+
+<h3 tal:condition="php: Component.type || Component.externalUrl">
+      <span tal:omit-tag="" tal:condition="Component/type" tal:content="Component/type" />
+      <span tal:omit-tag="" tal:condition="php: Component.type && Component.externalUrl" tal:content="string:-" />
+      <span tal:omit-tag=""  tal:condition="Component/externalUrl" tal:content="structure php: __Link::formatLink(Component.externalUrl, Component.externalUrl, Component.externalUrl, '', '')" />
+</h3>
+<article tal:condition="Component/description" tal:content="structure Component/description" class="item clearfix"/>
+<div class="clearfix">
+  <div class="col-md-5 col-padding-right">
+    <section class="results-content" tal:condition="php: count(Component.locations)" >
+        <section tal:repeat="item Component/locations" class="item">
+            <h4 tal:condition="item/locationDescription" >
+                <a href="#" tal:condition="item/coordinates" class="no-undeline js-toggleMapMarker" tal:attributes="data-item repeat/item/index" ><i class="fa fa-map-marker"></i> <span tal:omit-tag="" tal:content="structure item/locationDescription" /></a>
+            </h4>
+            <p tal:condition="item/location" tal:content="structure item/location" />
+        </section>
+    </section>
+  </div>
+  <div class="col-md-7">
+      <span tal:omit-tag=""
+              metal:use-macro="GoogleMap_macro.html/map"
+              tal:define="Component Component/map" />
+
+  </div>
+</div>
+
+<span tal:omit-tag=""
+        metal:use-macro="_macro.html/boxImageList"
+        tal:define="images Component/images;
+                    start '1';
+                    title php: __T('Images')" />
+
+<span tal:omit-tag=""
+        metal:use-macro="_macro.html/boxAttachments"
+        tal:define="attaches Component/attaches" />

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cms="org.glizycms.views.components.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="Page.php">
+    <glz:Import src="_common.xml" />
+
+    <mvc:State name="index">
+        <glz:DataProvider id="dp" recordClassName="org.glizycms.core.models.Language" />
+        <glz:DataGrid id="dataGrid" label="{i18n:GLZ_LANGUAGE_LIST}" dataProvider="{dp}" filters="{filters}" tableCssClass="table table-striped table-bordered" cssClass="odd,even" controller="{dataGridEdit}" orderStyle="BLACK">
+            <glz:DataGridColumn columnName="language_id"            visible="false" key="true" />
+            <glz:DataGridColumn columnName="language_name"          headerText="{i18n:GLZ_LANGUAGE}" />
+            <glz:DataGridColumn columnName="language_code"          headerText="{i18n:GLZ_LANGUAGE_CODE}" />
+            <glz:DataGridColumn columnName="language_isDefault"     headerText="{i18n:GLZ_LANGUAGE_DEFAULT}" width="120" align="center" renderCell="org.glizycms.core.application.renderer.CellUserActive" />
+            <glz:DataGridColumn columnName="language_id" align="right" width="80" renderCell="org.glizycms.languages.views.renderer.CellEditDelete" />
+        </glz:DataGrid>
+        <glz:Link label="{i18n:Add new language}" cssClass="{config:glizycms.form.actionLink.cssClass}" icon="icon-plus" routeUrl="actionsMVCAdd" editableRegion="actions" acl="*,new"/>
+    </mvc:State>
+
+     <mvc:State name="edit">
+        <cms:FormEdit id="myForm" controllerName="org.glizycms.languages.controllers.*">
+            <cms:pageTitleModifier action="edit" label="{i18n:New language}" new="true" />
+            <cms:pageTitleModifier action="edit" label="{i18n:Edit language}" new="false" field="language_name" />
+            <glz:Hidden id='__id' />
+            <glz:Hidden id="__model" value="org.glizycms.core.models.Language"/>
+            <glz:Hidden id="language_code" />
+            <glz:Input id="language_name" label="{i18n:GLZ_LABEL}" required="true" size="90" />
+            <glz:DataDictionary id="countryDP" recordClassName="org.glizycms.core.models.Country" field="country_id,country_name" />
+            <glz:List id="language_FK_country_id" label="{i18n:GLZ_LANGUAGE}" dataProvider="{countryDP}" emptyValue="-" required="true" />
+            <glz:Checkbox id="language_isDefault" label="{i18n:GLZ_LANGUAGE_DEFAULT}" data="type=checkbox"/>
+            <glz:Input id="language_order" label="{i18n:GLZ_LANGUAGE_ORDER}" size="10" />
+
+            <cms:FormButtonsPanel>
+                <glz:HtmlButton label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
+                <glz:HtmlButton label="{i18n:GLZ_SAVE_CLOSE}" type="button" cssClass="btn js-glizycms-save" data="action=saveClose" />
+                <glz:HtmlButton label="{i18n:GLZ_CANCEL}" type="button" cssClass="btn js-glizycms-cancel" data="action=cancel" />
+            </cms:FormButtonsPanel>
+        </cms:FormEdit>
+    </mvc:State>
+
+    <mvc:State name="delete">
+        <glz:Hidden controllerName="org.glizycms.languages.controllers.*" />
+    </mvc:State>
+
+</mvc:Page>

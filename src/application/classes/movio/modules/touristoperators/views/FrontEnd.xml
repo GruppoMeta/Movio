@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cms="org.glizycms.views.components.*"
+    xmlns:t="movio.modules.touristoperators.views.components.*"
+    controllerName="movio.modules.touristoperators.controllers.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="2cols.php"
+    adm:editComponents="viewProperties,text">
+
+	<glz:Import src="Common.xml" />
+
+    <glz:DataProvider id="ModuleDP" recordClassName="movio.modules.touristoperators.models.Model" order="title" />
+
+	<mvc:State name="index">
+        <glz:LongText id="text" label="{i18n:Text}" adm:rows="20" adm:cols="75" adm:htmlEditor="true" forceP="true" />
+
+        <glz:Panel id="viewProperties" visible="false">
+            <glz:List id="showForm" label="{i18n:Show search form}">
+                <glz:ListItem key="true" value="{i18n:Yes}"/>
+                <glz:ListItem key="false" value="{i18n:No}"/>
+            </glz:List>
+            <glz:List id="visualization" label="{i18n:Show}" >
+                <glz:ListItem key="list" value="{i18n:Show list}" />
+                <glz:ListItem key="map" value="{i18n:Show map}" />
+            </glz:List>
+            <glz:Checkbox id="showFulltext" label="{i18n:Show fulltext filter}" />
+            <glz:Checkbox id="showType" label="{i18n:Show Type filter}" />
+            <glz:Checkbox id="showCountry" label="{i18n:Show Country filter}" />
+            <glz:Checkbox id="showDistrict" label="{i18n:Show District filter}" />
+            <glz:Checkbox id="showPlace" label="{i18n:Show Place filter}" />
+        </glz:Panel>
+
+        <glz:SearchFilters id="filters" cssClass="search my-form clearfix" label="{i18n:Show search form}" method="get" rememberValues="false">
+            <glz:DataDictionary id="filterTypeDP" recordClassName="movio.modules.touristoperators.models.Model" field="type" />
+            <glz:DataDictionary id="filterCountryDP" recordClassName="movio.modules.touristoperators.models.Model" field="country" />
+            <glz:DataDictionary id="filterDistrictDP" recordClassName="movio.modules.touristoperators.models.Model" field="district" />
+            <glz:DataDictionary id="filterPlaceDP" recordClassName="movio.modules.touristoperators.models.Model" field="place" />
+
+            <glz:Input id="filterTitle" label="{i18n:Text to search}" bindTo="fulltext" value="{filters}" cssClass="input-large" />
+            <glz:List id="filterType" label="{i18n:Type}" bindTo="type" value="{filters}" dataProvider="{filterTypeDP}" emptyValue="-" />
+            <glz:List id="filterCountry" label="{i18n:Country}" bindTo="country" value="{filters}" dataProvider="{filterCountryDP}" emptyValue="-" />
+            <glz:List id="filterDistrict" label="{i18n:District}" bindTo="district" value="{filters}" dataProvider="{filterDistrictDP}" emptyValue="-" />
+            <glz:List id="filterPlace" label="{i18n:Place}" bindTo="place" value="{filters}" dataProvider="{filterPlaceDP}" emptyValue="-" />
+
+            <glz:Panel cssClass="control-group">
+                <glz:HtmlButton id="submit" label="{i18n:GLZ_SEARCH}" value="SEARCH" target="{filters}" />
+                <glz:HtmlButton id="reset" label="{i18n:GLZ_RESET}" value="RESET" target="{filters}" cssClass="reset" />
+            </glz:Panel>
+        </glz:SearchFilters>
+        <glz:RecordSetList id="list" dataProvider="{ModuleDP}" routeUrl="movio_touristoperators" title="{i18n:Search Result}" filters="{filters}" paginate="{paginate}" skin="TouristOperators_list.html" removeTitleWithNoFilter="true" enabled="false">
+            <glz:Repeater id="images">
+                <glz:Image id="image" width="{config:IMG_LIST_WIDTH}" height="{config:IMG_LIST_HEIGHT}" />
+            </glz:Repeater>
+        </glz:RecordSetList>
+        <t:RecordSetMap id="map" dataProvider="{ModuleDP}" routeUrl="movio_touristoperators" title="{i18n:Search Result}" filters="{filters}" skin="TouristOperators_map.html" removeTitleWithNoFilter="true" enabled="false" />
+        <glz:PaginateResult id="paginate" cssClass="pagination" />
+    </mvc:State>
+
+    <mvc:State name="show">
+        <t:RecordDetail id="entry" dataProvider="{ModuleDP}" idName="document_id" skin="TouristOperators_entry.html" ogTitle="title">
+            <glz:Repeater id="locations" label="{i18n:Locations}">
+                <glz:Input id="location" label="{i18n:Address}" size="255" />
+                <glz:Input id="locationDescription" label="{i18n:Address description}" size="255" />
+                <glz:Input id="coordinates" label="{i18n:Coordinates}" data="type=googlemaps" />
+            </glz:Repeater>
+            <glz:Repeater id="images">
+                <glz:Script extendParent="true"><![CDATA[
+function loadContent($id, $bindTo="") {
+    if ($this->contentCount>0) {
+        $c = $this->getComponentById($this->getId()."-image");
+        $c->setAttributes(array("width" => __Config::get("THUMB_WIDTH"),
+                                "height" => __Config::get("THUMB_HEIGHT")));
+    }
+    return parent::loadContent($id, $bindTo);
+}]]></glz:Script>
+                <glz:Image id="image" width="{config:IMG_WIDTH}" height="{config:IMG_HEIGHT}" zoom="true" group="slideshow" superZoom="true" />
+            </glz:Repeater>
+            <glz:Repeater id="attaches">
+                <glz:Media id="media" />
+            </glz:Repeater>
+        </t:RecordDetail>
+    </mvc:State>
+</mvc:Page>

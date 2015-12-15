@@ -1,0 +1,40 @@
+<script id="entity-labels-editor-template" type="text/x-handlebars-template">
+<div>
+<h4>{{locale.title}}</h4>
+<table data-id="{{id}}" id="editTable" class="table table-bordered table-striped">
+<thead>
+    <tr>
+        {{#languages}}
+            <th>{{language_name}}</th>
+        {{/languages}}
+        <th></th>
+    </tr>
+</thead>
+<tfoot>
+    <tr>
+        {{#languages}}
+            <td></td>
+        {{/languages}}
+        <td><input id="addButton" class="btn" type="button" value="{{locale.addNewButton}}"/></td>
+    </tr>
+</tfoot>
+<tbody>
+  {{#entityLabels}}
+    {{> entity-labels}}
+  {{/entityLabels}}
+</tbody>
+</table>
+</div>
+</script>
+
+<script id="entity-labels" type="text/x-handlebars-template">
+  <tr>
+    {{showTranslations this}}
+    <td>
+      {{#if isNew}}
+        <input class="btn btn-primary saveButton" type="button" value="{{locale.saveButton}}"/>
+      {{/if}}
+      <i class="-removeButton btn-icon icon-trash"></i>
+    </td>
+  </tr>
+</script>

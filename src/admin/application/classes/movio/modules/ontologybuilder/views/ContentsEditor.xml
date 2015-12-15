@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+	xmlns:cms="org.glizycms.views.components.*"
+	xmlns:mvc="org.glizy.mvc.components.*"
+	xmlns:cmp="movio.modules.ontologybuilder.views.components.*"
+	controllerName="movio.modules.ontologybuilder.controllers.contentsEditor.*"
+    defaultEditableRegion="content"
+	templateType="php"
+	templateFileName="Page.php">
+
+    <glz:Import src="_common.xml" />
+    <glz:JSscript folder="movio.modules.ontologybuilder.views.js" />
+
+    <mvc:State name="index">
+        <glz:DataGridAjax id="dataGrid" recordClassName="movio.modules.ontologybuilder.models.EntityDocument" queryOperator="AND" cssClass="table table-bordered table-striped">
+            <glz:DataGridColumn columnName="title" headerText="{i18n:Title}" renderCell="org.glizycms.contents.views.renderer.DocumentTitle"/>
+            <glz:DataGridColumn columnName="document_type" headerText="{i18n:Type}" sortable="false" searchable="false" renderCell="movio.modules.ontologybuilder.views.renderer.EntityName" />
+            <glz:DataGridColumn columnName="document_id" sortable="false" searchable="false" cssClass="actions" renderCell="movio.modules.ontologybuilder.views.renderer.ActionEditDraftDeleteEntity" />
+        </glz:DataGridAjax>
+	    <cmp:FilterEntityType id="filer_document_type" dataGridAjaxId="dataGrid" fieldNumber="1" recordClassName="movio.modules.ontologybuilder.models.Entity" />
+        <cmp:AddEntityButton label="{i18n:Add content}" routeUrl="actionEntitiesAdd" editableRegion="actions"/>
+    </mvc:State>
+
+    <mvc:State name="edit,editDraft">
+        <glz:JSscript src="../application/classes/movio/modules/thesaurus/static/FormatThesaurusSelectFrom.js" />
+        <cmp:EntityFormEdit id="myForm" addValidationJs="false" controllerName="movio.modules.ontologybuilder.controllers.entityFormEdit.*">
+            <cms:pageTitleModifier action="edit" label="{i18n:New content}" new="true" />
+            <cms:pageTitleModifier action="edit" label="{i18n:Edit content}" new="false" field="title" />
+            <glz:Link id="searchContent" label="{i18n:Search contents}" cssClass="{config:glizycms.form.actionLink.cssClass}" icon="icon-search" url="#" editableRegion="actions" />
+            <cms:FormButtonsPanel>
+                <glz:HtmlButton label="{i18n:GLZ_PUBLISH}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
+                <glz:HtmlButton label="{i18n:GLZ_PUBLISH_CLOSE}" type="button" cssClass="btn js-glizycms-save" data="action=saveClose" />
+                <glz:HtmlButton label="{i18n:GLZ_SAVE_DRAFT}" type="button" cssClass="btn js-glizycms-save" data="action=saveDraft" />
+                <glz:HtmlButton label="{i18n:GLZ_SAVE_DRAFT_CLOSE}" type="button" cssClass="btn js-glizycms-save" data="action=saveDraftClose" />
+                <glz:HtmlButton label="{i18n:GLZ_CANCEL}" type="button" routeUrl="link" cssClass="btn js-glizycms-cancel" data="action=cancel" />
+			</cms:FormButtonsPanel>
+		</cmp:EntityFormEdit>
+    </mvc:State>
+</mvc:Page>

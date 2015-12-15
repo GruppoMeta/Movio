@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cms="org.glizycms.views.components.*"
+    xmlns:cmp="movio.modules.sharingButtons.views.components.*"
+    controllerName="movio.modules.sharingButtons.controllers.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="Page.php">
+
+    <glz:Import src="_common.xml" />
+
+    <mvc:State name="index">
+        <glz:JSscript folder="movio.modules.sharingButtons.js" editableRegion="head" />
+        <cms:FormEdit id="shareButtonForm" controllerName="movio.modules.sharingButtons.controllers.*">
+            <cmp:GetSharingButtons id="share" />
+            <glz:Input id="enabledButton" type="hidden"/>
+            <cms:FormButtonsPanel>
+                <glz:HtmlButton id="shareButton" label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
+            </cms:FormButtonsPanel>
+        </cms:FormEdit>
+    </mvc:State>
+
+</mvc:Page>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cmp="movio.modules.ontologybuilder.views.components.*"
+    controllerName="movio.modules.ontologybuilder.controllers.graphAdmin.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="Page.php">
+    <glz:Import src="_common.xml" />
+    
+    <!-- TODO fix controller graphAdmin -->
+    
+    <mvc:State name="index">
+        <cmp:Graph />
+    </mvc:State>
+</mvc:Page>

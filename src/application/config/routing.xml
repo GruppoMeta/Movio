@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:Routing>
+    <glz:Route name="ModuleDetail" value="{pageId}/{action=show}/{integer=document_id}/{value=title}" />
+
+    <glz:Route name="showEntityDetail" value="{pageId}/{pageTitle}/{action=show}/{value=entityTypeId}/{value=document_id}" cms:urlResolver="movio.modules.ontologybuilder.content" />
+
+    <glz:Route name="linkChangeAction" value="{pageId}/{pageTitle}/{value=action}" />
+
+    <glz:Route name="linkLogin" value="{pageId=Login}" />
+    <glz:Route name="LinkRegistration" value="{pageId=Registration}" />
+    <glz:Route name="linkLostpassword" value="{pageId=LostPassword}" />
+    <glz:Route name="linkUserDetails" value="{pageId=UserDetails}" />
+    <glz:Route name="linkUserProfileContents" value="{pageId=33}" />
+    <glz:Route name="linkLogout" value="logout" pageId="login" action="logout" />
+
+    <glz:Route name="link" value="{pageId}/{pageTitle}" />
+</glz:Routing>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cms="org.glizycms.views.components.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="Page.php">
+    <glz:Import src="_common.xml" />
+
+    <mvc:State name="index">
+        <glz:DataProvider id="dp" recordClassName="org.glizycms.groupManager.models.UserGroup" />
+        <glz:DataGrid id="dataGrid" label="{i18n: Elenco utenti}" dataProvider="{dp}" filters="{filters}" tableCssClass="table table-striped table-bordered" cssClass="odd,even" paginate="{dataGridPaginate}" controller="{dataGridEdit}" orderStyle="BLACK">
+            <glz:DataGridColumn columnName="usergroup_id" visible="false" key="true"/>
+            <glz:DataGridColumn columnName="usergroup_name" headerText="{i18n:GLZ_USERGROUP_NAME}" />
+            <glz:DataGridColumn columnName="usergroup_id" align="right" width="80" renderCell="org.glizycms.contents.views.renderer.CellEditDelete" />
+        </glz:DataGrid>
+        <glz:PaginateResult id="dataGridPaginate" cssClass="pagination"/>
+        <glz:Link label="{i18n:GLZ_USERGROUP_ADD_NEW_RECORD}" cssClass="{config:glizycms.form.actionLink.cssClass}" icon="icon-plus" routeUrl="actionsMVCAdd" editableRegion="actions" acl="*,new"/>
+    </mvc:State>
+
+     <mvc:State name="edit">
+        <cms:FormEdit id="myForm" controllerName="org.glizycms.contents.controllers.activeRecordEdit.*">
+            <cms:pageTitleModifier action="edit" label="{i18n:New group}" new="true" />
+            <cms:pageTitleModifier action="edit" label="{i18n:Edit group}" new="false" field="usergroup_name" />
+            <glz:Hidden id='__id' />
+            <glz:Hidden id="__model" value="org.glizycms.groupManager.models.UserGroup"/>
+            <glz:Input id="usergroup_name" label="{i18n:GLZ_USERGROUP_NAME}" size="90" required="true" />
+        	<glz:Checkbox id="usergroup_backEndAccess" label="{i18n:GLZ_USERGROUP_INTERNAL}" visible="{php:!__Config::get(ACL_ROLES)}" defaultStatus="on" data="type=checkbox" />
+            <cms:FormButtonsPanel>
+                <glz:HtmlButton label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
+                <glz:HtmlButton label="{i18n:GLZ_SAVE_CLOSE}" type="button" cssClass="btn js-glizycms-save" data="action=saveClose" />
+                <glz:HtmlButton label="{i18n:GLZ_CANCEL}" type="button" cssClass="btn js-glizycms-cancel" data="action=cancel" />
+            </cms:FormButtonsPanel>
+        </cms:FormEdit>
+    </mvc:State>
+
+    <mvc:State name="delete">
+        <glz:Hidden controllerName="org.glizycms.contents.controllers.activeRecordEdit.*" />
+        <glz:Hidden id="__model" value="org.glizycms.groupManager.models.UserGroup"/>
+    </mvc:State>
+
+</mvc:Page>

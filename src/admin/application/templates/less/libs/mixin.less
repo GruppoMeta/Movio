@@ -1,0 +1,53 @@
+/* less define */
+
+.margin-reset() {	
+margin:0;
+}
+
+.padding-reset() {	
+padding:0;
+}
+
+.padding-margin-reset() {
+	padding:0;
+	margin:0;
+}
+
+.box-sizing() {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	}
+
+.border-radius (@radius) {
+  border-radius: @radius;
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
+}
+
+/* text-shaodow */
+.text-shadow (@x: 0, @y: 1px, @blur: 0, @color: #fff) {
+	text-shadow:@arguments;	
+}
+
+/* box-shadow */
+.box-shadow (@x: 0, @y: 1px, @blur: 0, @color: #fff, @where:inset ) {
+	box-shadow:@arguments;	
+}
+
+
+.transition (@time:.4s){
+	-moz-transition:all @time ease-in-out;
+	-webkit-transition:all @time ease-in-out;
+	-o-transition:all @time ease-in-out;
+	transition:all @time ease-in-out;
+	backface-visibility: hidden;
+	webkit-backface-visibility: hidden;
+	}
+	
+/* define opacity */
+
+.opacity (@opacity:.5){
+	opacity:@opacity;
+	filter: alpha(opacity=@opacity);
+	}

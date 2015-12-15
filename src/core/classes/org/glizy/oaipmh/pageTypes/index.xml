@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<o:Page id="Page"
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+	xmlns:mvc="org.glizy.mvc.components.*"
+	xmlns:o="org.glizy.oaipmh.components.*"
+	baseClassPath="org.glizy.oaipmh"
+	controllerName="oaipmh"
+	defaultEditableRegion="content"
+	actionName="verb"
+	templateType="php"
+	templateFileName="oaipmh.php"
+	defaultAction="">
+
+
+	<mvc:State name="Identify">
+		<o:Identify />
+	</mvc:State>
+
+	<mvc:State name="ListMetadataFormats">
+		<o:ListMetadataFormats />
+	</mvc:State>
+
+	<mvc:State name="ListSets">
+		<o:ListSets />
+	</mvc:State>
+
+	<mvc:State name="ListIdentifiers">
+		<o:ListIdentifiers />
+	</mvc:State>
+
+	<mvc:State name="ListRecords">
+		<o:ListRecords />
+	</mvc:State>
+
+	<mvc:State name="GetRecord">
+		<o:GetRecord />
+	</mvc:State>
+</o:Page>

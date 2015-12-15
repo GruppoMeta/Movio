@@ -1,0 +1,38 @@
+.padding-margin-reset() {
+    padding:0;
+    margin:0;
+}
+.pmr(){margin:0;padding:0;}
+.box-sizing() {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.border-radius (@radius) {
+    border-radius: @radius;
+    -moz-border-radius: @radius;
+    -webkit-border-radius: @radius;
+}
+.box-shadow (@x: 0, @y: 0, @blur: 1px, @color: #999) {
+  box-shadow: @arguments;
+  -moz-box-shadow: @arguments;
+  -webkit-box-shadow: @arguments;
+}
+/* font awesome icon */	
+/* http://fortawesome.github.io/Font-Awesome/icons/ */
+/* for icon code: font-awesome/variables.less */
+.icon-font-awesome() {
+	font-family: 'FontAwesome'; 		
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	-moz-font-feature-settings: normal;
+	-moz-font-language-override: normal;
+	-moz-osx-font-smoothing: grayscale;
+	font-size: inherit;
+	font-size-adjust: none;
+	font-stretch: normal;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: normal;
+	text-rendering: auto;
+}	

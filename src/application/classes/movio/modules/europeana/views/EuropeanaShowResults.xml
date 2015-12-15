@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:cms="org.glizycms.views.components.*"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:rc="movio.modules.europeana.views.components.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="Popup.php">
+
+    <mvc:State name="index">
+        <glz:Panel id="loading" cssClass="row-fluid"></glz:Panel>
+        <glz:Panel id="imgContainer" cssClass="row-fluid hidden">
+              <rc:ShowResults id="europeana" cssClass="odd,even" skin="../../../../application/classes/movio/modules/europeana/views/skin/showresults.html">
+              </rc:ShowResults>
+              <glz:PaginateResult id="paginate" cssClass="pagination" remember="false" pageLength="18" />
+                <glz:Panel cssClass="hidden js-controlCheckEnable">
+                    <glz:HtmlButton label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
+                    <glz:HtmlButton label="{i18n:GLZ_CANCEL}" type="button" cssClass="btn js-glizycms-cancel" data="action=cancel" />
+                </glz:Panel>
+                <glz:Panel cssClass="hidden js-controlCheckDisable">
+                    <glz:HtmlButton label="{i18n:GLZ_CLOSE}" type="button" cssClass="btn js-glizycms-cancel" data="action=cancel" />
+                </glz:Panel>
+        </glz:Panel>
+    </mvc:State>
+
+</mvc:Page>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<glz:EmptyComponent
+        xmlns:m="movio.views.components.*">
+
+    <glz:Modifier target="navigation" attribute="editableRegion" value="menu" />
+    <glz:Modifier target="navigation" attribute="drawAllChilds" value="true" />
+    <glz:Modifier target="navigation" attribute="showOnlyChilds" value="false" reprocess="true"/>
+
+    <glz:ConfigValue key="movio.thumb.entityList.width" action="set" value="242" />
+    <glz:ConfigValue key="movio.thumb.entityList.height" action="set" value="135" />
+    <glz:ConfigValue key="movio.thumb.entityList.crop" action="set" value="true" />
+    <glz:ConfigValue key="movio.thumb.homeSlider.width" action="set" value="1200" />
+    <glz:ConfigValue key="movio.thumb.homeSlider.height" action="set" value="290" />
+    <glz:ConfigValue key="movio.thumb.homeSlider.crop" action="set" value="true" />
+
+</glz:EmptyComponent>

@@ -1,0 +1,24 @@
+<section class="results-content" tal:condition="php: !is_null(Component.records)">
+  <h3 tal:content="structure Component/title"/>
+  <span tal:omit-tag="" tal:condition="php: Component.records.count() > 0">
+    <article tal:repeat="item Component/records" class="item clearfix">
+      <figure tal:condition="php: item.images[0]">
+        <a href="" tal:attributes="href item/__url__; title item/title">
+          <img tal:attributes="src php: item.images[0].image['src']; alt item/title" />
+        </a>
+      </figure>
+      <h1>
+          <a href="" tal:attributes="href item/__url__; title item/title">
+             <span tal:content="item/title" />
+          </a>
+      </h1>
+        <p tal:condition="php: item.keyInDataExists('bodyShort')" tal:content="structure item/bodyShort" />
+    </article>
+  </span>
+  <span tal:omit-tag="" tal:condition="php: Component.records.count() == 0">
+    <article class="item clearfix" >
+      <p tal:content="php:__T('MW_NO_RECORD_FOUND')" />
+    </article>
+  </span>
+  <div class="clear"></div>
+</section>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:include
+    xmlns:cms="org.glizycms.views.components.*"
+    src="movio.views.TemplateModuleAdmin">
+    <glz:template name="model" value="movio.modules.news.models.Model" />
+    <glz:template name="add_label" value="Add news" />
+
+    <glz:template name="grid_fields">
+        <glz:DataGridColumn columnName="title" headerText="{i18n:Title}" renderCell="org.glizycms.contents.views.renderer.DocumentTitle" />
+        <glz:DataGridColumn columnName="place" headerText="{i18n:MW_NEWS_PLACE}" searchable="true" />
+        <glz:DataGridColumn columnName="startDate" headerText="{i18n:MW_NEWS_STARTDATE}" searchable="true" />
+        <glz:DataGridColumn columnName="endDate" headerText="{i18n:MW_NEWS_ENDDATE}" searchable="true"/>
+        <!--
+        <glz:DataGridColumn columnName="inHome" headerText="{i18n:MW_EVENTS_PUBLISHED}" searchable="false" renderCell="org.glizycms.core.application.renderer.CellUserActive" />
+        <glz:DataGridColumn columnName="inHomeOrder" headerText="{i18n:MW_EVENTS_PUBLICATION_ORDER}" sortable="false" searchable="false" />
+    -->
+    </glz:template>
+
+    <glz:template name="form_fields">
+        <glz:Input id="title" label="{i18n:Title}" size="90" required="true" />
+        <!--glz:Input id="url" label="{i18n:Url}" size="90" required="false" /-->
+        <glz:Input id="startDate" label="{i18n:MW_NEWS_STARTDATE}" size="40" required="true" data="type=date" />
+        <glz:Input id="endDate" label="{i18n:MW_NEWS_ENDDATE}" size="40" required="true" data="type=date" />
+        <!--
+        <glz:Checkbox id="inHome" label="{i18n:MW_EVENTS_PUBLISHED}" data="type=checkbox" />
+        <glz:Input id="inHomeOrder" label="{i18n:MW_EVENTS_PUBLICATION_ORDER}" size="10" />
+        -->
+        <glz:Input id="category" label="{i18n:Category}" data="type=selectfrom;multiple=true;add_new_values=true;model=movio.modules.news.models.Model;query=All" size="255" />
+        <glz:Input id="dateDescription" label="{i18n:MW_EVENTS_REALDATE}" size="90" />
+        <glz:Input id="place" label="{i18n:MW_EVENTS_PLACE}" data="type=selectfrom;multiple=false;add_new_values=true;model=movio.modules.news.models.Model" size="255" />
+        <glz:Input id="bodyShort" label="{i18n:MW_NEWS_BODYSHORT}" size="90" type="multiline" rows="10" cols="70" htmlEditor="true" data="type=tinymce" />
+        <glz:Input id="body" label="{i18n:Text}" size="90" type="multiline" rows="10" cols="70" htmlEditor="true" data="type=tinymce" />
+        <glz:Input id="contacts" label="{i18n:Contacts}" size="90" type="multiline" rows="10" cols="70" htmlEditor="true" data="type=tinymce" />
+        <glz:Input id="urlLabel" label="{i18n:Label URL}" size="90" />
+        <glz:Input id="urlExternal" label="{i18n:URL}" size="90" />
+
+        <glz:Fieldset id="images" label="{i18n:Images}" data="type=repeat;repeatMin=0;repeatMax=5;collapsable=false">
+            <glz:Input id="image" label="{i18n:Image}" size="90" data="type=mediapicker;mediatype=IMAGE;preview=true"/>
+        </glz:Fieldset>
+
+        <glz:Fieldset id="attaches" label="{i18n:Download files}" data="type=repeat;repeatMin=0;repeatMax=5;collapsable=false">
+            <glz:Input id="media" label="{i18n:Media}" size="90" data="type=mediapicker;mediatype=ALL;preview=false"/>
+        </glz:Fieldset>
+    </glz:template>
+</glz:include>

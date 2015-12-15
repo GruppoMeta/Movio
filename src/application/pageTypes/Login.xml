@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cms="org.glizycms.views.components.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="2cols.php"
+    adm:editComponents="text,loginPage"
+    controllerName="org.glizycms.userManager.fe.controllers.login.*"
+    defaultAction="login"
+    >
+
+    <mvc:State name="login">
+    	<glz:Import src="Common.xml" />
+    	<glz:LongText id="text" label="{i18n:Text}" forceP="true" adm:rows="20" adm:cols="75" adm:htmlEditor="true" />
+    	<cms:PagePicker id="loginPage" label="{i18n:MW_LOGIN_DESTINATION_PAGE}" visible="false" required="true" />
+
+    	<glz:LoginBox id="formLoginPage" title="{i18n:MW_LOGIN_TITLE}" cssClass="sidebox_first"
+    					userField="fldUsr" passwordField="fldPsw"
+    					userLabel="{i18n:MW_LOGIN_USER}" passwordLabel="{i18n:MW_LOGIN_PSW}"
+                        registrationLabel="{i18n:MW_LOGIN_REGISTER}" registrationUrl="Registration"
+    					confirmLabel="{i18n:MW_LOGIN_CONFIRM}" errorLabel="{i18n:MW_LOGIN_ERROR}"
+                        rememberLabel="{i18n:MW_LOGIN_REMEMBER}" askPasswordLabel="{i18n:MW_LOGIN_ASK_PASSWORD}" askPasswordUrl="lostpassword"
+    					skin="Login.html" />
+    </mvc:State>
+</mvc:Page>

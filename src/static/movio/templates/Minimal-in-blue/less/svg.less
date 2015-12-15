@@ -1,0 +1,59 @@
+svg {
+    overflow: hidden;
+}
+
+/* Stile testo delle entità */
+g.nodes tspan {
+    font-family: Helvetica, sans-serif;
+    font-size: 14px;
+    color: @svg-text-node;
+}
+/* Stile testo delle entità in HTML */
+g.nodes div {
+    white-space: nowrap;
+    padding: 2px 5px 2px 5px;
+    font-family: Helvetica, sans-serif;
+    font-size: 14px;
+    color: @svg-text-node;
+}
+
+/* Stile testo delle entità principali */
+g.nodes tspan.main-node {
+    fill: @svg-text-main-node !important;
+}
+/* Stile testo delle entità principali in HTML */
+div.main-node {
+    padding: 2px 7px 2px 7px;
+    font-family: Helvetica, sans-serif;
+    font-size: 14px;
+    color: @svg-text-main-node !important;
+}
+
+/* Stile testo delle relazioni */
+g.edgeLabels tspan {
+
+}
+/* Stile riquadro delle entità */
+.node rect {
+    stroke: @svg-node-border;
+    stroke-width: 2px;
+    fill: @svg-node-background;
+}
+.node a {
+    color: @svg-text-link;
+    text-decoration: underline;
+}
+.node a:hover {
+    color: @svg-text-link-hover;
+}
+/* Stile riquadro delle entità principali */
+.node rect.main-node {
+    fill: @svg-main-node-background;
+}
+/* Stile delle frecce */
+.edgePath path {
+    stroke: @svg-path-stroke;
+    stroke-width: 1.5px;
+    fill: none;
+}
+

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:ma="org.glizycms.mediaArchive.views.components.*"
+    baseClassPath="it.gruppometa.iccd"
+    controllerName="storageBrowser"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="Popup.php">
+    
+    <mvc:State name="index">
+        <!--<glz:Authenticator accessPageId="login" />
+        
+        <glz:ConfigValue key="GLIZY_JS_LIB" value="jquery" action="set" />
+        
+        <glz:MessageBox type="SUCCESS" cssClass="alert alert-success" message="Risultato operazione"/>
+        <glz:MessageBox type="ERROR" cssClass="alert alert-error" message=""/>-->
+        
+        <ma:CustomStorageBrowser id="storageBrowser" />
+    
+    </mvc:State>
+</mvc:Page>

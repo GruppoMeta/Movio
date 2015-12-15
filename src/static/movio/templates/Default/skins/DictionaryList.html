@@ -1,0 +1,89 @@
+<div tal:condition="php: count(Component['records']) GT 0">
+    <span tal:omit-tag="" tal:condition="php: Component['type'] == 'generic'">
+        <section class="results-content" tal:repeat="item Component/records">
+            <span tal:omit-tag="" tal:condition="php: !empty(item['taggedDocuments'])">
+                <h2 tal:content="item/term/term" style="margin-bottom: 20px"/>
+                <article class="item clearfix" tal:repeat="subitem item/taggedDocuments" style="margin-left: 20px">
+                    <h1>
+                        <a tal:attributes="href subitem/url; title subitem/title" tal:content="structure subitem/title"></a>
+                    </h1>
+                    <p tal:condition="subitem/description" tal:content="structure subitem/description" />
+                </article>
+            </span>
+        </section>
+    </span>
+
+    <span tal:omit-tag="" tal:condition="php: Component['type'] == 'geographical'">
+        <div id="googlemap" class="google-maps" style="width: 100%; height: 600px"></div>
+        <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+        <script>
+        jQuery( function(){
+            var geo = {lat: "41.872389", long: '12.4801', zoom: 5};
+            var terms = <span tal:omit-tag="" tal:content="structure Component/records" />;
+            var geocoder;
+            var map;
+            var infowindow = new google.maps.InfoWindow();
+
+            var latlng = new google.maps.LatLng(geo.lat, geo.long);
+            var mapOptions = {
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+            }
+            var map = new google.maps.Map(document.getElementById("googlemap"), mapOptions);
+
+            var latlngbounds = new google.maps.LatLngBounds();
+            $(terms).each(function(i, item) {
+                var term = item.term;
+                var geoTerm = term.geo.split(',');
+                if ( $.isNumeric(geoTerm[0]) + '&&' + $.isNumeric(geoTerm[1]) ) {
+                    var ll = new google.maps.LatLng(geoTerm[0], geoTerm[1]);
+                    var m = new google.maps.Marker({
+                        map: map,
+                        position: ll,
+                        title: term.term
+                    });
+                    latlngbounds.extend(ll);
+                }
+
+                var content = '<h4>'+term.term+'</h4>';
+                $(item.taggedDocuments).each(function(i, document) {
+                    content += '<li><a href="'+document.url+'">'+document.title+'</a></li>';
+                });
+                makeInfoWindowEvent(map, infowindow, content, m);
+            });
+            map.setCenter(latlngbounds.getCenter());
+            map.fitBounds(latlngbounds);
+
+            function makeInfoWindowEvent(map, infowindow, contentString, marker) {
+                google.maps.event.addListener(marker, 'click', function() {
+                    infowindow.setContent(contentString);
+                    infowindow.open(map, marker);
+                });
+            }
+        })
+        </script>
+    </span>
+
+    <span tal:omit-tag="" tal:condition="php: Component['type'] == 'chronologic'">
+        <div id="timeline-embed"></div>
+        <script>
+        var embed_path = 'static/timelinejs/';
+        var timeline_config = {
+            width:              '100%',
+            height:             '600',
+            source:             '<span tal:omit-tag="" tal:content="structure Component/source" />',
+            embed_id:           'timeline-embed',
+            font:               '<span tal:omit-tag="" tal:content="structure Component/font" />',
+            hash_bookmark:      false,
+            debug:              false,
+            lang:               '<span tal:omit-tag="" tal:content="structure Component/lang" />',
+            css:                'static/timelinejs/css/timeline.css',
+            js:                 'static/timelinejs/js/timeline-min.js'
+        }
+        </script>
+        <script src="static/timelinejs/js/storyjs-embed.js"></script>
+    </span>
+
+</div>
+<span tal:omit-tag="" tal:condition="php: count(Component['records'])==0">
+    <p tal:content="php:__Tp('MW_NO_RECORD_FOUND')"></p>
+</span>

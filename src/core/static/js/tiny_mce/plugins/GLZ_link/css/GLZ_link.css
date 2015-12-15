@@ -1,0 +1,41 @@
+/* CSS file for advimage plugin popup */
+
+.mceActionPanel {
+	margin-top: 7px;
+}
+
+.panel_wrapper {
+        border-top: 1px solid #919B9C;
+		width: 380px;
+}
+        
+#linkType, #linkUrl, #internalLink, #title, #target, #id, #style, #classlist, #rel, #rev, #tabindex, #accesskey, #cssclass {
+	width: 100%;
+}
+
+#preview {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+        cursor: pointer;
+}
+
+.multifieldset {
+   margin-bottom: 4px;
+}        
+
+#picker {
+	width: 100%;
+	height: 100%;
+} 
+
+#pickerPanel {
+	background-color: #FFF;
+	position: absolute;
+	left: 414px;
+	top: 8px;
+	width: 470px;
+	height: 466px;
+	display: none;
+	padding: 4px;
+	border: 1px solid #919B9C;
+}

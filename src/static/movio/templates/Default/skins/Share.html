@@ -1,0 +1,24 @@
+<span tal:omit-tag="" tal:repeat="item Component">
+    <span tal:omit-tag="" tal:condition="php: item['id'] != 'btn_fbLike' && item['id'] != 'btn_google+1'">
+        <a tal:attributes="id item/id; name item/name; href item/href; title item/title; class item/a_class" target="_blank" style="background-image:none; text-decoration:none;">
+            <i tal:attributes="class item/i_class" style="text-decoration:none;"></i>
+        </a>
+    </span>
+    <span tal:omit-tag="" tal:condition="php: item['id'] == 'btn_fbLike'">
+        <script>(function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/it_IT/sdk.js#xfbml=1&version=v2.0";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+        </script>
+        <div tal:attributes="id item/id; name item/name; data-href item/href; class item/i_class" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" style="cursor: default;">
+        </div>
+        <div id="fb-root"></div>
+    </span>
+    <span tal:omit-tag="" tal:condition="php: item['id'] == 'btn_google+1'">
+        <div class="g-plusone" data-annotation="none"></div>
+        <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+    </span>
+</span>

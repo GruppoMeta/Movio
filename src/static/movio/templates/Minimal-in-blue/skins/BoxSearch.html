@@ -1,0 +1,7 @@
+<form class="top-search" method="get" tal:attributes="action SearchBox/__url__">
+<p>
+<label tal:content="SearchBox/label"></label><input type="text" name="search" tal:attributes="placeholder php:__T('GLZ_SEARCH')" />
+<input type="submit" class="button" name="" tal:attributes="value php:__T('GLZ_SEARCH')" />
+<i class="fa fa-search"></i>
+</p>
+</form>

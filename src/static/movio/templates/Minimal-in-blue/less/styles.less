@@ -1,0 +1,140 @@
+/**
+ * Import libraries
+ *
+ * Bootstrap custom build:
+ *   Print media styles
+ *   Typography
+ *   Code
+ *   Grid system
+ *   Tables
+ *   Forms
+ *   Buttons
+ *   Input groups
+ *   Badges
+ *   Component animations (for JS)
+ *   Dropdowns
+ *   Basic utilities
+ *   Responsive utilities
+*/
+@import "libs/bootstrap.less";
+@import "libs/mixin.less";
+@import "font-awesome/font-awesome.less";
+@import "libs/bootstrap-social.less";
+
+/**
+ * Import theme parts
+*/
+@import "global.less";
+@import "structure.less";
+@import "navigation.less";
+@import "element.less";
+@import "slick.less";
+@import "mobile.less";
+@import "svg.less";
+
+@font-1: 'Titillium Web', sans-serif;
+@font-2: 'PT Sans', sans-serif;
+
+/*define colors */
+@white:#fff;
+@black:#000;
+@color1:#CCC;
+@color4:#7A7A7A;
+@color5:#C6C6C6;
+@color7:#F5F5F5;
+@color8:#0099FF;
+@color9:#545453;
+@color10:#5E5E5D;
+@color11:#333;
+@color12:#CC0000;
+@color-success:green;
+@color-error:red;
+@solid:solid;
+
+/*define theme colors */
+@text: @color11;
+@text-heading: @color11;
+@color-link: @color8;
+@color-link-hover: darken(@color8, 5);
+@breadkcrumbs-link: @color-link;
+@breadkcrumbs-link-hover: @color-link-hover;
+
+@navigation-background:@color8;
+@sidebar-link: @color-link;
+@sidebar-link-hover: @color-link-hover;
+
+@languages-link:@color9;
+@languages-link-hover:@color-link;
+@metanavigation-link: @color10;
+@metanavigation-link-hover: @color-link;
+
+@slider-background:@color1;
+@slider-text:@white;
+@slider-bullet-background: @black;
+@slider-bullet-background-selected: @color1;
+
+@icon-in-page:lighten(@text, 30);
+@icon-in-box:@white;
+@icon-in-box-background:@color1;
+
+@box-image-border:@color1;
+@box-background:@white;
+@box-border:@color1;
+@box-header-link:@color9;
+@box-relation-item-border:@color1;
+@box-text:@black;
+
+@color-border-button:@color1;
+@color-arrow-button-slider:@color11;
+@color-arrow-button-slider-hover:@color8;
+
+@form-border: @color1;
+@form-required: @color1;
+@form-button: @color4;
+@form-button-text: @white;
+@form-button-primary: @color8;
+@form-button-primary-text:@white;
+@form-input-text:@text;
+@form-input-background:@white;
+
+@timeline-theme: @color8;
+
+@storyteller-background:transparent;
+@storyteller-icon: lighten(@text, 70);
+@storyteller-border:@color1;
+@storyteller-item-background: @white;
+@storyteller-comments-background:@white;
+@storyteller-link: @color8;
+@storyteller-link-hover: @color7;
+@storyteller-navigation-link: @color4;
+@storyteller-image-border: @color5;
+
+@footer-background:transparent;
+@footer-border: @color1;
+@footer-text: @color10;
+
+
+/* custom for this template */
+@max-width-outer:1200px;
+@breadkcrumbs-link-breadcrumd:@color11;
+
+@color-link-attach:@white;
+@color-link-attach-hover:@white;
+@bg-link-attach:@color1;
+@bg-link-attach-hover:@color9;
+
+@color-tag-attach:@white;
+@color-tag-attach-hover:#666;
+@bg-tag-attach:#666;
+@bg-tag-attach-hover:@color1;
+@bg-dl:#fafafa;
+@bg-block-my-pop-up:#fafafa;
+
+@svg-path-stroke:#000000;
+@svg-main-node-background:#D3D3D3;
+@svg-node-border:#CFCED3;
+@svg-text-link:#CC3522;
+@svg-text-link-hover:darken(@svg-text-link, 15);
+@svg-text-node:#000000;
+@svg-text-main-node:#000000;
+@svg-node-background:#FFFFFF;

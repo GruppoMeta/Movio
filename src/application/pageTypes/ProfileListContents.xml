@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cmp="movio.modules.ontologybuilder.views.components.*"
+    controllerName="movio.modules.ontologybuilder.controllers.profile.*"
+    templateType="php"
+    templateFileName="2cols.php"
+    defaultEditableRegion="content"
+    adm:editComponents="visualizationBox">
+
+    <glz:Import src="Common.xml" />
+    <glz:LoginCheck id="loginCheck" text="{i18n:MW_LOGIN_REQUIRED}" cssClass="error" />
+
+
+    <mvc:State name="index">
+        <glz:Panel id="visualizationBox" visible="false">
+            <glz:DataDictionary id="usergroupsDP" recordClassName="org.glizycms.userManager.models.UserGroup" field="usergroup_id,usergroup_name" query="userGroupsAdmin" />
+            <glz:List id="groupId" label="{i18n:User group}" dataProvider="{usergroupsDP}" emptyValue="{i18n:User Profile}" required="false" />
+        </glz:Panel>
+
+        <cmp:ShowProfileContents />
+    </mvc:State>
+
+
+</mvc:Page>

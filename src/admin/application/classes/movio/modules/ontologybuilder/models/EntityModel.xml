@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<glz:EmptyComponent
+  xmlns:glz="http://www.glizy.org/dtd/1.0/"
+  xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+  model:create="true"
+  model:tableName="entity_tbl"
+  model:autoGenerate="true"
+  model:usePrefix="false">
+</glz:EmptyComponent>

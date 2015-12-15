@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:Routing>
+    <glz:Route name="actionsMVCDelete" value="{pageId}/{action=delete}/{value=model}/{value=id}" />
+    <glz:Route name="actionsMVCToggleVisibility" value="{pageId}/{action=togglevisibility}/{value=model}/{value=id}" />
+
+    <glz:Route name="actionEntities" value="{pageId}/{value=entityTypeId}/{value=action}/{value=entityId}" />
+    <glz:Route name="actionEntitiesAdd" value="{pageId}/{value=entityTypeId}/{action=edit}/0" parseUrl="false" />
+
+    <glz:Route name="actionsMVC" value="{pageId}/{value=action}/{value=id}" />
+    <glz:Route name="actionsMVCAdd" value="{pageId}/{action=edit}/0" parseUrl="false" />
+
+    <glz:Route name="glizycmsMediaArchiveAdd" value="{pageId}/{action=add}" parseUrl="false" />
+
+
+    <glz:Route name="linkAddEntity" value="{pageId}/{action=edit}" />
+    <glz:Route name="linkCurrentPage" value="{pageId}" parseUrl="false" />
+    <glz:Route name="linkChangeAction" value="{pageId}/{value=action}" />
+    <glz:Route name="moduleAction" value="{pageId}/{value=action}" />
+    <glz:Route name="logout" value="{pageId=logout}" />
+    <glz:Route name="link" value="{pageId}" />
+</glz:Routing>

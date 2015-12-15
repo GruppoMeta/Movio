@@ -1,0 +1,52 @@
+GLIZY v1.3.0 by Daniele Ugoletti
+------------------------------
+
+GLIZY is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+ 
+GLIZY is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+GLIZY includes or is derivative of works distributed
+under the following copyright notices:
+
+
+- Cache Lite
+   license: GNU Lesser General Public License (LGPL)
+   website: http://pear.php.net/package/Cache_Lite
+   author: Fabien MARTY
+
+- FeedCreator
+   license: GNU General Public License (GPL)
+   website: http://www.bitfolge.de
+   author: Kai Blankenhorn
+   
+- HTML_TreeMenu
+   license: BSD
+   website: http://pear.php.net/package/HTML_TreeMenu
+   author: Richard Heyes <http://pear.php.net/user/richard>
+   
+- PHPTAL
+   license: GNU Lesser General Public License (LGPL)
+   website: http://phptal.motion-twin.com/
+   author: Laurent Bédubourg
+
+- phpMailer
+   license: GNU Lesser General Public License (LGPL)
+   website: http://phpmailer.sourceforge.net/
+   author: Brent R. Matzelle
+
+- js-calendar
+   license: GNU Lesser General Public License (LGPL)
+   website: http://phpmailer.sourceforge.net/
+   author: Mihai Bazon
+
+- TinyMCE
+   license: GNU Lesser General Public License (LGPL)
+   website: http://tinymce.moxiecode.com/
+   author: Moxiecode Systems AB
+   

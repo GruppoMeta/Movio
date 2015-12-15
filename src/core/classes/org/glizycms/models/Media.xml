@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+    model:type="2tables"
+	model:tableName="media_tbl,mediadetails_tbl"
+    model:joinFields="media_id,mediadetail_FK_media_id"
+    model:languageField="media_FK_language_id"
+    model:siteField="media_FK_site_id"
+    model:usePrefix="true">
+
+    <model:Define>
+        <model:Field name="media_category" type="array" defaultValue="a:0:{}" index="true"/>
+    </model:Define>
+
+    <model:Query name="allMedia" type="function">
+    <![CDATA[
+    ]]>
+    </model:Query>
+
+    <model:Query name="allImage" type="function">
+    <![CDATA[
+        $iterator->where('media_type', 'IMAGE');
+    ]]>
+    </model:Query>
+
+    <model:Query name="allOffice" type="function">
+    <![CDATA[
+        $iterator->where('media_type', 'OFFICE');
+     ]]>
+    </model:Query>
+
+    <model:Query name="allPdf" type="function">
+    <![CDATA[
+        $iterator->where('media_type', 'PDF');
+    ]]>
+    </model:Query>
+
+    <model:Query name="allArchive" type="function">
+    <![CDATA[
+        $iterator->where('media_type', 'ARCHIVE');
+    ]]>
+    </model:Query>
+
+    <model:Query name="allFlash" type="function">
+    <![CDATA[
+        $iterator->where('media_type', 'FLASH');
+    ]]>
+    </model:Query>
+
+    <model:Query name="allAudio" type="function">
+    <![CDATA[
+        $iterator->where('media_type', 'AUDIO');
+    ]]>
+    </model:Query>
+
+    <model:Query name="allAudio_video" type="function">
+    <![CDATA[
+        $or = $iterator->expr()->orX();
+        $iterator->where('media_type', 'AUDIO', '=', $or);
+        $iterator->where('media_type', 'VIDEO', '=', $or);
+        $iterator->qb()->andWhere($or);
+    ]]>
+    </model:Query>
+
+    <model:Query name="allVideo" type="function">
+    <![CDATA[
+        $iterator->where('media_type', 'VIDEO');
+    ]]>
+    </model:Query>
+
+    <model:Query name="allOther" type="function">
+    <![CDATA[
+        $iterator->where('media_type', 'OTHER');
+    ]]>
+    </model:Query>
+</model:Model>

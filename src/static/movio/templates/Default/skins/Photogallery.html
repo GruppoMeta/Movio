@@ -1,0 +1,20 @@
+<div tal:attributes="class php: Component['type'] . ' wrapper-galleria-io'" tal:condition="php: count(Component['images'])">
+<div class="content-galleria-io">
+    <div id="galleria"></div>
+    <script src="static/galleria/galleria-1.4.2.min.js"></script>
+    <script>
+var data = [];
+<span tal:omit-tag="" tal:repeat="item Component/images">
+data.push({ "title": "<span tal:omit-tag="" tal:content="structure php:glz_stringToJs(item.image['title'])" />",
+            "description": "<span tal:omit-tag="" tal:content="structure php:glz_stringToJs(item.image['description'], true)" />",
+            "thumb": "<span tal:omit-tag="" tal:content="php:org_glizy_helpers_Media::getResizedImageUrlById(item.image['mediaId'], false, __Config::get('THUMB_WIDTH'), __Config::get('THUMB_HEIGHT'), true)" />",
+            "image": "<span tal:omit-tag="" tal:content="php:org_glizy_helpers_Media::getUrlById(item.image['mediaId'])" />"
+        });
+</span>
+Galleria.loadTheme('static/galleria/themes/movio/galleria.<span tal:omit-tag="" tal:content="Component/type" />.js');
+Galleria.run('#galleria', {
+    dataSource: data, imageCrop: <span tal:omit-tag="" tal:content="Component/imageCrop" />, imagePan: <span tal:omit-tag="" tal:content="Component/imagePan" />, imagePosition: '<span tal:omit-tag="" tal:content="Component/imagePosition" />'
+});
+</script>
+</div>
+</div>

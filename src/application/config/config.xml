@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:Config xmlns:glz="http://www.glizy.org/dtd/1.0/">
+	<glz:Import src="config_common.xml" />
+    <glz:Param name="DB_TYPE" value="mysql" />
+	<glz:Param name="DB_HOST" value="localhost" />
+	<glz:Param name="DB_NAME" value="mmovio" />
+	<glz:Param name="DB_USER" value="root" />
+	<glz:Param name="DB_PSW" value="root" />
+    <glz:Param name="DB_PREFIX" value="" />
+</glz:Config>

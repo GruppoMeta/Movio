@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<glz:Page id="Page"
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    templateType="php"
+    templateFileName="2cols.php"
+	defaultEditableRegion="content"
+	adm:editComponents="text">
+	<glz:Import src="Common.xml" />
+	<glz:LongText id="text" label="{i18n:Text}" forceP="true" adm:rows="20" adm:cols="75" adm:htmlEditor="true" />
+	<glz:Search id="frm_ricerca" skin="Search.html" explodeWords="false" cssClass="form-horizontal my-form no-border-row" />
+</glz:Page>

@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(ajax\.php|static/|cache/|favicon\.ico) - [L]
+
+    RewriteRule ^application/.*\.js - [L]
+    RewriteRule ^application/templates - [L]
+    RewriteRule ^application(/|$) - [F,NC]
+
+    RewriteRule ^proxy/(.*)$ ajax.php?pageId=contentseditor&ajaxTarget=Page&action=GetUrl&url=$1 [QSA,L]
+    RewriteRule ^rest/(.*)$ rest.php?$1 [QSA,L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>

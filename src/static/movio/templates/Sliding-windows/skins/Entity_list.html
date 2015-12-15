@@ -1,0 +1,56 @@
+<section class="results-content" tal:condition="php: !is_null(Component.records)">
+    <h3 tal:condition="Component/title" tal:content="structure Component/title"/>
+    <span tal:omit-tag="" tal:condition="php: Component.records.count() > 0">
+
+        <span tal:omit-tag="" tal:condition="php: Component.params.visualization == 'listAndIcons' OR Component.params.visualization == 'icons'" tal:content="structure php: ('<div class=\'row-fluid clearfix\'><div class=\'slider entity-slider js-entity-slider\'>')" />
+
+        <span tal:omit-tag="" tal:repeat="item Component/records" tal:attributes="class item/__cssClass__">
+
+            <span tal:omit-tag="" tal:condition="php: Component.params.visualization == 'list'">
+                <article class="item clearfix">
+                    <h1><a href="" tal:attributes="href item/__url__; title item/title" tal:content="item/title"></a></h1>
+                </article>
+            </span>
+
+            <span tal:omit-tag="" tal:condition="php: Component.params.visualization == 'listWithDescription'">
+                <article class="item clearfix">
+                    <h1><a href="" tal:attributes="href item/__url__; title item/title" tal:content="item/title"></a></h1>
+                    <span tal:omit-tag="" tal:condition="php: Component.params.attributes.description && item.keyInDataExists(Component.params.attributes.description)" tal:content="structure php: item->{Component.params.attributes.description}" />
+                </article>
+            </span>
+
+            <span tal:omit-tag="" tal:condition="php: Component.params.visualization == 'listAndIcons' OR Component.params.visualization == 'icons'">
+                <div class="item slide in-grid clearfix">
+                    <figure>
+                        <a href="" tal:attributes="href item/__url__; title item/title" tal:content="structure item/__image"></a>
+                    </figure>
+                    <h2><a tal:attributes="href item/__url__; title item/title" tal:content="item/title"></a></h2>
+                </div>
+            </span>
+
+        </span>
+
+        <span tal:omit-tag="" tal:condition="php: Component.params.visualization == 'listAndIcons' OR Component.params.visualization == 'icons'" tal:content="structure php: ('</div></div>')" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: Component.records.count() == 0">
+      <p tal:content="php:__Tp('MW_NO_RECORD_FOUND')"></p>
+    </span>
+
+<script>
+$(document).ready(function() {
+  $('.js-entity-slider').slick({
+      dots: false,
+      infinite: false,
+      speed: 700,
+      slidesToShow: 4,
+      slidesToScroll: 1,
+      responsive: [{
+        breakpoint: 480,
+        settings: {
+            slidesToShow:1
+        }
+    }]
+  });
+});
+</script>
+</section>

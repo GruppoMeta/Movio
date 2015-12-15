@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:Config xmlns:glz="http://www.glizy.org/dtd/1.0/">
+	<glz:Import src="##APPLICATION_TO_ADMIN##" />
+    <glz:Import src="config_common.xml" />
+</glz:Config>

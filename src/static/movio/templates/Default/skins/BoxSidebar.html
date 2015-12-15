@@ -1,0 +1,34 @@
+<span tal:omit-tag="" tal:repeat="item Component">
+    <div class="content-box row-fluid ">
+        <span tal:omit-tag="" tal:repeat="subitem item">
+            <span tal:omit-tag="" tal:condition="php: subitem.type == 'imageText'">
+                <article class="box">
+                    <h1><a tal:attributes="href subitem/pageId" tal:content="subitem/title"></a> <i class="ico arrow-dx"></i></h1>
+                    <div class="container">
+                        <a tal:attributes="href subitem/pageId" tal:content="structure subitem/image/__html__"></a>
+                        <span tal:omit-tag="" tal:content="structure subitem/text" />
+                    </div>
+               </article>
+            </span>
+
+            <span tal:omit-tag="" tal:condition="php: subitem.type == 'imageLink'">
+                <article class="box">
+                    <h1><a tal:attributes="href subitem/pageId" tal:content="subitem/title"></a> <i class="ico arrow-dx"></i></h1>
+                    <div class="container">
+                        <a tal:attributes="href subitem/pageId" tal:content="structure subitem/image/__html__"></a>
+                        <a tal:attributes="href subitem/pageId" class="link-to-reserv"><span tal:omit-tag="" tal:content="subitem/linkTitle" /><span></span></a>
+                    </div>
+               </article>
+            </span>
+
+             <span tal:omit-tag="" tal:condition="php: subitem.type == 'text'">
+                <article class="box">
+                    <h1><a tal:attributes="href subitem/pageId" tal:content="subitem/title"></a> <i class="ico arrow-dx"></i></h1>
+                    <div class="container">
+                        <span tal:omit-tag="" tal:content="structure subitem/text" />
+                    </div>
+               </article>
+            </span>
+        </span>
+    </div>
+</span>

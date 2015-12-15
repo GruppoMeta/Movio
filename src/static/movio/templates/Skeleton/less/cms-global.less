@@ -1,0 +1,240 @@
+body {
+    background-color:#fff;
+    font-family:@font-1;
+    font-size:14px;
+    font-weight:normal;
+}
+
+* {
+    .box-sizing();
+}
+
+/**
+ * Typography
+ */
+h1, h2, h3, h4, h5, h6 {
+    color: @text-heading;
+}
+a {
+	color:@color-link;
+
+	&:hover {
+		color:@color-link-hover;
+	}
+}
+
+dt {
+    float: left;
+    font-weight:bold;
+    padding-right:10px;
+}
+
+dd {
+    margin-left:0;
+}
+
+dl {
+    &.small {
+        dt {
+            width: 70px;
+        }
+        dd {
+            margin-left: 70px;
+        }
+    }
+    &.medium {
+        dt {
+            width: 170px;
+        }
+        dd {
+            margin-left: 170px;
+        }
+    }
+    &.large {
+        dt {
+            width: 250px;
+        }
+        dd {
+            margin-left: 250px;
+        }
+    }
+}
+
+.main-content {
+    h1 {
+        .padding-margin-reset();
+    }
+    h2 {
+        .padding-margin-reset();
+        margin-bottom:15px;
+    }
+
+    .print-ico {
+        float:right;
+    }
+
+    p {
+        line-height:1.6em;
+        padding-bottom:15px;
+    }
+}
+/**
+ * Form
+ */
+input[type="text"], input[type="password"], input[type="email"] {
+    .input-style(100%);
+
+    &.input-large {
+        width:450px;
+    }
+    &.input-small {
+        width:160px;
+    }
+}
+
+select {
+    width:auto;
+    &.select-large {
+        width:450px;
+    }
+    &.select-small {
+        width:160px;
+    }
+    &.select-medium {
+        width:260px;
+    }
+}
+
+input[type="submit"], button, input[type="button"], input[type="reset"] {
+    .button-style(auto);
+}
+
+input[type="submit"] {
+    background:@form-button-primary;
+    color:@form-button-primary-text;
+}
+
+textarea {
+    border:1px @solid @color1;
+    width:100%;
+    padding:4px;
+    height:150px;
+    &.textarea-large {
+        width:450px;
+    }
+}
+
+/**
+ * global selectors
+ */
+.clearfix-left {
+    clear:left;
+}
+
+.clearfix-right {
+    clear:right;
+}
+
+.align-center {
+    text-align:center!important;
+}
+
+.align-right {
+    text-align:right!important;
+}
+
+.first-box {
+    margin-left:0!important;
+}
+
+.ico-box {
+    display:block;
+    position:absolute;
+    width:30px!important;
+    height:30px!important;
+    top:0;
+    right:0;
+    margin-right:10px;
+    background:@icon-in-box-background;
+    color:@icon-in-box;
+    text-align:center;
+    padding-top:7px;
+    font-size:15px;
+    &.icon-film {
+        padding-left:5px;
+    }
+}
+
+.icon-grey {
+    color:@icon-in-page;
+    font-size:20px;
+}
+
+.link-go-to-read {
+    color:@color-link!important;
+    font-size: 12px;
+    display: inline-block;
+    padding-top: 5px;
+
+    &:hover {
+    color:@color-link-hover!important;
+    }
+
+}
+
+span.superzoom {
+    background: @form-button-primary;
+    border-radius: 4px;
+    color: @form-button-primary-text;
+    padding: 2px 4px;
+    position: absolute;
+    text-align: center;
+    width: 60px;
+    cursor: pointer;
+}
+
+.container-fluid {
+	padding:0;
+}
+
+.content-box {
+	min-height:290px;
+	position:relative;
+}
+
+.navbar-default {
+    .btn-default {
+        border:1px solid @color-border-button;
+        padding-top:5px;
+    }
+}
+
+button.btn.navbar-toggle {
+    border:1px solid @color9;
+    float: none;
+    position: relative;
+    margin-left:10px;
+    padding-top:8px;
+    background:@bg-menu;
+    color: @color-menu-link;
+}
+
+.btn-default, input[type="submit"], button {
+background:@form-button-primary;
+color:@form-button-primary-text;
+}
+
+input[type="reset"] {
+    background:@bg-button-reset!important;
+}
+
+
+a.no-undeline {
+    text-decoration: none;
+}
+
+.col-padding-left,
+.col-padding-right {
+    padding-right: 15px;
+}
+

@@ -1,0 +1,7 @@
+<section class="results-content" tal:condition="php: !is_null(Component)">
+    <h3 tal:content="structure Component/title"/>
+    <span tal:omit-tag=""
+            metal:use-macro="GoogleMap_macro.html/map"
+            tal:define="Component Component" />
+
+</section>

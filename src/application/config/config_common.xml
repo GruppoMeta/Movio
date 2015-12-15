@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:Config xmlns:glz="http://www.glizy.org/dtd/1.0/">
+    <glz:Param name="CHARSET" value="UTF-8" />
+    <glz:Param name="APP_NAME" value="MOVIO" />
+    <glz:Param name="APP_VERSION" value="1.8" />
+    <glz:Param name="APP_AUTHOR">
+        <![CDATA[Gruppo Meta <http://www.gruppometa.it>]]>
+    </glz:Param>
+
+    <glz:Param name="IMG_WIDTH" value="400" />
+    <glz:Param name="IMG_HEIGHT" value="300" />
+    <glz:Param name="THUMB_WIDTH" value="86" />
+    <glz:Param name="THUMB_HEIGHT" value="86" />
+    <glz:Param name="THUMB_SMALL_WIDTH" value="56" />
+    <glz:Param name="THUMB_SMALL_HEIGHT" value="56" />
+
+    <glz:Param name="SEF_URL" value="full" />
+    <glz:Param name="CACHE_CODE" value="-1" />
+    <glz:Param name="USER_LOG" value="false" />
+    <glz:Param name="DEBUG" value="false" />
+    <glz:Param name="DB_CHARSET" value="utf8" />
+    <glz:Param name="DATASOURCE_MODE" value="db" />
+    <glz:Param name="START_PAGE" value="1" />
+    <glz:Param name="PSW_METHOD" value="MD5" />
+    <glz:Param name="MULTILANGUAGE_ENABLED" value="true" />
+
+    <glz:Param name="GLIZY_ADD_JQUERY_JS" value="false" />
+    <glz:Param name="GLIZY_ADD_JQUERYUI_JS" value="false" />
+    <glz:Param name="glizycms.template.default" value="Movio" />
+    <glz:Param name="glizycms.contents.templateEnabled" value="true" />
+    <glz:Param name="glizy.dataAccess.serializationMode" value="json" />
+    <glz:Param name="glizycms.speakingUrl" value="true" />
+    <glz:Param name="glizy.dataAccess.documentVisibility" value="true" />
+    <glz:Param name="glizycms.content.history" value="false" />
+    <glz:Param name="glizy.routing.newParser" value="false" />
+
+    <glz:Param name="BASE_REGISTRY_PATH" value="movio" />
+    <glz:Param name="STATIC_FOLDER" value="static/movio/" />
+
+    <glz:Param name="movio.noImage.src" value="{{path:STATIC_DIR}}movio/templates/Movio/img/various/img-not-disponible.jpg" />
+    <glz:Param name="movio.graph.shapeColor" value="#cfced3" />
+    <glz:Param name="movio.graph.backgroundColor" value="#ffffff" />
+    <glz:Param name="movio.thumb.entityList.width" value="{{THUMB_WIDTH}}" />
+    <glz:Param name="movio.thumb.entityList.height" value="{{THUMB_HEIGHT}}" />
+    <glz:Param name="movio.thumb.entityList.crop" value="false" />
+    <glz:Param name="movio.thumb.homeSlider.width" value="1200" />
+    <glz:Param name="movio.thumb.homeSlider.height" value="290" />
+    <glz:Param name="movio.thumb.homeSlider.crop" value="true" />
+    <glz:Param name="movio.thumb.map.width" value="250" />
+    <glz:Param name="movio.thumb.map.height" value="250" />
+    <glz:Param name="movio.thumb.map.crop" value="false" />
+
+    <glz:Param name="movio.europeana.apiKey" value="" />
+    <glz:Param name="movio.europeana.apiSearchUrl" value="http://europeana.eu/api/v2/search.json" />
+    <glz:Param name="movio.europeana.rows" value="18" />
+    <glz:Param name="movio.europeana.searchFields" value="title,who,what,when,where,TYPE,LANGUAGE" />
+    <glz:Param name="movio.europeana.searchFieldsLabels" value="Titles,Creators,Subjects,Dates,Places,Media type,Language" />
+    <glz:Param name="movio.europeana.registry" value="europeana" />
+    <glz:Param name="FORM_ITEM_TEMPLATE"><![CDATA[
+    <div class="control-group">
+        ##FORM_LABEL##
+        <div class="controls">
+            ##FORM_ITEM##
+        </div>
+    </div>
+    ]]></glz:Param>
+    <glz:Param name="FORM_ITEM_RIGHT_LABEL_TEMPLATE"><![CDATA[
+    <div class="control-group">
+        ##FORM_LABEL##
+        <div class="controls">
+            ##FORM_ITEM##
+        </div>
+    </div>
+    ]]></glz:Param>
+</glz:Config>

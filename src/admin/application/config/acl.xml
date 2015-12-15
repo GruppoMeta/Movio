@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:Acl>
+    <glz:AclService name="glizycms_contentsedit" default="false">
+        <glz:AclAction name="new" allowGroups="*" allowUsers="" />
+        <glz:AclAction name="edit" allowGroups="1,2" allowUsers="" />
+        <glz:AclAction name="editDraft" allowGroups="*" allowUsers="" />
+        <glz:AclAction name="visible" allowGroups="1,2" allowUsers="" />
+        <glz:AclAction name="delete" allowGroups="1,2" allowUsers="" />
+        <glz:AclAction name="preview" allowGroups="*" allowUsers="" />
+        <glz:AclAction name="publish" allowGroups="1,2" allowUsers="" />
+        <glz:AclAction name="lock" allowGroups="1,2" allowUsers="" />
+        <glz:AclAction name="move" allowGroups="1,2" allowUsers="" />
+    </glz:AclService>
+</glz:Acl>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>{#fxeditor_dlg.title}</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <!-- Map of math commands and symbols -->
+        <script type="text/javascript" src="js/mathmap.js?v=4"></script>
+
+        <!-- TinyMCE -->
+        <script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+        <script type="text/javascript" src="js/dialog.js"></script>
+
+        <!-- JQUERY LIB -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+        <!-- JQUERY LIB -->
+
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+
+        <!-- jQuery textrange plugin: to manage textarea text selection-->
+        <script type="text/javascript" src="js/jquery-textrange.js"></script>
+
+        <!-- MathJAX -->
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                config: ["MMLorHTML.js"],
+                jax: ["input/TeX","input/MathML","input/AsciiMath","output/HTML-CSS","output/NativeMML"],
+                extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","toMathML.js"],
+                TeX: {
+                    extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                },
+                showProcessingMessages: true,
+                messageStyle: "simple",
+                showMathMenu: false,
+                showMathMenuMSIE: false,
+                "HTML-CSS": {
+                    linebreaks: {
+                        automatic: true,
+                        width: "container"
+                    }
+                },
+                MMLorHTML: {
+                    prefer: {
+                        MSIE:    "MML",
+                        Firefox: "HTML",
+                        Opera:   "HTML",
+                        Safari:  "HTML",
+                        Chrome:  "HTML",
+                        other:   "HTML"
+                    }
+                }
+            });
+        </script>
+
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+        <!-- MathJAX -->
+
+        <!-- Buffered UndoManager -->
+        <script type="text/javascript" src="js/underscore-min.js"></script>
+        <script type="text/javascript" src="js/undo-manager.js"></script>
+
+
+        <link rel="stylesheet" href="css/styles.css?v=18">
+
+    </head>
+    <body>
+        <script>
+        </script>
+        <!--[if lt IE 8]>
+            <p class="chromeframe">Stai usando un browser <strong>non supportato</strong>. Per favore <a href="http://browsehappy.com/">aggiorna il tuo browser</a> o <a href="http://www.google.com/chromeframe/?redirect=true">attiva Google Chrome Frame</a> per far diventare pi&ugrave; potente il tuo browser.</p>
+        <![endif]-->
+
+		<!-- outer -->
+        <div id="outer">
+
+        	<!-- content -->
+            <div class="content clearfix">
+
+            	<!-- nav -->
+                <nav id="tab-menu">
+                	<ul class="tab">
+                    	<li><a href="javascript:FormulaEditorDialog.selectTab('math-tab');" class="active">Math</a></li>
+                        <li><a href="javascript:FormulaEditorDialog.selectTab('fun-tab');">Fun</a></li>
+                        <li><a href="javascript:FormulaEditorDialog.selectTab('logic-tab');">Logic</a></li>
+                        <li><a href="javascript:FormulaEditorDialog.selectTab('arrow-tab');">Arrow</a></li>
+                        <li><a href="javascript:FormulaEditorDialog.selectTab('symbol-tab');">Symbol</a></li>
+                        <li><a href="javascript:FormulaEditorDialog.selectTab('format-tab');">Format</a></li>
+                    </ul>
+                    <ul class="toolbar">
+                        <li><a href="javascript:FormulaEditorDialog.undo();" id="undo-command">Undo</a></li>
+                        <li><a href="javascript:FormulaEditorDialog.redo();" id="redo-command">Redo</a></li>
+                        <li><a href="javascript:FormulaEditorDialog.cut();" id="cut-command">Cut</a></li>
+                        <li><a href="javascript:FormulaEditorDialog.copy();" id="copy-command">Copy</a></li>
+                        <li><a href="javascript:FormulaEditorDialog.paste();" id="paste-command">Paste</a></li>
+                        <li><a href="javascript:FormulaEditorDialog.clear();" id="delete-command">Delete</a></li>
+                        <li>
+                            <select id="mathjax-mode-select">
+                                <option value="tex">TeX</option>
+                                <option value="am">AsciiMath</option>
+                                <option value="mml">MathML</option>
+                            </select>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- nav -->
+
+            	<!-- sx -->
+                <div id="math-tab" class="side-sx" style="display: block">
+
+                	<ul class="formula">
+                        <li><a href="javascript:void(0);" data-tex-command="times"><script type="math/tex; mode=display">\times</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="div"><script type="math/tex; mode=display">\div</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="pm"><script type="math/tex; mode=display">\pm</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="mp"><script type="math/tex; mode=display">\mp</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="cdot"><script type="math/tex; mode=display">\cdot</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="star"><script type="math/tex; mode=display">\star</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="sqrt"><script type="math/tex; mode=display">\sqrt{ab}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rootn"><script type="math/tex; mode=display">\sqrt[n]{ab}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="logax"><script type="math/tex; mode=display">\log_{a}{x}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="lnx"><script type="math/tex; mode=display">\ln{x}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="pow"><script type="math/tex; mode=display">a^{b}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="subscr"><script type="math/tex; mode=display">a_{b}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="subsup"><script type="math/tex; mode=display">c_a^b</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="tilde"><script type="math/tex; mode=display">\widetilde{ab}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="hat"><script type="math/tex; mode=display">\widehat{ab}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="vecl"><script type="math/tex; mode=display">\overleftarrow{ab}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="vec"><script type="math/tex; mode=display">\overrightarrow{ab}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="overbr"><script type="math/tex; mode=display">\overbrace{ab}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="underbr"><script type="math/tex; mode=display">\underbrace{ab}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="underl"><script type="math/tex; mode=display">\underline{ab}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="overl"><script type="math/tex; mode=display">\overline{ab}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="bmatrix"><script type="math/tex; mode=display">\begin{bmatrix}a & b \\c & d \end{bmatrix}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="cases"><script type="math/tex; mode=display">\begin{cases}a & x = 0\\b & x > 0\end{cases}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="frac"><script type="math/tex; mode=display">\frac{ab}{cd}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="delab"><script type="math/tex; mode=display">\frac{\partial a}{\partial b}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="dxdy"><script type="math/tex; mode=display">\frac{\text{d}x}{\text{d}y}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="limx0"><script type="math/tex; mode=display">\lim_{x \rightarrow 0}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="integr"><script type="math/tex; mode=display">\int_{a}^{b}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="ointegr"><script type="math/tex; mode=display">\oint_a^b</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="prod"><script type="math/tex; mode=display">\prod_a^b</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="coprod"><script type="math/tex; mode=display">\coprod_a^b</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="bigcap"><script type="math/tex; mode=display">\bigcap_a^b </script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="bigcup"><script type="math/tex; mode=display">\bigcup_a^b</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="bigvee"><script type="math/tex; mode=display">\bigvee_a^b</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="bigwed"><script type="math/tex; mode=display">\bigwedge_a^b</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="bigsqc"><script type="math/tex; mode=display">\bigsqcup_a^b</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="sum"><script type="math/tex; mode=display">\sum_{n=0}^\infty</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="arrayab"><script type="math/tex; mode=display">\left(\begin{array}{c}a\\ b\end{array}\right)</script></a></li>
+                    </ul>
+
+                </div>
+
+                <div id="fun-tab" class="side-sx">
+                    <ul class="formula">
+                        <li><a href="javascript:void(0);" data-tex-command="alpha"><script type="math/tex; mode=display">\alpha</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="beta"><script type="math/tex; mode=display">\beta</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="gamma"><script type="math/tex; mode=display">\gamma</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="delta"><script type="math/tex; mode=display">\delta</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="epsilon"><script type="math/tex; mode=display">\epsilon</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="zeta"><script type="math/tex; mode=display">\zeta</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="eta"><script type="math/tex; mode=display">\eta</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="theta"><script type="math/tex; mode=display">\theta</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="iota"><script type="math/tex; mode=display">\iota</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="kappa"><script type="math/tex; mode=display">\kappa</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="lambda"><script type="math/tex; mode=display">\lambda</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="mu"><script type="math/tex; mode=display">\mu</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="nu"><script type="math/tex; mode=display">\nu</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="xi"><script type="math/tex; mode=display">\xi</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="pi"><script type="math/tex; mode=display">\pi</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rho"><script type="math/tex; mode=display">\rho</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="sigma"><script type="math/tex; mode=display">\sigma</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="tau"><script type="math/tex; mode=display">\tau</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="upsilon"><script type="math/tex; mode=display">\upsilon</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="phi"><script type="math/tex; mode=display">\phi</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="chi"><script type="math/tex; mode=display">\chi</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="psi"><script type="math/tex; mode=display">\psi</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="omega"><script type="math/tex; mode=display">\omega</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Gamma"><script type="math/tex; mode=display">\Gamma</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Delta"><script type="math/tex; mode=display">\Delta</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Theta"><script type="math/tex; mode=display">\Theta</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Lambda"><script type="math/tex; mode=display">\Lambda</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Xi"><script type="math/tex; mode=display">\Xi</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Pi"><script type="math/tex; mode=display">\Pi</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Sigma"><script type="math/tex; mode=display">\Sigma</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Upsilon"><script type="math/tex; mode=display">\Upsilon</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Phi"><script type="math/tex; mode=display">\Phi</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Psi"><script type="math/tex; mode=display">\Psi</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Omega"><script type="math/tex; mode=display">\Omega</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="varepsilon"><script type="math/tex; mode=display">\varepsilon</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="vartheta"><script type="math/tex; mode=display">\vartheta</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="varrho"><script type="math/tex; mode=display">\varrho</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="varsigma"><script type="math/tex; mode=display">\varsigma</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="varphi"><script type="math/tex; mode=display">\varphi</script></a></li>
+                    </ul>
+                    <ul class="formula">
+                        <li><a href="javascript:void(0);" data-tex-command="arccos"><script type="math/tex; mode=display">\arccos</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="arcsin"><script type="math/tex; mode=display">\arcsin</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="arctan"><script type="math/tex; mode=display">\arctan</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="cos"><script type="math/tex; mode=display">\cos</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="cosh"><script type="math/tex; mode=display">\cosh</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="cot"><script type="math/tex; mode=display">\cot</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="coth"><script type="math/tex; mode=display">\coth</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="csc"><script type="math/tex; mode=display">\csc</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="sec"><script type="math/tex; mode=display">\sec</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="sin"><script type="math/tex; mode=display">\sin</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="sinh"><script type="math/tex; mode=display">\sinh</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="tan"><script type="math/tex; mode=display">\tan</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="tanh"><script type="math/tex; mode=display">\tanh</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="exp"><script type="math/tex; mode=display">\exp</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="log"><script type="math/tex; mode=display">\log</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="ln"><script type="math/tex; mode=display">\ln</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="max"><script type="math/tex; mode=display">\max</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="min"><script type="math/tex; mode=display">\min</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="sup"><script type="math/tex; mode=display">\sup</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="inf"><script type="math/tex; mode=display">\inf</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="lim"><script type="math/tex; mode=display">\lim</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="gcd"><script type="math/tex; mode=display">\gcd</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="hom"><script type="math/tex; mode=display">\hom</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="ker"><script type="math/tex; mode=display">\ker</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="det"><script type="math/tex; mode=display">\det</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="bmod"><script type="math/tex; mode=display">\bmod</script></a></li>
+                    </ul>
+                </div>
+                <div id="logic-tab" class="side-sx">
+                    <ul class="formula">
+                        <li><a href="javascript:void(0);" data-tex-command="neq"><script type="math/tex; mode=display">\neq</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="leq"><script type="math/tex; mode=display">\leq</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="geq"><script type="math/tex; mode=display">\geq</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="sim"><script type="math/tex; mode=display">\sim</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="approx"><script type="math/tex; mode=display">\approx</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="cong"><script type="math/tex; mode=display">\cong</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="equiv"><script type="math/tex; mode=display">\equiv</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="propto"><script type="math/tex; mode=display">\propto</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="ll"><script type="math/tex; mode=display">\ll</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="gg"><script type="math/tex; mode=display">\gg</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="in_"><script type="math/tex; mode=display">\in</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="notin"><script type="math/tex; mode=display">\notin</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="ni"><script type="math/tex; mode=display">\ni</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="subset"><script type="math/tex; mode=display">\subset</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="subseteq"><script type="math/tex; mode=display">\subseteq</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="prec"><script type="math/tex; mode=display">\prec</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="preceq"><script type="math/tex; mode=display">\preceq</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="simeq"><script type="math/tex; mode=display">\simeq</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="asymp"><script type="math/tex; mode=display">\asymp</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="doteq"><script type="math/tex; mode=display">\doteq</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="succ"><script type="math/tex; mode=display">\succ</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="succeq"><script type="math/tex; mode=display">\succeq</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="sqsubseteq"><script type="math/tex; mode=display">\sqsubseteq</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="sqsupseteq"><script type="math/tex; mode=display">\sqsupseteq</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="models"><script type="math/tex; mode=display">\models</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="vdash"><script type="math/tex; mode=display">\vdash</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="dashv"><script type="math/tex; mode=display">\dashv</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="perp"><script type="math/tex; mode=display">\perp</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="mid"><script type="math/tex; mode=display">\mid</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="parallel"><script type="math/tex; mode=display">\parallel</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="smile"><script type="math/tex; mode=display">\smile</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="frown"><script type="math/tex; mode=display">\frown</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="bowtie"><script type="math/tex; mode=display">\bowtie</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="unlhd"><script type="math/tex; mode=display">\unlhd</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="unrhd"><script type="math/tex; mode=display">\unrhd</script></a></li>
+                    </ul>
+                    <ul class="formula">
+                        <li><a href="javascript:void(0);" data-tex-command="hata"><script type="math/tex; mode=display">\hat{a}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="checka"><script type="math/tex; mode=display">\check{a}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="brevea"><script type="math/tex; mode=display">\breve{a}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="acutea"><script type="math/tex; mode=display">\acute{a}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="gravea"><script type="math/tex; mode=display">\grave{a}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="tildea"><script type="math/tex; mode=display">\tilde{a}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="bara"><script type="math/tex; mode=display">\bar{a}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="veca"><script type="math/tex; mode=display">\vec{a}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="dota"><script type="math/tex; mode=display">\dot{a}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="ddota"><script type="math/tex; mode=display">\ddot{a}</script></a></li>
+                    </ul>
+                </div>
+                <div id="arrow-tab" class="side-sx">
+                    <ul class="formula">
+                        <li><a href="javascript:void(0);" data-tex-command="leftp"><script type="math/tex; mode=display">(</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rightp"><script type="math/tex; mode=display">)</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="leftsp"><script type="math/tex; mode=display">[</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rightsp"><script type="math/tex; mode=display">]</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="leftgp"><script type="math/tex; mode=display">\{</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rightgp"><script type="math/tex; mode=display">\}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="lfloor"><script type="math/tex; mode=display">\lfloor</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="lceil"><script type="math/tex; mode=display">\lceil</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rfloor"><script type="math/tex; mode=display">\rfloor</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rceil"><script type="math/tex; mode=display">\rceil</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="langle"><script type="math/tex; mode=display">\langle</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rangle"><script type="math/tex; mode=display">\rangle</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="backslash"><script type="math/tex; mode=display">\backslash</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="cap"><script type="math/tex; mode=display">\cap</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="cup"><script type="math/tex; mode=display">\cup</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="uplus"><script type="math/tex; mode=display">\uplus</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="sqcap"><script type="math/tex; mode=display">\sqcap</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="sqcup"><script type="math/tex; mode=display">\sqcup</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="vee"><script type="math/tex; mode=display">\vee</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="wedge"><script type="math/tex; mode=display">\wedge</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="wr"><script type="math/tex; mode=display">\wr</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="leftarrow"><script type="math/tex; mode=display">\leftarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Leftarrow"><script type="math/tex; mode=display">\Leftarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rightarrow"><script type="math/tex; mode=display">\rightarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Rightarrow"><script type="math/tex; mode=display">\Rightarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="leftrightarrow"><script type="math/tex; mode=display">\leftrightarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Leftrightarrow"><script type="math/tex; mode=display">\Leftrightarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="mapsto"><script type="math/tex; mode=display">\mapsto</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="leftharpoonup"><script type="math/tex; mode=display">\leftharpoonup</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="leftharpoondown"><script type="math/tex; mode=display">\leftharpoondown</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rightleftharpoons"><script type="math/tex; mode=display">\rightleftharpoons</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="leftrightharpoons"><script type="math/tex; mode=display">\leftrightharpoons</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="hookrightarrow"><script type="math/tex; mode=display">\hookrightarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rightharpoonup"><script type="math/tex; mode=display">\rightharpoonup</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="uparrow"><script type="math/tex; mode=display">\uparrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Uparrow"><script type="math/tex; mode=display">\Uparrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="downarrow"><script type="math/tex; mode=display">\downarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Downarrow"><script type="math/tex; mode=display">\Downarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="updownarrow"><script type="math/tex; mode=display">\updownarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Updownarrow"><script type="math/tex; mode=display">\Updownarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="leftleftarrows"><script type="math/tex; mode=display">\leftleftarrows</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rightrightarrows"><script type="math/tex; mode=display">\rightrightarrows</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="leftrightarrows"><script type="math/tex; mode=display">\leftrightarrows</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rightleftarrows"><script type="math/tex; mode=display">\rightleftarrows</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Lleftarrow"><script type="math/tex; mode=display">\Lleftarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Rrightarrow"><script type="math/tex; mode=display">\Rrightarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="twoheadleftarrow"><script type="math/tex; mode=display">\twoheadleftarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="twoheadrightarrow"><script type="math/tex; mode=display">\twoheadrightarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="leftarrowtail"><script type="math/tex; mode=display">\leftarrowtail</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rightarrowtail"><script type="math/tex; mode=display">\rightarrowtail</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="looparrowleft"><script type="math/tex; mode=display">\looparrowleft</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="looparrowright"><script type="math/tex; mode=display">\looparrowright</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="curvearrowleft"><script type="math/tex; mode=display">\curvearrowleft</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="curvearrowright"><script type="math/tex; mode=display">\curvearrowright</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="circlearrowleft"><script type="math/tex; mode=display">\circlearrowleft</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="circlearrowright"><script type="math/tex; mode=display">\circlearrowright</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="dashleftarrow"><script type="math/tex; mode=display">\dashleftarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="dashrightarrow"><script type="math/tex; mode=display">\dashrightarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Lsh"><script type="math/tex; mode=display">\Lsh</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Rsh"><script type="math/tex; mode=display">\Rsh</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="upuparrows"><script type="math/tex; mode=display">\upuparrows</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="downdownarrows"><script type="math/tex; mode=display">\downdownarrows</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="upharpoonleft"><script type="math/tex; mode=display">\upharpoonleft</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="upharpoonright"><script type="math/tex; mode=display">\upharpoonright</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="downharpoonleft"><script type="math/tex; mode=display">\downharpoonleft</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="downharpoonright"><script type="math/tex; mode=display">\downharpoonright</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rightsquigarrow"><script type="math/tex; mode=display">\rightsquigarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="leftrightsquigarrow"><script type="math/tex; mode=display">\leftrightsquigarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="multimap"><script type="math/tex; mode=display">\multimap</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="nleftarrow"><script type="math/tex; mode=display">\nleftarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="nrightarrow"><script type="math/tex; mode=display">\nrightarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="nLeftarrow"><script type="math/tex; mode=display">\nLeftarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="nRightarrow"><script type="math/tex; mode=display">\nRightarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="nleftrightarrow"><script type="math/tex; mode=display">\nleftrightarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="nLeftrightarrow"><script type="math/tex; mode=display">\nLeftrightarrow</script></a></li>
+                    </ul>
+                </div>
+                <div id="symbol-tab" class="side-sx">
+                    <ul class="formula">
+                        <li><a href="javascript:void(0);" data-tex-command="infty"><script type="math/tex; mode=display">\infty</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="partial"><script type="math/tex; mode=display">\partial</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="varnothing"><script type="math/tex; mode=display">\varnothing</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="forall"><script type="math/tex; mode=display">\forall</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="exists"><script type="math/tex; mode=display">\exists</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="nexists"><script type="math/tex; mode=display">\nexists</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="mathbbR"><script type="math/tex; mode=display">\mathbb{R}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="mathbbC"><script type="math/tex; mode=display">\mathbb{C}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="mathbbN"><script type="math/tex; mode=display">\mathbb{N}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="mathbbZ"><script type="math/tex; mode=display">\mathbb{Z}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="mathbbQ"><script type="math/tex; mode=display">\mathbb{Q}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="imath"><script type="math/tex; mode=display">\imath</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="jmath"><script type="math/tex; mode=display">\jmath</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="ell"><script type="math/tex; mode=display">\ell</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="wp"><script type="math/tex; mode=display">\wp</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Im"><script type="math/tex; mode=display">\Im</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="prime"><script type="math/tex; mode=display">\prime</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="backprime"><script type="math/tex; mode=display">\backprime</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="angle"><script type="math/tex; mode=display">\angle</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="flat"><script type="math/tex; mode=display">\flat</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="natural"><script type="math/tex; mode=display">\natural</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="sharp"><script type="math/tex; mode=display">\sharp</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="S"><script type="math/tex; mode=display">\S</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="checkmark"><script type="math/tex; mode=display">\checkmark</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="ulcorner"><script type="math/tex; mode=display">\ulcorner</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="urcorner"><script type="math/tex; mode=display">\urcorner</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="llcorner"><script type="math/tex; mode=display">\llcorner</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="lrcorner"><script type="math/tex; mode=display">\lrcorner</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="triangle"><script type="math/tex; mode=display">\triangle</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="triangledown"><script type="math/tex; mode=display">\triangledown</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="triangleleft"><script type="math/tex; mode=display">\triangleleft</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="triangleright"><script type="math/tex; mode=display">\triangleright</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="surd"><script type="math/tex; mode=display">\surd</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="top"><script type="math/tex; mode=display">\top</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="bot"><script type="math/tex; mode=display">\bot</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="heartsuit"><script type="math/tex; mode=display">\heartsuit</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="sphericalangle"><script type="math/tex; mode=display">\sphericalangle</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Game"><script type="math/tex; mode=display">\Game</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="dotplus"><script type="math/tex; mode=display">\dotplus</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="ltimes"><script type="math/tex; mode=display">\ltimes</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rtimes"><script type="math/tex; mode=display">\rtimes</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Cap"><script type="math/tex; mode=display">\Cap</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Cup"><script type="math/tex; mode=display">\Cup</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="leftthreetimes"><script type="math/tex; mode=display">\leftthreetimes</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="rightthreetimes"><script type="math/tex; mode=display">\rightthreetimes</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="curlywedge"><script type="math/tex; mode=display">\curlywedge</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="curlyvee"><script type="math/tex; mode=display">\curlyvee</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Finv"><script type="math/tex; mode=display">\Finv</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="diagup"><script type="math/tex; mode=display">\diagup</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="diagdown"><script type="math/tex; mode=display">\diagdown</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="barwedge"><script type="math/tex; mode=display">\barwedge</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="veebar"><script type="math/tex; mode=display">\veebar</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="doublebarwedge"><script type="math/tex; mode=display">\doublebarwedge</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="Box"><script type="math/tex; mode=display">\Box</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="boxplus"><script type="math/tex; mode=display">\boxplus</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="boxminus"><script type="math/tex; mode=display">\boxminus</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="boxtimes"><script type="math/tex; mode=display">\boxtimes</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="boxdot"><script type="math/tex; mode=display">\boxdot</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="circledast"><script type="math/tex; mode=display">\circledast</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="circledcirc"><script type="math/tex; mode=display">\circledcirc</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="divideontimes"><script type="math/tex; mode=display">\divideontimes</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="therefore"><script type="math/tex; mode=display">\therefore</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="because"><script type="math/tex; mode=display">\because</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="oplus"><script type="math/tex; mode=display">\oplus</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="ominus"><script type="math/tex; mode=display">\ominus</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="otimes"><script type="math/tex; mode=display">\otimes</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="oslash"><script type="math/tex; mode=display">\oslash</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="diamondsuit"><script type="math/tex; mode=display">\diamondsuit</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="diamond"><script type="math/tex; mode=display">\diamond</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="circ"><script type="math/tex; mode=display">\circ</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="hslash"><script type="math/tex; mode=display">\hslash</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="hbar"><script type="math/tex; mode=display">\hbar</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="mho"><script type="math/tex; mode=display">\mho</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="eth"><script type="math/tex; mode=display">\eth</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="blacktriangleleft"><script type="math/tex; mode=display">\blacktriangleleft</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="blacktriangleright"><script type="math/tex; mode=display">\blacktriangleright</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="blacklozenge"><script type="math/tex; mode=display">\blacklozenge</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="blacktriangle"><script type="math/tex; mode=display">\blacktriangle</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="blacktriangledown"><script type="math/tex; mode=display">\blacktriangledown</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="blacksquare"><script type="math/tex; mode=display">\blacksquare</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="clubsuit"><script type="math/tex; mode=display">\clubsuit</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="spadesuit"><script type="math/tex; mode=display">\spadesuit</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="bigstar"><script type="math/tex; mode=display">\bigstar</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="maltese"><script type="math/tex; mode=display">\maltese</script></a></li>
+                    </ul>
+                </div>
+                <div id="format-tab" class="side-sx">
+                    <ul class="formula">
+                        <li><a href="javascript:void(0);" data-tex-command="bold"><script type="math/tex; mode=display">\bf Bold</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="italic"><script type="math/tex; mode=display">\it italic</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="typewriter"><script type="math/tex; mode=display">\tt Typewriter</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="tiny"><script type="math/tex; mode=display">\scriptsize tiny</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="scriptsize"><script type="math/tex; mode=display">\scriptsize script</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="small"><script type="math/tex; mode=display">\small small</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="normalsize"><script type="math/tex; mode=display">\normalsize normal</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="large"><script type="math/tex; mode=display">\large large</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="huge"><script type="math/tex; mode=display">\large huge</script></a></li>
+                    </ul>
+                    <ul class="formula">
+                        <li><a href="javascript:void(0);" data-tex-command="aqua"><script type="math/tex; mode=display">\color{aqua} {acqua}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="black"><script type="math/tex; mode=display">\color{black} {nero}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="blue"><script type="math/tex; mode=display">\color{blue} {blu}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="fuchsia"><script type="math/tex; mode=display">\color{fuchsia} {fucsia}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="gray"><script type="math/tex; mode=display">\color{gray} {grigio}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="green"><script type="math/tex; mode=display">\color{green} {verde}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="lime"><script type="math/tex; mode=display">\color{lime} {lime}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="maroon"><script type="math/tex; mode=display">\color{maroon} {marrone}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="navy"><script type="math/tex; mode=display">\color{navy} {navy}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="olive"><script type="math/tex; mode=display">\color{olive} {oliva}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="orange"><script type="math/tex; mode=display">\color{orange} {arancio}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="purple"><script type="math/tex; mode=display">\color{purple} {porpora}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="red"><script type="math/tex; mode=display">\color{red} {rosso}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="silver"><script type="math/tex; mode=display">\color{silver} {argento}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="teal"><script type="math/tex; mode=display">\color{teal} {teal}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="yellow"><script type="math/tex; mode=display">\color{yellow} {giallo}</script></a></li>
+                    </ul>
+                </div>
+                <!-- sx -->
+
+                <!-- dx -->
+                <div class="side-dx">
+
+                	<div class="editor-box">
+
+                        <textarea id="texformula"></textarea>
+
+                        <div id="previewcell" class="results">
+                        </div>
+
+                	</div>
+
+                </div>
+                <!-- dx -->
+
+                <!-- row-button -->
+                <div class="row-button">
+                    <input type="submit" name="insert" value="{#insert}" onclick="FormulaEditorDialog.insert();" />
+                    <input type="reset" name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();"/>
+                </div>
+                <!-- row-button -->
+
+            </div>
+            <!-- content-->
+
+
+        </div>
+        <!-- outer -->
+    </body>
+</html>

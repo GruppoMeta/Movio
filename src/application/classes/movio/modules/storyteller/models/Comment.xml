@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+	model:tableName="movio.modules.storyteller.models.comments" model:usePrefix="true" model:type="simpledocument">
+
+	<model:Define>
+        <model:Field name="menuId" type="int" validator="notNull" index="true" />
+		<model:Field name="hash" type="string" validator="notNull" index="true" />
+        <model:Field name="approved" type="int" index="true" />
+        <model:Field name="authorName" type="string" index="false" />
+        <model:Field name="authorEmail" type="string" index="false" />
+		<model:Field name="date" type="datetime" index="true" />
+        <model:Field name="text" type="string" index="false" />
+	</model:Define>
+
+    <model:Query name="getCommentFromStory" type="function" arguments="menuId,hash">
+    <![CDATA[
+        $iterator->where('menuId', $menuId)
+                 ->where('hash', $hash)
+                 ->orderBy('date', 'DESC');
+    ]]>
+    </model:Query>
+
+
+</model:Model>
+
+
+

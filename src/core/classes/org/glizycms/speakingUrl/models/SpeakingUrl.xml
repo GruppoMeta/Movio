@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+	model:tableName="speakingurls_tbl" model:usePrefix="true">
+
+    <model:Query name="all" type="function">
+    <![CDATA[
+        $expr = $iterator->expr();
+        $iterator->join("t1", $this->tablePrefix."languages_tbl", "t2", $expr->eq("t1.speakingurl_FK_language_id", "t2.language_id"));
+    ]]>
+    </model:Query>
+    <model:Query name="deleteAllByType" type="function" arguments="type">
+        <!--
+            Delete record by type
+            Used in:
+                org.glizycms.speakingUrl.models.proxy.SpeakingUrlProxy
+        -->
+        <![CDATA[
+        $expr = $iterator->expr();
+        $qb = $iterator->qb();
+        $qb->delete($this->tablePrefix.'speakingurls_tbl')
+              ->where($expr->comparison('speakingurl_type', '=', ':type'))
+              ->setParameter(':type', $type);
+        $iterator->setSqlQuery($qb->getSQL());
+    ]]>
+    </model:Query>
+</model:Model>

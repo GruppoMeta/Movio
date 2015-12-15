@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+    model:tableName="movio.modules.touristoperators" model:usePrefix="true" model:type="document">
+
+
+    <model:Define>
+        <!-- system -->
+        <model:Field name="url" type="string" index="false" />
+        <model:Field name="title" type="string" length="255" index="true" />
+        <model:Field name="fulltext" type="string" index="fulltext" />
+
+        <!-- custom -->
+        <model:Field name="type" type="string" length="255" index="true" />
+        <model:Field name="country" type="string" length="255" index="true" />
+        <model:Field name="district" type="string" length="255" index="true" />
+        <model:Field name="place" type="string" length="255" index="true" />
+        <model:Field name="description" type="text" />
+        <model:Field name="locations" type="multivalues" />
+        <model:Field name="coordinates" type="string" validator="notnull" />
+        <model:Field name="externalUrl" type="string" />
+        <model:Field name="image" type="object" readFormat="false" />
+        <model:Field name="images" type="object" readFormat="false" />
+        <model:Field name="attaches" type="object" readFormat="false" />
+    </model:Define>
+
+    <model:Script parent="model">
+    <![CDATA[
+function loadFromArray($values, $useSet=false)
+{
+    parent::loadFromArray($values, $useSet);
+    if (!property_exists($this->data, 'images') && property_exists($this->data, 'image')) {
+        $this->data->images = new StdClass;
+        $this->data->images->image =  array($this->data->image);
+        $this->data->image = null;
+    }
+}
+    ]]>
+    </model:Script>
+</model:Model>

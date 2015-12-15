@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:EmptyComponent
+        xmlns:m="movio.views.components.*">
+     <glz:List id="templateFileName" label="{i18n:Layout}">
+        <glz:ListItem key="default" value="{i18n:Default}" />
+        <glz:ListItem key="1col.php" value="{i18n:Full page}" />
+        <glz:ListItem key="2cols.php" value="{i18n:Two columns}" />
+        <glz:ListItem key="3cols.php" value="{i18n:Three columns}" />
+    </glz:List>
+
+    <m:BoxesSidebar id="boxesSidebar" label="{i18n:Boxes left}" />
+    <m:BoxesSidebar id="boxesSidebar-right" label="{i18n:Boxes right (3 cols)}" />
+</glz:EmptyComponent>

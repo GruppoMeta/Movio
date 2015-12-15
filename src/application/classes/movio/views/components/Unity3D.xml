@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<m:Unity3DCmp
+    label="{i18n:Unity3D}"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:cms="org.glizycms.views.components.*"
+    xmlns:m="movio.views.components.*">
+
+    <glz:Media id="unity3DFile" label="File Unity 3D" adm:mediaType="other" />
+    <glz:Input id="width" label="{i18n:Width}" size="50" />
+    <glz:Input id="height" label="{i18n:Height}" size="50" />
+    <glz:Input id="backgroundColor" label="{i18n:LoadingBackgroundColor}" size="50" data="type=colorPicker" />
+    <glz:Input id="borderColor" label="{i18n:LoadingBorderColor}" data="type=colorPicker" />
+    <glz:Input id="textColor" label="{i18n:ErrorTextColor}" data="type=colorPicker" />
+    <glz:Image id="logoimage" label="{i18n:LoadingLogoImage}" />
+    <glz:List id="disableContextMenu" label="{i18n:disableContextMenu}">
+		<glz:ListItem key="false" value="{i18n:No}" />    
+		<glz:ListItem key="true" value="{i18n:Yes}" />
+	</glz:List>
+    <glz:List id="disableFullscreen" label="{i18n:disableFullscreen}">
+		<glz:ListItem key="false" value="{i18n:No}" />
+		<glz:ListItem key="true" value="{i18n:Yes}" />
+	</glz:List>
+	<glz:Repeater id="attributeList" label="{i18n:attributeList}">
+		<glz:Input id="attributeKey" label="{i18n:Key}" />
+		<glz:Input id="attributeValue" label="{i18n:Value}" />
+	</glz:Repeater>
+</m:Unity3DCmp>

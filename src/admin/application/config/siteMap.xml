@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:WebSite>
+    <glz:Page pageType="Dashboard" id="Home" value="{i18n:Dashboard}">
+        <glz:Page id="glizycms_ContentsEdit_alias" value="{i18n:Site Contents}" icon="icon-file" select="glizycms_ContentsEdit">
+            <glz:Page pageType="org.glizycms.contents.views.ContentsEdit" id="glizycms_ContentsEdit" value="{i18n:Pages}" />
+            <glz:Page pageType="movio.modules.ontologybuilder.views.ContentsEditor" id="ContentsEditor" icon="icon-file" value="{i18n:Contents}" />
+            <glz:Page pageType="movio.modules.siteProperties.views.SiteProperties" id="glizycms_SiteProperty" icon="icon-cog" value="{i18n:MW_SM_SITE_PROPERTIES}" adm:acl="*" />
+
+            <glz:Page pageType="movio.modules.sharingButtons.views.Admin" id="glizycms_SharingButton" icon="icon-share" value="{i18n:Sharing Buttons}" adm:acl="*" />
+
+            <glz:Page pageType="org.glizycms.template.views.TemplateSelect" id="TemplateSelect" value="{i18n:Template}" />
+            <glz:Page pageType="org.glizycms.languages.views.Admin" id="glizycms_Languages" icon="icon-globe" value="{i18n:MW_SM_MULTILINGUALISM}" adm:acl="*" />
+        </glz:Page>
+
+
+        <glz:Page id="movio_OntologyBuilder_alias" value="{i18n:Ontology Builder}" icon="icon-sitemap" select="movio_OntologyBuilder">
+            <glz:Page pageType="movio.modules.ontologybuilder.views.OntologyBuilder" id="movio_OntologyBuilder" icon="icon-sitemap" value="{i18n:Entities}" />
+            <glz:Page pageType="movio.modules.ontologybuilder.views.RelationsEditor" id="movio_RelationsEditor" icon="icon-sitemap" value="{i18n:Relations}" />
+            <glz:Page pageType="movio.modules.ontologybuilder.views.EntityLabelsEditor" id="movio_EntityLabelsEditor" icon="icon-sitemap" value="{i18n:Labels Translations}" />
+            <glz:Page pageType="movio.modules.ontologybuilder.views.Graph" id="movio_Graph" icon="icon-sitemap" value="{i18n:Graph}" />
+        </glz:Page>
+
+        <glz:Page pageType="movio.modules.modulesBuilder.views.Admin" id="movio_modulesBuilder" value="{i18n:Modules Builder}" icon="icon-plus"  />
+
+        <glz:Page id="PublishApp_alias" value="{i18n:Mobile App}" select="PublishApp" icon="icon-mobile-phone" adm:acl="*" adm:aclPageTypes="PublishApp">
+            <glz:Page pageType="movio.modules.publishApp.views.Admin" id="PublishApp" value="{i18n:Export content}" />
+            <glz:Page pageType="movio.modules.codes.views.Admin" id="Codes" icon="icon-file" value="{i18n:Codes}" adm:acl="*" />
+        </glz:Page>
+
+        <glz:Page id="glizycms_modules" value="{i18n:Moduli}" icon="icon-tasks" select="*" sortChild="true">
+            <glz:modulesAdmin />
+        </glz:Page>
+
+        <glz:Page pageType="org.glizycms.mediaArchive.views.MediaArchive" id="MediaArchive" value="{i18n:MW_SM_MEDIA_ARCHIVE}" icon="icon-picture" />
+
+        <glz:Page id="userManager_alias" value="{i18n:Users and Groups}" select="userManager" icon="icon-user" adm:acl="*" adm:aclPageTypes="userManager,groupManager,roleManager">
+            <glz:Page pageType="org.glizycms.userManager.views.UserManagerEdit" id="userManager" icon="icon-user" value="{i18n:Show user list}" />
+            <glz:Page pageType="org.glizycms.groupManager.views.GroupManagerEdit" id="groupManager" icon="icon-user" value="{i18n:Show group list}" />
+        </glz:Page>
+	</glz:Page>
+
+    <glz:Page pageType="Login" id="login" value="{i18n:Login}" />
+    <glz:Page pageType="Logout" id="Logout" value="{i18n:Logout}" />
+    <glz:Page pageType="movio.modules.europeana.views.EuropeanaShowResults" id="EuropeanaShowResults" />
+    <glz:Page pageType="org.glizycms.mediaArchive.views.MediaPicker" id="MediaArchive_picker" />
+    <glz:Page pageType="org.glizycms.mediaArchive.views.MediaPicker" id="MediaArchive_pickerTiny" />
+</glz:WebSite>

@@ -1,0 +1,18 @@
+<script id="reference-relations-template" type="text/x-handlebars-template">
+  <tr data-id="{{id}}">
+    <td>{{from}} {{locale.relationTo}} {{to}}</td>
+    <td></td>
+    <td>
+    <select class="-relationDisplaySelector">
+      <option {{selected show 0}} value="0">{{locale.relationShowImages}}</option>
+      <option {{selected show 1}} value="1">{{locale.relationShowLinks}}</option>
+      <option {{selected show 2}} value="2">{{locale.relationShowImagesLinks}}</option>
+      <option {{selected show 3}} value="3">{{locale.relationHide}}</option>
+    </select>
+    </td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</script>

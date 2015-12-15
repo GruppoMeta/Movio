@@ -1,0 +1,34 @@
+<div class="alert error" tal:condition="Component/errorLabel">
+	<h4 tal:content="php:__T('Alert')"></h4>
+   	<p tal:content="structure Component/errorLabel"></p>
+</div>
+<form class="my-form login clearfix">
+    <div class="control-group">
+        <label for="" tal:attributes="for Component/userField" tal:content="structure Component/userLabel"></label>
+        <div class="controls">
+            <i class="ico fa fa-user"></i>
+           <input type="text" tal:attributes="id Component/userField; name Component/userField" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label for="" tal:attributes="for Component/passwordField" tal:content="structure Component/passwordLabel"></label>
+        <div class="controls">
+            <i class="ico fa fa-lock"></i>
+            <input type="password" tal:attributes="id Component/passwordField; name Component/passwordField" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="pull-left">
+            <p>
+            	<a class="link" tal:attributes="href Component/__url__" tal:content="structure Component/registrationLabel"></a>
+                <br />
+                <a class="link" tal:attributes="href Component/askPasswordUrl" tal:content="structure Component/askPasswordLabel"></a>
+            </p>
+        </div>
+        <div class="pull-right">
+            <input type="submit" tal:attributes="name Component/submitName;value Component/confirmLabel" />
+        </div>
+    </div>
+</form>

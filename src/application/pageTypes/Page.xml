@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<glz:Page id="Page"
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+	xmlns:m="movio.views.components.*"
+	templateType="php"
+	templateFileName="2cols.php"
+	defaultEditableRegion="content" >
+	<glz:Import src="Common.xml" />
+    <glz:LongText id="text" label="{i18n:Text}" adm:rows="20" adm:cols="75" adm:htmlEditor="true" forceP="true" adm:required="false" />
+
+     <glz:Repeater id="images" label="{i18n:Images list}" adm:collapsable="true" skin="ImagesList.html">
+        <glz:Image id="image" label="{i18n:Image}" width="{config:THUMB_WIDTH}" height="{config:THUMB_HEIGHT}" zoom="true" group="slideshow" superZoom="true" />
+    </glz:Repeater>
+
+     <glz:Repeater id="attachments" label="{i18n:Attachments list}" adm:collapsable="false" skin="AttachmentsList.html">
+        <glz:Media id="media" label="{i18n:Attachment}" />
+    </glz:Repeater>
+</glz:Page>

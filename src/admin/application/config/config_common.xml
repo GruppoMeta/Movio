@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:Config xmlns:glz="http://www.glizy.org/dtd/1.0/">
+    <glz:Param name="DATASOURCE_MODE" value="xml" />
+    <glz:Param name="START_PAGE" value="Login" />
+
+    <glz:Param name="SANITIZE_URL" value="false" />
+
+    <glz:Param name="IMG_WIDTH" value="400" />
+    <glz:Param name="IMG_HEIGHT" value="300" />
+    <glz:Param name="THUMB_WIDTH" value="150" />
+    <glz:Param name="THUMB_HEIGHT" value="150" />
+    <glz:Param name="THUMB_SMALL_WIDTH" value="56" />
+    <glz:Param name="THUMB_SMALL_HEIGHT" value="56" />
+    <glz:Param name="ADM_THUMBNAIL_CROP" value="true" />
+    <glz:Param name="MULTILANGUAGE_ENABLED" value="false" />
+    <glz:Param name="BASE_REGISTRY_PATH" value="movio" />
+
+    <glz:Param name="GLIZY_JQUERY" value="jquery-1.8.3.min.js" />
+
+    <glz:Param name="GLIZY_ADD_JQUERY_JS" value="true" />
+    <glz:Param name="GLIZY_ADD_JQUERYUI_JS" value="true" />
+    <glz:Param name="GLIZY_JQUERYUI_THEME" value="jquery-ui-bootstrap/jquery-ui-1.10.0.custom.css" />
+    <glz:Param name="GLIZY_JQUERYUI" value="jquery-ui-1.10.4.custom.min.js" />
+
+    <glz:Param name="TINY_MCE_DEF_PLUGINS" value="inlinepopups,style,searchreplace,contextmenu,paste,directionality,xhtmlxtras,table,GLZ_link,GLZ_image" />
+    <glz:Param name="TINY_MCE_BUTTONS1" value="bold,italic,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,outdent,indent,|,formatselect" />
+    <glz:Param name="TINY_MCE_BUTTONS2" value="undo,redo,|,cut,copy,pastetext,pasteword,selectall,|,link,unlink,anchor,image,hr,charmap,|,removeformat,cleanup,code" />
+    <glz:Param name="TINY_MCE_BUTTONS3" value="ltr,rtl,cite,ins,del,abbr,acronym,|,tablecontrols" />
+
+    <glz:Param name="glizy.form.cssClass" value="form-horizontal row-fluid stickyForm" />
+    <glz:Param name="glizy.formElement.cssClassLabel" value="control-label" />
+    <glz:Param name="glizy.formElement.admCssClass" value="span11" />
+    <glz:Param name="glizy.formElement.cssClass" value="span11" />
+
+    <glz:Param name="movio.modules.publishApp.mobileCodesTable" value="mobilecodes_tbl" />
+    <glz:Param name="movio.modules.publishApp.mobileContentsTable" value="mobilecontents_tbl" />
+    <glz:Param name="movio.modules.publishApp.mobileFulltextTable" value="mobilefulltext_tbl" />
+    <glz:Param name="movio.modules.publishApp.sqliteDbName" value="mobilecontents.db" />
+
+    <glz:Param name="movio.noImage.src" value="{{path:STATIC_DIR}}movio/templates/Movio/img/various/img-not-disponible.jpg" />
+    <glz:Param name="movio.graph.shapeColor" value="#cfced3" />
+    <glz:Param name="movio.graph.backgroundColor" value="#ffffff" />
+
+    <glz:Param name="movio.europeana.apiKey" value="" />
+    <glz:Param name="movio.europeana.apiSearchUrl" value="http://europeana.eu/api/v2/search.json" />
+    <glz:Param name="movio.europeana.rows" value="18" />
+    <glz:Param name="movio.europeana.searchFields" value="title,who,what,when,where,TYPE,LANGUAGE" />
+    <glz:Param name="movio.europeana.searchFieldsLabels" value="Titles,Creators,Subjects,Dates,Places,Media type,Language" />
+    <glz:Param name="movio.europeana.registry" value="europeana" />
+
+    <glz:Param name="FORM_ITEM_TEMPLATE"><![CDATA[
+    <div class="control-group">
+        ##FORM_LABEL##
+        <div class="controls">
+            ##FORM_ITEM##
+        </div>
+    </div>
+    ]]></glz:Param>
+    <glz:Param name="FORM_ITEM_RIGHT_LABEL_TEMPLATE"><![CDATA[
+    <div class="control-group">
+        ##FORM_LABEL##
+        <div class="controls">
+            ##FORM_ITEM##
+        </div>
+    </div>
+    ]]></glz:Param>
+    <glz:Param name="glizycms.form.buttonsPanel"><![CDATA[
+    <div class="formButtons" id="##ID##">
+        <div class="content">
+            ##CONTENT##
+        </div>
+    </div>
+    ]]></glz:Param>
+</glz:Config>

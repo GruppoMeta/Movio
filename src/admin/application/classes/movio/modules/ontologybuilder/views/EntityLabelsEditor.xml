@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cmp="movio.modules.ontologybuilder.views.components.*"
+    controllerName="movio.modules.ontologybuilder.controllers.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="Page.php">
+    <glz:Import src="_common.xml" />
+    <glz:JSscript folder="movio.modules.ontologybuilder.views.js" />
+
+    <glz:CSS src="../static/jquery/bootstrap-editable-1.3.0/bootstrap-editable/css/bootstrap-editable.css" />
+    <glz:JSscript src="../static/jquery/bootstrap-editable-1.3.0/bootstrap-editable/js/bootstrap-editable-inline.min.js" />
+    <glz:JSscript src="application/classes/movio/modules/ontologybuilder/views/js/locale/en-EN.js">
+       	<glz:Script extendParent="false"><![CDATA[
+function process()
+{
+    $language = $this->_application->getLanguage();
+    $language = $language.'-'.strtoupper($language);
+    $this->setAttribute('src', 'application/classes/movio/modules/ontologybuilder/views/js/locale/'.$language.'.js');
+	parent::process();
+}
+		]]></glz:Script>
+    </glz:JSscript>
+    <glz:JSscript src="../static/handlebars/handlebars-1.0.rc.1.js" />
+    <glz:JSscript folder="movio.modules.ontologybuilder.views.skins" inline="true" extension=".html"/>
+</mvc:Page>

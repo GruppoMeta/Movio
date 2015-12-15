@@ -1,0 +1,4 @@
+<?php
+class org_glizycms_contents_controllers_pageEdit_ajax_Addblock extends org_glizycms_contents_controllers_pageEdit_ajax_Add
+{
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<glz:EmptyComponent
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:cms="org.glizycms.views.components.*">
+
+    <glz:Authenticator accessPageId="Login" logoutPageId="Logout" cssClass="logout" editableRegion="logout" />
+
+    <glz:NavigationMenu id="menu" startFrom="home" depth="+3" forceLink="true" drawAllChilds="false" selectParent="false" showOnlyChilds="true" editableRegion="leftSidebar" showPath="true" attributeToSelect="class" cssCurrent="active" />
+    <glz:MessageBox type="SUCCESS" cssClass="alert welcome alert-info" />
+    <glz:MessageBox type="ERROR" cssClass="alert alert-error"/>
+
+    <cms:EditLanguage id="language-menu" editableRegion="languageMenu" cssClass="pull-left" />
+    <glz:PageTitle id="pageTitle" wrap="true" wrapCssClass="section-title" drawIcon="true" />
+
+    <glz:JSscript src="application/templates/js/bootstrap.min.js" editableRegion="head" />
+</glz:EmptyComponent>

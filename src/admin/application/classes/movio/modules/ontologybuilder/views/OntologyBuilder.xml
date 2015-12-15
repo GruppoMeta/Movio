@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cmp="movio.modules.ontologybuilder.views.components.*"
+    controllerName="movio.modules.ontologybuilder.controllers.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="Page.php">
+    <glz:Import src="_common.xml" />
+    <glz:JSscript folder="movio.modules.ontologybuilder.views.js" />
+
+    <mvc:State name="index">
+        <!--<cmp:EntireGraph />-->
+        <glz:DataProvider id="dp" recordClassName="movio.modules.ontologybuilder.models.EntityModel" order="entity_name" />
+        <glz:RecordSetList id="list" dataProvider="{dp}" skin="{entityList}" processCell="movio.modules.ontologybuilder.views.renderer.ActionEditDelete" />
+        <glz:Link label="{i18n:Add new entity}" cssClass="{config:glizycms.form.actionLink.cssClass}" icon="icon-plus" routeUrl="actionsMVCAdd" editableRegion="actions" />
+    </mvc:State>
+
+    <mvc:State name="edit">
+        <glz:JSscript src="application/classes/movio/modules/ontologybuilder/views/js/locale/##LANG2##.js" />
+        <glz:JSscript src="../static/handlebars/handlebars-1.0.rc.1.js" />
+        <glz:CSS src="../core/classes/org/glizycms/js/jquery/select2/select2.css" />
+        <glz:JSscript src="../core/classes/org/glizycms/js/jquery/select2/select2.min.js" />
+        <glz:CSS src="../core/classes/org/glizycms/js/jquery/jquery.pnotify/jquery.pnotify.default.css" />
+        <glz:JSscript src="../core/classes/org/glizycms/js/jquery/jquery.pnotify/jquery.pnotify.min.js" />
+
+        <glz:JSscript folder="movio.modules.ontologybuilder.views.skins" inline="true" extension=".html" />
+    </mvc:State>
+
+    <glz:SkinDefine id="entityList"><![CDATA[
+<ul class="entities">
+    <li tal:repeat="item Component/records">
+        <h5 tal:content="item/entity_name">Title</h5>
+        <div class="actions">
+            <span tal:omit-tag="" tal:content="structure item/__url__" />
+            <span tal:omit-tag="" tal:content="structure item/__urlDelete__" />
+        </div>
+    </li>
+</ul>
+    ]]></glz:SkinDefine>
+</mvc:Page>

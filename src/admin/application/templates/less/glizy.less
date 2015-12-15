@@ -1,0 +1,1269 @@
+
+/* BEGIN GlizyFormEdit */
+fieldset.GFEFieldset {
+    margin-left:0!important;
+    padding:0!important;
+    overflow-x:hidden;
+    border: 0;
+    margin-bottom: 40px;
+    border-bottom: 1px solid #E5E5E5;
+
+    legend {
+        width:100%;
+        font-size:17px;
+        padding-left:6px;
+        background:@white;
+        color:@grey14;
+    }
+
+    .btn-icon {
+        cursor:pointer;
+        }
+}
+
+fieldset.GFEFieldset fieldset.GFEFieldset {
+    margin-left: 20px !important;
+}
+.GFEFooter {
+    width:auto;
+    .box-sizing();
+    padding:8px;
+    margin:0 0 0 10px;
+}
+.GFEButtonContainer {
+	float: left;
+}
+.GFEStatusContainer {
+	float: right;
+	font-size: 13px;
+	margin-top: 9px;
+}
+
+input.GFEAddRow {
+    font-size: 13px;
+}
+
+.GFERowContainer {
+	position: relative;
+	padding: 4px;
+	background-color: #F0F0F0;
+	margin-bottom: 2px;
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+    width:auto;
+    .box-sizing();
+    margin:0 0 0 10px;
+}
+.GFERowContainer.GFERowContainerOdd {
+	background-color: #E0E0E0;
+}
+.GFERowContainer.GFEEditingRow {
+	position: relative;
+	z-index: 101;
+}
+.GFERowCollapsed {
+}
+.GFERowExpanded {
+}
+.GFERowHeader {
+	float: left;
+}
+.GFERowHandler {
+	float: left;
+	cursor: move;
+	height: 95%;
+}
+.GFERowHandler img {
+	height: auto;
+}
+
+.GFERowPreview div.GFEPreviewItem{
+   display:none;
+}
+.GFERowPreview div.GFEPreviewItem:nth-child(1){
+   display:inline;
+}
+.GFERowPreview div.GFEPreviewItem:nth-child(2){
+   display:inline;
+}
+
+.GFERowHandler.GFERowHandlerExpanded {
+    position: absolute;
+    top: 3px;
+}
+.GFERecordTitle {
+	display: inline-block;
+    font-weight: bold;
+    margin: 9px 12px;
+}
+.GFERowPanel {
+	float: right;
+	margin: 7px 5px;
+}
+.GFEPreviewItem {
+	display: inline-block;
+	padding: 2px 3px;
+	margin: 1px 5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+    border-radius: 5px;
+    background:@white;
+}
+.GFESideClearer {
+	clear: both;
+}
+.GFEEmptyMessage {
+	text-align: center;
+	margin: 6px;
+}
+.GFERowContainer .icon {
+	cursor: pointer;
+}
+.GFERightIcon {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
+.GFERowButtonContainer {
+	text-align: center;
+	clear: both;
+	margin-top: 14px;
+}
+.GButtonDisabled {
+	opacity: 0.5;
+	/*filter: alpha(opacity = 50);*/
+}
+.GFETranslucentCover {
+	position: fixed;
+	display: none;
+	background-color: black;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 100;
+	opacity: 0.5;
+	/*filter: alpha(opacity = 50);*/
+}
+.GFEValidationError {
+  border-left:  3px solid #ff0000 !important;
+}
+.GFEValidationError > label {
+  color: #ff0000;
+}
+
+.GFEcomments {
+    width: 100%;
+    height: 150px;
+    border: 0 !important;
+}
+/* END GlizyFormEdit */
+
+/* BEGIN dropzone */
+.glizy-dropzone,
+.glizy-dropzone *,
+.dropzone-previews,
+.dropzone-previews * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.glizy-dropzone {
+  position: relative;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(0,0,0,0.02);
+  padding: 1em;
+}
+.glizy-dropzone p {
+    margin:60px 0;
+    text-align: center;
+}
+.glizy-dropzone.dz-clickable {
+  cursor: pointer;
+}
+.glizy-dropzone.dz-clickable .dz-message,
+.glizy-dropzone.dz-clickable .dz-message span {
+  cursor: pointer;
+}
+.glizy-dropzone.dz-clickable * {
+  cursor: default;
+}
+.glizy-dropzone .dz-message {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
+}
+.glizy-dropzone.dz-drag-hover {
+  border-color: rgba(0,0,0,0.15);
+  background: rgba(0,0,0,0.04);
+}
+.glizy-dropzone.dz-started .dz-message {
+  display: none;
+}
+.glizy-dropzone .dz-preview,
+.dropzone-previews .dz-preview {
+  background: rgba(255,255,255,0.8);
+  position: relative;
+  display: inline-block;
+  margin: 17px;
+  vertical-align: top;
+  border: 1px solid #acacac;
+  padding: 6px 6px 6px 6px;
+}
+.glizy-dropzone .dz-preview.dz-file-preview [data-dz-thumbnail],
+.dropzone-previews .dz-preview.dz-file-preview [data-dz-thumbnail] {
+  display: none;
+}
+.glizy-dropzone .dz-preview .dz-details,
+.dropzone-previews .dz-preview .dz-details {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  background: #ebebeb;
+  padding: 5px;
+  margin-bottom: 22px;
+}
+.glizy-dropzone .dz-preview .dz-details .dz-filename,
+.dropzone-previews .dz-preview .dz-details .dz-filename {
+  overflow: hidden;
+  height: 100%;
+}
+.glizy-dropzone .dz-preview .dz-details img,
+.dropzone-previews .dz-preview .dz-details img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+}
+.glizy-dropzone .dz-preview .dz-details .dz-size,
+.dropzone-previews .dz-preview .dz-details .dz-size {
+  position: absolute;
+  bottom: -28px;
+  left: 3px;
+  height: 28px;
+  line-height: 28px;
+}
+.glizy-dropzone .dz-preview.dz-error .dz-error-mark,
+.dropzone-previews .dz-preview.dz-error .dz-error-mark {
+  display: block;
+}
+.glizy-dropzone .dz-preview.dz-success .dz-success-mark,
+.dropzone-previews .dz-preview.dz-success .dz-success-mark {
+  display: block;
+}
+.glizy-dropzone .dz-preview:hover .dz-details img,
+.dropzone-previews .dz-preview:hover .dz-details img {
+  display: none;
+}
+.glizy-dropzone .dz-preview .dz-success-mark,
+.dropzone-previews .dz-preview .dz-success-mark,
+.glizy-dropzone .dz-preview .dz-error-mark,
+.dropzone-previews .dz-preview .dz-error-mark {
+  display: none;
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  font-size: 30px;
+  text-align: center;
+  right: -10px;
+  top: -10px;
+}
+.glizy-dropzone .dz-preview .dz-success-mark,
+.dropzone-previews .dz-preview .dz-success-mark {
+  color: #8cc657;
+}
+.glizy-dropzone .dz-preview .dz-error-mark,
+.dropzone-previews .dz-preview .dz-error-mark {
+  color: #ee162d;
+}
+.glizy-dropzone .dz-preview .dz-progress,
+.dropzone-previews .dz-preview .dz-progress {
+  position: absolute;
+  top: 100px;
+  left: 6px;
+  right: 6px;
+  height: 6px;
+  background: #d7d7d7;
+  display: none;
+}
+.glizy-dropzone .dz-preview .dz-progress .dz-upload,
+.dropzone-previews .dz-preview .dz-progress .dz-upload {
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  background-color: #8cc657;
+}
+.glizy-dropzone .dz-preview.dz-processing .dz-progress,
+.dropzone-previews .dz-preview.dz-processing .dz-progress {
+  display: block;
+}
+.glizy-dropzone .dz-preview .dz-error-message,
+.dropzone-previews .dz-preview .dz-error-message {
+  display: none;
+  position: absolute;
+  top: -5px;
+  left: -20px;
+  background: rgba(245,245,245,0.8);
+  padding: 8px 10px;
+  color: #800;
+  min-width: 140px;
+  max-width: 500px;
+  z-index: 500;
+}
+.glizy-dropzone .dz-preview:hover.dz-error .dz-error-message,
+.dropzone-previews .dz-preview:hover.dz-error .dz-error-message {
+  display: block;
+}
+
+.GFERowContainer .dropzone-previews {
+    width: 100px;
+    position: absolute;
+    top: -10px;
+    right: 50px;
+}
+
+.GFERowContainer .dropzone-previews .dz-progress,
+.GFERowContainer .dropzone-previews .dz-success-mark {
+    display: none;
+}
+
+.GFERowWithPreview .span11 {
+    width: 78%;
+}
+
+.GFERowContainer .dropzone-previews .dz-preview .dz-details {
+    width: 80px;
+    height: 80px;
+}
+
+.form-horizontal #medias .control-label {
+    width: 120px;
+}
+
+.form-horizontal #medias .controls {
+    margin-left: 130px;
+}
+
+/* END dropzone */
+
+/* BEGIN MediaPicker */
+.mediaPickerField {
+    position: relative;
+}
+.mediaPickerSelector {
+	position: relative;
+	width: 150px;
+	height: 150px;
+	display: inline-block;
+	background-color: #F0F0F0;
+	border: 1px solid #fff;
+	cursor: pointer;
+	display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+.mediaPickerInfo {
+    position: relative;
+    top: 0px;
+    left: 20px;
+    float: left;
+
+    input, textarea {
+        width: 100%;
+        margin: 0 0 10px 0;
+    }
+ }
+
+.mediaPickerSelector.mediaPickerElement {
+    float: left;
+}
+/* END MediaPicker */
+
+/* treeview */
+#treeview-inner .jstree-default.jstree-focused {
+	background:  transparent;
+}
+
+#treeview-inner .jstree-clicked {
+    padding: 0;
+}
+
+#treeview-inner .jstree-hovered {
+    padding: 0 !important;
+}
+
+#treeview-inner .jstree a {
+    white-space: normal !important;
+    height: auto;
+    width: 80%;
+}
+
+#treeview-inner .jstree li > ins {
+    vertical-align: top;
+}
+
+
+
+li.glizycmsSiteTree-nodeSystem > a {
+	font-style:  italic;
+}
+
+li.glizycmsSiteTree-nodeHide > a {
+	color: #909090;
+}
+#openclose {
+	display: none;
+}
+
+div.formButtons {
+	border-top: 1px solid #EEE;
+	margin-top: 20px;
+	padding-top: 20px;
+}
+
+div.formButtons .btn {
+	margin: 0 4px;
+}
+
+
+.thumbnail li {
+    height: 150px;
+}
+
+.thumbnails .title {
+	font-weight: normal;
+	font-size: 11px;
+}
+
+div.formButtonsTop {
+	background:  #f0f0f0;
+	margin-bottom:  10px;
+	padding: 5px;
+	text-align: right;
+}
+
+div.formButtonsTop .btn {
+	margin: 0 4px;
+}
+
+#filtersForm select, #filtersForm input[type="text"] {
+	width: 150px;
+}
+
+#sidebar-inner ul li ul {
+    display: block;
+}
+
+/* datatables */
+
+div.dataTables_length label {
+	float: left;
+	text-align: left;
+}
+
+div.dataTables_length select {
+	width: 75px;
+}
+
+div.dataTables_filter label {
+	float: right;
+	margin: 0 0 0 10px;
+}
+
+div.dataTables_info {
+	padding-top: 8px;
+}
+
+div.dataTables_paginate {
+	float: right;
+	margin: 0;
+}
+
+table.table {
+	clear: both;
+	margin-bottom: 6px !important;
+	max-width: none !important;
+}
+
+table.table thead .sorting,
+table.table thead .sorting_asc,
+table.table thead .sorting_desc,
+table.table thead .sorting_asc_disabled,
+table.table thead .sorting_desc_disabled {
+	cursor: pointer;
+	*cursor: hand;
+}
+
+table.table thead .sorting { background: url('images/sort_both.png') no-repeat center right; }
+table.table thead .sorting_asc { background: url('images/sort_asc.png') no-repeat center right; }
+table.table thead .sorting_desc { background: url('images/sort_desc.png') no-repeat center right; }
+
+table.table thead .sorting_asc_disabled { background: url('images/sort_asc_disabled.png') no-repeat center right; }
+table.table thead .sorting_desc_disabled { background: url('images/sort_desc_disabled.png') no-repeat center right; }
+
+table.dataTable th:active {
+	outline: none;
+}
+
+/* Scrolling */
+div.dataTables_scrollHead table {
+	margin-bottom: 0 !important;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+div.dataTables_scrollHead table thead tr:last-child th:first-child,
+div.dataTables_scrollHead table thead tr:last-child td:first-child {
+	border-bottom-left-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+}
+
+div.dataTables_scrollBody table {
+	border-top: none;
+	margin-bottom: 0 !important;
+}
+
+div.dataTables_scrollBody tbody tr:first-child th,
+div.dataTables_scrollBody tbody tr:first-child td {
+	border-top: none;
+}
+
+div.dataTables_scrollFoot table {
+	border-top: none;
+}
+
+
+
+
+/*
+ * TableTools styles
+ */
+.table tbody tr.active td,
+.table tbody tr.active th {
+	background-color: #08C;
+	color: white;
+}
+
+.table tbody tr.active:hover td,
+.table tbody tr.active:hover th {
+	background-color: #0075b0 !important;
+}
+
+.table-striped tbody tr.active:nth-child(odd) td,
+.table-striped tbody tr.active:nth-child(odd) th {
+	background-color: #017ebc;
+}
+
+table.DTTT_selectable tbody tr {
+	cursor: pointer;
+	*cursor: hand;
+}
+
+div.DTTT .btn {
+	color: #333 !important;
+	font-size: 12px;
+}
+
+div.DTTT .btn:hover {
+	text-decoration: none !important;
+}
+
+
+ul.DTTT_dropdown.dropdown-menu a {
+	color: #333 !important; /* needed only when demo_page.css is included */
+}
+
+ul.DTTT_dropdown.dropdown-menu li:hover a {
+	background-color: #0088cc;
+	color: white !important;
+}
+
+/* TableTools information display */
+div.DTTT_print_info.modal {
+	height: 150px;
+	margin-top: -75px;
+	text-align: center;
+}
+
+div.DTTT_print_info h6 {
+	font-weight: normal;
+	font-size: 28px;
+	line-height: 28px;
+	margin: 1em;
+}
+
+div.DTTT_print_info p {
+	font-size: 14px;
+	line-height: 20px;
+}
+
+
+
+/*
+ * FixedColumns styles
+ */
+div.DTFC_LeftHeadWrapper table,
+div.DTFC_LeftFootWrapper table,
+table.DTFC_Cloned tr.even {
+	background-color: white;
+}
+
+div.DTFC_LeftHeadWrapper table {
+	margin-bottom: 0 !important;
+	border-top-right-radius: 0 !important;
+	border-bottom-left-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+}
+
+div.DTFC_LeftHeadWrapper table thead tr:last-child th:first-child,
+div.DTFC_LeftHeadWrapper table thead tr:last-child td:first-child {
+	border-bottom-left-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+}
+
+div.DTFC_LeftBodyWrapper table {
+	border-top: none;
+	margin-bottom: 0 !important;
+}
+
+div.DTFC_LeftBodyWrapper tbody tr:first-child th,
+div.DTFC_LeftBodyWrapper tbody tr:first-child td {
+	border-top: none;
+}
+
+div.DTFC_LeftFootWrapper table {
+	border-top: none;
+}
+
+
+caption {
+	display: none;
+}
+
+.required {
+	font-weight:  bold;
+}
+
+.form-horizontal .control-label {
+    white-space: normal;
+    width: 160px;
+    margin: 0 10px 0 0;
+}
+
+.mapPicker img {
+	max-width: none;
+}
+/* override jquery UI per compatibilità con Glizy  */
+.ui-front {
+	position:  fixed !important;
+    z-index: 110 !important;
+}
+
+
+
+/* storege browser */
+
+table.storageBrowser{
+	width: 100%;
+}
+
+table.storageBrowser .icon {
+	width: 18px;
+}
+
+table.storageBrowser td.folder {
+	background: url( '../icons/folder.png') no-repeat 4px 4px;
+}
+
+table.storageBrowser td.image {
+	background: url( '../icons/image.png') no-repeat 4px 4px;
+}
+
+table.storageBrowser td.audio {
+	background: url( '../icons/audio.png') no-repeat 4px 4px;
+}
+
+table.storageBrowser td.other {
+	background: url( '../icons/other.png') no-repeat 4px 4px;
+}
+
+table.storageBrowser td.pdf {
+	background: url( '../icons/pdf.png') no-repeat 4px 4px;
+}
+
+
+table.storageBrowser .filename {
+	font-weight: bold;
+}
+
+
+table.storageBrowser .size {
+	text-align:right;
+	width: 100px;
+}
+
+table.storageBrowser .date {
+	text-align:right;
+	width: 150px;
+}
+
+
+table.storageBrowser tbody tr {
+	cursor: pointer;
+}
+
+
+table#dataGrid.storageBrowser tbody tr.ruled td{
+	background-color: #fff;
+}
+
+
+div.addMedia input.mediaFilePicker {
+	margin-left: 10px;
+}
+
+
+.VS-search .ui-menu {
+	width: auto;
+}
+
+.VS-search {
+  margin-bottom: 20px;
+}
+
+#filters_visualsearch {
+    margin:0 0 0 0px!important;
+
+    .VS-search-box-wrapper {
+        width:80%;
+        float:left;
+        margin-right:7px;
+        }
+
+    .VS-search-box {
+        box-shadow:none!important;
+        .border-radius(0)!important;
+        border:1px solid #ccc!important;
+    }
+
+    .VS-search input {
+        border: 0;
+        background-color: transparent;
+        box-shadow: 0 0 0 0;
+    }
+}
+
+
+.glizyVisualSearch {
+    margin-left: 0 !important;
+
+    .VS-search-box {
+        box-shadow:none!important;
+        .border-radius(0)!important;
+        border:1px solid #ccc!important;
+    }
+
+    .VS-search input {
+        border: 0;
+        background-color: transparent;
+        box-shadow: 0 0 0 0;
+    }
+}
+
+
+
+/* jstree */
+.jstree-default a ins.jstree-icon.home {
+	background: transparent url(../images/treeIcons.png) no-repeat 0 0;
+}
+
+.jstree-default a ins.jstree-icon.page {
+	background: transparent url(../images/treeIcons.png) no-repeat -19px 0;
+}
+
+.jstree-default a ins.jstree-icon.alias {
+	background: transparent url(../images/treeIcons.png) no-repeat -36px 0;
+}
+
+.jstree-default a ins.jstree-icon.folder {
+	background: transparent url(../images/treeIcons.png) no-repeat -56px 0;
+}
+
+.jstree-default a ins.jstree-icon.system {
+	background: transparent url(../images/treeIcons.png) no-repeat -73px 0;
+}
+
+.jstree-default a ins.jstree-icon.home.lock {
+    background: transparent url(../images/treeIcons.png) no-repeat 0 -18px;
+}
+
+.jstree-default a ins.jstree-icon.page.lock {
+    background: transparent url(../images/treeIcons.png) no-repeat -19px -18px;
+}
+
+.jstree-default a ins.jstree-icon.alias.lock {
+    background: transparent url(../images/treeIcons.png) no-repeat -36px -18px;
+}
+
+.jstree-default a ins.jstree-icon.folder.lock {
+    background: transparent url(../images/treeIcons.png) no-repeat -56px -18px;
+}
+
+.jstree-default a ins.jstree-icon.system.lock {
+    background: transparent url(../images/treeIcons.png) no-repeat -73px -18px;
+}
+
+.jstree-default a ins.jstree-icon.hide {
+	opacity: 0.5;
+}
+
+.jstree-default-context li ins {
+  padding: 3px 0  0 5px;
+  color: #505050;
+}
+
+div.addMedia input.mediaFilePicker {
+	margin-left: 10px;
+}
+
+/* add page */
+.pageTypeSelect {
+
+		li {
+			border: 1px solid #D5D5D5;
+			box-shadow: 0 1px 0 0 @white inset, 0 1px 0 rgba(255, 255, 255, 0.4);
+			display: inline-block;
+			line-height: 18px;
+			margin: 0 10px 10px;
+			padding: 0 10px;
+			width: 19.5%;
+			position: relative;
+			-moz-transition: all 0.2s ease-in-out;
+			cursor: pointer;
+
+			&:hover, &.button-selected {
+				border: 1px solid @orange8;
+				box-shadow: 0 1px 0 0 @white inset, 0 0 6px rgba(0,0,0, 0.1);
+				background-color:@white;
+			}
+
+			a {
+
+				display:inline-block;
+				text-align:center;
+				color:@black2;
+				min-height:26px;
+				width:100%;
+
+				&:hover {
+					text-decoration:none;
+					}
+
+					&.button-generic {
+					background:url(../img/article.png) center 10px no-repeat;
+
+					padding-top:65px;
+					}
+
+					&.button-article {
+					background:url(../img/article.png) center 10px no-repeat;
+
+					padding-top:65px;
+					}
+
+				&.button-attach {
+					background:url(../img/attach.png) center 10px no-repeat;
+
+					padding-top:65px;
+					}
+
+				&.button-exercise {
+					background:url(../img/exercise.png) center 10px no-repeat;
+
+					padding-top:65px;
+					}
+
+				}
+
+			}
+
+
+
+		}
+
+
+.hotspots-container #selectionMarquee {
+  z-index: 1000;
+  position: absolute;
+  border: 1px dashed #cc0001;
+  display: none;
+}
+
+.hotspots-container .selected-box {
+  z-index: 999;
+  position: absolute;
+  background-color: rgba(255, 255, 1, 0.3);
+}
+
+.hotspots-container .hotspot-circle {
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+}
+
+.hotspots-container .hotspot {
+  position: relative;
+  margin: 4px;
+  border: 1px solid #999;
+  clear: both;
+  height: 182px;
+}
+
+.hotspots-container .selected {
+  border: 2px solid yellow;
+}
+
+.hotspots-container .hotspots-container {
+  clear: both;
+  border: 1px solid #999;
+  padding: 2px;
+  margin: 40px;
+}
+
+.hotspots-container .btn-container {
+  clear: both;
+  border: 1px solid #999;
+  padding: 4px;
+  margin: 2px;
+}
+
+.hotspots-container .hotspots-list {
+  position: relative;
+  float: left;
+  border: 1px solid #999;
+  width: 310px;
+  margin: 2px;
+  overflow: auto;
+}
+
+.hotspots-container .hotspots-image {
+  float: left;
+  border: 1px solid #999;
+  padding: 4px;
+  margin: 2px;
+  position: relative;
+}
+
+.hotspots-container .list-label {
+  float: left;
+  width: 50px;
+}
+
+.hotspots-container .list-container {
+  padding: 4px;
+}
+
+.hotspots-container .print-check {
+  float: left;
+  margin-left: 10px;
+}
+
+.hotspots-container .list-select {
+  float: left;
+  margin-left: 10px;
+  width: 210px;
+  height: auto;
+  padding: 0;
+}
+
+.hotspots-container .list-description {
+  clear: both;
+  margin: 4px;
+  width: 270px;
+}
+
+.hotspots-container .list-url {
+  float: left;
+  margin-left: 10px;
+  height: auto;
+  width: 200px;
+}
+
+
+.hotspots-container .delete {
+  position: absolute;
+  top: 6px;
+  right: 5px;
+}
+
+
+
+
+/* Apply the element you want to drag/resize */
+._drsElement {
+ position: absolute;
+ border: 1px solid #333;
+}
+
+.drsElement {
+ position: absolute;
+}
+
+/*
+ The main mouse handle that moves the whole element.
+ You can apply to the same tag as drsElement if you want.
+*/
+._drsMoveHandle {
+ height: 20px;
+ background-color: #CCC;
+ border-bottom: 1px solid #666;
+ cursor: move;
+}
+.drsMoveHandle {
+ cursor: move;
+}
+
+
+/*
+ The DragResize object name is automatically applied to all generated
+ corner resize handles, as well as one of the individual classes below.
+*/
+
+.dragresize {
+ position: absolute;
+ width: 5px;
+ height: 5px;
+ font-size: 1px;
+ background: yellow;
+ border: 1px solid #333;
+}
+
+/*
+ Individual corner classes - required for resize support.
+ These are based on the object name plus the handle ID.
+*/
+.dragresize-tl {
+ top: -8px;
+ left: -8px;
+ cursor: nw-resize;
+}
+.dragresize-tm {
+ top: -8px;
+ left: 50%;
+ margin-left: -4px;
+ cursor: n-resize;
+}
+.dragresize-tr {
+ top: -8px;
+ right: -8px;
+ cursor: ne-resize;
+}
+
+.dragresize-ml {
+ top: 50%;
+ margin-top: -4px;
+ left: -8px;
+ cursor: w-resize;
+}
+.dragresize-mr {
+ top: 50%;
+ margin-top: -4px;
+ right: -8px;
+ cursor: e-resize;
+}
+
+.dragresize-bl {
+ bottom: -8px;
+ left: -8px;
+ cursor: sw-resize;
+}
+.dragresize-bm {
+ bottom: -8px;
+ left: 50%;
+ margin-left: -4px;
+ cursor: s-resize;
+}
+.dragresize-br {
+ bottom: -8px;
+ right: -8px;
+ cursor: se-resize;
+}
+
+#diff {
+    /*
+    https://github.com/chrisboulton/php-diff
+     */
+    .Differences {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+        empty-cells: show;
+    }
+
+    .Differences thead th {
+        text-align: left;
+        border-bottom: 1px solid #000;
+        background: #aaa;
+        color: #000;
+        padding: 4px;
+    }
+    .Differences tbody th {
+        text-align: right;
+        background: #ccc;
+        width: 4em;
+        padding: 1px 2px;
+        border-right: 1px solid #000;
+        vertical-align: top;
+        font-size: 13px;
+    }
+
+    .Differences td {
+        padding: 1px 2px;
+        font-family: Consolas, monospace;
+        font-size: 13px;
+    }
+
+    .DifferencesSideBySide .ChangeInsert td.Left {
+        background: #dfd;
+    }
+
+    .DifferencesSideBySide .ChangeInsert td.Right {
+        background: #cfc;
+    }
+
+    .DifferencesSideBySide .ChangeDelete td.Left {
+        background: #f88;
+    }
+
+    .DifferencesSideBySide .ChangeDelete td.Right {
+        background: #faa;
+    }
+
+    .DifferencesSideBySide .ChangeReplace .Left {
+        background: #fe9;
+    }
+
+    .DifferencesSideBySide .ChangeReplace .Right {
+        background: #fd8;
+    }
+
+    .Differences ins, .Differences del {
+        text-decoration: none;
+    }
+
+    .DifferencesSideBySide .ChangeReplace ins, .DifferencesSideBySide .ChangeReplace del {
+        background: #fc0;
+    }
+
+    .Differences .Skipped {
+        background: #f7f7f7;
+    }
+
+    .DifferencesInline .ChangeReplace .Left,
+    .DifferencesInline .ChangeDelete .Left {
+        background: #fdd;
+    }
+
+    .DifferencesInline .ChangeReplace .Right,
+    .DifferencesInline .ChangeInsert .Right {
+        background: #dfd;
+    }
+
+    .DifferencesInline .ChangeReplace ins {
+        background: #9e9;
+    }
+
+    .DifferencesInline .ChangeReplace del {
+        background: #e99;
+    }
+
+    pre {
+        width: 100%;
+        overflow: auto;
+    }
+}
+
+ul.mediaArchive.nav-pills {
+    margin-bottom: 0;
+}
+
+.modulesBuilderStep1Panel { border-bottom: 1px solid #ccc; margin-bottom: 1em; overflow: hidden;}
+.modulesBuilderStep1Panel p { float: left; width: 80%;}
+.modulesBuilderStep1Panel input { float: right; margin-top: 1.5em;}
+.modulesBuilderTable { margin-top: 2em;}
+.modulesBuilderTable td.dragHandler  { padding-left: 20px; background: url( ../images/common/dragHandler.gif) no-repeat;}
+.modulesBuilderTable td.newTableFoot { text-align: center; height: 50px;}
+.modulesBuilderTable #newTableBtnAdd { padding: 5px; background: #328BE5; color: #fff; width: 100px; text-decoration: none;}
+.modulesBuilderTable .delete { cursor: pointer;}
+
+.GlizycmsBlockEdit {
+    margin-bottom: 40px;
+    h2 {
+        font-size: 20px;
+        line-height: 1em;
+        font-weight: normal;
+        padding: 5px;
+        background-color: @themeColor;
+        color: @white;
+    }
+
+    div.blockItem {
+        width: 180px;
+        height: 230px;
+        float: left;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: @white;
+        border: 1px solid @grey1;
+        cursor: grab;
+        position: relative;
+
+        h3 {
+            font-size: 18px;
+            margin: 0;
+            padding: 0;
+            line-height: 1.4em;
+        }
+        p {
+            font-size: 13px;
+            line-height: 1.4em;
+            margin: 0;
+            padding: 0;
+        }
+
+        .actions {
+            position: absolute;
+            width: 180px;
+            bottom: 15px;
+            text-align: right;
+        }
+    }
+
+    div.blockEmpty {
+        cursor: pointer;
+        color: @grey1;
+
+        i {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            font-size: 120px;
+        }
+
+        .actions {
+            text-align: center;
+        }
+    }
+}
+
+
+input.delete-media {
+  float: left;
+  margin: 5px;
+}

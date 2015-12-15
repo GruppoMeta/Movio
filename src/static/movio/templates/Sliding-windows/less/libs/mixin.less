@@ -1,0 +1,85 @@
+.padding-margin-reset() {
+    padding:0;
+    margin:0;
+}
+.box-sizing() {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.input-style (@width) {
+    background:@form-input-background;
+    border:0;
+    box-shadow:0;
+    color:@form-input-text;
+    width:@width;
+    padding:2px;
+    font-size:14px;
+    border:1px @solid @form-border;
+    height: 30px;
+	.border-radius(0);		
+    &.required {
+        border:2px solid @form-required;
+    }
+}
+.button-style (@width) {
+    .button(auto, @form-button);
+    border:0;
+}
+.button(@width, @background:@form-button) {
+    background:@background;
+    width:@width;
+    text-align:center;
+    color:@form-button-text;
+    line-height:1em;
+    height:30px;
+    display:inline-block;
+    padding:0 15px 0 15px;
+    font-size:14px;
+    line-height:30px;
+    text-decoration:none;
+    &:hover {
+        text-decoration:none;
+    }
+}
+.border-radius (@radius) {
+    border-radius: @radius;
+    -moz-border-radius: @radius;
+    -webkit-border-radius: @radius;
+}
+
+.icon-font() {
+	font-family: FontAwesome;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.box-shadow (@x: 0, @y: 0, @blur: 1px, @color: #999) {
+  box-shadow: @arguments;
+  -moz-box-shadow: @arguments;
+  -webkit-box-shadow: @arguments;
+}
+
+.grid(@col, @span, @margin) {
+    width: ((100% - (@margin * (@col - 1))) / @col * @span) + (@margin * (@span - 1));
+    margin-right: @margin; 
+}
+
+.icon-font-awesome() {
+	font-family: 'FontAwesome'; 		
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	-moz-font-feature-settings: normal;
+	-moz-font-language-override: normal;
+	-moz-osx-font-smoothing: grayscale;
+	font-size: inherit;
+	font-size-adjust: none;
+	font-stretch: normal;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: normal;
+	text-rendering: auto;
+}

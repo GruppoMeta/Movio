@@ -1,0 +1,205 @@
+#loading {
+    width: 100%;
+    height: 80px;
+    margin-top: 120px;
+    background: url(../images/ajax-loader.gif) no-repeat top center;
+}
+
+.splitDiv {
+    width: 100%;
+    overflow: auto;
+    position: absolute;
+    padding-bottom: 0;
+}
+
+#searchForm {
+    padding-top: 10px;
+}
+
+body > #outer.splitDiv {
+    min-height: 0;
+}
+
+.resizeDiv {
+    position: fixed;
+    background-color: white;
+}
+
+#handle {
+    height: 22px;
+    width: 100%;
+    background: url("../images/resize.png") no-repeat scroll center center rgba(238, 238, 238, 1);
+    background-size: 37px 8px;
+    z-index: 9;
+}
+
+#handle:hover {
+    cursor: n-resize;
+}
+
+.contentSearch {
+    margin-left: 15px !important;
+}
+
+#searchText {
+    width: 60%;
+}
+
+#searchSubmit {
+    margin-left:5px;
+    cursor: pointer;
+}
+
+#searchResultFrame {
+    border: 2px solid #ccc;
+    border-left:0;
+    border-right:0;
+}
+
+#input-menu .btn-group a.action-link.btn {
+    padding-right:5px !important
+}
+#input-menu .btn-group .dropdown-menu li a {
+    color:#333;
+    text-indent:0;
+    font-size:13px;
+}
+#input-menu {
+    background-color:#fff
+}
+
+#searchResultContextmenu {
+    position: absolute !important;
+}
+
+#loadingFrame {
+    background: url("../images/ajax-loader.gif") no-repeat scroll center center rgba(0, 0, 0, 0);
+    height: 80px;
+    width: 100%;
+}
+
+.js-closeDiv {
+    cursor: pointer;
+    padding-right: 5px;
+}
+
+.europeana-group {
+  margin-left: 200px !important;
+  margin-top: 10px;
+}
+
+.europeana-group label, input, select {
+    font-size: 13px !important;
+}
+
+.europeana-group input[type="text"] {
+    width: 80% !important;
+}
+
+.europeana-group select {
+    width: 84% !important;
+}
+
+.europeana-group input.btn {
+    margin-top: 15px !important;
+    margin-right: 5px !important;
+}
+
+
+.europeana-group ul {
+    margin-left: 0 !important;
+    margin-top: 20px;
+}
+
+.europeana-group.firstDiv {
+    margin-top: -20px;
+}
+
+.europeana-group div.js-imageRemove {
+    cursor: pointer !important;
+}
+
+.europeana-group div.js-imageRemove i {
+    margin-bottom: 2px;
+}
+
+.europeana-group div.imgPreview {
+    height: 210px;
+    width: 111px;
+}
+
+.europeana-group div.imgPreview img {
+    height: 130px;
+    width: 111px;
+}
+
+.europeana-group div.maxResDiv input{
+    width:106px !important;
+}
+
+.europeana-group input.titleInput {
+    width: 90% !important;
+}
+
+.europeana-group.div-btn {
+    width: 79%;
+}
+
+.sortable { list-style-type: none; margin: auto; padding: auto; float: left; background: #eee; padding: 5px; width: 100%; cursor: pointer; min-height: 175px;}
+.sortable li { margin: 0 3px 3px 3px; padding: 0.4em; text-align: center; font-size: 0.9em; height: 14px; }
+.sortableNote {padding-top: 5px; clear:both; font-style:italic; font-size: 15px; color: #888;}
+
+
+/* grafo */
+svg {
+    overflow: hidden;
+    margin: auto auto;
+}
+
+/* Stile testo delle entità */
+g.nodes tspan {
+    font-family: Helvetica, sans-serif;
+    font-size: 14px;
+}
+/* Stile testo delle entità in HTML */
+g.nodes div {
+    white-space: nowrap;
+    padding: 4px;
+    font-family: Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+/* Stile testo delle entità principali */
+g.nodes tspan.main-node {
+    fill: white;
+}
+/* Stile testo delle entità principali in HTML */
+div.main-node {
+    padding: 2px 7px 2px 7px;
+    font-family: Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+/* Stile testo delle relazioni */
+g.edgeLabels tspan {
+
+}
+
+/* Stile riquadro delle entità */
+.node rect {
+    stroke: #cfced3;
+    stroke-width: 2px;
+    fill: none;
+}
+
+/* Stile riquadro delle entità principali */
+.node rect.main-node {
+    fill: lightgray;
+}
+
+/* Stile delle frecce */
+.edgePath path {
+    stroke: black;
+    stroke-width: 1.5px;
+    fill: none;
+}

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+	xmlns:mvc="org.glizy.mvc.components.*"
+	xmlns:m="org.glizycms.modulesManager.views.components.*"
+	controllerName="org.glizycms.modulesManager.controllers.*"
+	templateType="php"
+	templateFileName="Page.php"
+	defaultEditableRegion="content">
+	<glz:Import src="_common.xml" />
+
+	<mvc:State name="index">
+		<m:Datagrid id="dataGrid" cssClass="table table-bordered table-striped" />
+	</mvc:State>
+
+	<mvc:State name="duplicate">
+		<glz:Form>
+			<glz:LongText id="text" adm:htmlEditor="true" />
+			<glz:Hidden id="moduleId" />
+			<glz:Input id="moduleName" label="{i18n:Nome del modulo}" required="true" />
+
+			<glz:Panel cssClass="formButtons">
+                <glz:HtmlButton label="{i18n:GLZ_SAVE}" cssClass="btn btn-primary" />
+            </glz:Panel>
+		</glz:Form>
+	</mvc:State>
+
+</mvc:Page>

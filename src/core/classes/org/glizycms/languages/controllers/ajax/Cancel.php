@@ -1,0 +1,4 @@
+<?php
+class org_glizycms_languages_controllers_ajax_Cancel extends org_glizycms_contents_controllers_activeRecordEdit_ajax_Cancel
+{
+}

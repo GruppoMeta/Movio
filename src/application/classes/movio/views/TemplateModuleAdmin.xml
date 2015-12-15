@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+	xmlns:cms="org.glizycms.views.components.*"
+	xmlns:mvc="org.glizy.mvc.components.*"
+    defaultEditableRegion="content"
+	templateType="php"
+	templateFileName="Page.php">
+
+    <glz:templateDefine name="model" required="true" />
+    <glz:templateDefine name="grid_fields" required="true" />
+    <glz:templateDefine name="form_fields" required="true" />
+    <glz:templateDefine name="custom_states" required="false" defaultValue="" />
+    <glz:templateDefine name="primary_key" required="false" defaultValue="document_id" />
+    <glz:templateDefine name="controller_name" required="false" defaultValue="org.glizycms.contents.controllers.moduleEdit.*" />
+    <glz:templateDefine name="show_external_id" required="false" defaultValue="true" />
+    <glz:templateDefine name="add_label" required="false" defaultValue="GLZ_ADD_NEW_RECORD" />
+    <glz:templateDefine name="render_class" required="false" defaultValue="org.glizycms.contents.views.renderer.CellEditDraftDeleteVisible" />
+
+	<glz:Import src="_common.xml" />
+
+    <mvc:State name="index">
+       <glz:Link label="{i18n:##add_label##}" cssClass="{config:glizycms.form.actionLink.cssClass}" icon="icon-plus" routeUrl="actionsMVCAdd" editableRegion="actions" acl="*,new"/>
+       <glz:DataGridAjax id="dataGrid" recordClassName="##model##" cssClass="table table-bordered table-striped">
+            ##grid_fields##
+            <glz:DataGridColumn columnName="##primary_key##" sortable="false" searchable="false" cssClass="actions" renderCell="##render_class##" />
+        </glz:DataGridAjax>
+    </mvc:State>
+
+    <mvc:State name="edit,editDraft">
+        <cms:FormEdit id="editForm" controllerName="##controller_name##">
+            <glz:Hidden id="__id" />
+            <glz:Hidden id="__model" value="##model##"/>
+            <glz:Input id="external_id" label="{i18n:ID}" size="90" disabled="true" visible="##show_external_id##" />
+            ##form_fields##
+
+            <cms:FormButtonsPanel>
+                <glz:HtmlButton label="{i18n:GLZ_PUBLISH}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
+                <glz:HtmlButton label="{i18n:GLZ_PUBLISH_CLOSE}" type="button" cssClass="btn js-glizycms-save" data="action=saveClose" />
+                <glz:HtmlButton label="{i18n:GLZ_SAVE_DRAFT}" type="button" cssClass="btn js-glizycms-save" data="action=saveDraft" />
+                <glz:HtmlButton label="{i18n:GLZ_SAVE_DRAFT_CLOSE}" type="button" cssClass="btn js-glizycms-save" data="action=saveDraftClose" />
+                <glz:HtmlButton label="{i18n:GLZ_CANCEL}" type="button" routeUrl="link" cssClass="btn js-glizycms-cancel" data="action=cancel" />
+			</cms:FormButtonsPanel>
+		</cms:FormEdit>
+    </mvc:State>
+
+    <mvc:State name="delete">
+        <glz:Hidden controllerName="##controller_name##" />
+    </mvc:State>
+
+    <mvc:State name="togglevisibility">
+        <glz:Hidden controllerName="##controller_name##" />
+    </mvc:State>
+
+    ##custom_states##
+</mvc:Page>

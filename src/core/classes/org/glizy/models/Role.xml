@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+	xmlns:glz="http://www.glizy.org/dtd/1.0/" xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+    model:tableName="roles_tbl" model:usePrefix="true">
+    
+    <!--
+    // TODO 
+    <model:Query name="getPermissions" type="function" arguments="id,groupId">
+	<![CDATA[
+        /*
+        org_glizy_dataAccessDoctrine_DataAccess::enableLogging();
+        $andX = $iterator->expr()->andX();
+        $orX = $iterator->expr()->orX();
+        
+        $iterator->join('t1', $this->tablePrefix.'joins_tbl', 't2', $iterator->expr()->eq('role_id','join_FK_source_id'))
+                 ->where($orX->add(
+                            $andX->add(
+                                $iterator->where('join_objectName', 'roles2users'), 
+                                $iterator->where('join_FK_dest_id', $id)
+                            ),
+                            $andX->add(
+                                $iterator->where('join_objectName', 'roles2usergroups'), 
+                                $iterator->where('join_FK_dest_id', $groupId)
+                            )
+                        )
+                    );
+	]]>
+	</model:Query>
+    -->
+    
+    <model:Query name="mysql_getPermissions">
+    <![CDATA[
+        SELECT * 
+        FROM ##TABLE_PREFIX##joins_tbl JOIN 
+        ##TABLE_PREFIX##roles_tbl ON join_FK_source_id = role_id
+        WHERE (join_objectName = 'roles2users' AND join_FK_dest_id = :id) OR
+              (join_objectName = 'roles2usergroups' AND join_FK_dest_id = :groupId)
+	]]>
+	</model:Query>
+    
+    <model:Query name="pgsql_getPermissions">
+    <![CDATA[
+        SELECT * 
+        FROM ##TABLE_PREFIX##joins_tbl JOIN 
+        ##TABLE_PREFIX##roles_tbl ON "join_FK_source_id" = role_id
+        WHERE ("join_objectName" = 'roles2users' AND "join_FK_dest_id" = :id) OR
+              ("join_objectName" = 'roles2usergroups' AND "join_FK_dest_id" = :groupId)
+    ]]>
+	</model:Query>
+    
+</model:Model>

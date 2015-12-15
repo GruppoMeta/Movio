@@ -1,0 +1,72 @@
+/* CSS file for advimage plugin popup */
+
+.mceImageList {
+	width: 280px;
+}
+
+.mceActionPanel {
+	margin-top: 7px;
+}
+
+.alignPreview {
+	border: 1px solid black;
+    width: 100px;
+	height: 100px;
+	overflow: hidden;
+	padding: 5px;
+}
+
+.checkbox {
+	border: 0px;
+}
+
+.panel_wrapper div.current {
+	height: 305px;
+}
+
+#align, #classlist {
+	width: 120px;
+}
+
+#width, #height {
+	vertical-align: middle;
+	width: 40px;
+	text-align: center;
+}
+
+#vspace, #hspace, #border {
+	vertical-align: middle;
+	width: 30px;
+	text-align: center;
+}
+
+#cssClass {
+	width: 140px;
+	margin-right: 5px;
+}
+
+input {
+	width: 100%;
+}
+
+#id, #dir, #lang, #usemap, #longdesc {
+	width: 200px;
+}
+
+#general_panel {
+        width: 370px;
+} 
+
+#picker {
+        width: 100%;
+        height: 450px;
+} 
+
+
+.multifieldset {
+        margin-bottom: 4px;
+}        
+
+body {
+        margin: 6px;
+}                                      

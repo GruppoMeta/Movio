@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<m:PhotogalleryCmp
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:cms="org.glizycms.views.components.*"
+    xmlns:m="movio.views.components.*">
+
+    <glz:List id="galleryType" label="{i18n:Gallery type}">
+        <glz:ListItem value="{i18n:Gallery}" key="gallery" />
+        <glz:ListItem value="{i18n:Slideshow}" key="slideshow" />
+        <glz:ListItem value="{i18n:Slider}" key="slider" />
+        <glz:ListItem value="{i18n:Page flip}" key="pageflip" />
+    </glz:List>
+    <glz:Checkbox id="imageCrop" label="{i18n:Image crop}" defaultValue="1" />
+    <glz:Checkbox id="imagePan" label="{i18n:Image pan}" defaultValue="1" />
+    <glz:Checkbox id="queryOr" label="{i18n:Query in OR}" defaultValue="1" />
+
+    <m:RepeaterFromModel id="images" label="{i18n:Images list}" skin="ImageList.html" adm:data="type=selectfrom;multiple=true;add_new_values=false;model=org.glizycms.models.Media;field=media_category">
+       <glz:Image id="image" label="{i18n:Image}" width="800" height="600" />
+    </m:RepeaterFromModel>
+</m:PhotogalleryCmp>

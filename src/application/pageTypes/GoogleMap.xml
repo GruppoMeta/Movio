@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<glz:Page id="Page"
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+	xmlns:m="movio.views.components.*"
+	templateType="php"
+	templateFileName="2cols.php"
+	defaultEditableRegion="content" >
+	<glz:Import src="Common.xml" />
+    <glz:LongText id="text" label="{i18n:Text}" adm:rows="20" adm:cols="75" adm:htmlEditor="true" forceP="true" />
+    <m:GoogleMap id="map" />
+</glz:Page>

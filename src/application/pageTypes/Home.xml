@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<glz:Page id="Page"
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:cms="org.glizycms.views.components.*"
+    xmlns:m="movio.views.components.*"
+	templateType="php"
+	templateFileName="1col.php"
+	defaultEditableRegion="content"
+	addCoreJS="true">
+	<glz:Import src="Common.xml" />
+
+    <glz:Modifier target="pageTitle" attribute="visible" value="false" />
+    <glz:Modifier target="breadcrumbs" attribute="visible" value="false" />
+    <glz:Modifier target="navigation" attribute="editableRegion" value="navigation" />
+
+    <glz:Repeater id="slider" label="{i18n:Image slider}" adm:collapsable="true" skin="HomeImageSlider.html">
+        <glz:Input id="title" label="{i18n:Title}" size="50" required="false" />
+        <glz:LongText id="text" label="{i18n:Text}" adm:rows="20" adm:cols="75" adm:htmlEditor="true" />
+        <glz:Image id="image" label="{i18n:Image}" width="{config:movio.thumb.homeSlider.width}" height="{config:movio.thumb.homeSlider.height}" crop="{config:movio.thumb.homeSlider.crop}" />
+        <cms:PagePicker id="pageId" label="{i18n:Linked page}" required="false" />
+    </glz:Repeater>
+
+    <m:Boxes id="boxes" label="{i18n:Boxes}" />
+</glz:Page>

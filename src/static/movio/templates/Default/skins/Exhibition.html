@@ -1,0 +1,139 @@
+<div class="clearfix">
+    <figure class="main-img align-right" tal:condition="php: Component['banner']['mediaId'] > 0">
+      <span tal:omit-tag="" tal:content="structure Component/banner/__html__" />
+      <figcaption class="description" tal:content="structure Component/banner/title"></figcaption>
+    </figure>
+    <dl class="properties">
+        <span tal:omit-tag="" tal:condition="Component/date">
+          <dt tal:content="php: __T('Date')"></dt>
+          <dd tal:content="Component/date"></dd>
+        </span>
+        <span tal:omit-tag="" tal:condition="Component/place">
+          <dt tal:content="php: __T('Nation, Region, Province')"></dt>
+          <dd tal:content="Component/place"></dd>
+        </span>
+        <span tal:omit-tag="" tal:condition="Component/town">
+          <dt tal:content="structure php: __T('Town')"></dt>
+          <dd tal:content="Component/town"></dd>
+        </span>
+        <span tal:omit-tag="" tal:condition="Component/venue">
+          <dt tal:content="php: __T('Venue')"></dt>
+          <dd tal:content="Component/venue"></dd>
+        </span>
+        <span tal:omit-tag="" tal:condition="Component/address">
+          <dt tal:content="php: __T('Address')"></dt>
+          <dd tal:content="Component/address"></dd>
+        </span>
+        <span tal:omit-tag="" tal:condition="Component/geo">
+          <dt tal:content="php: __T('Venue Geolocation')"></dt>
+          <dd tal:content="Component/geo"></dd>
+        </span>
+        <span tal:omit-tag="" tal:condition="Component/targetUser">
+          <dt tal:content="php: __T('Users')"></dt>
+          <dd tal:content="Component/targetUser"></dd>
+        </span>
+        <span tal:omit-tag="" tal:condition="Component/category">
+          <dt tal:content="php: __T('Subject')"></dt>
+          <dd tal:content="Component/category"></dd>
+        </span>
+        <span tal:omit-tag="" tal:condition="Component/linkedDigitalExhibition">
+          <dt tal:content="php: __T('Digital alternative')"></dt>
+          <dd tal:content="structure php: __Link::formatLink(Component['linkedDigitalExhibition'])"></dd>
+        </span>
+        <span tal:omit-tag="" tal:condition="Component/openingTime">
+          <dt tal:content="php: __T('Timetable')"></dt>
+          <dd tal:content="Component/openingTime"></dd>
+        </span>
+        <span tal:omit-tag="" tal:condition="Component/ticket">
+          <dt tal:content="php: __T('Access')"></dt>
+          <dd tal:content="Component/ticket"></dd>
+        </span>
+        <span tal:omit-tag="" tal:condition="Component/vernissage">
+          <dt tal:content="php: __T('Vernissage')"></dt>
+          <dd tal:content="Component/vernissage"></dd>
+        </span>
+
+    </dl>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['abstract'])">
+      <span tal:omit-tag="" tal:content="structure Component/abstract" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['ticketOffice'])">
+      <h3 tal:content="structure php: __T('Ticket Office')" />
+      <span tal:omit-tag="" tal:content="structure Component/ticketOffice" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['catalog'])">
+      <h3 tal:content="structure php: __T('Catalog')" />
+      <span tal:omit-tag="" tal:content="structure Component/catalog" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['sponsor1'])">
+      <h3 tal:content="structure php: __T('Patronages')" />
+      <span tal:omit-tag="" tal:content="structure Component/sponsor1" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['sponsor2'])">
+      <h3 tal:content="structure php: __T('Promoting organisations')" />
+      <span tal:omit-tag="" tal:content="structure Component/sponsor2" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['sponsor3'])">
+      <h3 tal:content="structure php: __T('Sponsors')" />
+      <span tal:omit-tag="" tal:content="structure Component/sponsor3" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['honoraryCommittee'])">
+      <h3 tal:content="structure php: __T('Committee of Honor')" />
+      <span tal:omit-tag="" tal:content="structure Component/honoraryCommittee" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['scientificCommittee'])">
+      <h3 tal:content="structure php: __T('Scientific Committee')" />
+      <span tal:omit-tag="" tal:content="structure Component/scientificCommittee" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['dedication'])">
+      <h3 tal:content="structure php: __T('Dedication')" />
+      <span tal:omit-tag="" tal:content="structure Component/dedication" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['aknowledgements'])">
+      <h3 tal:content="structure php: __T('Aknowledgements')" />
+      <span tal:omit-tag="" tal:content="structure Component/aknowledgements" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['promotion'])">
+      <h3 tal:content="structure php: __T('Promotion')" />
+      <span tal:omit-tag="" tal:content="structure Component/promotion" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['pressOffice'])">
+      <h3 tal:content="structure php: __T('Press Office')" />
+      <span tal:omit-tag="" tal:content="structure Component/pressOffice" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['projectConstruction'])">
+      <h3 tal:content="structure php: __T('Exhibition project')" />
+      <span tal:omit-tag="" tal:content="structure Component/projectConstruction" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['reviews'])">
+      <h3 tal:content="structure php: __T('Reviews')" />
+      <span tal:omit-tag="" tal:content="structure Component/reviews" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['contacts'])">
+      <h3 tal:content="structure php: __T('Contacts')" />
+      <span tal:omit-tag="" tal:content="structure Component/contacts" />
+    </span>
+    <span tal:omit-tag="" tal:condition="php: !glz_empty(Component['services'])">
+      <h3 tal:content="structure php: __T('Services')" />
+      <span tal:omit-tag="" tal:content="structure Component/services" />
+    </span>
+    <div class="content-box row-fluid clearfix" tal:condition="php: Component['video']['mediaId'] > 0">
+        <h3 tal:content="php: __T('Presentation video')" />
+        <script>
+$(function(){
+    jQuery('video,audio').mediaelementplayer();
+});
+        </script>
+        <video tal:attributes="src Component/video/src;"/>
+    </div>
+
+  <span tal:omit-tag=""
+        metal:use-macro="_macro.html/boxImageList"
+        tal:define="images Component/images;
+                    start '0';
+                    title php: __T('Images')" />
+
+  <span tal:omit-tag=""
+        metal:use-macro="_macro.html/boxAttachments"
+        tal:define="attaches Component/attaches" />
+</div>

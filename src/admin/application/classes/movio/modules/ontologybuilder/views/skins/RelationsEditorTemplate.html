@@ -1,0 +1,36 @@
+<script id="relations-editor-template" type="text/x-handlebars-template">
+<div id="relationsEditor">
+<table data-id="{{id}}" id="editTable" class="table table-bordered table-striped">
+<thead>
+    <tr>
+        {{#languages}}
+            <th>{{language_name}}</th>
+        {{/languages}}
+        <th>{{locale.cardinality}}</th>
+        <th width="100"></th>
+    </tr>
+</thead>
+<tbody>
+  {{#relations}}
+    {{> relation}}
+  {{/relations}}
+</tbody>
+</table>
+<div class="afterTableActions">
+  <a class="js-addButton btn btnBig action-link" href="#"><i class="icon-plus"></i> {{locale.addNewButton}}</a>
+</div>
+</div>
+</script>
+
+<script id="relation" type="text/x-handlebars-template">
+  <tr>
+    {{showTranslations this}}
+    <td><a href="#" data-type="select" data-pk="{{id}}" data-name="cardinality" {{#notNull cardinality}}data-value="{{cardinality}}"{{/notNull}} data-source="[{value: 0, text: '{{locale.oneToOne}}'}, {value: 1, text: '{{locale.oneToMany}}'}]"></a></td>
+    <td class="actions">
+    {{#if isNew}}
+      <input class="btn btn-primary js-saveButton" type="button" value="{{locale.saveButton}}" />
+    {{/if}}
+      <i class="js-removeButton btn-icon icon-trash"></i>
+    </td>
+  </tr>
+</script>

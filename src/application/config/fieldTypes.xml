@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fieldTypes>
+    <fieldType id="attribute.text">
+		<map_to>text</map_to>
+        <is_indexed>true</is_indexed>
+		<translation>
+			<it>Testo</it>
+			<en>Text</en>
+		</translation>
+	</fieldType>
+    <fieldType id="attribute.longtext">
+    	<map_to>text</map_to>
+        <is_indexed>true</is_indexed>
+		<translation>
+			<it>Testo lungo</it>
+			<en>Long text</en>
+		</translation>
+	</fieldType>
+    <fieldType id="attribute.descriptivetext">
+		<map_to>text</map_to>
+        <is_indexed>true</is_indexed>
+		<translation>
+			<it>Testo descrittivo (html)</it>
+			<en>Descriptive text (html)</en>
+		</translation>
+	</fieldType>
+	<fieldType id="attribute.int">
+        <map_to>integer</map_to>
+        <is_indexed>false</is_indexed>
+		<translation>
+			<it>Numerico</it>
+			<en>Numeric</en>
+		</translation>
+	</fieldType>
+	<fieldType id="attribute.date">
+		<map_to>date</map_to>
+        <is_indexed>true</is_indexed>
+		<translation>
+			<it>Data</it>
+			<en>Date</en>
+		</translation>
+	</fieldType>
+	<fieldType id="attribute.image">
+		<map_to>text</map_to>
+        <is_indexed>false</is_indexed>
+		<translation>
+			<it>Immagine</it>
+			<en>Image</en>
+		</translation>
+	</fieldType>
+    <fieldType id="attribute.imagelist">
+    	<map_to>object</map_to>
+        <is_indexed>false</is_indexed>
+		<translation>
+			<it>Elenco immagini</it>
+			<en>Image list</en>
+		</translation>
+	</fieldType>
+    <fieldType id="attribute.media">
+		<map_to>text</map_to>
+        <is_indexed>false</is_indexed>
+		<translation>
+			<it>Media</it>
+			<en>Media</en>
+		</translation>
+	</fieldType>
+	<fieldType id="attribute.medialist">
+    	<map_to>object</map_to>
+        <is_indexed>false</is_indexed>
+		<translation>
+			<it>Elenco media</it>
+			<en>Media list</en>
+		</translation>
+	</fieldType>
+    <fieldType id="attribute.photogallery">
+        <map_to>object</map_to>
+        <is_indexed>false</is_indexed>
+		<translation>
+			<it>Galleria fotografica</it>
+			<en>Photographic Gallery</en>
+		</translation>
+	</fieldType>
+    <fieldType id="attribute.openlist">
+		<map_to>text</map_to>
+        <is_indexed>true</is_indexed>
+		<translation>
+			<it>Vocabolario aperto</it>
+			<en>Open Vocabulary</en>
+		</translation>
+	</fieldType>
+	<fieldType id="attribute.externalimage">
+    	<map_to>text</map_to>
+        <is_indexed>false</is_indexed>
+		<translation>
+			<it>Immagine esterna</it>
+			<en>External image</en>
+		</translation>
+	</fieldType>
+	<fieldType id="attribute.externallink">
+		<map_to>text</map_to>
+        <is_indexed>false</is_indexed>
+		<translation>
+			<it>Link esterno</it>
+			<en>External link</en>
+		</translation>
+	</fieldType>
+    <fieldType id="attribute.internallink">
+    	<map_to>integer</map_to>
+        <is_indexed>false</is_indexed>
+		<translation>
+			<it>Link interno</it>
+			<en>Internal link</en>
+		</translation>
+	</fieldType>
+	<fieldType id="attribute.europeanaRelatedContents">
+        <map_to>object</map_to>
+        <is_indexed>false</is_indexed>
+		<translation>
+			<it>Contenuti correlati europana</it>
+			<en>Europeana related contents</en>
+		</translation>
+	</fieldType>
+	<fieldType id="attribute.thesaurus">
+    	<map_to>object</map_to>
+        <is_indexed>false</is_indexed>
+		<translation>
+			<it>Dizionario</it>
+			<en>Thesaurus</en>
+		</translation>
+	</fieldType>
+	<fieldType id="attribute.module">
+    	<map_to>object</map_to>
+        <is_indexed>false</is_indexed>
+		<translation>
+			<it>Modulo</it>
+			<en>Module</en>
+		</translation>
+	</fieldType>
+</fieldTypes>

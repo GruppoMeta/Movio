@@ -1,0 +1,133 @@
+<script id="entity-template" type="text/x-handlebars-template">
+<form class="form-horizontal row-fluid stickyForm">
+  <div id="message-box"></div>
+
+  <label for="entityName">{{locale.entityNameLabel}}</label><input id="entityName" type="text" value="{{nameId}}" data-init-text="{{nameText}}" style="width: 20em"/>
+
+  <div class="box-relations" data-id="{{id}}" id="editTable" >
+    <h2>{{locale.attributesLabel}}</h2>
+
+    {{#defaultProperties}}
+      {{> default-entity-property}}
+    {{/defaultProperties}}
+    {{#properties}}
+      {{> entity-property}}
+    {{/properties}}
+  </div>
+
+  <div class="pull-right">
+     <input id="addButton" class="btn" type="button" value="{{locale.addButton}}"/>
+  </div>
+
+  {{#if relations}}
+  <h4>{{locale.referenceRelationsLabel}}</h4>
+  <table id="reference-relations" class="modulesBuilderTable">
+  <thead>
+      <tr>
+          <td></td>
+          <td>{{locale.referenceRelationsRelation}}</td>
+          <td></td>
+          <td>{{locale.referenceRelationsShow}}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+  </thead>
+  <tbody>
+    {{#relations}}
+      {{> reference-relations-template}}
+    {{/relations}}
+  </tbody>
+  </table>
+  {{else}}
+  <h4>{{locale.referenceRelationsNone}}</h4>
+  {{/if}}
+
+  <hr/>
+
+  <div>
+    <input class="pull-left" style="margin-right: 5px" id="showRelationsGraph" type="checkbox" {{checked showRelationsGraph}}/>
+    <label for="showRelationsGraph">{{locale.showRelationsGraph}}</label>
+  </div>
+
+  <div class="formButtons">
+    <div class="content">
+        <input id="saveButton" class="btn btn-primary" type="button" value="{{locale.saveButton}}"/>
+        <input id="saveCloseButton" class="btn" type="button" value="{{locale.saveCloseButton}}"/>
+        <input id="cancelButton" class="btn" type="button" value="{{locale.cancelButton}}"/>
+        <img id="preloader" src="application/templates/icons/icon_loading.gif" style="display: none"/>
+    </div>
+  </div>
+</form>
+</script>
+
+
+<script id="default-entity-property" type="text/x-handlebars-template">
+<div class="relation -property">
+    <p>
+        <input id="propertyLabel{{id}}" type="text" style="width: 20em" value="{{labelText}}" disabled="disabled"/>
+    </p>
+</div>
+</script>
+
+<script id="entity-property" type="text/x-handlebars-template">
+<div class="relation -sortable -property" data-id="{{id}}">
+    <a href="#" class="close"><i class="icon-remove icon-white -removeButton"></i></a>
+    <p>
+        <select class="-typeSelector" >
+            {{fieldTypes type}}
+            {{relationTypes type}}
+        </select>
+        <input id="propertyLabel{{id}}" type="hidden" class="-propertyLabel" style="width: 20em" value="{{labelId}}" data-init-text="{{labelText}}" />
+        <span><input class="-fieldRequired" type="checkbox" {{checked required}}/><label>{{locale.required}}</label></span>
+        <span><input class="-showLabelInFrontend" type="checkbox" {{checked showLabelInFrontend}}/><label>{{locale.showLabelInFrontend}}</label></span>
+    </p>
+    <p>
+        <span class="-paramSelectorPanel">
+            <label>{{locale.attributeDictionary}}</label>
+            <select class="-paramSelector">
+                {{dictionaries params}}
+            </select>
+        </span>
+        
+        <span class="-moduleParamSelectorPanel">
+            <label>{{locale.attributeModule}}</label>
+            <select class="-moduleParamSelector">
+                {{modules params}}
+            </select>
+        </span>
+
+        <select class="-targetSelector">
+            {{entities target}}
+        </select>
+
+        <span class="-relationShowSelectorPanel">
+            <label>{{locale.attributeRelationShow}}</label>
+            <select class="-relationShowSelector">
+                <option {{selected relationShow 0}} value="0">{{locale.relationShowImages}}</option>
+                <option {{selected relationShow 1}} value="1">{{locale.relationShowLinks}}</option>
+                <option {{selected relationShow 2}} value="2">{{locale.relationShowImagesLinks}}</option>
+                <option {{selected relationShow 3}} value="3">{{locale.relationHide}}</option>
+            </select>
+        </span>
+
+        <label>{{locale.attributeDublicCore}}</label>
+        <select class="-dcFieldSelector">
+            <option></option>
+            <option {{selected dcField "DC.Title"}}>DC.Title</option>
+            <option {{selected dcField "DC.Creator"}}>DC.Creator</option>
+            <option {{selected dcField "DC.Subject"}}>DC.Subject</option>
+            <option {{selected dcField "DC.Description"}}>DC.Description</option>
+            <option {{selected dcField "DC.Publisher"}}>DC.Publisher</option>
+            <option {{selected dcField "DC.Contributor"}}>DC.Contributor</option>
+            <option {{selected dcField "DC.Type"}}>DC.Type</option>
+            <option {{selected dcField "DC.Identifier"}}>DC.Identifier</option>
+            <option {{selected dcField "DC.Source"}}>DC.Source</option>
+            <option {{selected dcField "DC.Relation"}}>DC.Relation</option>
+            <option {{selected dcField "DC.Coverage"}}>DC.Coverage</option>
+            <option {{selected dcField "DC.Rights"}}>DC.Rights</option>
+        </select>
+    </p>
+</div>
+</script>

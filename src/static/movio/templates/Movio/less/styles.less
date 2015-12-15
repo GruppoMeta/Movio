@@ -1,0 +1,192 @@
+/**
+ * Import libraries
+ */
+
+@import "libs/mixin.less";
+@import "libs/bootstrap.less";
+@import "libs/bootstrap-social.less";
+/**
+ * Template files
+ */
+@import "global.less";
+@import "element.less";
+@import "page.less";
+@import "structure.less";
+@import "slick.less";
+@import "mobile.less";
+@import "svg.less";
+
+
+/* font-awesome */
+@import "font-awesome/font-awesome.less";
+
+/*define lib colors */
+@white:#fff;
+@black:#000;
+@green:#7AB660;
+@red1:#B82013;
+@red2:#CC3522;
+@red3:#CB3521;
+@grey:#7E7E7E;
+@grey2:#D8D8D8;
+@grey3:#F5F5F5;
+@grey4:#C6C6C6;
+@grey5:#FAFAFA;
+@grey6:#F3F3F3;
+@grey7:#A1A1A1;
+@grey8:#363636;
+@grey9:#5E5E5E;
+@grey10:#B6B6B6;
+@grey11:#2F2F2F;
+@grey12:#7A7A7A;
+@grey13:#F9F9F9;
+@grey14:#D7D7D7;
+@grey15:#E9E9E9;
+@grey16:#D6D6D6;
+
+@color1:#CCC;
+@color2:#D8D8D8;
+@color3:#F9F9F9;
+@color4:#7A7A7A;
+@color5:#C6C6C6;
+@color6:#E4E4E4;
+@color7:#F5F5F5;
+@color8:#0099FF;
+@color9:#545453;
+@color10:#5E5E5D;
+@color11:#333;
+@color12:#CC0000;
+@color-success:green;
+@color-error:red;
+@solid:solid;
+
+
+/* define border type */
+@solid:solid;
+
+@font-1: 'Titillium Web', sans-serif;
+@font-2: 'Open Sans', sans-serif;
+
+/* colori divisi per elementi */
+@text: @black;
+@text-heading: @grey11;
+@body-background: @white;
+@color-link: @red2;
+@color-link-hover: @red1;
+@breadkcrumbs-link: @red1;
+@breadkcrumbs-link-hover: @red1;
+
+@metanavigation-background:@red2;
+@metanavigation-background-hover: @red1;
+@metanavigation-link: @white;
+@metanavigation-link-hover: @white;
+
+@slider-background: @red2;
+@slider-text: @white;
+@slider-read-more-background: @red1;
+@slider-bullet-background: @white;
+@slider-bullet-background-selected: @red1;
+
+@sidebar-background: @grey3;
+@sidebar-background-hover: @red2;
+@sidebar-border: @grey4;
+@sidebar-link: @black;
+@sidebar-link-hover: @white;
+@sidebar-arrow:@grey7;
+@sidebar-arrow-hover:@white;
+
+@sidebar-sub-background: @grey5;
+@sidebar-sub-background-hover: @red2;
+@sidebar-sub-border: @grey4;
+@sidebar-sub-link: @black;
+@sidebar-sub-link-hover: @white;
+@sidebar-box-background: @grey5;
+
+@inner-nav-link: @text-heading;
+@inner-nav-link-hover: @red2;
+
+@box-border: @grey4;
+@box-background: @grey5;
+@box-header-background: @grey6;
+@box-header-link: @black;
+@box-image-border: @grey4;
+@box-text: @text;
+@box-relation-item-border: @grey14;
+@box-relation-item-background: @white;
+@box-relation-item-link: @black;
+@box-relation-item-link-hover: @red1;
+
+@icon-in-page:lighten(@text, 70);
+@icon-in-box:@white;
+@icon-in-box-background:@grey7;
+
+@color-border-button:@grey16;
+@color-background-button:@white;
+@color-arrow-button-slider:@grey7;
+@color-arrow-button-slider-hover:@red3;
+
+@linkButton-link: @white;
+@linkButton-grandient-1: rgb(76,76,76);
+@linkButton-grandient-2: rgb(1,1,1);
+@link-button-link: @white;
+
+@storyteller-background: #E4E4E4; //#E4E4E4
+@storyteller-border: darken(@storyteller-background, 5); //#D9D9D9
+@storyteller-shadow: darken(@storyteller-background, 25);
+@storyteller-icon: lighten(@text, 70);
+@storyteller-grandient-1: lighten(@storyteller-background, 3); //#ececec;
+@storyteller-grandient-2: lighten(@storyteller-background, 10);; //#fdfdfd;
+@storyteller-border: @grey2;
+@storyteller-item-background: @grey13;
+@storyteller-comments-background: @grey13;
+@storyteller-link: @red2;
+@storyteller-navigation-link: @grey12;
+@storyteller-image-border: @grey4;
+@storyteller-border: darken(@storyteller-background, 5); //#D9D9D9
+
+@form-border: @grey15;
+@form-required: @red1;
+@form-button-primary: @red1;
+@form-buttonPrimary-gradient-2:darken(@form-button-primary, 4);
+@form-buttonPrimary-gradient-1:lighten(@form-button-primary, 24);
+@form-buttonPrimary-text:@white;
+@form-button-gradient-1:#CACACA;
+@form-button-gradient-2:darken(@form-button-gradient-1, 15);
+@form-button-text:@form-buttonPrimary-text;
+@form-input-text:#5D5D5D;
+@form-button: @color4;
+@form-input-background:@grey13;
+
+@timeline-theme: @red2;
+
+@footer-background: @grey8;
+@footer-border: @grey9;
+@footer-text: @white;
+@footer-text2: @grey10;
+
+@alert-error-background:#FFFED0;
+@alert-ok-background:#E9FBE1;
+@alert-error-text: @red3;
+@alert-ok-border:#CFE0C2;
+@alert-error-border:#FFCC00;
+
+@color-link-attach:@white;
+@color-link-attach-hover:@white;
+@bg-link-attach:@color1;
+@bg-link-attach-hover:@color9;
+
+@color-tag-attach:@white;
+@color-tag-attach-hover:#B82013;
+@bg-tag-attach:#B82013;
+@bg-tag-attach-hover:@color1;
+@bg-dl:#fafafa;
+@bg-block-my-pop-up:#fafafa;
+
+@svg-path-stroke:#000000;
+@svg-main-node-background:#D3D3D3;
+@svg-node-border:#CFCED3;
+@svg-text-link:#CC3522;
+@svg-text-link-hover:darken(@svg-text-link, 15);
+@svg-text-node:#000000;
+@svg-text-main-node:#000000;
+@svg-node-background:#FFFFFF;

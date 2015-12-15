@@ -1,0 +1,25 @@
+<span tal:omit-tag="" tal:condition="php: !Component['error']" >
+    <input type="hidden" id="keySearch" tal:attributes="value Component/params" />
+    <div class="row_fluid" tal:attributes="id php: 'img-' . Component['id']">
+      <ul class="thumbnails" >
+          <li class="span2 thumbnail" tal:repeat="item Component/records" >
+            <div style="height:190px;">
+              <div>
+                <a target="_blank" tal:attributes="href item/url; title item/title">
+                  <img tal:attributes="src item/image; title item/title" style="height:130px;"/>
+                </a>
+              </div>
+              <div>
+                <span tal:omit-tag="" tal:condition="php: Component['imgCheckBox']" >
+                  <input type="checkbox" tal:attributes="class string:js-check; name item/id; value item/title; id item/id" />
+                </span>
+                <span tal:content="php: strlen(item['title'][0]) >= 30 ? substr(item['title'][0],0, 30) . '...' : item['title']" />
+              </div>
+          </div>
+          </li>
+      </ul>
+    </div>
+</span>
+<span tal:omit-tag="" tal:condition="php: Component['error']" class="wrapper-box-summary no-padding clearfix">
+  <h1 tal:content="structure Component/error" />
+</span>

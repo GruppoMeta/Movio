@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+    model:type="2tables"
+    model:tableName="joins_tbl,users_tbl"
+    model:joinFields="join_FK_dest_id,user_id"
+    model:usePrefix="true">
+
+    <model:Query name="getUsers" type="function" arguments="roleId">
+    <![CDATA[
+        $iterator->where('join_objectName', 'roles2users')
+                 ->where('join_FK_source_id', $roleId);
+    ]]>
+    </model:Query>
+
+</model:Model>

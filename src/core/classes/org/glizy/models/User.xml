@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+	model:tableName="users_tbl" model:usePrefix="true">
+
+    <model:Query name="login" type="function" arguments="loginId,password">
+    <!--
+    	Query for login
+		Used in:
+			org.glizy.authentication.Database
+	-->
+	<![CDATA[
+        $iterator->join('t1', $this->tablePrefix.'usergroups_tbl', 't2', $iterator->expr()->eq('user_FK_usergroup_id', 'usergroup_id'))
+                 ->where('user_loginId', $loginId)
+                 ->where('user_password', $password);
+    ]]>
+    </model:Query>
+    
+	<!--
+	<model:Query name="login">
+		Query for login
+		Used in:
+			org.glizy.authentication.Database
+	<![CDATA[
+			SELECT * FROM ##TABLE_NAME##
+				INNER JOIN ##TABLE_PREFIX##usergroups_tbl ON (user_FK_usergroup_id=usergroup_id)
+				WHERE user_loginId = :loginId AND user_password = :password
+	]]>
+	</model:Query>
+	-->
+</model:Model>

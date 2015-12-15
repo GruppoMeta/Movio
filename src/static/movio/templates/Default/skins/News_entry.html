@@ -1,0 +1,27 @@
+<h2 tal:content="Component/title" />
+<h4 tal:condition="php: Component.place || Component.dateDescription">
+  <span tal:omit-tag="" tal:condition="Component/place" tal:content="Component/place" /><span tal:omit-tag="" tal:condition="php: Component.place && Component.dateDescription" tal:content="string:, " />
+  <span tal:omit-tag=""  tal:condition="Component/dateDescription" tal:content="Component/dateDescription" />
+</h4>
+<h5  tal:condition="php: Component.category || Component.urlExternal" >
+  <span tal:omit-tag="" tal:condition="Component/category" tal:content="Component/category" /><span tal:omit-tag="" tal:condition="php: Component.category && Component.urlExternal" tal:content="string:, " />
+  <span tal:omit-tag=""  tal:condition="Component/urlExternal" tal:content="structure php: __Link::formatLink(Component.urlExternal, Component.urlLabel)" />
+</h5>
+<figure tal:condition="php: Component.images[0]" class="main-img align-right" tal:content="structure php: Component.images[0].image['__html__']" />
+<article tal:omit-tag="" tal:condition="php: !glz_empty(Component.body)">
+    <span tal:omit-tag="" tal:content="structure Component/body" />
+</article>
+<section tal:omit-tag="" tal:condition="php: !glz_empty(Component.contacts)" class="item clearfix">
+    <h3 tal:content="structure php: __T('Contacts')" />
+    <span tal:omit-tag="" tal:content="structure Component/contacts" />
+</section>
+
+<span tal:omit-tag=""
+        metal:use-macro="_macro.html/boxImageList"
+        tal:define="images Component/images;
+                    start '1';
+                    title php: __T('Images')" />
+
+<span tal:omit-tag=""
+        metal:use-macro="_macro.html/boxAttachments"
+        tal:define="attaches Component/attaches" />

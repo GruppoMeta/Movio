@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+    model:tableName="glizycms.content" model:usePrefix="true" model:type="document">
+
+    <model:Query name="getContentForMenu" type="function" arguments="menuId">
+    <![CDATA[
+        $iterator->setOptions(array('type' => 'PUBLISHED_DRAFT'));
+        $iterator->where("id", $menuId);
+    ]]>
+    </model:Query>
+    <model:Script parent="model">
+    <![CDATA[
+public function getContentVO()
+{
+    $vo = org_glizy_ObjectFactory::createObject('org.glizycms.contents.models.ContentVO');
+    $vo->__id = $this->id;
+    $vo->__title = $this->title;
+    $vo->__url = $this->url;
+
+    $content = $this->data->content;
+    if ($content) {
+        foreach ($content as $name => $value) {
+            $vo->{$name} = $value;
+        }
+    }
+
+    return $vo;
+}
+
+public function isValidVO($data)
+{
+    return property_exists($data, '__id') && property_exists($data, '__title') && property_exists($data, '__url');
+}
+
+public function setDataFromContentVO(org_glizycms_contents_models_ContentVO $data)
+{
+    if ($this->isValidVO($data)) {
+        $this->id = $data->__id;
+        $this->title = $data->__title;
+        $this->url = $data->__url;
+
+        $fulltext = $this->title.org_glizycms_Glizycms::FULLTEXT_DELIMITER;
+        $newContent = new StdClass();
+        foreach ($data as $k => $v) {
+            // remove the system values and keep __indexFields for reindex function
+            if (strpos($k, '__') === 0 && $k!='__indexFields') continue;
+            $newContent->$k = $v;
+            $this->addInFulltext($v, $fulltext);
+        }
+        $this->content = $newContent;
+        $this->fulltext = $fulltext;
+        $this->addFieldsToIndex($data->__indexFields);
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
+protected function addInFulltext($value, &$fulltext)
+{
+    if (is_array($value) || is_object($value)) {
+        foreach($value as $v) {
+            $this->addInFulltext($v, $fulltext);
+        }
+    } else {
+        if (strpos($value, '{"')===0) return;
+        $stripped = trim(strip_tags($value));
+        if (!is_numeric($value) && strlen($stripped) > org_glizycms_Glizycms::FULLTEXT_MIN_CHAR ) {
+            $fulltext .= $stripped.org_glizycms_Glizycms::FULLTEXT_DELIMITER;
+        }
+    }
+}
+
+// init the index fields they can be:
+// index={tipo} ie. index=true, index=int, index=text
+// for objects in array
+// index={fieldName:type,fieldName:type} ie. id:int,type:text
+
+public function addFieldsToIndex($indexFields)
+{
+    if (!$indexFields) return;
+
+    $addedFields = array();
+    foreach($indexFields as $k=>$v) {
+        $fieldPath = explode('.', $k);
+        $targetObj = $this->content;
+        $targetKeyName = '';
+        $targetKeyNamePart = '';
+        $found = true;
+        foreach($fieldPath as $p) {
+            if (strpos($p, '@')!==false) {
+               list($p, $targetKeyNamePart) = explode('@', $p);
+            }
+            if (!property_exists($targetObj, $p)) {
+                $found = false;
+                break;
+            }
+            if (is_object($targetObj->{$p})) $targetObj = $targetObj->{$p};
+            $targetKeyName = $p;
+        }
+        if (!$found || is_null($targetObj->{$targetKeyName})) continue;
+
+        $indexType = org_glizy_dataAccessDoctrine_DbField::INDEXED;
+        $options = null;
+        switch ($v) {
+            case 'int':
+                $type = \Doctrine\DBAL\Types\Type::INTEGER;
+                break;
+            case 'date':
+                $type = \Doctrine\DBAL\Types\Type::DATE;
+                break;
+            case 'fulltext':
+                $type = Doctrine\DBAL\Types\Type::STRING;
+                $indexType = org_glizy_dataAccessDoctrine_DbField::FULLTEXT;
+                break;
+            case 'array_id':
+                $type = org_glizy_dataAccessDoctrine_types_Types::ARRAY_ID;
+                break;
+            default:
+                $type = Doctrine\DBAL\Types\Type::STRING;
+        }
+
+        // verify if the field to index is part of array
+        $targetPropName = $targetKeyName;
+
+        if ($targetKeyNamePart) {
+            $options = array( org_glizy_dataAccessDoctrine_types_Types::ARRAY_ID => array(
+                                        'type' => $type,
+                                        'field' => $targetKeyNamePart
+                                    ));
+            $type = org_glizy_dataAccessDoctrine_types_Types::ARRAY_ID;
+            $targetPropName .= $targetKeyNamePart;
+        }
+
+        $this->addField(new org_glizy_dataAccessDoctrine_DbField(
+                    $targetPropName,
+                    $type,
+                    255,
+                    false,
+                    null,
+                    '',
+                    false,
+                    false,
+                    '',
+                    $indexType | org_glizy_dataAccessDoctrine_DbField::ONLY_INDEX,
+                    $options
+                    ));
+
+        if (!in_array($targetPropName, $addedFields)) {
+            $this->{$targetPropName} = array();
+            $addedFields[] = $targetKeyName;
+        }
+
+        $this->{$targetPropName} = array_merge($this->{$targetPropName}, is_array($targetObj->{$targetKeyName}) ? $targetObj->{$targetKeyName} : array($targetObj->{$targetKeyName}));
+    }
+}
+    ]]>
+    </model:Script>
+
+    <model:Define>
+        <model:Field name="id" type="int" validator="notNull" index="true" />
+        <model:Field name="title" type="string" validator="notNull" index="false" />
+        <model:Field name="url" type="string" index="false" />
+        <model:Field name="content" type="object" index="false" readFormat="false" />
+        <model:Field name="fulltext" type="string" index="fulltext" onlyIndex="true" />
+    </model:Define>
+
+</model:Model>

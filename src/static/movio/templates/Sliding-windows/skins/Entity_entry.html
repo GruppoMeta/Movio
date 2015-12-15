@@ -1,0 +1,208 @@
+<div class="clearfix">
+  <div class="quick-slider-nav">
+    <ul></ul>
+  </div>
+   <script>
+  $(function(){
+
+      var setMenuActive = function() {
+         var currentSlide = $('.issue-slider').getSlick().currentSlide;
+         $(".quick-slider-nav li").each(function(){
+            $el =  $(this).find('a').first();
+            if($el.attr('data') == currentSlide) {
+              $el.addClass('active');
+            } else {
+              $el.removeClass('active');
+            }
+         });
+      }
+
+      var setSlide = function(initialSlide) {
+         $('.issue-slider').unslick();
+         $('.issue-slider').slick({
+            dots: false,
+            refresh: true,
+            centerPadding: '170px',
+            centerMode: true,
+            infinite: false,
+            speed: 700,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            onAfterChange: setMenuActive,
+            responsive: [{
+              breakpoint: 480,
+              settings: {
+                 centerPadding: '10px'
+              }
+            }]
+          });
+      }
+
+      var resize  = function() {
+        var h = $(window).height() - $('#header').height() - $('#footer').height() -2*($('div.quick-slider-nav').height() + $('div.box-title').height() + $('div.breadcrumb').height());
+        $('.item-slide-height-full').height(h);
+      }
+
+      $( document ).on('click', '.quick-slider-nav a', function(e){
+          e.preventDefault();
+          $(this).parent().parent().find('a.active').first().removeClass('active');
+          $(this).addClass('active');
+          $('.issue-slider').slickGoTo(parseFloat($(this).attr('data')));
+      });
+      $( document ).on('click', '.slick-next, .slick-prev', function(e){
+          setMenuActive();
+      });
+
+      $(document).on('ready', function(){
+        var html ='';
+        $('div .item-slide').each(function(index, el){
+            active = index == 0 ? ' class="active" ' : ' ';
+            // <![CDATA[
+            html += '<li><a' + active +'data="' + index + '"><span class="fa fa-' + $(this).attr("data")+ '"></span></a></li>';
+            // ]]>
+        });
+        $('div.quick-slider-nav ul').append(html);
+
+        var width1 = $(window).width();
+        if(width1 >= 700) {
+          $(window).resize(function () {
+            resize();
+          });
+          resize();
+        }
+
+        setSlide();
+
+        $('.js-relationImage').slick({
+            dots: false,
+            infinite: false,
+            speed: 700,
+            slidesToShow: 6,
+            slidesToScroll: 1,
+            responsive: [{
+              breakpoint: 1024,
+              settings: {
+                slidesToShow: 3,
+                slidesToScroll: 1,
+                infinite: true,
+                dots: false
+              }
+            }, {
+              breakpoint: 600,
+              settings: {
+                slidesToShow: 2,
+                slidesToScroll: 1
+              }
+            }, {
+              breakpoint: 480,
+              settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1
+              }
+            }]
+          });
+      });
+    });
+  </script>
+
+  <div class="slider issue-slider clearfix">
+
+    <span tal:omit-tag="" tal:repeat="attribute Component/attributes/figure" >
+      <div class="item-slide item-slide-height-full slide clearfix" data="picture-o" tal:condition="php: Component[attribute['name']]['mediaId']" >
+        <div class="overflow content-slide">
+          <figure>
+            <span tal:omit-tag="" tal:content="structure php:Component[attribute['name']]['__html__']" />
+            <figcaption class="description" tal:content="structure php:Component[attribute['name']]['title']" />
+          </figure>
+        </div>
+      </div>
+    </span>
+
+   <div class="item-slide item-slide-height-full text slide clearfix" data ="file-text">
+      <div class="overflow content-slide" >
+        <span tal:omit-tag="" tal:condition="php: count(Component['attributes'].properties)">
+          <span tal:omit-tag="" tal:repeat="attribute Component/attributes/properties">
+            <span tal:omit-tag="" tal:condition="php: attribute['type'] == 'property'">
+              <span tal:omit-tag="" tal:condition="php: Component[attribute['name']] != ''">
+              <dt tal:condition="php: attribute['label']" tal:content="php: attribute['label']"></dt>
+              <dd tal:content="structure php:Component[attribute['name']]"></dd>
+              </span>
+            </span>
+            <span tal:omit-tag="" tal:condition="php: attribute['type'] == 'date'">
+              <span tal:omit-tag="" tal:condition="php: Component[attribute['name']] != ''">
+              <dt tal:condition="php: attribute['label']" tal:content="php: attribute['label']"></dt>
+              <dd tal:content="php:glz_defaultDate2locale( __T('GLZ_DATE_FORMAT'), Component[attribute['name']])"></dd>
+              </span>
+            </span>
+
+            <span tal:omit-tag="" tal:condition="php: attribute['type'] == 'thesaurus'">
+              <span tal:omit-tag="" tal:condition="php: count(Component[attribute['name']])">
+              <dt tal:condition="php: attribute['label']" tal:content="php: attribute['label']"></dt>
+              <dd><span tal:omit-tag="" tal:repeat="item php:Component[attribute['name']]"><a tal:attributes="href item/url; title item/title" tal:content="structure item/title"></a>  </span></dd>
+              </span>
+            </span>
+          </span>
+        </span>
+        <span tal:omit-tag="" tal:condition="php: count(Component['attributes'].body)">
+          <span tal:omit-tag="" tal:repeat="attribute Component/attributes/body">
+
+              <span tal:omit-tag="" tal:condition="php: attribute['type'] == 'longtext'">
+                <span tal:omit-tag="" tal:condition="php: !glz_empty(Component[attribute['name']])">
+                  <h3 tal:condition="php: attribute['label']"  tal:content="php: attribute['label']" />
+                  <span tal:omit-tag="" tal:content="structure php:Component[attribute['name']]" />
+                </span>
+              </span>
+
+              <span tal:omit-tag="" tal:condition="php: attribute['type'] == 'imagelist'">
+                <span tal:omit-tag="" tal:condition="php: count(Component[attribute['name']]['content'])">
+                  <h3 tal:condition="php: attribute['label']"  tal:content="php: attribute['label']" />
+                  <div class="slider js-relationImage imageList clearfix js-imageList">
+                    <div class="slide" tal:repeat="item php:Component[attribute['name']]['content']" tal:content="structure item/__html__" />
+                  </div>
+                </span>
+              </span>
+
+              <span tal:omit-tag="" tal:condition="php: attribute['type'] == 'media'">
+                <span tal:omit-tag="" tal:condition="php: Component[attribute['name']]['__html__'] != ''">
+                  <h3 tal:condition="php: attribute['label']"  tal:content="php: attribute['label']" />
+                  <span tal:omit-tag="" tal:content="structure php:Component[attribute['name']]['__html__']" />
+                </span>
+              </span>
+
+              <span tal:omit-tag="" tal:condition="php: attribute['type'] == 'medialist'">
+                <span tal:omit-tag="" tal:condition="php: count(Component[attribute['name']]['content'])">
+                  <h3 tal:condition="php: attribute['label']"  tal:content="php: attribute['label']" />
+                  <ul class="downloadList">
+                    <li tal:repeat="item php:Component[attribute['name']]['content']" tal:content="structure item/__html__" />
+                  </ul>
+                </span>
+              </span>
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <div class="item-slide item-slide-height-full link slide clearfix" data="link" tal:condition="php: property_exists(Component['relations'], 'europeanaRelatedContents') or property_exists(Component['relations'], 'relations') or property_exists(Component['relations'], 'referenceRelations')" >
+       <div class="overflow content-slide slider js-relationImage imageList clearfix js-imageList" >
+        <article class="box collapsible big">
+          <span tal:condition="php: property_exists(Component['relations'], 'europeanaRelatedContents')" tal:content="structure Component/relations/europeanaRelatedContents" />
+          <span tal:condition="php: property_exists(Component['relations'], 'relations')" tal:content="structure Component/relations/relations" />
+          <span tal:condition="php: property_exists(Component['relations'], 'referenceRelations')" tal:content="structure Component/relations/referenceRelations" />
+        </article>
+      </div>
+    </div>
+
+    <div class="item-slide item-slide-height-full link slide clearfix" data="film" tal:condition="php: property_exists(Component['relations'], 'photogallery')" >
+      <div class="overflow content-slide" >
+        <article tal:condition="php: property_exists(Component['relations'], 'photogallery')" tal:content="structure Component/relations/photogallery" />
+      </div>
+    </div>
+
+    <div class="item-slide item-slide-height-full link slide clearfix" data="sitemap" tal:condition="php: property_exists(Component['relations'], 'relationsGraph')" >
+      <div class="overflow content-slide" >
+        <article class="box relationGeneral collapsible big" tal:content="structure Component/relations/relationsGraph" />
+      </div>
+    </div>
+
+  </div>
+</div>

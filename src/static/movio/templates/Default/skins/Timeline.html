@@ -1,0 +1,18 @@
+<div id="timeline-embed"></div>
+<script>
+var embed_path = 'static/timelinejs/';
+var timeline_config = {
+    width:              '<span tal:omit-tag="" tal:content="structure Component/width" />',
+    height:             '<span tal:omit-tag="" tal:content="structure Component/height" />',
+    source:             '<span tal:omit-tag="" tal:content="structure Component/source" />',
+    embed_id:           'timeline-embed',
+    hash_bookmark:      true,
+    font:               '<span tal:omit-tag="" tal:content="structure Component/font" />',
+    debug:              false,
+    lang:               '<span tal:omit-tag="" tal:content="structure Component/lang" />',
+    maptype:            '<span tal:omit-tag="" tal:content="structure Component/maptype" />',
+    css:                'static/timelinejs/css/timeline.css',
+    js:                 'static/timelinejs/js/timeline-min.js'
+}
+</script>
+<script src="static/timelinejs/js/storyjs-embed.js"></script>

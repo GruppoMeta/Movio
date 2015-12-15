@@ -1,0 +1,10 @@
+<div tal:attributes="style php:(Component['width'] ? 'margin: auto;; width: ' . Component['width'] . 'px;;' : '') . (Component['margin'] ? 'margin-top: ' . Component['margin'] . 'px;;' : '')">
+    <span tal:omit-tag="" tal:content="structure Component/text" />
+    <div class="clearfix" tal:condition="php: Component['image']['mediaId'] > 0">
+        <a tal:attributes="href Component/pageId">
+            <span tal:omit-tag="" tal:content="structure Component/image/__html__" />
+        </a>
+    </div>
+    <span tal:omit-tag="" tal:content="structure Component/textAfter" />
+</div>
+

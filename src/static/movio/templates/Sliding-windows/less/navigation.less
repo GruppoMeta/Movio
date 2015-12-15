@@ -1,0 +1,225 @@
+/**
+ * Language navigation
+ */
+.languages {
+text-transform:uppercase;
+position:absolute;
+top:0;
+right:0;
+margin-right:10px;
+
+	ul {
+		.padding-margin-reset();
+		
+		li {
+			display:inline;
+			
+			a {
+				font-size:12px;
+				display:inline-block;						
+				margin:0;
+				text-decoration:none;
+				border-top:5px solid @box-header-background;
+				width:25px;
+				padding-top:3px;
+				text-align:center;
+				
+				&:hover, &.active {
+					border-top:5px solid @border-color-link;	
+				}
+				
+			}
+			
+		}
+			
+	}
+
+}
+
+/**
+ * Matanavigation
+ */
+.metanavigation {
+    margin-left:20px;
+    float:left;
+    margin-top:5px;
+    ul {
+        .padding-margin-reset();
+        li {
+            display:inline;
+            padding:0 0 0 4px;
+            a {
+                display:inline-block;
+                margin-right:6px;
+                &.active {
+                    text-decoration:underline;
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Navigation menu
+ */
+.menu {
+    padding:0 0;  
+	position:absolute;
+	bottom:0;
+	right:0;
+	margin-bottom:5px;
+				
+    ul {
+        .padding-margin-reset();
+		margin-right:-15px;
+								
+        li {
+			list-style:none;
+			display:inline-block;
+			float:left;
+			
+			 &.jqx-menu-item-top-selected {
+				 	a {
+						color: @color-link-menu;
+						text-decoration:none;
+						border-bottom:5px solid @box-sub-menu-background;
+						background:@box-sub-menu-background;	
+					}
+				}
+			
+			
+            a {
+                color: @color-link-menu;
+                font-size:12px;
+				text-transform:uppercase;
+				margin-right:25px;			
+				display:inline-block;
+				padding:5px 8px 0 8px;
+				line-height:1em;
+				border-bottom:5px solid @box-header-background;
+							
+                &:hover {
+                    color: @color-link-menu;
+					text-decoration:none;
+					border-bottom:5px solid @box-sub-menu-background;
+					background:@box-sub-menu-background;
+                }
+                &.active {
+                    color: @color-link-menu;
+                    text-decoration:none;
+					border-bottom:5px solid @border-color-link;	
+                }
+            }
+        }	
+	}
+}
+
+.jqx-menu-dropdown {
+	.padding-margin-reset();
+	width:174px;
+	background:@box-sub-menu-background;
+	
+	.jqx-item {
+		.jqx-icon-arrow-right {				
+			width: 0!important; 
+			height: 0!important; 
+			border-top:5px solid transparent!important;
+			border-bottom:5px solid transparent!important;	
+			border-left:5px solid @color-link-menu!important;
+			margin-right:5px!important;	
+			margin-left:5px!important;			
+		}	
+	}
+	
+	a {
+		color: @color-link-menu;
+		line-height:1.2em;
+		padding:8px 8px;		
+		border-bottom:1px solid @box-header-background;
+		display:block;
+		font-size:12px;
+		text-transform:uppercase;
+		
+		&:hover {
+			background:@border-color-link;
+			text-decoration:none;	
+		}
+		
+	}	
+		
+}
+
+/**
+ * Breadcrumb
+ */
+.breadcrumb {
+    margin:5px 0 15px 0;  
+	font-size:13px;
+	
+    ul {
+        .padding-margin-reset();
+        li {
+            display:inline;
+			font-style:italic;
+			
+			&:first-child {
+				font-style:normal;
+				}
+			
+            a {
+            	color: @breadkcrumbs-link;				
+            	&:hover {
+            		color: @breadkcrumbs-link-hover;
+					text-decoration:none;					
+            	}
+            }
+        }
+    }
+}
+
+/**
+ * Pagination
+ */
+.pagination {
+    width:100%;
+
+    ul {
+        padding:0;
+        width:100%;
+        min-height:29px;
+        text-align:center;
+        text-align:center;
+
+        li {
+            display:inline;
+            a {
+                border:0;
+                background:none;
+                float:none;
+                color:@text;
+                display:inline-block;
+                padding-top:0;
+                margin-top:7px;
+                padding-bottom:0;
+                line-height:1em;
+                font-size:14px;
+                outline:none;
+                padding:0 5px 0 5px;
+                border-left:1px @solid @box-border;
+                &:hover {
+                    text-decoration:underline;
+                }
+            }
+            &.active a {
+                text-decoration:underline;
+            }
+            &:first-child > a {
+                border:0;
+                padding-left:17px;
+            }
+            &:last-child > a {
+                padding-right:17px;
+            }
+        }
+    }
+}

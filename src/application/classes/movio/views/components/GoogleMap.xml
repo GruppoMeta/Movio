@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<m:GoogleMapCmp
+    label="{i18n:Google Map}"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:cms="org.glizycms.views.components.*"
+    xmlns:m="movio.views.components.*">
+
+    <glz:Input id="width" label="{i18n:Width (default full width)}" size="50" />
+    <glz:Input id="height" label="{i18n:Height (default 600px)}" size="50" />
+    <glz:Input id="geo" label="{i18n:Address}" size="90" data="type=googlemaps" required="true" />
+    <glz:Input id="text" label="{i18n:Text}" size="50" required="true" />
+    <glz:List id="pathEnable" label="{i18n:Connect POI with a path}">
+            <glz:ListItem value="{i18n:No connection}" key="0" />
+            <glz:ListItem value="{i18n:Line}" key="1" />
+            <glz:ListItem value="{i18n:Route car}" key="3" />
+            <glz:ListItem value="{i18n:Route transit}" key="4" />
+            <glz:ListItem value="{i18n:Route bicycling}" key="2" />
+            <glz:ListItem value="{i18n:Route walking}" key="5" />
+    </glz:List>
+
+    <glz:Repeater id="markers" label="{i18n:Markers}" adm:collapsable="true">
+        <glz:Input id="poi" label="{i18n:POI}" size="90" required="true" data="type=googlemaps" />
+        <glz:Input id="title" label="{i18n:Title}" size="50" required="false" />
+        <glz:LongText id="text" label="{i18n:Text}" adm:rows="10" adm:cols="75" adm:htmlEditor="true" required="false" />
+        <glz:Image id="image" label="{i18n:Image}" width="{config:movio.thumb.map.width}" height="{config:movio.thumb.map.height}" crop="{config:movio.thumb.map.crop}" />
+        <glz:List id="type" label="{i18n:Link type}" data="target=externalLink,internalLink;val_0=1,0;val_1=0,1;">
+            <glz:ListItem value="{i18n:External link}" key="externalLink" />
+            <glz:ListItem value="{i18n:Internal link}" key="internalLink" />
+        </glz:List>
+        <glz:Input id="externalLink" label="{i18n:External link}" size="50" required="false" data="type=url" />
+        <cms:PagePicker id="internalLink" label="{i18n:Linked page}" required="false" />
+    </glz:Repeater>
+
+</m:GoogleMapCmp>

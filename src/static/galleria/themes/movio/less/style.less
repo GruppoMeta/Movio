@@ -1,0 +1,23 @@
+@import "gallery.less";
+@import "pageflip.less";
+@import "slider.less";
+@import "slideshow.less";
+
+@font:Arial, Helvetica, sans-serif;
+
+#galleria-loader{height:1px!important}
+
+#galleria{height:500px}
+
+
+.border-radius (@radius) {
+  border-radius: @radius;
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
+}
+
+.glow (@color) {
+-moz-box-shadow: inset -1px 1px 1px @color;
+-webkit-box-shadow: inset -1px 1px 1px @color;
+box-shadow: inset -1px 1px 1px @color;
+}

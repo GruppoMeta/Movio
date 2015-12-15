@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+	model:tableName="languages_tbl" model:usePrefix="true">
+	
+	<model:Query name="getLanguageDictionary" type="function">
+    <![CDATA[
+        $iterator->select('language_id as k', 'language_name as v')
+                 ->orderBy('language_id');
+    ]]>
+    </model:Query>
+
+    <model:Query name="mysql_duplicateMenuDetail">
+    <!--
+        Duplicate the menu details
+        Used in:
+            org.glizycms.languages.models.proxy.LanguagesProxy
+    -->
+    <![CDATA[
+        INSERT INTO ##TABLE_PREFIX##menudetails_tbl (
+    menudetail_FK_menu_id,
+    menudetail_FK_language_id,
+    menudetail_title,
+    menudetail_keywords,
+    menudetail_description,
+    menudetail_subject,
+    menudetail_creator,
+    menudetail_publisher,
+    menudetail_contributor,
+    menudetail_type,
+    menudetail_identifier,
+    menudetail_source,
+    menudetail_relation,
+    menudetail_coverage,
+    menudetail_isVisible,
+    menudetail_titleLink,
+    menudetail_linkDescription)
+SELECT
+    menudetail_FK_menu_id,
+    :newLanguageId,
+    menudetail_title,
+    menudetail_keywords,
+    menudetail_description,
+    menudetail_subject,
+    menudetail_creator,
+    menudetail_publisher,
+    menudetail_contributor,
+    menudetail_type,
+    menudetail_identifier,
+    menudetail_source,
+    menudetail_relation,
+    menudetail_coverage,
+    menudetail_isVisible,
+    menudetail_titleLink,
+    menudetail_linkDescription
+FROM ##TABLE_PREFIX##menudetails_tbl
+WHERE menudetail_FK_language_id=:languageId
+    ]]>
+    </model:Query>
+    <model:Query name="mysql_duplicateDocumentsDetail">
+    <!--
+        Duplicate the documents
+        Used in:
+            org.glizycms.languages.models.proxy.LanguagesProxy
+    -->
+    <![CDATA[
+        INSERT INTO ##TABLE_PREFIX##documents_detail_tbl (
+    document_detail_FK_document_id,
+    document_detail_FK_language_id,
+    document_detail_FK_user_id,
+    document_detail_modificationDate,
+    document_detail_status,
+    document_detail_translated,
+    document_detail_object)
+SELECT
+    document_detail_FK_document_id,
+    :newLanguageId,
+    document_detail_FK_user_id,
+    document_detail_modificationDate,
+    document_detail_status,
+    0,
+    document_detail_object
+FROM ##TABLE_PREFIX##documents_detail_tbl
+WHERE document_detail_FK_language_id=:languageId AND document_detail_status = 'PUBLISHED'
+    ]]>
+    </model:Query>
+    <model:Query name="mysql_duplicateMediaDetail">
+    <!--
+        Duplicate the media detail
+        Used in:
+            org.glizycms.languages.models.proxy.LanguagesProxy
+    -->
+    <![CDATA[
+        INSERT INTO ##TABLE_PREFIX##mediadetails_tbl (
+    mediadetail_FK_media_id,
+    media_FK_language_id,
+    media_FK_user_id,
+    media_modificationDate,
+    media_title,
+    media_category,
+    media_date,
+    media_copyright,
+    media_description)
+SELECT
+    mediadetail_FK_media_id,
+    :newLanguageId,
+    media_FK_user_id,
+    media_modificationDate,
+    media_title,
+    media_category,
+    media_date,
+    media_copyright,
+    media_description
+FROM ##TABLE_PREFIX##mediadetails_tbl
+WHERE media_FK_language_id=:languageId
+    ]]>
+    </model:Query>
+<model:Query name="pgsql_duplicateMenuDetail">
+    <!--
+        Duplicate the menu details
+        Used in:
+            org.glizycms.languages.models.proxy.LanguagesProxy
+    -->
+    <![CDATA[
+        INSERT INTO ##TABLE_PREFIX##menudetails_tbl (
+    "menudetail_FK_menu_id",
+    "menudetail_FK_language_id",
+    "menudetail_title",
+    "menudetail_keywords",
+    "menudetail_description",
+    "menudetail_subject",
+    "menudetail_creator",
+    "menudetail_publisher",
+    "menudetail_contributor",
+    "menudetail_type",
+    "menudetail_identifier",
+    "menudetail_source",
+    "menudetail_relation",
+    "menudetail_coverage",
+    "menudetail_isVisible",
+    "menudetail_titleLink",
+    "menudetail_linkDescription")
+SELECT
+    "menudetail_FK_menu_id",
+    :newLanguageId,
+    "menudetail_title",
+    "menudetail_keywords",
+    "menudetail_description",
+    "menudetail_subject",
+    "menudetail_creator",
+    "menudetail_publisher",
+    "menudetail_contributor",
+    "menudetail_type",
+    "menudetail_identifier",
+    "menudetail_source",
+    "menudetail_relation",
+    "menudetail_coverage",
+    "menudetail_isVisible",
+    "menudetail_titleLink",
+    "menudetail_linkDescription"
+FROM ##TABLE_PREFIX##menudetails_tbl
+WHERE "menudetail_FK_language_id"=:languageId
+    ]]>
+    </model:Query>
+    <model:Query name="pgsql_duplicateDocumentsDetail">
+    <!--
+        Duplicate the documents
+        Used in:
+            org.glizycms.languages.models.proxy.LanguagesProxy
+    -->
+    <![CDATA[
+        INSERT INTO ##TABLE_PREFIX##documents_detail_tbl (
+    "document_detail_FK_document_id",
+    "document_detail_FK_language_id",
+    "document_detail_FK_user_id",
+    "document_detail_modificationDate",
+    "document_detail_status",
+    "document_detail_translated",
+    "document_detail_object")
+SELECT
+    "document_detail_FK_document_id",
+    :newLanguageId,
+    "document_detail_FK_user_id",
+    "document_detail_modificationDate",
+    "document_detail_status",
+    0,
+    "document_detail_object"
+FROM ##TABLE_PREFIX##documents_detail_tbl
+WHERE "document_detail_FK_language_id"=:languageId AND document_detail_status = 'PUBLISHED'
+    ]]>
+    </model:Query>
+    <model:Query name="pgsql_duplicateMediaDetail">
+    <!--
+        Duplicate the media detail
+        Used in:
+            org.glizycms.languages.models.proxy.LanguagesProxy
+    -->
+    <![CDATA[
+        INSERT INTO ##TABLE_PREFIX##mediadetails_tbl (
+    "mediadetail_FK_media_id",
+    "media_FK_language_id",
+    "media_FK_user_id",
+    "media_modificationDate",
+    "media_title",
+    "media_category",
+    "media_date",
+    "media_copyright",
+    "media_description")
+SELECT
+    "mediadetail_FK_media_id",
+    :newLanguageId,
+    "media_FK_user_id",
+    "media_modificationDate",
+    "media_title",
+    "media_category",
+    "media_date",
+    "media_copyright",
+    "media_description"
+FROM ##TABLE_PREFIX##mediadetails_tbl
+WHERE "media_FK_language_id"=:languageId
+    ]]>
+    </model:Query>
+
+    <model:Query name="deleteMenuDetail" type="function" arguments="languageId">
+    <!--
+        Delete the menu details
+        Used in:
+            org.glizycms.languages.models.proxy.LanguagesProxy
+    -->
+    <![CDATA[
+        $expr = $iterator->expr();
+        $qb = $iterator->qb();
+        $qb->delete($this->tablePrefix.'menudetails_tbl')
+              ->where($expr->comparison('menudetail_FK_language_id', '=', ':languageId'))
+              ->setParameter('languageId', $languageId);
+        $iterator->setSqlQuery($qb->getSQL());
+    ]]>
+    </model:Query>
+    <model:Query name="deleteDocumentsDetail" type="function" arguments="languageId">
+    <!--
+        Delete the menu details
+        Used in:
+            org.glizycms.languages.models.proxy.LanguagesProxy
+    -->
+    <![CDATA[
+        $expr = $iterator->expr();
+        $qb = $iterator->qb();
+        $qb->delete($this->tablePrefix.'documents_detail_tbl')
+              ->where($expr->comparison('document_detail_FK_language_id', '=', ':languageId'))
+              ->setParameter(':languageId', $languageId);
+        $iterator->setSqlQuery($qb->getSQL());
+    ]]>
+    </model:Query>
+    <model:Query name="deleteMediaDetail" type="function" arguments="languageId">
+    <!--
+        Delete the menu details
+        Used in:
+            org.glizycms.languages.models.proxy.LanguagesProxy
+    -->
+    <![CDATA[
+        $expr = $iterator->expr();
+        $qb = $iterator->qb();
+        $qb->delete($this->tablePrefix.'mediadetails_tbl')
+              ->where($expr->comparison('media_FK_language_id', '=', ':languageId'))
+              ->setParameter(':languageId', $languageId);
+        $iterator->setSqlQuery($qb->getSQL());
+    ]]>
+    </model:Query>
+</model:Model>

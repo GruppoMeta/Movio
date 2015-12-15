@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:EmptyComponent
+        xmlns:m="movio.views.components.*">
+
+    <glz:Input id="customCss" label="{i18n:Custom css}" size="90" type="multiline" rows="10" cols="70" />
+</glz:EmptyComponent>

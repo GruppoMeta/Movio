@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:Page id="Page"
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:r="org.glizycms.roleManager.views.*"
+    xmlns:cms="org.glizycms.views.components.*"
+	templateType="php"
+	templateFileName="Page.php"
+	defaultEditableRegion="content">
+	<glz:Import src="_common.xml" />
+	<!-- TODO: USARE MVC STATE-->
+	<glz:StateSwitch id="dataGridEdit" defaultState="list" rememberState="false" customClass="org.glizycms.roleManager.controllers.StateController" >
+		<glz:State name="list">
+			<glz:DataProvider id="dp" recordClassName="org.glizycms.roleManager.models.Role" />
+			<glz:Form id="editForm">
+				<glz:DataGrid id="dataGrid" label="Elenco ruoli" dataProvider="{dp}" filters="{filters}" tableCssClass="table table-striped table-bordered" cssClass="odd,even" paginate="{dataGridPaginate}" controller="{dataGridEdit}" orderStyle="BLACK">
+					<glz:DataGridColumn columnName="role_id" 				visible="false" key="true"/>
+					<glz:DataGridColumn columnName="role_name" 				headerText="Nome" />
+					<glz:DataGridColumn command="edit" 						width="20" aclService="{php:$application->getPageId()}" />
+					<glz:DataGridColumn command="delete" 					width="20" aclService="{php:$application->getPageId()}" />
+				</glz:DataGrid>
+				<glz:PaginateResult id="dataGridPaginate" cssClass="pagination"/>
+
+				<glz:Button value="{i18n:Aggiungi un nuovo ruolo}" target="{dataGridEdit}" action="new" actionType="location" cssClass="{config:glizycms.form.actionLink.cssClass}" visible="{php:$user->acl($application->getPageId(),'new')}" editableRegion="actions"/>
+			</glz:Form>
+		</glz:State>
+		<glz:State name="new,edit">
+			<glz:MessageBox type="ERROR" cssClass="message failure"/>
+			<glz:LongText adm:htmlEditor="true"><![CDATA[
+			<p class="genericCaption">Creazione nuovo ruolo.</p>
+			<p>Inserire i dati per la creazione del nuovo sito.</p>
+			]]></glz:LongText>
+			<glz:Form id="myForm" removeGetValues="false" enctype="multipart/form-data" addValidationJs="false">
+				<glz:Hidden id="roleId" />
+				<glz:Input id="roleName" label="{i18n:Nome del ruolo}" size="90" required="true" />
+				<r:Input id="groups" mode="groups" label="{i18n:Gruppo associati}" size="90" />
+				<r:Input id="users" mode="users" label="{i18n:Utenti associati}" size="90" />
+				<glz:Checkbox id="roleActive" label="{i18n:Attivo}" size="90" />
+    			<r:Permissions id="permissions" label="{i18n:Permessi per il ruolo}" />
+
+				<cms:FormButtonsPanel>
+					<glz:HtmlButton label="{i18n:Salva}" id="next" value="next" name="action" cssClass="btn btn-primary" />
+					<glz:Button value="{i18n:GLZ_CANCEL}" target="{dataGridEdit}" action="reset" actionType="location" cssClass="btn" visible="true"/>
+				</cms:FormButtonsPanel>
+			</glz:Form>
+		</glz:State>
+	</glz:StateSwitch>
+</glz:Page>

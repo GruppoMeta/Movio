@@ -1,0 +1,4 @@
+<?php
+class org_glizycms_languages_controllers_Edit extends org_glizycms_contents_controllers_activeRecordEdit_Edit
+{
+}

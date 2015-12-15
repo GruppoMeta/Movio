@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cms="org.glizycms.views.components.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="2cols.php"
+    adm:editComponents="text,privacy,confirm"
+    controllerName="org.glizycms.userManager.fe.controllers.user.*"
+    defaultAction="registration">
+	<glz:Import src="Common.xml" />
+	<mvc:State name="registration">
+<!--
+TODO localizzare
+-->
+		<glz:LongText id="text" label="{i18n:Text}" forceP="true" adm:rows="20" adm:cols="75" adm:htmlEditor="true" />
+		<glz:MessageBox type="ERROR" cssClass="message error" message="{i18n:Check following errors:}" />
+		<glz:Form id="registration" cssClass="form-horizontal my-form">
+			<glz:Input id="name" label="{i18n:MW_USER_NAME}" size="50" required="true" validationType="not_empty" bindTo="user_firstName" />
+			<glz:Input id="surname" label="{i18n:MW_USER_SURNAME}" size="50" required="true" validationType="not_empty" bindTo="user_lastName" />
+			<glz:Input id="email" label="{i18n:MW_USER_EMAIL}" size="50" required="true" validationType="email" bindTo="user_email" />
+			<glz:Input id="psw" label="{i18n:MW_USER_PSW}" size="50" type="password" required="true" validationType="not_empty" bindTo="user_password" />
+            <glz:DataDictionary id="usergroupsDP" recordClassName="org.glizycms.userManager.models.UserGroup" query="userGroups" />
+            <glz:List id="profile" bindTo="user_FK_usergroup_id" label="{i18n:Profilo}" dataProvider="{usergroupsDP}" emptyValue="-" required="true" />
+			<glz:LongText id="privacy" label="{i18n:MW_REGISTRATION_PRIVACY_TEXT}" forceP="true" adm:rows="10" adm:cols="75" adm:htmlEditor="true" skin="{privacySKIN}" />
+			<glz:Checkbox id="agree" label="{i18n:MW_REGISTRATION_PRIVACY}" skin="{checkBoxSKIN}" required="true" validationType="checkbox"/>
+			<glz:Panel cssClass="formButtons" >
+				<glz:HtmlButton label="{i18n:MW_SUBMIT}" value="submit" name="submit" cssClass="submitButton" />
+			</glz:Panel>
+		</glz:Form>
+		<glz:Text text="{i18n:MW_REGISTRATION_REQUIRED}" wrapTag="p" />
+	</mvc:State>
+	<mvc:State name="registrationConfirm">
+		<glz:LongText id="confirm" label="{i18n:MW_REGISTRATION_CONFIRM}" forceP="true" adm:rows="10" adm:cols="75" adm:htmlEditor="true" />
+	</mvc:State>
+	<glz:SkinDefine id="privacySKIN"><![CDATA[
+	<span tal:omit-tag="">
+		<hr />
+		<div id="privacy" tal:content="structure LongText"></div>
+	</span>
+	]]></glz:SkinDefine>
+	<glz:SkinDefine id="checkBoxSKIN"><![CDATA[
+	<span tal:omit-tag="">
+		<p class="smallPrivacy"><input type="checkbox" value="1" class="required  validate[required,]" name="agree" id="agree" />&nbsp;<span tal:omit-tag="" tal:content="Checkbox/label" /></p>
+	</span>
+	]]></glz:SkinDefine>
+</mvc:Page>

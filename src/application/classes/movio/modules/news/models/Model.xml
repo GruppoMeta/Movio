@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+    model:tableName="movio.modules.news" model:usePrefix="true" model:type="document">
+
+
+    <model:Define>
+        <!-- system -->
+        <model:Field name="title" type="string" length="255" index="true" />
+        <model:Field name="fulltext" type="string" index="fulltext" />
+
+        <!-- custom -->
+        <model:Field name="startDate" type="date" validator="date,notnull" index="true" />
+        <model:Field name="endDate" type="date" validator="date,notnull" index="true" />
+        <model:Field name="category" type="string" length="255" index="true" />
+        <model:Field name="dateDescription" type="string" />
+        <model:Field name="place" type="string" length="255" index="true" />
+        <model:Field name="bodyShort" type="text" />
+        <model:Field name="body" type="text" />
+        <model:Field name="contacts" type="text" />
+        <model:Field name="urlLabel" type="string" />
+        <model:Field name="urlExternal" type="string" />
+        <model:Field name="images" type="object" readFormat="false" />
+        <model:Field name="attaches" type="object" readFormat="false" />
+
+        <model:Field name="year" type="int" onlyIndex="true" />
+        <model:Field name="body,bodyShort" type="string" index="fulltext" onlyIndex="true" />
+    </model:Define>
+
+    <model:Script parent="model">
+    <![CDATA[
+    public function save($values=NULL, $forceNew=false, $status='DRAFT') {
+        $this->createAddictionalIndex();
+        return parent::save($values, $forceNew, $status);
+    }
+
+    public function publish($values = null, $comment='', $forceNew=false) {
+        $this->createAddictionalIndex();
+        return parent::publish($values, $comment, $forceNew);
+    }
+
+    private function createAddictionalIndex()
+    {
+        $startDate = $this->getFieldValueByRegexp('_startDate', true);
+        if ($startDate) {
+            $this->year = substr($startDate, 0, strpos($startDate, '-'));
+        }
+
+        $k = 'body,bodyShort';
+        $this->$k = $this->body.$this->bodyShort;
+    }
+    ]]>
+    </model:Script>
+
+    <model:Query name="filterYear" type="function">
+    <![CDATA[
+        $iterator->selectIndex('year', 'DISTINCT document_index_int_value as k', 'document_index_int_value as v')
+                 ->orderBy('year');
+    ]]>
+    </model:Query>
+
+</model:Model>

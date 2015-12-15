@@ -1,0 +1,48 @@
+.input-style (@width) {
+    background:@form-input-background;
+    border:0;
+    box-shadow:0;
+    color:@form-input-text;
+    width:@width;
+    padding:2px;
+    font-size:14px;
+    border:1px @solid @form-border;
+    height: 30px;
+	.border-radius(5px);		
+    &.required {
+        border:2px solid @form-required;
+    }
+}
+.button-style (@width) {
+    .button(auto, @form-button);
+    border:0;
+}
+.button(@width, @background:@form-button) {
+    background:@background;
+    width:@width;
+    text-align:center;
+    color:@form-button-text;
+    line-height:1em;
+    height:30px;
+    display:inline-block;
+    padding:0 15px 0 15px;
+    font-size:14px;
+    line-height:30px;
+    text-decoration:none;
+    &:hover {
+        text-decoration:none;
+    }
+}
+.icon-font() {
+	font-family: FontAwesome;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.grid(@col, @span, @margin) {
+    width: ((100% - (@margin * (@col - 1))) / @col * @span) + (@margin * (@span - 1));
+    margin-right: @margin; 
+}

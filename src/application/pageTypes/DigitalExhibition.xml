@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="2cols.php"
+    adm:editComponents="exhibition">
+
+    <glz:Import src="Common.xml" />
+
+    <glz:Groupbox id="exhibition" skin="DigitalExhibition.html">
+        <glz:Input id="subtitle" label="{i18n:Subtitle}" size="90" />
+        <glz:Image id="banner" label="{i18n:Banner}" size="90" required="true" width="305" height="305" zoom="true" />
+        <glz:Image id="appImage" label="{i18n:App image}" size="90" width="305" height="305" zoom="true" />
+        <glz:Input id="appColor" label="{i18n:App color}" size="90" data="type=colorPicker"/>
+        <glz:Input id="accountLinkFacebook" label="{i18n:Account link on Facebook}" size="90" data="type=url"/>
+        <glz:Input id="emailBooking" label="{i18n:Email booking}" size="90" />
+        <glz:Input id="targetUser" label="{i18n:Users}" size="255" required="true"/>
+        <glz:Input id="date" label="{i18n:Creation date}" size="255" required="true"/>
+        <glz:Input id="language" label="{i18n:Language}" size="90" />
+        <glz:Input id="identifier" label="{i18n:Identifier}" size="90" />
+        <glz:Input id="category" label="{i18n:Subject}" size="90" required="true"/>
+        <glz:Input id="urlExternal" label="{i18n:Exhibition url}" size="90" data="type=url"/>
+        <glz:Input id="linkedExhibition" label="{i18n:Physycal alternative}" size="90" />
+        <glz:LongText id="description" label="{i18n:Abstract}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" required="true"/>
+        <glz:LongText id="credits" label="{i18n:Credits}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" />
+        <glz:LongText id="sponsor1" label="{i18n:Patronages}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" />
+        <glz:LongText id="sponsor2" label="{i18n:Promoters}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" />
+        <glz:LongText id="sponsor3" label="{i18n:Sponsors}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" />
+        <glz:LongText id="honoraryCommittee" label="{i18n:Committee of Honor}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" />
+        <glz:LongText id="scientificCommittee" label="{i18n:Scientific Committee}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" />
+        <glz:LongText id="dedication" label="{i18n:Dedication}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" />
+        <glz:LongText id="aknowledgements" label="{i18n:Aknowledgements}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" />
+        <glz:LongText id="contacts" label="{i18n:Contacts}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" />
+        <glz:LongText id="services" label="{i18n:Services}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" />
+        <glz:Media id="video" label="{i18n:Presentation video}" size="90" adm:mediaType="video"/>
+
+        <glz:Repeater id="images" label="{i18n:Image galleries}">
+            <glz:Image id="image" label="{i18n:Image}" width="{config:THUMB_WIDTH}" height="{config:THUMB_HEIGHT}" zoom="true" />
+        </glz:Repeater>
+
+        <glz:Repeater id="attaches" label="{i18n:Download files}">
+            <glz:Media id="media" label="{i18n:Media}" size="90" mediatype="video" />
+        </glz:Repeater>
+    </glz:Groupbox>
+</glz:Page>

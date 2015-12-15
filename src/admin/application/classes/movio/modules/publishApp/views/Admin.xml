@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<mvc:Page id="Page"
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+	xmlns:cms="org.glizycms.views.components.*"
+	xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cmp="movio.modules.publishApp.views.components.*"
+	controllerName="movio.modules.publishApp.controllers.*"
+	defaultEditableRegion="content"
+	templateType="php"
+	templateFileName="Page.php">
+
+	<glz:Import src="_common.xml" />
+
+    <glz:JSscript folder="movio.modules.publishApp.js" />
+    
+    <glz:DataDictionary id="languageDP" recordClassName="org.glizycms.core.models.Language" query="getLanguageDictionary" />
+        
+    <mvc:State name="index" >
+        <cms:FormEdit id="myForm" controllerName="movio.modules.publishApp.controllers.*">
+            <glz:JSscript folder="movio.modules.publishApp.static" extension="js" />
+            <cmp:SiteTreeView id="treeview" editableRegion="treeview" controllerName="org.glizycms.contents.controllers.siteTree.*" />
+            <cmp:ProgressBarDialog />
+            <glz:LongText id="lastUpdate" adm:htmlEditor="true"></glz:LongText>
+            <glz:List id="languages" label="{i18n:Languages}" dataProvider="{languageDP}" multiSelect="true" />
+            <glz:Input id="title" label="{i18n:Title}" size="90" required="true"  />
+            <glz:Input id="subtitle" label="{i18n:Subtitle}" size="90" />
+            <cms:PagePicker id="creditPageId" label="{i18n:Linked credit page}" protocol="internal:"/>
+            <glz:Checkbox id="isExhibitionActive" label="{i18n:Exhibition active}" data="type=checkbox"/>
+		    <glz:Panel cssClass="formButtons">
+                <glz:HtmlButton label="{i18n:Export}" type="button" cssClass="btn btn-primary js-publish-app"/>
+            </glz:Panel>
+            <cmp:GraphContainer id="graph" />
+        </cms:FormEdit>
+    </mvc:State>
+</mvc:Page>

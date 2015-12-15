@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cms="org.glizycms.views.components.*"
+    xmlns:t="org.glizycms.template.views.components.*"
+    controllerName="org.glizycms.template.controllers.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="Page.php">
+    <glz:Import src="_common.xml" />
+
+    <mvc:StateTabNavigation id="tabs" cssClass="nav nav-tabs" cssClassCurrent="active" addQueryString="true" />
+
+    <mvc:State name="index" label="{i18n:Template select}">
+        <cms:FormEdit id="myForm">
+            <t:SelectTemplate id="template" label="{i18n:Select the template}" />
+            <cms:FormButtonsPanel>
+                <glz:HtmlButton label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=saveTemplate" />
+            </cms:FormButtonsPanel>
+        </cms:FormEdit>
+    </mvc:State>
+
+    <mvc:State name="customize" label="{i18n:Customize}">
+        <t:TemplateEdit id="templateEdit" global="true">
+            <cms:FormButtonsPanel>
+                <glz:HtmlButton label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
+            </cms:FormButtonsPanel>
+        </t:TemplateEdit>
+    </mvc:State>
+</mvc:Page>

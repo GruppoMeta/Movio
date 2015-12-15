@@ -1,0 +1,121 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>{#GLZ_link.window_title}</title>
+	<script language="javascript" src="../../../../../../static/jquery/jquery-1.8.3.min.js"></script>
+	<script  type="text/javascript" src="../../tiny_mce_popup.js"></script>
+	<script language="javascript" type="text/javascript" src="../../utils/mctabs.js"></script>
+	<script language="javascript" type="text/javascript" src="../../utils/form_utils.js"></script>
+	<script language="javascript" type="text/javascript" src="jscripts/functions.js"></script>
+	<link href="css/GLZ_link.css" rel="stylesheet" type="text/css" />
+</head>
+<body id="GLZ_link" style="display: none">
+    <form onsubmit="insertAction();return false;" action="#">
+		<input type="hidden" name="mediaId" value="" />
+		<input type="hidden" name="mediaTitle" value="" />
+		<div class="panel_wrapper" style="width: 380px;">
+				<fieldset class="multifieldset">
+					<legend>{#GLZ_link.general_legend}</legend>
+                    <table border="0" cellpadding="4" cellspacing="0" width="100%">
+						<tr>
+						  <td nowrap="nowrap"><label id="linkTypeLabel" for="linkType">{#GLZ_link.link_type}</label></td>
+						  <td colspan="3" width="100%"><select id="linkType" style="width:100%" onchange="setLinkType(this.value)">
+						  	<option>---</option>
+						  	<option value="7">Link elementi della pagina</option>
+						  	<option value="1">{#GLZ_link.internal_link}</option>
+						  	<option value="6">{#GLZ_link.relative_link}</option>
+						  	<option value="2">{#GLZ_link.external_link}</option>
+						  	<option value="3">{#GLZ_link.media_link}</option>
+						  	<!--<option value="4">{#GLZ_link.anchor}</option>-->
+						  </select></td>
+						</tr>
+						<tr>
+							<td nowrap="nowrap"><label id="linkUrlLabel" for="linkUrl">{#GLZ_link.link_url}</label></td>
+							<td width="1%"><select id="protocol"><option selected="selected" value="http://">http://</option><option value="https://">https://</option><option value="ftp://">ftp://</option><option value="mailto:">mailto:</option></select></td>
+                            <td><input id="linkUrl" name="linkUrl" style="width:100%" type="text" value="" disabled="disabled" class="ja={suggest:{src:'../../../../../../../admin/ajax.php?pageId=AjaxCatalog&ajaxTarget=glossary',key:'t'}}"/></td>
+                            <td width="1%"><input type="button" id="preview" value="{#GLZ_link.preview}" disabled="disabled" onclick="previewLink()"/></td>
+						</tr>
+						<tr>
+							<td nowrap><label id="internalLinkLabel" for="internalLink">{#GLZ_link.internal_link}</label></td>
+							<td colspan="3" id="internalLinks">
+							</td>
+						</tr>
+						<tr>
+							<td nowrap="nowrap"><label id="titleLabel" for="title">{#GLZ_link.title}</label></td>
+							<td colspan="3"><input id="title" type="text" value="" /></td>
+						</tr>
+						<tr>
+							<td nowrap><label id="relLabel" for="rel">{#GLZ_link.open_external}</label></td>
+							<td>
+								<input type="checkbox" id="relExternal" name="nameExternal" value="1" />
+							</td>
+						</tr>
+					</table>
+				</fieldset>
+				<fieldset>
+					<legend>{#GLZ_link.advanced_legend}</legend>
+                    <table border="0" cellpadding="4" cellspacing="0" width="100%">
+						<tr>
+							<td class="column1"><label id="idlabel" for="id">{#GLZ_link.id}</label></td>
+							<td><input id="id" name="id" type="text" value="" /></td>
+						</tr>
+						<tr>
+							<td nowrap="nowrap"><label id="styleLabel" for="style">{#GLZ_link.style}</label></td>
+							<td width="100%"><input id="style" type="text" value="" /></td>
+						</tr>
+						<tr id="classRow">
+							<td nowrap="nowrap"><label id="classesLabel" for="classlist">{#GLZ_link.classes}</label></td>
+							<td><input id="cssclass" name="cssclass" type="text" value="" /></td>
+						</tr>
+												<tr>
+							<td class="column1"><label id="dirlabel" for="dir">{#GLZ_link.langdir}</label></td>
+							<td>
+								<select id="dir" name="dir">
+										<option value="">{#GLZ_link.not_set}</option>
+										<option value="ltr">{#GLZ_link.ltr}</option>
+										<option value="rtl">{#GLZ_link.rtl}</option>
+								</select>
+							</td>
+						</tr>
+
+						<tr>
+							<td><label id="hreflanglabel" for="hreflang">{#GLZ_link.target_langcode}</label></td>
+							<td><input type="text" id="hreflang" name="hreflang" value="" /></td>
+						</tr>
+
+						<tr>
+							<td class="column1"><label id="langlabel" for="lang">{#GLZ_link.langcode}</label></td>
+							<td>
+								<input id="lang" name="lang" type="text" value="" />
+							</td>
+						</tr>
+
+						<tr>
+							<td><label id="charsetlabel" for="charset">{#GLZ_link.encoding}</label></td>
+							<td><input type="text" id="charset" name="charset" value="" /></td>
+						</tr>
+
+						<tr>
+							<td nowrap="nowrap"><label id="tabindexLabel" for="tabindex">{#GLZ_link.tabindex}</label></td>
+							<td><input id="tabindex" type="text" value="" /></td>
+						</tr>
+						<tr>
+							<td nowrap="nowrap"><label id="accesskeyLabel" for="accesskey">{#GLZ_link.accesskey}</label></td>
+							<td><input id="accesskey" type="text" value="" /></td>
+						</tr>
+					</table>
+				</fieldset>
+			</div>
+
+		<div class="mceActionPanel">
+			<input type="submit" id="insert" name="insert" value="{#insert}" onclick="insertAction();" />
+			<input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();" />
+		</div>
+
+		<div id="pickerPanel">
+			<iframe id="picker" frameborder="0"></iframe>
+		</div>
+    </form>
+</body>
+</html>
+
+

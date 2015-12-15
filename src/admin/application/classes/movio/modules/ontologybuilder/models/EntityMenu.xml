@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+    model:tableName="glizycms.content"
+    model:usePrefix="true"
+    model:type="document">
+    
+    <model:Query name="mysql_getVisibleEntityByTypeId">
+    <![CDATA[
+        SELECT `menus_tbl`.*, `menudetails_tbl`.*, `doc`.*, `doc_detail`.*
+        FROM `documents_tbl` `doc`     
+        INNER JOIN `documents_detail_tbl` `doc_detail` ON `doc`.`document_id` = `doc_detail`.`document_detail_FK_document_id`
+        INNER JOIN `documents_index_text_tbl` `index0` ON `doc_detail`.`document_detail_id` = `index0`.`document_index_text_FK_document_detail_id` 
+        INNER JOIN `documents_index_int_tbl` `index1` ON `doc_detail`.`document_detail_id` = `index1`.`document_index_int_FK_document_detail_id` 
+        INNER JOIN `menus_tbl` ON `index1`.`document_index_int_value` = `menus_tbl`.`menu_id` 
+        INNER JOIN `menudetails_tbl` ON `menus_tbl`.`menu_id` = `menudetails_tbl`.`menudetail_FK_menu_id`
+        WHERE `doc`.`document_type` = 'glizycms.content'
+            AND `index0`.`document_index_text_name` = 'entitySelect'
+            AND `index0`.`document_index_text_value` = :entityTypeId
+            AND `index1`.`document_index_int_name` = 'id'
+            AND `doc_detail`.`document_detail_status` = 'PUBLISHED'
+            AND `doc_detail`.`document_detail_FK_language_id` = 1
+            AND `menus_tbl`.`menu_pageType` = 'Entity'
+            AND `menudetails_tbl`.`menudetail_FK_language_id` = 1
+            AND `menudetails_tbl`.`menudetail_isVisible` = 1
+    ]]>
+    </model:Query>
+
+</model:Model>
+
+
+

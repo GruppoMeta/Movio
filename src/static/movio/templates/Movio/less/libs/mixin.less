@@ -1,0 +1,237 @@
+.margin-reset() {
+margin:0;
+}
+
+.padding-reset() {
+padding:0;
+}
+
+.padding-margin-reset() {
+	.padding-reset();
+	.margin-reset();
+	}
+
+.pmr() {
+	.padding-reset();
+	.margin-reset();
+	}
+
+.box-sizing() {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	}
+
+/* define border radius */
+
+.border-radius (@radius) {
+  border-radius: @radius;
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
+}
+
+.border-radius-top (@radius-top) {
+  border-top-left-radius: @radius-top;
+  border-top-right-radius: @radius-top;
+  -moz-border-radius-topright: @radius-top;
+   -moz-border-radius-topleft: @radius-top;
+  -webkit-border-top-right-radius: @radius-top;
+   -webkit-border-top-left-radius: @radius-top;
+}
+
+.border-radius-bottom-left-right (@radius-bottom-left-right) {
+  -webkit-border-bottom-right-radius:  @radius-bottom-left-right;
+  -webkit-border-bottom-left-radius:  @radius-bottom-left-right;
+  -moz-border-radius-bottomright:  @radius-bottom-left-right;
+  -moz-border-radius-bottomleft:  @radius-bottom-left-right;
+  border-bottom-right-radius:  @radius-bottom-left-right;
+  border-bottom-left-radius:  @radius-bottom-left-right;
+}
+
+.border-radius-left (@radius-left) {
+  -webkit-border-bottom-left-radius:@radius-left;
+  border-bottom-left-radius:@radius-left;
+  -webkit-border-top-left-radius:@radius-left;
+  border-top-left-radius:@radius-left;
+  -moz-border-radius-bottomleft:@radius-left;
+  -moz-border-radius-topleft:@radius-left;
+}
+
+.border-radius-right (@radius-right) {
+  -webkit-border-top-right-radius:@radius-right;
+  border-top-right-radius:@radius-right;
+  -webkit-border-bottom-right-radius:@radius-right;
+  border-bottom-right-radius:@radius-right;
+  -moz-border-radius-topright:@radius-right;
+  -moz-border-radius-bottomright:@radius-right;
+}
+
+.border-radius-all-no-right (@radius-all-no-right) {
+	-webkit-border-radius:@radius-all-no-right;
+	-webkit-border-bottom-right-radius: 0;
+	-moz-border-radius:@radius-all-no-right;
+	-moz-border-radius-bottomright: 0;
+	border-radius:@radius-all-no-right;
+	border-bottom-right-radius: 0;
+}
+
+/* define transition */
+
+.transition (@time:.4s) {
+	-moz-transition:all @time ease-in-out;
+	-webkit-transition:all @time ease-in-out;
+	-o-transition:all @time ease-in-out;
+	transition:all @time ease-in-out;
+	}
+
+/* define shadow */
+
+.shadow-inset (@color) {
+-moz-box-shadow:inset 0 0 10px @color;
+-webkit-box-shadow:inset 0 0 10px @color;
+box-shadow:inset 0 0 10px @color;
+}
+
+.glow (@color) {
+-moz-box-shadow: inset -1px 1px 1px @color;
+-webkit-box-shadow: inset -1px 1px 1px @color;
+box-shadow: inset -1px 1px 1px @color;
+}
+
+.mini-shadow (@color) {
+-moz-box-shadow:    2px 2px 2px 2px @color;
+-webkit-box-shadow: 2px 2px 2px 2px @color;
+box-shadow:         -1px 1px 3px 1px @color;
+}
+
+/* define shadow */
+
+.box-shadow (@x: 0, @y: 0, @blur: 1px, @color: #999) {
+  box-shadow: @arguments;
+  -moz-box-shadow: @arguments;
+  -webkit-box-shadow: @arguments;
+}
+
+/* text-shaodow */
+.text-shadow (@x: 0, @y: 0, @blur: 1px, @color: #000) {
+	text-shadow:@arguments;
+}
+
+.button-gradient-black() {
+background-image: linear-gradient(bottom, @linkButton-grandient-1 0%, @linkButton-grandient-2 67%);
+background-image: -o-linear-gradient(bottom, @linkButton-grandient-1 0%, @linkButton-grandient-2 67%);
+background-image: -moz-linear-gradient(bottom, @linkButton-grandient-1 0%, @linkButton-grandient-2 67%);
+background-image: -webkit-linear-gradient(bottom, @linkButton-grandient-1 0%, @linkButton-grandient-2 67%);
+background-image: -ms-linear-gradient(bottom, r@linkButton-grandient-1 0%, @linkButton-grandient-2 67%);
+
+background-image: -webkit-gradient(
+	linear,
+	left bottom,
+	left top,
+	color-stop(0, @linkButton-grandient-1),
+	color-stop(0.67,@linkButton-grandient-2)
+);
+}
+
+.button-gradient-black-reverse() {
+background-image: linear-gradient(bottom, @linkButton-grandient-2 0%, @linkButton-grandient-1 67%);
+background-image: -o-linear-gradient(bottom, @linkButton-grandient-2 0%, @linkButton-grandient-1 67%);
+background-image: -moz-linear-gradient(bottom, @linkButton-grandient-2 0%, @linkButton-grandient-1 67%);
+background-image: -webkit-linear-gradient(bottom, @linkButton-grandient-2 0%, @linkButton-grandient-1 67%);
+background-image: -ms-linear-gradient(bottom, @linkButton-grandient-2 0%, @linkButton-grandient-1 67%);
+
+background-image: -webkit-gradient(
+	linear,
+	left bottom,
+	left top,
+	color-stop(0, @linkButton-grandient-2),
+	color-stop(0.67, @linkButton-grandient-1)
+);
+}
+
+.button-red {
+	display:block;
+	position:absolute;
+	display:block;
+	color:@form-buttonPrimary-text;
+	padding:2px 8px 4px 8px;
+	.border-radius (4px);
+	background:@form-button-primary url(../img/ico/pool.png) 50px -36px no-repeat;
+
+	&:hover {
+		text-decoration:none;
+		}
+
+}
+
+.input-style (@width) {
+	background:@form-input-background;
+	box-shadow:0;
+	color:@form-input-text;
+	width:@width;
+	padding:2px;
+	font-size:14px;
+	.border-radius(6px);
+	border:1px solid @form-border;
+	font-family: @font-1;
+  	font-weight: 400;
+  	height:30px;
+
+	&.required {
+		border:2px solid @form-required;
+		}
+
+}
+
+
+.button-style (@with) {
+  width: @with;
+  border:0;
+  font-size:14px;
+  color:@form-buttonPrimary-text;
+  border:0;
+  padding:0 15px;
+  .border-radius(6px);
+  background: @form-buttonPrimary-gradient-1;
+  .text-shadow (0,0,1px,#999);
+  text-transform:uppercase;
+  font-family: @font-1;
+  font-weight: 400;
+  height:30px;
+  line-height:30px;
+  background: -moz-linear-gradient(top,  @form-buttonPrimary-gradient-1 0%, @form-buttonPrimary-gradient-2 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@form-buttonPrimary-gradient-1), color-stop(100%,@form-buttonPrimary-gradient-2));
+  background: -webkit-linear-gradient(top,  @form-buttonPrimary-gradient-1 0%,@form-buttonPrimary-gradient-2 100%);
+  background: -o-linear-gradient(top,  @form-buttonPrimary-gradient-1 0%,@form-buttonPrimary-gradient-2 100%);
+  background: -ms-linear-gradient(top,  @form-buttonPrimary-gradient-1 0%,@form-buttonPrimary-gradient-2 100%);
+  background: linear-gradient(to bottom,  @form-buttonPrimary-gradient-1 0%,@form-buttonPrimary-gradient-2 100%);
+
+ }
+
+.button-style-reset (@with) {
+  width: @with;
+  border:0;
+  font-size:14px;
+  color:@form-button-text;
+  border:0;
+  height:30px;
+  line-height:30px;
+  padding:0 15px;
+  .border-radius(6px);
+  background: @form-button-gradient-1;
+  .text-shadow (0,0,1px,#999);
+  text-transform:uppercase;
+  font-family: @font-1;
+  font-weight: 400;
+  background: -moz-linear-gradient(top,  @form-button-gradient-1 0%, @form-button-gradient-2 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@form-button-gradient-1), color-stop(100%,@form-button-gradient-2));
+  background: -webkit-linear-gradient(top,  @form-button-gradient-1 0%,@form-button-gradient-2 100%);
+  background: -o-linear-gradient(top,  @form-button-gradient-1 0%,@form-button-gradient-2 100%);
+  background: -ms-linear-gradient(top,  @form-button-gradient-1 0%,@form-button-gradient-2 100%);
+  background: linear-gradient(to bottom,  @form-button-gradient-1 0%,@form-button-gradient-2 100%);
+ }
+ 
+ .grid(@col, @span, @margin) {
+    width: ((100% - (@margin * (@col - 1))) / @col * @span) + (@margin * (@span - 1));
+    margin-right: @margin; 
+}

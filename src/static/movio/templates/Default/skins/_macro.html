@@ -1,0 +1,16 @@
+<div class="row-fluid clearfix" tal:condition="php: count(images) > start" metal:define-macro="boxImageList">
+    <h3 tal:condition="title" tal:content="title" />
+    <div class="slider imageList clearfix js-imageList">
+         <span tal:omit-tag="" tal:repeat="item images">
+            <span tal:condition="php: repeat.item.number > start" class="slide" tal:content="structure item/image/__html__" />
+          </span>
+    </div>
+</div>
+
+<span tal:omit-tag="" tal:condition="php: count(attaches)" metal:define-macro="boxAttachments">
+    <h3 tal:content="php: __T('Download files')" class="downloadTitle" />
+    <ul class="downloadList">
+        <li tal:repeat="item attaches" tal:content="structure item/media/__html__" />
+    </ul>
+</span>
+

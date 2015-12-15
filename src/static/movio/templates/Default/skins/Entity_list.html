@@ -1,0 +1,42 @@
+<section class="results-content clearfix" tal:condition="php: !is_null(Component.records)">
+    <h3 tal:condition="Component/title" tal:content="structure Component/title"/>
+    <span tal:omit-tag="" tal:condition="php: Component.records.count() > 0">
+      <span tal:omit-tag="" tal:repeat="item Component/records" tal:attributes="class item/__cssClass__">
+
+        <span tal:omit-tag="" tal:condition="php: Component.params.visualization == 'list'">
+            <article class="item clearfix">
+                <h1><a href="" tal:attributes="href item/__url__; title item/title" tal:content="item/title"></a></h1>
+            </article>
+        </span>
+
+        <span tal:omit-tag="" tal:condition="php: Component.params.visualization == 'listWithDescription'">
+            <article class="item clearfix">
+                <h1><a href="" tal:attributes="href item/__url__; title item/title" tal:content="item/title"></a></h1>
+                <span tal:omit-tag="" tal:condition="php: Component.params.attributes.description && item.keyInDataExists(Component.params.attributes.description)" tal:content="structure php: item->{Component.params.attributes.description}" />
+            </article>
+        </span>
+
+        <span tal:omit-tag="" tal:condition="php: Component.params.visualization == 'icons'">
+            <h4><a href="" tal:attributes="href item/__url__; title item/title" tal:content="structure item/__image"></a></h4>
+        </span>
+
+        <span tal:omit-tag="" tal:condition="php: Component.params.visualization == 'listAndIcons'">
+            <span tal:omit-tag="" tal:condition="php: (repeat.item.index % 4) == 0" tal:content="structure php: ('<div class=\'row-fluid\'>')" />
+                <div class="item in-grid col-md-3 clearfix">
+                    <figure>
+                        <a href="" tal:attributes="href item/__url__; title item/title" tal:content="structure item/__image"></a>
+                    </figure>
+                    <h2><a href="" tal:attributes="href item/__url__; title item/title" tal:content="item/title"></a></h2>
+                    <div class="wrapper-link">
+                        <a href="" tal:attributes="href item/__url__; title item/title"><i class="fa fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            <span tal:omit-tag="" tal:condition="php: (repeat.item.index % 4) == 3 || repeat.item.end" tal:content="structure php:('</div>') "  />
+        </span>
+
+      </span>
+    </span>
+    <span tal:omit-tag="" tal:condition="php: Component.records.count() == 0">
+      <p tal:content="php:__Tp('MW_NO_RECORD_FOUND')"></p>
+    </span>
+</section>

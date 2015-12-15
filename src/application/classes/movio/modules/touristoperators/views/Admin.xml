@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:include
+    xmlns:cms="org.glizycms.views.components.*"
+    src="movio.views.TemplateModuleAdmin">
+    <glz:template name="model" value="movio.modules.touristoperators.models.Model" />
+    <glz:template name="add_label" value="Add tourist operator" />
+
+    <glz:template name="grid_fields">
+        <glz:DataGridColumn columnName="title" headerText="{i18n:Title}" renderCell="org.glizycms.contents.views.renderer.DocumentTitle" />
+        <glz:DataGridColumn columnName="type" headerText="{i18n:Type}" />
+        <glz:DataGridColumn columnName="externalUrl" headerText="{i18n:Url}" />
+    </glz:template>
+
+    <glz:template name="form_fields">
+        <glz:Input id="title" label="{i18n:Title}" size="90" required="true" />
+        <glz:Input id="type" label="{i18n:Type}" data="type=selectfrom;multiple=false;add_new_values=true;model=movio.modules.touristoperators.models.Model" size="255" />
+        <glz:Input id="country" label="{i18n:Country}" data="type=selectfrom;multiple=false;add_new_values=true;model=movio.modules.touristoperators.models.Model" size="255" />
+        <glz:Input id="district" label="{i18n:District}" data="type=selectfrom;multiple=false;add_new_values=true;model=movio.modules.touristoperators.models.Model" size="255" />
+        <glz:Input id="place" label="{i18n:Place}" data="type=selectfrom;multiple=false;add_new_values=true;model=movio.modules.touristoperators.models.Model" size="255" />
+        <glz:Input id="externalUrl" label="{i18n:Url}" type="url"/>
+        <glz:Input id="description" label="{i18n:Description}" type="multiline" rows="10" cols="70" htmlEditor="true" data="type=tinymce" />
+        <glz:Fieldset id="locations" label="{i18n:Locations}" data="type=repeat;collapsable=true">
+            <glz:Input id="locationDescription" label="{i18n:Address description}" type="text"/>
+            <glz:Input id="location" label="{i18n:Address}" type="multiline" rows="5" htmlEditor="true" data="type=tinymce" />
+            <glz:Input id="coordinates" label="{i18n:Coordinates}" data="type=googlemaps" />
+        </glz:Fieldset>
+
+<!--
+        <glz:Input id="image" label="{i18n:Image}" size="90" data="type=mediapicker;mediaType=IMAGE;preview=true" />
+-->
+        <glz:Fieldset id="images" label="{i18n:Images}" data="type=repeat;repeatMin=0;repeatMax=5;collapsable=false">
+            <glz:Input id="image" label="{i18n:Image}" size="90" data="type=mediapicker;mediatype=IMAGE;preview=true"/>
+        </glz:Fieldset>
+
+        <glz:Fieldset id="attaches" label="{i18n:Download files}" data="type=repeat;repeatMin=0;repeatMax=5;collapsable=false">
+            <glz:Input id="media" label="{i18n:Media}" size="90" data="type=mediapicker;mediatype=ALL;preview=false"/>
+        </glz:Fieldset>
+    </glz:template>
+</glz:include>

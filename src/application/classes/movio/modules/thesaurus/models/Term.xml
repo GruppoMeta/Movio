@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+    model:tableName="movio.modules.thesaurus.models.Term" model:usePrefix="true" model:type="document">
+
+    <model:Define>
+        <model:Field name="term" type="string" length="255" index="true" />
+        <model:Field name="type" type="string" length="255" index="true" />
+        <model:Field name="parentId" type="int" index="true" />
+        <model:Field name="dictionaryId" type="int" index="true" />
+        <model:Field name="url" type="string" length="255" index="true" />
+        <model:Field name="note" type="text" index="true" />
+        <model:Field name="geo" type="string" length="255" index="true" />
+        <model:Field name="dateFrom" type="date" index="true" />
+        <model:Field name="dateTo" type="date" index="true" />
+    </model:Define>
+</model:Model>

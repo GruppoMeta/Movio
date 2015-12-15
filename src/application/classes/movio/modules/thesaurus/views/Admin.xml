@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mvc:Page id="Page"
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:mvc="org.glizy.mvc.components.*"
+    xmlns:cms="org.glizycms.views.components.*"
+    xmlns:cmp="movio.modules.thesaurus.views.components.*"
+    defaultEditableRegion="content"
+    templateType="php"
+    templateFileName="Popup.php"
+    controllerName="movio.modules.thesaurus.controllers.*">
+    <glz:Import src="_common.xml" />
+    <glz:JSscript folder="movio.modules.thesaurus.js" />
+
+    <mvc:State name="index">
+        <glz:Modifier target="Page" attribute="templateFileName" value="Page.php" />
+
+        <glz:DataProvider id="dp" recordClassName="movio.modules.thesaurus.models.Dictionary" orderBy="title"/>
+        <glz:DataGrid id="dataGrid" label="{i18n: Elenco utenti}" dataProvider="{dp}" tableCssClass="table table-striped table-bordered" cssClass="odd,even" controller="{dataGridEdit}" orderStyle="BLACK">
+            <glz:DataGridColumn columnName="title" headerText="{i18n:GLZ_USER_FIRST}" />
+            <glz:DataGridColumn columnName="type" headerText="{i18n:Type}" renderCell="movio.modules.thesaurus.views.renderer.CellType"/>
+            <glz:DataGridColumn columnName="document_id" align="right" width="80" renderCell="movio.modules.thesaurus.views.renderer.CellEditDelete" />
+        </glz:DataGrid>
+        <glz:Link label="{i18n:Create dictionary}" cssClass="{config:glizycms.form.actionLink.cssClass}" icon="icon-plus" url="movio_thesaurus/createDictionary" editableRegion="actions" acl="*,new"/>
+    </mvc:State>
+
+    <mvc:State name="editDictionary">
+        <glz:Modifier target="Page" attribute="templateFileName" value="Page.php" />
+        <glz:Modifier target="pageTitle" attribute="visible" value="false" />
+        <cmp:DictionaryTreeView id="treeview" title="{i18n:Dictionary structure}" addLabel="{i18n:Add term}" editableRegion="treeview" controllerName="movio.modules.thesaurus.controllers.treeview.*" />
+        <cmp:TermEdit id="pageEdit" mode="container" />
+    </mvc:State>
+
+     <mvc:State name="deleteDictionary">
+        <glz:Modifier target="Page" attribute="templateFileName" value="Page.php" />
+        <glz:Modifier target="pageTitle" attribute="visible" value="false" />
+    </mvc:State>
+
+    <mvc:State name="createDictionary">
+        <glz:Modifier target="Page" attribute="templateFileName" value="Page.php" />
+        <cms:FormEdit id="dictionaryForm" controllerName="movio.modules.thesaurus.controllers.dictionaryEdit.*">
+            <glz:Input id="title" label="{i18n:Dictionary name}" size="90" required="true" />
+            <glz:List id="type" label="{i18n:Type}">
+                <glz:ListItem value="{i18n:Generic}" key="generic" />
+                <glz:ListItem value="{i18n:Geographical}" key="geographical" />
+                <glz:ListItem value="{i18n:Chronologic}" key="chronologic" />
+            </glz:List>
+
+            <cms:FormButtonsPanel>
+                <glz:HtmlButton label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=add" />
+            </cms:FormButtonsPanel>
+        </cms:FormEdit>
+    </mvc:State>
+
+    <mvc:State name="add">
+        <cms:FormEdit id="myForm" controllerName="movio.modules.thesaurus.controllers.termEdit.*">
+            <cms:pageTitleModifier action="add" label="{i18n:Add a new term}" new="true" />
+
+            <glz:Hidden id="dictionaryId" />
+            <glz:Hidden id="type" />
+            <glz:Input id="term" label="{i18n:Term}" size="90" required="true" />
+            <!--glz:List id="type" label="{i18n:Type}">
+                <glz:ListItem value="{i18n:Generic}" key="generic" />
+                <glz:ListItem value="{i18n:Geographical}" key="geographical" />
+                <glz:ListItem value="{i18n:Chronologic}" key="chronologic" />
+            </glz:List -->
+            <cmp:SelectTerm id="parentId" label="{i18n:Parent}" size="90" emptyValue="-" />
+            <glz:Panel id="genericPanel" >
+                <glz:Input id="url" label="{i18n:Term source}" size="90" data="type=url" />
+                <glz:Input id="note" label="{i18n:Scope note}" size="90" type="multiline" rows="10" cols="70" htmlEditor="true" data="type=tinymce" />
+            </glz:Panel>
+            <glz:Panel id="geographicalPanel">
+                <glz:Input id="geo" label="{i18n:Address}" size="90" data="type=googlemaps"/>
+            </glz:Panel>
+            <glz:Panel id="chronologicPanel">
+                <glz:Input id="dateFrom" label="{i18n:Data da}" size="90" />
+                <glz:Input id="dateTo" label="{i18n:Data a}" size="90" />
+            </glz:Panel>
+
+            <cms:FormButtonsPanel>
+                <glz:HtmlButton label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=add" />
+            </cms:FormButtonsPanel>
+        </cms:FormEdit>
+    </mvc:State>
+
+    <mvc:State name="edit" label="{i18n:Content}">
+        <cmp:TermEdit id="pageEdit" mode="edit" controllerName="movio.modules.thesaurus.controllers.termEdit.*">
+            <cms:pageTitleModifier action="edit" label="{i18n:Edit term}" field="__title" />
+
+            <glz:Hidden id="dictionaryId" />
+            <glz:Hidden id="type" />
+            <glz:Hidden id="__id"/>
+            <glz:Input id="term" label="{i18n:Term}" size="90" required="true" />
+            <!--glz:List id="type" label="{i18n:Type}" disabled="true">
+                <glz:ListItem value="{i18n:Generic}" key="generic" />
+                <glz:ListItem value="{i18n:Geographical}" key="geographical" />
+                <glz:ListItem value="{i18n:Chronologic}" key="chronologic" />
+            </glz:List-->
+            <cmp:SelectTerm id="parentId" label="{i18n:Parent}" size="90" emptyValue="-" disabled="true"/>
+            <glz:Panel id="genericPanel" >
+                <glz:Input id="url" label="{i18n:Term source}" size="90" data="type=url"/>
+                <glz:Input id="note" label="{i18n:Scope note}" size="90" type="multiline" rows="10" cols="70" htmlEditor="true" data="type=tinymce" />
+            </glz:Panel>
+            <glz:Panel id="geographicalPanel">
+                <glz:Input id="geo" label="{i18n:Address}" size="90" data="type=googlemaps"/>
+            </glz:Panel>
+            <glz:Panel id="chronologicPanel">
+                <glz:Input id="dateFrom" label="{i18n:Data da}" size="90" />
+                <glz:Input id="dateTo" label="{i18n:Data a}" size="90" />
+            </glz:Panel>
+
+            <cms:FormButtonsPanel>
+                <glz:HtmlButton label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
+                <glz:Link id="preview" label="{i18n:GLZ_PREVIEW}" cssClass="btn" visible="false" target="_blank" />
+            </cms:FormButtonsPanel>
+        </cmp:TermEdit>
+    </mvc:State>
+</mvc:Page>

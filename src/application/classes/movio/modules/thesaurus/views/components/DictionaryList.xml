@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<m:DictionaryListCmp
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:cms="org.glizycms.views.components.*"
+    xmlns:m="movio.modules.thesaurus.views.components.*">
+
+    <m:SelectDictionary id="dictionaryId" label="{i18n:Select dictionary}" size="90" required="true"/>
+
+</m:DictionaryListCmp>

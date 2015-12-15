@@ -1,0 +1,9 @@
+<div class="content-box row-fluid">
+        <script>
+$(function(){
+    jQuery('video,audio').mediaelementplayer();
+});
+    </script>
+
+    <video tal:attributes="src Component/video/src; width Component/width; height Component/height" />
+</div>

@@ -1,0 +1,43 @@
+<span tal:omit-tag="" tal:repeat="item Component">
+    <div class="content-box row-fluid ">
+        <span tal:omit-tag="" tal:repeat="subitem item">
+            <span tal:omit-tag="" tal:condition="php: subitem.type == 'imageText'">
+                <article tal:attributes="style subitem/style; class php: 'box height-rid col-md-' . subitem.width">
+                    <h1><a tal:attributes="href subitem/pageId" tal:content="subitem/title"></a> <a tal:attributes="href subitem/pageId"><i class="ico-box fa fa-arrow-right"></i></a></h1>
+                    <div class="container">
+                        <a tal:attributes="href subitem/pageId" tal:content="structure subitem/image/__html__"></a>
+                        <span tal:omit-tag="" tal:content="structure subitem/text" />
+                    </div>
+               </article>
+            </span>
+
+            <span tal:omit-tag="" tal:condition="php: subitem.type == 'imageLink'">
+                <article tal:attributes="style subitem/style; class php: 'box height-rid col-md-' . subitem.width">
+                    <h1><a tal:attributes="href subitem/pageId" tal:content="subitem/title"></a> <a tal:attributes="href subitem/pageId"><i class="ico-box fa fa-arrow-right"></i></a></h1>
+                    <div class="container">
+                        <a tal:attributes="href subitem/pageId" tal:content="structure subitem/image/__html__"></a>
+                        <a tal:attributes="href subitem/pageId" class="link-to-reserv"><span tal:omit-tag="" tal:content="subitem/linkTitle" /><span></span></a>
+                    </div>
+               </article>
+            </span>
+
+            <span tal:omit-tag="" tal:condition="php: subitem.type == 'timeline'">
+                <article tal:attributes="style subitem/style; class php: 'box height-rid col-md-' . subitem.width">
+                    <h1><a tal:attributes="href subitem/pageId" tal:content="subitem/title"></a> <a tal:attributes="href subitem/pageId"><i class="ico-box fa fa-arrow-right"></i></a></h1>
+                    <div class="container">
+
+                    </div>
+               </article>
+            </span>
+
+             <span tal:omit-tag="" tal:condition="php: subitem.type == 'text'">
+                <article tal:attributes="style subitem/style; class php: 'box height-rid col-md-' . subitem.width">
+                    <h1><a tal:attributes="href subitem/pageId" tal:content="subitem/title"></a> <a tal:attributes="href subitem/pageId"><i class="ico-box fa fa-arrow-right"></i></a></h1>
+                    <div class="container">
+
+                    </div>
+               </article>
+            </span>
+        </span>
+    </div>
+</span>

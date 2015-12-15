@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+    xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+    model:type="2tables"
+    model:tableName="menus_tbl,menudetails_tbl"
+    model:joinFields="menu_id,menudetail_FK_menu_id"
+    model:languageField="menudetail_FK_language_id"
+    model:siteField="menu_FK_site_id"
+    model:usePrefix="true">
+
+    <model:Query name="getRootMenu" type="function" arguments="languageId">
+    <!--
+        Get a menu.
+        Used in:
+            org.glizycms.contents.models.proxy.MenuProxy
+    -->
+    <![CDATA[
+        $iterator->where('menu_parentId', 0);
+    ]]>
+    </model:Query>
+
+    <model:Query name="getMenu" type="function" arguments="menuId,languageId">
+    <!--
+        Get a menu.
+        Used in:
+            org.glizycms.contents.models.proxy.MenuProxy
+    -->
+    <![CDATA[
+        $iterator->where('menu_id', $menuId)
+                ->whereLanguageIs($languageId);
+
+        if (__Config::get('glizycms.speakingUrl')) {
+            $expr = $iterator->expr();
+            $iterator->leftJoin("t1", $this->tablePrefix."speakingurls_tbl", "t3",
+                $expr->andX(
+                    $expr->eq("t1.menu_id", "t3.speakingurl_FK"),
+                    $expr->andX( $expr->eq("t3.speakingurl_type", "'org.glizycms.core.models.Content'"),
+                                 $expr->eq("detail.menudetail_FK_language_id", "t3.speakingurl_FK_language_id")
+                                )
+                )
+             )
+             ->join("t1", $this->tablePrefix."languages_tbl", "t2", $expr->eq("detail.menudetail_FK_language_id", "t2.language_id"));
+        }
+    ]]>
+    </model:Query>
+
+    <model:Query name="autocompletePagePicker" type="function" arguments="search,languageId,menuId,pageType">
+    <!--
+        Search a menu by title and returns the title and path
+        Used in:
+            org.glizycms.contents.controllers.autocomplete.ajax.PagePicker
+    -->
+    <![CDATA[
+        $expr = $iterator->expr();
+
+        $iterator->select("t1.menu_id", "t5.menudetail_title", "t6.menudetail_title as p3", "t7.menudetail_title as p2", "t8.menudetail_title as p1")
+                 ->leftJoin("t1", $this->tablePrefix."menus_tbl", "t2", $expr->eq("t1.menu_parentId", "t2.menu_id"))
+                 ->leftJoin("t1", $this->tablePrefix."menus_tbl", "t3", $expr->eq("t2.menu_parentId", "t3.menu_id"))
+                 ->leftJoin("t1", $this->tablePrefix."menus_tbl", "t4", $expr->eq("t3.menu_parentId", "t4.menu_id"))
+                 ->leftJoin("t1", $this->tablePrefix."menudetails_tbl", "t5", $expr->andX($expr->eq("t5.menudetail_FK_menu_id", "t1.menu_id"), $expr->eq("t5.menudetail_FK_language_id", ":languageId")))
+                 ->leftJoin("t1", $this->tablePrefix."menudetails_tbl", "t6", $expr->andX($expr->eq("t6.menudetail_FK_menu_id", "t2.menu_id"), $expr->eq("t6.menudetail_FK_language_id", ":languageId")))
+                 ->leftJoin("t1", $this->tablePrefix."menudetails_tbl", "t7", $expr->andX($expr->eq("t7.menudetail_FK_menu_id", "t3.menu_id"), $expr->eq("t7.menudetail_FK_language_id", ":languageId")))
+                 ->leftJoin("t1", $this->tablePrefix."menudetails_tbl", "t8", $expr->andX($expr->eq("t8.menudetail_FK_menu_id", "t4.menu_id"), $expr->eq("t8.menudetail_FK_language_id", ":languageId")))
+                 ->setParameter(':languageId', $languageId)
+                 ->where("t1.menu_type", 'BLOCK', '!=')
+                 ->limit(0, 10)
+                 ->orderBy("t5.menudetail_title");
+
+        if ($pageType) {
+            $iterator->where("t1.menu_pageType", $pageType, '=');
+        }
+        if ($search) {
+            $iterator->where("t5.menudetail_title", $search, 'ILIKE');
+        } else if ($menuId) {
+            $iterator->where("t1.menu_id", $menuId);
+        }
+
+        if ($this->siteField) {
+            $this->siteField = "t1.menu_FK_site_id";
+        }
+    ]]>
+    </model:Query>
+
+    <model:Query name="mysql_getChildMenus">
+    <!--
+        Get a child menu.
+        Used in:
+            org.glizycms.contents.models.proxy.MenuProxy
+    -->
+    <![CDATA[
+        SELECT t1.*,
+            menudetail_title,
+            menudetail_titleLink,
+            menudetail_linkDescription,
+            menudetail_isVisible,
+            (SELECT count(*) FROM ##TABLE_PREFIX##menus_tbl as t2 WHERE t2.menu_parentId = t1.menu_id) as numChild
+        FROM ##TABLE_PREFIX##menus_tbl as t1
+        INNER JOIN ##TABLE_PREFIX##menudetails_tbl ON (menudetail_FK_menu_id=menu_id)
+        WHERE t1.menu_parentId=:menuId AND menudetail_FK_language_id=:languageId
+        ORDER BY t1.menu_order, t1.menu_id
+    ]]>
+    </model:Query>
+
+    <model:Query name="mysql_getChildMenusNoBlock">
+    <!--
+        Get a child menu.
+        Used in:
+            org.glizycms.contents.models.proxy.MenuProxy
+    -->
+    <![CDATA[
+        SELECT t1.*,
+            menudetail_title,
+            menudetail_titleLink,
+            menudetail_linkDescription,
+            menudetail_isVisible,
+            (SELECT count(*) FROM ##TABLE_PREFIX##menus_tbl as t2 WHERE t2.menu_parentId = t1.menu_id AND t2.menu_type!='BLOCK') as numChild
+        FROM ##TABLE_PREFIX##menus_tbl as t1
+        INNER JOIN ##TABLE_PREFIX##menudetails_tbl ON (menudetail_FK_menu_id=menu_id)
+        WHERE t1.menu_parentId=:menuId AND menudetail_FK_language_id=:languageId AND t1.menu_type!='BLOCK'
+        ORDER BY t1.menu_order, t1.menu_id
+    ]]>
+    </model:Query>
+
+    <model:Query name="pgsql_getChildMenus">
+    <!--
+        Get a child menu.
+        Used in:
+            org.glizycms.contents.models.proxy.MenuProxy
+    -->
+    <![CDATA[
+        SELECT t1.*,
+            menudetail_title,
+            "menudetail_titleLink",
+            "menudetail_linkDescription",
+            "menudetail_isVisible",
+            (SELECT count(*) FROM ##TABLE_PREFIX##menus_tbl as t2 WHERE t2."menu_parentId" = t1.menu_id) as "numChild"
+        FROM ##TABLE_PREFIX##menus_tbl as t1
+        INNER JOIN ##TABLE_PREFIX##menudetails_tbl ON ("menudetail_FK_menu_id" = menu_id)
+        WHERE t1."menu_parentId"=:menuId AND "menudetail_FK_language_id"=:languageId
+        ORDER BY t1.menu_order, t1.menu_id
+    ]]>
+    </model:Query>
+
+    <model:Query name="pgsql_getChildMenusNoBlock">
+    <!--
+        Get a child menu.
+        Used in:
+            org.glizycms.contents.models.proxy.MenuProxy
+    -->
+    <![CDATA[
+        SELECT t1.*,
+            menudetail_title,
+            "menudetail_titleLink",
+            "menudetail_linkDescription",
+            "menudetail_isVisible",
+            (SELECT count(*) FROM ##TABLE_PREFIX##menus_tbl as t2 WHERE t2."menu_parentId" = t1.menu_id AND t2.menu_type!='BLOCK') as "numChild"
+        FROM ##TABLE_PREFIX##menus_tbl as t1
+        INNER JOIN ##TABLE_PREFIX##menudetails_tbl ON ("menudetail_FK_menu_id" = menu_id)
+        WHERE t1."menu_parentId"=:menuId AND "menudetail_FK_language_id"=:languageId AND t1.menu_type!='BLOCK'
+        ORDER BY t1.menu_order, t1.menu_id
+    ]]>
+    </model:Query>
+
+    <model:Query name="getAllMenu" type="function" arguments="languageId">
+    <!--
+        Get a menu.
+        Used in:
+            org.glizycms.core.application.SiteMapDB
+    -->
+    <![CDATA[
+        $iterator->select('t1.*', 'detail.menudetail_title', 'detail.menudetail_titleLink', 'detail.menudetail_linkDescription', 'detail.menudetail_isVisible' )
+                 ->whereLanguageIs($languageId)
+                 ->orderBy('t1.menu_parentId')
+                 ->orderBy('t1.menu_order')
+                 ->orderBy('t1.menu_id');
+
+        if (__Config::get('glizycms.speakingUrl')) {
+            $expr = $iterator->expr();
+             $iterator->select('t1.*', 'detail.menudetail_title', 'detail.menudetail_titleLink', 'detail.menudetail_linkDescription', 'detail.menudetail_isVisible', 't3.speakingurl_value', 't2.language_code' )
+                 ->leftJoin("t1", $this->tablePrefix."speakingurls_tbl", "t3",
+                    $expr->andX(
+                        $expr->eq("t1.menu_id", "t3.speakingurl_FK"),
+                        $expr->andX( $expr->eq("t3.speakingurl_type", "'org.glizycms.core.models.Content'"),
+                                     $expr->eq("detail.menudetail_FK_language_id", "t3.speakingurl_FK_language_id")
+                                    )
+                    )
+                 )
+                 ->join("t1", $this->tablePrefix."languages_tbl", "t2", $expr->eq("detail.menudetail_FK_language_id", "t2.language_id"));
+        }
+    ]]>
+    </model:Query>
+
+    <model:Query name="getChildrenMenuInOrder" type="function" arguments="menuId">
+    <!--
+        Get the children of a menu
+        Used in:
+            org.glizycms.contents.models.proxy.Menu
+    -->
+    <![CDATA[
+        $iterator->select('menu_id', 'menu_order', 'menudetail_id')
+                 ->where('menu_parentId', $menuId)
+                 ->orderBy('menu_order');
+    ]]>
+    </model:Query>
+
+</model:Model>

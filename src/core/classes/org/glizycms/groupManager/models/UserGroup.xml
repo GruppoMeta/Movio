@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+	model:tableName="usergroups_tbl" model:usePrefix="true">
+    
+    <model:Query name="userGroupsAdmin" type="function">
+        $iterator->select('usergroup_id as k', 'usergroup_name as v')  
+                 ->orderBy('v');
+    </model:Query>
+</model:Model>

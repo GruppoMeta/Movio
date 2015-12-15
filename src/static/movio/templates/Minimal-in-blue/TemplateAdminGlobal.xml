@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glz:EmptyComponent
+        xmlns:m="movio.views.components.*">
+
+    <glz:Fieldset label="{i18n:Header logo}">
+        <glz:Image id="headerLogo" label="{i18n:Logo}" required="true" />
+    </glz:Fieldset>
+
+    <glz:Fieldset label="{i18n:Footer logo}">
+        <glz:Image id="footerLogo" label="{i18n:Additional logo}" />
+        <glz:Input id="footerLogoLink" label="{i18n:Logo link}" />
+        <glz:Input id="footerLogoTitle" label="{i18n:Logo title}" />
+    </glz:Fieldset>
+
+     <glz:List id="font1" label="{i18n:Font primary}">
+        <glz:ListItem key="default" value="{i18n:Default}" />
+        <glz:ListItem key="Alegreya" value="Alegreya" />
+        <glz:ListItem key="Cinzel" value="Cinzel" />
+        <glz:ListItem key="Inconsolata" value="Inconsolata" />
+        <glz:ListItem key="Jacques Francois" value="Jacques Francois" />
+        <glz:ListItem key="Karla" value="Karla" />
+        <glz:ListItem key="Lato" value="Lato" />
+        <glz:ListItem key="Lora" value="Lora" />
+        <glz:ListItem key="Libre Baskerville" value="Libre Baskerville" />
+        <glz:ListItem key="Merriweather" value="Merriweather" />
+        <glz:ListItem key="Montserrat" value="Montserrat" />
+        <glz:ListItem key="Muli" value="Muli" />
+        <glz:ListItem key="Neuton" value="Neuton" />
+        <glz:ListItem key="Open Sans" value="Open Sans" />
+        <glz:ListItem key="Oswald" value="Oswald" />
+        <glz:ListItem key="Playfair Display" value="Playfair Display" />
+        <glz:ListItem key="PT Sans" value="PT Sans" />
+        <glz:ListItem key="Quattrocento Sans" value="Quattrocento Sans" />
+        <glz:ListItem key="Raleway" value="Raleway" />
+        <glz:ListItem key="Roboto" value="Roboto" />
+        <glz:ListItem key="Roboto Slab" value="Roboto Slab" />
+        <glz:ListItem key="Scada" value="Scada" />
+        <glz:ListItem key="Titillium Web" value="Titillium Web" />
+    </glz:List>
+     <glz:List id="font2" label="{i18n:Font secondary}">
+        <glz:ListItem key="default" value="{i18n:Default}" />
+        <glz:ListItem key="Alegreya" value="Alegreya" />
+        <glz:ListItem key="Cinzel" value="Cinzel" />
+        <glz:ListItem key="Inconsolata" value="Inconsolata" />
+        <glz:ListItem key="Jacques Francois" value="Jacques Francois" />
+        <glz:ListItem key="Karla" value="Karla" />
+        <glz:ListItem key="Lato" value="Lato" />
+        <glz:ListItem key="Lora" value="Lora" />
+        <glz:ListItem key="Libre Baskerville" value="Libre Baskerville" />
+        <glz:ListItem key="Merriweather" value="Merriweather" />
+        <glz:ListItem key="Montserrat" value="Montserrat" />
+        <glz:ListItem key="Muli" value="Muli" />
+        <glz:ListItem key="Neuton" value="Neuton" />
+        <glz:ListItem key="Open Sans" value="Open Sans" />
+        <glz:ListItem key="Oswald" value="Oswald" />
+        <glz:ListItem key="Playfair Display" value="Playfair Display" />
+        <glz:ListItem key="PT Sans" value="PT Sans" />
+        <glz:ListItem key="Quattrocento Sans" value="Quattrocento Sans" />
+        <glz:ListItem key="Raleway" value="Raleway" />
+        <glz:ListItem key="Roboto" value="Roboto" />
+        <glz:ListItem key="Roboto Slab" value="Roboto Slab" />
+        <glz:ListItem key="Scada" value="Scada" />
+        <glz:ListItem key="Titillium Web" value="Titillium Web" />
+    </glz:List>
+
+    <glz:Fieldset label="{i18n:Colors}">
+        <glz:List label="{i18n:Preset}" data="type=valuesPreset;elements=c-body-background,c-text,c-text-heading,c-color-link,c-color-link-hover,c-box-image-border,c-navigation-background,c-sidebar-link,c-sidebar-link-hover,c-languages-link,c-languages-link-hover,c-metanavigation-link,c-metanavigation-link-hover,c-slider-background,c-slider-text,c-box-border,c-box-background,c-box-header-link,c-box-text,c-icon-in-box,c-icon-in-box-background,c-color-border-button,c-color-arrow-button-slider,c-color-arrow-button-slider-hover,c-form-border,c-form-required,c-form-input-text,c-form-input-background,c-form-button-primary,c-form-button,c-form-button-text,c-timeline-theme,c-storyteller-background,c-storyteller-item-background,c-storyteller-border,c-storyteller-navigation-link,c-footer-border,c-footer-text,c-svg-path-stroke,c-svg-node-border,c-svg-main-node-background,c-svg-text-link,c-svg-text-node,c-svg-text-main-node,c-svg-node-background">
+            <glz:ListItem value="-" key="" />
+            <glz:ListItem value="{i18n:Preset 1}" key="0" options="#FFFFFF,#333333,#333333,#0099FF,#008ae6,#CCCCCC,#0099FF,#0099FF,#008ae6,#545453,#0099FF,#5E5E5D,#0099FF,#CCCCCC,#FFFFFF,#CCCCCC,#FFFFFF,#545453,#333333,#FFFFFF,#CCCCCC,#CCCCCC,#333333,0099FF,#CCCCCC,#CCCCCC,#333333,#FFFFFF,#0099FF,#0099FF,#FFFFFF,#0099FF,,#FFFFFF,#CCCCCC,#7A7A7A,#CCCCCC,#5E5E5D,#000000,#CFCED3,#D3D3D3,#CC3522,#000000,#000000,#FFFFFF" />
+        </glz:List>
+
+        <glz:Fieldset label="{i18n:General}">
+            <glz:Input id="c-body-background" label="{i18n:Background}" data="type=colorPicker" required="false" />
+            <glz:Input id="c-text" label="{i18n:Text}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-text-heading" label="{i18n:Heading}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-color-link" label="{i18n:Link}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-color-link-hover" label="{i18n:Link Hover}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-box-image-border" label="{i18n:Image border}" data="type=colorPicker" required="true" />
+        </glz:Fieldset>
+
+        <glz:Fieldset label="{i18n:Navigation}">
+            <glz:Input id="c-navigation-background" label="{i18n:Background}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-sidebar-link" label="{i18n:Text}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-sidebar-link-hover" label="{i18n:Text Hover/Selected}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-languages-link" label="{i18n:Language Text}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-languages-link-hover" label="{i18n:Language Hover/Selected}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-metanavigation-link" label="{i18n:Metanavigation Text}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-metanavigation-link-hover" label="{i18n:Metanavigation Hover/Selected}" data="type=colorPicker" required="true" />
+        </glz:Fieldset>
+
+        <glz:Fieldset label="{i18n:Slider Home}">
+            <glz:Input id="c-slider-background" label="{i18n:Background}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-slider-text" label="{i18n:Text}" data="type=colorPicker" required="true" />
+        </glz:Fieldset>
+
+        <glz:Fieldset label="{i18n:Box}">
+            <glz:Input id="c-box-border" label="{i18n:Border}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-box-background" label="{i18n:Background}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-box-header-link" label="{i18n:Title}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-box-text" label="{i18n:Text}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-icon-in-box" label="{i18n:Icon}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-icon-in-box-background" label="{i18n:Icon background}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-color-border-button" label="{i18n:Collapsible button border}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-color-arrow-button-slider" label="{i18n:Collapsible button icon}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-color-arrow-button-slider-hover" label="{i18n:Collapsible button icon hover}" data="type=colorPicker" required="true" />
+        </glz:Fieldset>
+
+        <glz:Fieldset label="{i18n:Forms}">
+            <glz:Input id="c-form-border" label="{i18n:Border}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-form-required" label="{i18n:Border required}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-form-input-text" label="{i18n:Field text color}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-form-input-background" label="{i18n:Field background}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-form-button-primary" label="{i18n:Primary button}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-form-button" label="{i18n:Secondary button}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-form-button-text" label="{i18n:Button text}" data="type=colorPicker" required="true" />
+        </glz:Fieldset>
+
+        <glz:Fieldset label="{i18n:Tools}">
+            <glz:Input id="c-timeline-theme" label="{i18n:Timeline theme}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-storyteller-background" label="{i18n:Storyteller background}" data="type=colorPicker" required="false" />
+            <glz:Input id="c-storyteller-item-background" label="{i18n:Storyteller background items}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-storyteller-border" label="{i18n:Storyteller border}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-storyteller-navigation-link" label="{i18n:Storyteller link}" data="type=colorPicker" required="true" />
+        </glz:Fieldset>
+
+        <glz:Fieldset label="{i18n:Graph}">
+            <glz:Input id="c-svg-path-stroke" label="{i18n:Path color}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-svg-node-border" label="{i18n:node border}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-svg-main-node-background" label="{i18n:Main node}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-svg-text-link" label="{i18n:Link}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-svg-text-node" label="{i18n:Text}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-svg-text-main-node" label="{i18n:Text main node}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-svg-node-background" label="{i18n:Node background}" data="type=colorPicker" required="true" />
+        </glz:Fieldset>
+
+        <glz:Fieldset label="{i18n:Footer}">
+            <glz:Input id="c-footer-border" label="{i18n:Border}" data="type=colorPicker" required="true" />
+            <glz:Input id="c-footer-text" label="{i18n:Text}" data="type=colorPicker" required="true" />
+        </glz:Fieldset>
+    </glz:Fieldset>
+
+
+    <glz:Input id="customCss" label="{i18n:Custom css}" size="90" type="multiline" rows="10" cols="70" />
+</glz:EmptyComponent>

@@ -1,0 +1,27 @@
+<article class="box collapsible big relationImage" tal:condition="php: Component">
+    <h1><span tal:omit-tag="" tal:content="structure Component/relation" /> <i class="ico-box fa fa-link"></i></h1>
+    <button data-toggle="collapse" class="show-content-box" type="button" tal:attributes="data-target php: '#' . Component['id']"></button>
+    <div tal:attributes="id Component/id">
+        <div class="container">
+            <div class="slider js-relationImage clearfix">
+                <div class="slide" tal:repeat="item Component/content">
+                       <a tal:condition="exists:item/__image" tal:attributes="href item/url; title item/title" tal:content="structure item/__image/__html__">
+                          <span class="popup" >
+                              <span class="popup-text" tal:content="item/title">
+                                <span class="popup-arrow"></span>
+                              </span>
+                          </span>
+                      </a>
+                </div>
+            </div>
+        </div>
+    </div>
+  <script>
+    $(function() {
+      var targetId = '#<span tal:omit-tag="" tal:content="Component/id"/>';
+      Movio.initImageSlider(targetId+' .js-relationImage');
+    });
+  </script>
+</article>
+
+

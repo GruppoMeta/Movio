@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<m:BoxesCmp
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:cms="org.glizycms.views.components.*"
+    xmlns:m="movio.views.components.*">
+
+    <m:BoxesRepeater id="boxes" label="{php:$this._parent.getAttribute('label')}" adm:collapsable="true" skin="BoxSidebar.html">
+        <glz:List id="type" label="{i18n:Box type}" data="target=title,text,image,linkTitle,pageId;val_0=1,1,1,0,1;val_1=1,0,1,1,1;val_2=1,1,0,0,0;">
+            <glz:ListItem value="{i18n:Image with text}" key="imageText" />
+            <glz:ListItem value="{i18n:Image with link}" key="imageLink" />
+            <glz:ListItem value="{i18n:Text}" key="text" />
+        </glz:List>
+
+        <glz:Input id="title" label="{i18n:Title}" size="50" required="false" />
+        <glz:LongText id="text" label="{i18n:Text}" adm:rows="20" adm:cols="75" adm:htmlEditor="true" />
+        <glz:Image id="image" label="{i18n:Image}" width="300" height="150" />
+        <glz:Input id="linkTitle" label="{i18n:Link title}" size="50" required="false" />
+        <cms:PagePicker id="pageId" label="{i18n:Linked page}" required="false" />
+    </m:BoxesRepeater>
+</m:BoxesCmp>

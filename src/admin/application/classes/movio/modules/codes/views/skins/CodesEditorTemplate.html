@@ -1,0 +1,42 @@
+<script id="codes-editor-template" type="text/x-handlebars-template">
+<div id="codesEditor">
+<table data-id="{{id}}" id="editTable" class="table table-bordered table-striped">
+<thead>
+    <tr>
+        <th>{{locale.description}}</th>
+        <th>{{locale.code}}</th>
+        <th>{{locale.resourceLink}}</th>
+        <th>QRCode</th>
+        <th></th>
+    </tr>
+</thead>
+<tbody>
+  {{#items}}
+    {{> item}}
+  {{/items}}
+</tbody>
+</table>
+<div class="afterTableActions">
+  <a class="js-addButton btn btnBig action-link" href="#"><i class="icon-plus"></i> {{locale.addNewButton}}</a>
+</div>
+</div>
+</script>
+
+<script id="item" type="text/x-handlebars-template">
+  <tr>
+    <td><a href="#" data-type="textarea" data-pk="{{id}}" data-name="custom_code_mapping_description" data-value="{{description}}"></a></td>
+    <td><a href="#" data-type="text" data-pk="{{id}}" data-name="custom_code_mapping_code" data-value="{{code}}"></a></td>
+    <td><a href="#" class="js-resourceLink" data-type="select2" data-pk="{{id}}" data-name="custom_code_mapping_link" data-value="{{resourceLink}}">{{resourceLinkLabel}}</a></td>
+    {{#if downloadQrCode}}
+        <td><a href="{{downloadQrCode}}">Download</a></td>
+    {{else}}
+        <td><a></a></td>
+    {{/if}}
+    <td class="actions">
+    {{#if isNew}}
+      <input class="btn btn-primary js-saveButton" type="button" value="{{locale.saveButton}}" />
+    {{/if}}
+      <i class="js-removeButton btn-icon icon-trash"></i>
+    </td>
+  </tr>
+</script>

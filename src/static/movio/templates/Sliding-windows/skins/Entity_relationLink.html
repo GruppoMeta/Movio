@@ -1,0 +1,13 @@
+<article class="box collapsible big relationLink" tal:condition="php: Component">
+    <h1><span tal:omit-tag="" tal:content="structure Component/relation" /> <i class="ico-box fa fa-link"></i></h1>
+    <button data-toggle="collapse" class="show-content-box" type="button" tal:attributes="data-target php: '#' . Component['id']"></button>
+    <div tal:attributes="id Component/id">
+        <div class="container">
+            <div class="row-fluid">
+                <ul class="item-list">
+                    <li tal:repeat="item Component/content"><a tal:attributes="href item/url; title item/title" tal:content="structure item/title"></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</article>

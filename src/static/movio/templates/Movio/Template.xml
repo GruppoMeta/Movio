@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<glz:EmptyComponent
+        xmlns:m="movio.views.components.*">
+    <m:BoxesSidebar id="template:boxesSidebar" editableRegion="leftSidebarAfter" />
+    <m:BoxesSidebar id="template:boxesSidebar-right" editableRegion="afterContent" />
+
+    <glz:ConfigValue key="movio.thumb.entityList.width" action="set" value="86" />
+    <glz:ConfigValue key="movio.thumb.entityList.height" action="set" value="86" />
+    <glz:ConfigValue key="movio.thumb.entityList.crop" action="set" value="true" />
+    <glz:ConfigValue key="movio.thumb.homeSlider.width" action="set" value="600" />
+    <glz:ConfigValue key="movio.thumb.homeSlider.height" action="set" value="290" />
+    <glz:ConfigValue key="movio.thumb.homeSlider.crop" action="set" value="true" />
+
+</glz:EmptyComponent>
