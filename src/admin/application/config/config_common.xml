@@ -35,6 +35,7 @@
     <glz:Param name="movio.modules.publishApp.mobileCodesTable" value="mobilecodes_tbl" />
     <glz:Param name="movio.modules.publishApp.mobileContentsTable" value="mobilecontents_tbl" />
     <glz:Param name="movio.modules.publishApp.mobileFulltextTable" value="mobilefulltext_tbl" />
+    <glz:Param name="movio.modules.publishApp.mobileLocationTable" value="mobilelocation_tbl" />
     <glz:Param name="movio.modules.publishApp.sqliteDbName" value="mobilecontents.db" />
 
     <glz:Param name="movio.noImage.src" value="{{path:STATIC_DIR}}movio/templates/Movio/img/various/img-not-disponible.jpg" />
@@ -42,7 +43,7 @@
     <glz:Param name="movio.graph.backgroundColor" value="#ffffff" />
 
     <glz:Param name="movio.europeana.apiKey" value="" />
-    <glz:Param name="movio.europeana.apiSearchUrl" value="http://europeana.eu/api/v2/search.json" />
+    <glz:Param name="movio.europeana.apiSearchUrl" value="http://www.europeana.eu/api/v2/search.json" />
     <glz:Param name="movio.europeana.rows" value="18" />
     <glz:Param name="movio.europeana.searchFields" value="title,who,what,when,where,TYPE,LANGUAGE" />
     <glz:Param name="movio.europeana.searchFieldsLabels" value="Titles,Creators,Subjects,Dates,Places,Media type,Language" />

@@ -2,7 +2,7 @@
 <glz:Config xmlns:glz="http://www.glizy.org/dtd/1.0/">
     <glz:Param name="CHARSET" value="UTF-8" />
     <glz:Param name="APP_NAME" value="MOVIO" />
-    <glz:Param name="APP_VERSION" value="1.8" />
+    <glz:Param name="APP_VERSION" value="2.0" />
     <glz:Param name="APP_AUTHOR">
         <![CDATA[Gruppo Meta <http://www.gruppometa.it>]]>
     </glz:Param>
@@ -49,9 +49,16 @@
     <glz:Param name="movio.thumb.map.width" value="250" />
     <glz:Param name="movio.thumb.map.height" value="250" />
     <glz:Param name="movio.thumb.map.crop" value="false" />
+    <glz:Param name="movio.photogallery.resize.width" value="800" />
+    <glz:Param name="movio.photogallery.resize.height" value="600" />
+
+    <glz:Param name="movio.home.width-size1" value="242" />
+    <glz:Param name="movio.home.width-size2" value="537" />
+    <glz:Param name="movio.home.width-size3" value="831" />
+    <glz:Param name="movio.home.width-size4" value="1126" />
 
     <glz:Param name="movio.europeana.apiKey" value="" />
-    <glz:Param name="movio.europeana.apiSearchUrl" value="http://europeana.eu/api/v2/search.json" />
+    <glz:Param name="movio.europeana.apiSearchUrl" value="http://www.europeana.eu/api/v2/search.json" />
     <glz:Param name="movio.europeana.rows" value="18" />
     <glz:Param name="movio.europeana.searchFields" value="title,who,what,when,where,TYPE,LANGUAGE" />
     <glz:Param name="movio.europeana.searchFieldsLabels" value="Titles,Creators,Subjects,Dates,Places,Media type,Language" />
@@ -72,4 +79,5 @@
         </div>
     </div>
     ]]></glz:Param>
+    <glz:Param name="glizy.maps.google.apiKey" value="" />
 </glz:Config>
