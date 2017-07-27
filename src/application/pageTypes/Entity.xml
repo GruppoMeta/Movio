@@ -14,8 +14,8 @@
 
     <mvc:State name="index">
         <glz:LongText id="text" label="{i18n:Text}" adm:rows="20" adm:cols="75" adm:htmlEditor="true" forceP="true" />
-        <glz:Panel id="entitySelectionBox" visible="false">
-            <glz:DataProvider id="entityDP" recordClassName="movio.modules.ontologybuilder.models.Entity" />
+        <glz:Panel id="entitySelectionBox" enabled="false">
+            <cmp:DataProviderEntities id="entityDP" visible="false" />
             <glz:List id="entitySelect" label="{i18n:Entity to show}" dataProvider="{entityDP}" bindTo="entity_name" emptyValue="{i18n:-}" data="index=text" required="true" />
             <glz:List id="showForm" label="{i18n:Show search form}">
                 <glz:ListItem key="true" value="{i18n:Yes}"/>
