@@ -25,7 +25,14 @@ class movio_modules_modulesBuilder_builder_07CreateRoutingFile extends movio_mod
 		$output .= '<glz:Route name="'.$tableName.'" value="{pageId='.$tableName.'.views.FrontEnd}/{static=state=show}/{integer='.$fieldKey.'}/{value='.$title.'}" />'.GLZ_COMPILER_NEWLINE2;
 		$output .= '</glz:Routing>'.GLZ_COMPILER_NEWLINE2;
 
-		file_put_contents( $this->parent->getCustomModulesFolder().'/config/routing.xml', $output );
+
+        $path = $this->parent->getCustomModulesFolder() . '/config';
+        $file = $path . '/routing.xml';
+
+        $r = file_put_contents( $file, $output );
+        if ($r === false){
+            $this->throwFileCreationException($path, $file);
+        }
 		return true;
 	}
 }

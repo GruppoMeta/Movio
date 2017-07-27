@@ -158,12 +158,17 @@ class movio_modules_modulesBuilder_controllers_StateController extends org_glizy
 				$fieldOrder = __Request::get( 'fieldOrder' );
 				__Request::set( 'fieldName', explode( ',', $fieldOrder ) );
 				$mbName = __Request::get( 'mbName' );
-				__Request::set( 'mbTable', $this->getModuleName($mbName) );
+				$mbTable = $this->getModuleName($mbName);
+				__Request::set( 'mbTable', $mbTable );
 				__Request::set( 'mbModuleType', 'document');
 
 				$builder = org_glizy_ObjectFactory::createObject( 'movio.modules.modulesBuilder.builder.Builder' );
 				$builder->execute();
-				$this->_parent->refreshToState( 'step4' );
+				$this->_parent->refreshToState( 'step4',
+					array(
+						'mbTable' => $mbTable
+					)
+				);
 		}
 	}
 

@@ -265,7 +265,7 @@ $(function(){
 		<glz:State name="step4">
 			<glz:Form id="myForm" removeGetValues="false">
 				<glz:LongText adm:htmlEditor="true"><![CDATA[
-				Module create with success.
+				Module successfully created.
 				]]></glz:LongText>
 			</glz:Form>
 		</glz:State>

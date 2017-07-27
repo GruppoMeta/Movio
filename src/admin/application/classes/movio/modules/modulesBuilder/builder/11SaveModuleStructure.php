@@ -15,8 +15,14 @@ class movio_modules_modulesBuilder_builder_11SaveModuleStructure extends movio_m
 		$values[ 'mbModuleType' ]  = __Request::get( 'mbModuleType', 'document' ) != 'db' ? 'document' : 'db';
 		$values[ 'tableDb' ]  = $this->parent->getTableNameDb();
 
-		file_put_contents( $this->parent->getCustomModulesFolder().'/Info', serialize( $values ) );
+        $path = $this->parent->getCustomModulesFolder();
+        $file = $path . 'Info';
+        $output = serialize($values);
 
+        $r = file_put_contents( $file, $output );
+        if ($r === false){
+            $this->throwFileCreationException($path, $file);
+        }
 		return true;
 	}
 

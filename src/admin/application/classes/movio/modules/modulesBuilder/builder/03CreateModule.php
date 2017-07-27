@@ -37,7 +37,13 @@ class {$tableName}_Module
 }
 EOD;
 
-		file_put_contents( $this->parent->getCustomModulesFolder().'/Module.php', $output );
+        $path = $this->parent->getCustomModulesFolder();
+        $file = $path . 'Module.php';
+
+        $r = file_put_contents( $file, $output );
+        if ($r === false){
+            $this->throwFileCreationException($path, $file);
+        }
 		return true;
 	}
 }

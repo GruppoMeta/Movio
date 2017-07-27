@@ -113,7 +113,13 @@ $output = <<<EOD
 </glz:include>
 EOD;
 
-		file_put_contents( $this->parent->getCustomModulesFolder().'/views/Admin.xml', $output );
+        $path = $this->parent->getCustomModulesFolder() . '/views';
+        $file = $path . '/Admin.xml';
+
+        $r = file_put_contents( $file, $output );
+        if ($r === false){
+            $this->throwFileCreationException($path, $file);
+        }
 		return true;
 	}
 }

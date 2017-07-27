@@ -62,10 +62,15 @@ class movio_modules_modulesBuilder_builder_04CreateModelFile extends movio_modul
 					break;
 			}
 		}
-
-
 		$output .= '</model:Define></model:Model>';
-		file_put_contents( $this->parent->getCustomModulesFolder().'/models/Model.xml', $output );
+
+        $path = $this->parent->getCustomModulesFolder() . '/models';
+        $file = $path . '/Model.xml';
+
+        $r = file_put_contents( $file, $output );
+        if ($r === false){
+            $this->throwFileCreationException($path, $file);
+        }
 		return true;
 	}
 }

@@ -4,6 +4,7 @@ class movio_modules_modulesBuilder_views_components_EditTableFields extends org_
 	function render()
 	{
 		$tableName = __Request::get( 'mbTableDB' );
+		$tableNameMB = __Request::get( 'mbTable' );
 		$moduleType = __Request::get('mbModuleType');
 		$fieldOrder = __Request::get( 'fieldOrder', array());
 		$fieldRequired = __Request::get( 'fieldRequired', array() );
@@ -13,6 +14,8 @@ class movio_modules_modulesBuilder_views_components_EditTableFields extends org_
 		$fieldAdmin = __Request::get( 'fieldAdmin', array() );
 		$fieldLabel = __Request::get( 'fieldLabel', array() );
 		$fieldPrimaryKey = '';
+
+		$this->loadLocaleFile($tableNameMB);
 
 		if ($moduleType=='document') {
 			$fieldOrder =  explode(',', $fieldOrder);
@@ -57,7 +60,6 @@ class movio_modules_modulesBuilder_views_components_EditTableFields extends org_
 				}
 				$fieldType[] = $type;
 			}
-
 		}
 
 		$output = '<table id="editTable" class="modulesBuilderTable table table-striped">';
@@ -69,6 +71,12 @@ class movio_modules_modulesBuilder_views_components_EditTableFields extends org_
 			$type =  $fieldType[$i];
 			$label = $fieldLabel[$i];
 			$id = $fieldOrder[$i];
+
+			$localeKey = $tableNameMB.'_'.$id;
+			$labelLocale = __T($localeKey);
+			if ($labelLocale!==$localeKey) {
+				$label = $labelLocale;
+			}
 
 			$output .= '<tr id="'.$id.'">';
 			$output .= '<td width="10"><img src="application/templates/images/dragHandler.gif" /></td>';
@@ -132,6 +140,15 @@ class movio_modules_modulesBuilder_views_components_EditTableFields extends org_
 		$output .= '<input type="hidden" name="mbModuleType" value="'.$moduleType.'" />';
 		$output .= '<input type="hidden" name="mbTableDB" value="'.$tableName.'" />';
 		$this->addOutputCode($output);
+	}
+
+	private function loadLocaleFile($tableNameMB)
+	{
+		$language = $this->_application->getEditingLanguage();
+		$localeFile = __Paths::get('APPLICATION_TO_ADMIN').'classes/userModules/'.$tableNameMB.'/locale/'.$language.'.php';
+		if (file_exists($localeFile)) {
+			require $localeFile;
+		}
 	}
 
 }

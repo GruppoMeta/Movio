@@ -1,28 +1,37 @@
 <?php
+
 class movio_modules_modulesBuilder_builder_01CreateFolders extends movio_modules_modulesBuilder_builder_AbstractCommand
 {
-	function execute()
-	{
-		// crea le cartelle
-		// controlla se esiste la cartella che contiene tutti i moduli custom
-		if ( !file_exists( $this->parent->getCustomModulesFolder( false ) ) )
-		{
-			mkdir( $this->parent->getCustomModulesFolder( false ) );
-		}
-		@mkdir( $this->parent->getCustomModulesFolder() );
-		@mkdir( $this->parent->getCustomModulesFolder().'/models' );
-		@mkdir( $this->parent->getCustomModulesFolder().'/views' );
-		@mkdir( $this->parent->getCustomModulesFolder().'/locale' );
-		@mkdir( $this->parent->getCustomModulesFolder().'/config' );
-		@mkdir( $this->parent->getCustomModulesFolder().'/images' );
+    function execute()
+    {
+        $customModulesFolder = $this->parent->getCustomModulesFolder();
 
-		@chmod( $this->parent->getCustomModulesFolder(), 0777 );
-		@chmod( $this->parent->getCustomModulesFolder().'/models', 0777 );
-		@chmod( $this->parent->getCustomModulesFolder().'/views', 0777 );
-		@chmod( $this->parent->getCustomModulesFolder().'/locale', 0777 );
-		@chmod( $this->parent->getCustomModulesFolder().'/config', 0777 );
-		@chmod( $this->parent->getCustomModulesFolder().'/images', 0777 );
+        $folders = array(
+            $customModulesFolder. '',
+            $customModulesFolder. '/models',
+            $customModulesFolder. '/views',
+            $customModulesFolder. '/images',
+            $customModulesFolder. '/config',
+            $customModulesFolder. '/locale'
+        );
 
-		return true;
-	}
+        // crea le cartelle
+        // controlla se esiste la cartella che contiene tutti i moduli custom
+        if (!file_exists($this->parent->getCustomModulesFolder(false))) {
+            mkdir($this->parent->getCustomModulesFolder(false));
+        }
+
+        @array_map(
+            function($dirPath){
+                @mkdir($dirPath);
+                @chmod($dirPath, 0777);
+                if (!is_dir($dirPath) || !is_readable($dirPath) || !is_writable($dirPath)){
+                    throw new Exception("Non è stato possibile creare la cartella \"$path\", creazione fallita");
+                }
+            },
+            $folders
+        );
+
+        return true;
+    }
 }

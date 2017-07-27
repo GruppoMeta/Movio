@@ -74,7 +74,7 @@ class movio_modules_modulesBuilder_views_components_NewTableFields extends org_g
 		$output .= '</tr>';
 		$output .= '</thead>';
 		$output .= '</table>';
-		$output .= '<input type="hidden" name="fieldKey" value="id" />';
+		$output .= '<input type="hidden" name="fieldKey" value="document_id" />';
 		$output .= '<input type="hidden" name="mbModuleType" value="'.$moduleType.'" />';
 		$output .= '<input type="hidden" name="mbTableDB" value="" />';
 		$this->addOutputCode($output);

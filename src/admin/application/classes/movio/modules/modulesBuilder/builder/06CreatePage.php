@@ -282,7 +282,13 @@ $skinEntry
 </glz:Page>
 EOD;
 
-		file_put_contents( $this->parent->getCustomModulesFolder().'/views/FrontEnd.xml', $output );
-		return true;
+        $path = $this->parent->getCustomModulesFolder() . '/views';
+        $file = $path . '/FrontEnd.xml';
+
+        $r = file_put_contents( $file, $output );
+        if ($r === false){
+            $this->throwFileCreationException($path, $file);
+        }
+        return true;
 	}
 }
