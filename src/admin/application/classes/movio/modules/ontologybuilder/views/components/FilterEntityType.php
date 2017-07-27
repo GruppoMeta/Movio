@@ -20,10 +20,14 @@ class movio_modules_ontologybuilder_views_components_FilterEntityType extends or
         $output .= '<select id="'.$id.'">';
         $output .= '<option value="">All</option>';
 
+        $localeService = $this->_application->retrieveProxy('movio.modules.ontologybuilder.service.LocaleService');
+        $language = $this->_application->getEditingLanguage();
+
         $it = org_glizy_objectFactory::createModelIterator($this->getAttribute('recordClassName'), 'all');
 
         foreach ($it as $ar) {
-            $output .= '<option value="entity'.$ar->getId().'">'.$ar->entity_name.'</option>';
+            $entityName = $localeService->getTranslation($language, $ar->entity_name);
+            $output .= '<option value="entity'.$ar->getId().'">'.$entityName.'</option>';
         }
 
         $output .= '</select></label>';

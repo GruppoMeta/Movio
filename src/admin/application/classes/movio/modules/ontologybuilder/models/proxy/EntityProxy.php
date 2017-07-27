@@ -32,6 +32,16 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
         $document->addField(new org_glizy_dataAccessDoctrine_DbField('profile', Doctrine\DBAL\Types\Type::TARRAY, 255, false, null, '', false));
         $data['profile'] = $document->profile;
 
+        $document->addField(new org_glizy_dataAccessDoctrine_DbField(
+                            'externalId',
+                            Doctrine\DBAL\Types\Type::INTEGER,
+                            10,
+                            false,
+                            null,
+                            '',
+                            false));
+        $data['externalId'] = $document->externalId;
+
         $application = org_glizy_ObjectValues::get('org.glizy', 'application' );
         $fieldTypeService = $application->retrieveProxy('movio.modules.ontologybuilder.service.FieldTypeService');
 
@@ -104,7 +114,7 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
             $languageProxy = __ObjectFactory::createObject('org.glizycms.languages.models.proxy.LanguagesProxy');
             $defaultLanguageId = $languageProxy->getDefaultLanguageId();
             $document->load($entityId, 'LAST_MODIFIED', $defaultLanguageId);
-            $document->setLanguage($languageProxy->getLanguageId());
+            $document->setDetailFromLanguageId($languageProxy->getLanguageId());
         }
 
         $document->setVisible($data->__isVisible);
@@ -121,6 +131,16 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
 
         $document->addField(new org_glizy_dataAccessDoctrine_DbField('profile', Doctrine\DBAL\Types\Type::TARRAY, 255, false, null, '', false));
         $document->profile = $data->profile;
+
+        $document->addField(new org_glizy_dataAccessDoctrine_DbField(
+                            'externalId',
+                            Doctrine\DBAL\Types\Type::INTEGER,
+                            10,
+                            false,
+                            null,
+                            '',
+                            false));
+        $document->externalId = $data->externalId;
 
         $application = org_glizy_ObjectValues::get('org.glizy', 'application' );
         $fieldTypeService = $application->retrieveProxy('movio.modules.ontologybuilder.service.FieldTypeService');
@@ -202,17 +222,14 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
 
             if ($speakingUrlProxy) {
                 $languageId = org_glizy_ObjectValues::get('org.glizy', 'editingLanguageId');
-
-                if ($originalUrl != $document->url) {
-                    //valida l'url
-                    if (!$speakingUrlProxy->validate($document->url, $languageId, $id, 'movio.modules.ontologybuilder.content')) {
-                        throw new org_glizy_validators_ValidationException(array('Url non valido perché già utilizzato'));
-                    } else {
-                        $options = array('entityTypeId' => $entityTypeId);
-                        // aggiorna l'url parlante
-                        $speakingUrlProxy->addUrl($document->url, $languageId, $id, 'movio.modules.ontologybuilder.content', $options);
-                        org_glizy_cache_CacheFile::cleanPHP('../cache/');
-                    }
+                //valida l'url
+                if (!$speakingUrlProxy->validate($document->url, $languageId, $id, 'movio.modules.ontologybuilder.content')) {
+                    throw new org_glizy_validators_ValidationException(array('Url non valido perché già utilizzato'));
+                } else {
+                    $options = array('entityTypeId' => $entityTypeId);
+                    // aggiorna l'url parlante
+                    $speakingUrlProxy->addUrl($document->url, $languageId, $id, 'movio.modules.ontologybuilder.content', $options);
+                    org_glizy_cache_CacheFile::cleanPHP('../cache/');
                 }
             }
         }
@@ -233,6 +250,7 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
 
         $document = org_glizy_objectFactory::createObject('org.glizy.dataAccessDoctrine.ActiveRecordDocument');
 
+        $languageProxy = __ObjectFactory::createObject('org.glizycms.languages.models.proxy.LanguagesProxy');
         $document->load($entityId);
 
         $document->addField(new org_glizy_dataAccessDoctrine_DbField('title', Doctrine\DBAL\Types\Type::STRING, 255, false, null, '', false));

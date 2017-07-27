@@ -48,7 +48,7 @@ OntologyBuilderEditor = {
                 });
 
                 property.find('.-relationShowSelectorPanel').hide();
-                
+
                 if ($(this).val() === 'attribute.thesaurus') {
                     property.find('.-paramSelectorPanel').show();
                     property.find('.-moduleParamSelectorPanel').hide();
@@ -126,7 +126,7 @@ OntologyBuilderEditor = {
                 OntologyBuilderEditor.dictionaries = data.result;
             }
         });
-        
+
         $.ajax({
             type: "POST",
             url: Glizy.ajaxUrl + "GetModules",
@@ -187,7 +187,7 @@ OntologyBuilderEditor = {
 
             return new Handlebars.SafeString(html);
         });
-        
+
         Handlebars.registerHelper('modules', function(target) {
             var html = "";
 
@@ -274,13 +274,13 @@ OntologyBuilderEditor = {
                     };
                 },
                 results: function(data, page ) {
-                    return { results: data.result }
+                    return { results: data.result };
                 }
             },
             formatSelection: function(data) {
                 if (data.id == '__newTerm') {
                     OntologyBuilderEditor.addTerm(null, data.text, data.key);
-                    $(item).select2('data').id = data.key ? data.key : data.text;
+                    $(item).select2('data').id = data.key != '__newTerm' ? data.key : data.text;
                 }
                 return data.text;
             },
@@ -365,7 +365,7 @@ OntologyBuilderEditor = {
 
         entity["id"] = $("#editTable").data("id");
         entity["name"] = $("#entityName").select2('data').id;
-        
+
         if (entity["name"] === '') {
             $("#entityName").select2("focus");
             OntologyBuilderEditor.hideLoader();

@@ -6,10 +6,14 @@ Glizy.module('ontologybuilder.SearchContent', function(){
                     '<div id="handle" class="resize"></div>' +
                     '<div class="js-closeDiv pull-right" type="button">x</div>' +
                     '<div id="searchForm">' +
-                        '<input id="searchText" type="search" style="margin-left:5px;" autocomplete="on">' +
+                        '<label style="display: inline; padding: 0 5px;">{i18n:search on}</label>' +
+                        '<select class="js-searchProvider">'+
+                            '<% _.each( rc.searchProviders, function(provider, index){ %>' +
+                                '<option value="<%- index %>"><%- provider.name %></option>' +
+                            '<% });%>' +
+                        '</select>'+
+                        '<input id="searchText" class="js-searchText" type="search" style="margin-left:5px;" autocomplete="on">' +
                         '<i id="searchSubmit" class="icon-search"></i>' +
-                        '<input type="radio" id="europeanaSearch"  name="searchType" value="europeana" class="js-searchMode contentSearch" checked > {i18n:search on europeana}' +
-                        '<input type="radio" id="wikipediaSearch" name="searchType" value="wikipedia" class="js-searchMode contentSearch"> {i18n:search on wikipedia}' +
                         '<div id="searchResultContextmenu" style="display: none;">' +
                             '<div class="pull-left" id="input-menu">' +
                                 '<div class="btn-group">' +
@@ -32,9 +36,9 @@ Glizy.module('ontologybuilder.SearchContent', function(){
                     '</iframe>' +
                 '</div>';
 
-    self.europeanaLink = "www.europeana.eu/portal/search.html?query=<%- rc.searchTerm%>";
-    self.wikipediaLink = "it.wikipedia.org/wiki/<%- rc.searchTerm%>";
+    self.searchProviders = {config:movio.search.content};
     self.selectedText ='';
+    self.selectedProvider = null;
     self.searchActive = true;
     self.url = '';
     self.numField = 0;
@@ -44,15 +48,13 @@ Glizy.module('ontologybuilder.SearchContent', function(){
     this.run = function() {
         var target = $("#outer");
         var menu = self.getInputFields();
-        var templateData = { 'menu' : menu };
-        var menu = self.getInputFields();
-        var templateData = { 'menu' : menu };
+        var templateData = { 'menu' : menu, 'searchProviders': self.searchProviders };
         self.render(target, templateData, self.html, true);
         self.resizeAdjust();
         target.css('height', '');
         $('#searchContentDiv').hide();
         self.setResize()
-        $("#breadcrumb-actions a").on('click', function(e){
+        $("#searchContentAction").on('click', function(e){
             e.preventDefault();
             self.searchActive = self.searchActive === false;
             if (!self.searchActive) {
@@ -91,8 +93,7 @@ Glizy.module('ontologybuilder.SearchContent', function(){
 
     };
 
-    this.setMaxHeight = function()
-    {
+    this.setMaxHeight = function() {
         self.maxHeigth = (2/3)*$(window).height();
     }
 
@@ -209,7 +210,7 @@ Glizy.module('ontologybuilder.SearchContent', function(){
         }
     };
 
-this.copySelectedText = function(el) {
+    this.copySelectedText = function(el) {
         selector = $(el.attr('href'));
         selector.focus();
         if(selector.prop("tagName") == "TEXTAREA" && selector.attr('data-type') == "tinymce") {
@@ -226,31 +227,12 @@ this.copySelectedText = function(el) {
     }
 
     this.callSearch = function() {
-        self.searchEngine = $("input[type='radio'][name='searchType']:checked").val();
-        self.searchTerm = $('#searchText').val()
-        if(!self.searchTerm) {
-            $('#searchText').focus();
-        } else {
-            self.loadSearchResult();
-        }
-    }
-
-
-    this.loadSearchResult = function()
-    {
-        var link ='';
-        switch (self.searchEngine) {
-            case 'wikipedia':
-                link = self.wikipediaLink;
-            break;
-            default:
-                link = self.europeanaLink;
-        }
-        var template = _.template( link );
-        var templateData = { 'searchTerm' : self.searchTerm };
-        link = template( templateData );
+        self.selectedProvider = self.searchProviders[$('.js-searchProvider').val()];
+        var searchText = $('.js-searchText').val();
+        var searchUrl = self.selectedProvider.url
+                            .replace('##SEARCH##', searchText);
         var frameId = 'searchResultFrame';
-        self.loadContent(link, frameId);
+        self.loadContent(searchUrl, frameId);
     }
 
     this.loadContent = function(link, frameId) {
@@ -259,26 +241,18 @@ this.copySelectedText = function(el) {
        $('#searchResultFrame').addClass('hidden');
        $('#loadingFrame').removeClass('hidden');
        $('#loadingFrame').css('height', $('#searchResultFrame').height() - 40);
-       var url = '../admin/proxy/'+ escape(link);
+       var url = '../admin/proxy/?url='+ encodeURIComponent(link);
        $('#' + frameId).attr('src', url);
     };
 
     this.setFrameEvents = function(frameId) {
-       var urlArray = self.url.split('.');
        $('#loadingFrame').addClass('hidden');
        $('#searchResultFrame').removeClass('hidden');
-       $frameDocument = $('#' + frameId).contents()
-       if (urlArray[1] === 'europeana') {
-            $('#query-full', $frameDocument).hide();
-            $('[id*="cb-"]', $frameDocument).on('click', function(e){
-                if($(this).prop('checked')) {
-                    link = $(this).parent().find('a').attr('href');
-                    self.goToLink(link)
-                }
-            })
-       } else {
-            $('#p-search', $frameDocument).hide();
+       var $frameDocument = $('#' + frameId).contents()
+       if (self.selectedProvider && self.selectedProvider.processResults) {
+        self.selectedProvider.processResults($frameDocument, self);
        }
+
        $('a', $frameDocument).on('click', function(e) {
             e.preventDefault();
             var link = $(this).attr('href');
@@ -313,13 +287,16 @@ this.copySelectedText = function(el) {
                 /*TODO scroll to anchor... non funziona nell'iframe*/
                 return;
              }
-             var index = Math.max(link.indexOf('europeana.eu'), link.indexOf('wikipedia.org'));
-             if ( index < 0  ) {
-                return;
-             } else {
-                 link = link.replace(/http:\/\//, '');
+            if (self.selectedProvider.processLink && self.selectedProvider.processLink(link) > -1) {
+                self.loadContent(link, 'searchResultFrame');
             }
-            self.loadContent(link, 'searchResultFrame');
+
+            //  var index = Math.max(link.indexOf('europeana.eu'), link.indexOf('wikipedia.org'));
+            //  if ( index < 0  ) {
+            //     return;
+            //  } else {
+            //      link = link.replace(/http:\/\//, '');
+            // }
         }
     }
 

@@ -16,7 +16,7 @@ class movio_modules_ontologybuilder_EntityResolver extends org_glizycms_speaking
         // ricava il pageid tramite entitySelect
         $menu = $this->getPage($entityTypeId);
 
-        return $menu ? '<glz:Route skipLanguage="true" value="'.$ar->language_code.'/'.$ar->speakingurl_value.'" action="show" pageId="'.$menu->id.'" entityTypeId="'.$entityTypeId.'" document_id="'.$ar->speakingurl_FK.'" cms:urlResolver="movio.modules.ontologybuilder.content"  />' : '';
+        return $menu ? '<glz:Route skipLanguage="true" value="'.$ar->language_code.'/'.$ar->speakingurl_value.'" language="'.$ar->language_code.'" action="show" pageId="'.$menu->id.'" entityTypeId="'.$entityTypeId.'" document_id="'.$ar->speakingurl_FK.'" cms:urlResolver="movio.modules.ontologybuilder.content"  />' : '';
     }
 
     // NOTA: questo moetodo dovrebbe essere spostato  in un'altra classe

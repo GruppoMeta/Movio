@@ -62,11 +62,12 @@ class movio_modules_ontologybuilder_views_components_Graph extends org_glizy_com
 
             $visited[$entityTypeId] = true;
 
+
             foreach ((array)$entityProperties as $entityProperty) {
                 if ($entityProperty['entity_properties_target_FK_entity_id']) {
                     $toEntityTypeId = $entityProperty['entity_properties_target_FK_entity_id'];
                     $toEntityTypeName = $entityTypeService->getEntityTypeName($toEntityTypeId);
-                    $label = __Tp('rel:'.$entityProperty['entity_properties_type']);
+                    $label = $this->escape($entityProperty['entity_properties_label_key']);
                     if (!$edges[$entityTypeName][$toEntityTypeName]) {
                         $edges[$entityTypeName][$toEntityTypeName] = true;
                         $graph .= '"'.$this->escape($entityTypeName).'" -> "'.$this->escape($toEntityTypeName).'" [label="'.$label.'"];'.PHP_EOL;
@@ -81,7 +82,7 @@ class movio_modules_ontologybuilder_views_components_Graph extends org_glizy_com
                 if ($referenceRelation['entity_properties_target_FK_entity_id']) {
                     $toEntityTypeId = $referenceRelation['entity_properties_FK_entity_id'];
                     $toEntityTypeName = $entityTypeService->getEntityTypeName($toEntityTypeId);
-                    $label = __Tp('rel:'.$referenceRelation['entity_properties_type']);
+                    $label = $this->escape($referenceRelation['entity_properties_label_key']);
                     if (!$edges[$toEntityTypeName][$entityTypeName]) {
                         $edges[$toEntityTypeName][$entityTypeName] = true;
                         $graph .= '"'.$this->escape($toEntityTypeName).'" -> "'.$this->escape($entityTypeName).'" [label="'.$label.'"];'.PHP_EOL;

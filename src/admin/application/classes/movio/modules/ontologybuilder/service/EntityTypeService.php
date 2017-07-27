@@ -64,7 +64,7 @@ class movio_modules_ontologybuilder_service_EntityTypeService extends GlizyObjec
 
             if ($ar->entity_properties_id) {
                 $attributeId = $this->getAttributeIdById($ar->entity_properties_id);
-                
+
                 $entityTypes[$ar->entity_id]['properties'][$attributeId] = array(
                     'entity_properties_id' => $ar->entity_properties_id,
                     'entity_properties_FK_entity_id' => $ar->entity_properties_FK_entity_id,
@@ -175,14 +175,14 @@ class movio_modules_ontologybuilder_service_EntityTypeService extends GlizyObjec
 
     public function getEntityTypeAttribute($entityTypeId, $attribute)
     {
-        return __Tp($this->entityTypes["entityTypes"][$entityTypeId][$attribute]);
+        return $this->entityTypes["entityTypes"][$entityTypeId][$attribute];
     }
 
     public function getEntityTypeProperties($entityTypeId)
     {
         return $this->entityTypes["entityTypes"][$entityTypeId]['properties'];
     }
-    
+
     public function getEntityTypeAttributeProperties($entityTypeId, $attributeId)
     {
         return $this->entityTypes["entityTypes"][$entityTypeId]['properties'][$attributeId];

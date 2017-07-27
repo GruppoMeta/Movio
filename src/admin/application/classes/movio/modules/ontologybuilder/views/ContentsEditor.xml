@@ -27,7 +27,7 @@
         <cmp:EntityFormEdit id="myForm" addValidationJs="false" controllerName="movio.modules.ontologybuilder.controllers.entityFormEdit.*">
             <cms:pageTitleModifier action="edit" label="{i18n:New content}" new="true" />
             <cms:pageTitleModifier action="edit" label="{i18n:Edit content}" new="false" field="title" />
-            <glz:Link id="searchContent" label="{i18n:Search contents}" cssClass="{config:glizycms.form.actionLink.cssClass}" icon="icon-search" url="#" editableRegion="actions" />
+            <glz:Link id="searchContentAction" label="{i18n:Search contents}" cssClass="{config:glizycms.form.actionLink.cssClass}" icon="icon-search" url="#" editableRegion="actions" />
             <cms:FormButtonsPanel>
                 <glz:HtmlButton label="{i18n:GLZ_PUBLISH}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
                 <glz:HtmlButton label="{i18n:GLZ_PUBLISH_CLOSE}" type="button" cssClass="btn js-glizycms-save" data="action=saveClose" />

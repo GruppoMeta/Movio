@@ -29,7 +29,7 @@ class movio_modules_ontologybuilder_models_EntityLabelsDocument extends org_gliz
                                         true,
                                         false,
                                         '',
-                                        org_glizy_dataAccessDoctrine_DbField::NOT_INDEXED
+                                        org_glizy_dataAccessDoctrine_DbField::INDEXED
                                         )
                         );
                         

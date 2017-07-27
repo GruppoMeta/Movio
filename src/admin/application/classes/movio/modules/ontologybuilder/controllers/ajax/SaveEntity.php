@@ -12,6 +12,7 @@ class movio_modules_ontologybuilder_controllers_ajax_SaveEntity extends org_gliz
         $entityModel->load($entity['id']);
         $entityModel->entity_name = $entity['name'];
         $entityModel->entity_show_relations_graph = $entity['showRelationsGraph'] == 'true' ? 1 : 0;
+        $entityModel->entity_skin_attributes = '';
 
         // se è una nuova entità
         if ($entity['id'] == '') {
@@ -123,7 +124,7 @@ class movio_modules_ontologybuilder_controllers_ajax_SaveEntity extends org_gliz
                     case 'attribute.thesaurus':
                         $insideDL[] = array('type' => 'thesaurus', 'name' => $attribute, 'label' => $showLabel ? $label : '');
                         break;
-                        
+
                     case 'attribute.module':
                         $insideDL[] = array('type' => 'module', 'name' => $attribute, 'label' => $showLabel ? $label : '');
                         break;

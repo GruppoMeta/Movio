@@ -11,6 +11,9 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
 
         $entityTypeId = __Request::get('entityTypeId');
 
+        $language = $this->_application->getEditingLanguage();
+        $localeService = $this->_application->retrieveProxy('movio.modules.ontologybuilder.service.LocaleService');
+
         $entityModel = org_glizy_objectFactory::createModel('movio.modules.ontologybuilder.models.Entity');
         $entityModel->load($entityTypeId);
 
@@ -29,6 +32,10 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
         $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Hidden', $this->_application, $this, 'glz:Input', $entityId, $entityId);
         $c->setAttribute('name', 'entityId');
         $c->setAttribute('value', $entityId);
+        $this->addChild($c);
+
+        $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Hidden', $this->_application, $this, 'glz:Input', $id, $id);
+        $c->setAttribute('name', 'externalId');
         $this->addChild($c);
 
         $id = '__isVisible';
@@ -78,8 +85,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
                 case 'attribute.text':
                 case 'attribute.externalimage':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                    $c->setAttribute('required', $ar->entity_properties_required == 1);
                     $c->setAttribute('type', 'text');
                     $c->setAttribute('cssClass', __Config::get('glizy.formElement.admCssClass'));
                     $c->setAttribute('value', '');
@@ -88,8 +93,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
 
                 case 'attribute.int':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                    $c->setAttribute('required', $ar->entity_properties_required == 1);
                     $c->setAttribute('type', 'number');
                     $c->setAttribute('cssClass', __Config::get('glizy.formElement.admCssClass'));
                     $c->setAttribute('value', '');
@@ -98,8 +101,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
 
                 case 'attribute.longtext':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                    $c->setAttribute('required', $ar->entity_properties_required == 1);
                     $c->setAttribute('type', 'multiline');
                     $c->setAttribute('rows', '10');
                     $c->setAttribute('cols', '90');
@@ -110,8 +111,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
 
                case 'attribute.descriptivetext':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                    $c->setAttribute('required', $ar->entity_properties_required == 1);
                     $c->setAttribute('type', 'multiline');
                     $c->setAttribute('rows', '10');
                     $c->setAttribute('cols', '90');
@@ -124,8 +123,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
 
                 case 'attribute.date':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                    $c->setAttribute('required', $ar->entity_properties_required == 1);
                     $c->setAttribute('readOnly', true);
                     $c->setAttribute('type', 'text');
                     $c->setAttribute('data', 'type=date;date-format=yyyy-mm-dd');
@@ -136,8 +133,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
 
                 case 'attribute.externallink':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                    $c->setAttribute('required', $ar->entity_properties_required == 1);
                     $c->setAttribute('type', 'url');
                     $c->setAttribute('cssClass', __Config::get('glizy.formElement.admCssClass'));
                     $c->setAttribute('value', '');
@@ -146,8 +141,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
 
                 case 'attribute.internallink':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizycms.views.components.PagePicker', $this->_application, $this, 'cms:PagePicker', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                    $c->setAttribute('required', $ar->entity_properties_required == 1);
                     $c->setAttribute('cssClass', __Config::get('glizy.formElement.admCssClass'));
                     $c->setAttribute('value', '');
                     $this->addChild($c);
@@ -155,8 +148,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
 
                 case 'attribute.openlist':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                    $c->setAttribute('required', $ar->entity_properties_required == 1);
                     $c->setAttribute('cssClass', __Config::get('glizy.formElement.admCssClass'));
                     $proxyParams = json_encode( array('entityTypeId' => $entityTypeId) );
                     $proxyParams = str_replace('"', '##', $proxyParams);
@@ -167,8 +158,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
 
                 case 'attribute.image':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                    $c->setAttribute('required', $ar->entity_properties_required == 1);
                     $c->setAttribute('data', 'type=mediapicker;mediatype=IMAGE;preview=true');
                     $c->setAttribute('size', '90');
                     $c->setAttribute('value', '');
@@ -177,8 +166,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
 
                 case 'attribute.media':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                    $c->setAttribute('required', $ar->entity_properties_required == 1);
                     $c->setAttribute('data', 'type=mediapicker;mediatype=ALL;preview=false');
                     $c->setAttribute('size', '90');
                     $c->setAttribute('value', '');
@@ -187,8 +174,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
 
                 case 'attribute.imagelist':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Fieldset', $this->_application, $this, 'glz:Fieldset', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                    $c->setAttribute('required', $ar->entity_properties_required == 1);
                     $c->setAttribute('data', 'type=repeat;repeatMin=0;collapsable=false');
 
                     $subchild = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', 'attaches', 'attaches');
@@ -202,8 +187,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
 
                 case 'attribute.medialist':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Fieldset', $this->_application, $this, 'glz:Fieldset', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                    $c->setAttribute('required', $ar->entity_properties_required == 1);
                     $c->setAttribute('data', 'type=repeat;repeatMin=0;collapsable=false');
 
                     $subchild = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', 'attaches', 'attaches');
@@ -218,7 +201,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
                 // TODO
                 case 'attribute.photogallery':
                     $c = &org_glizy_ObjectFactory::createComponent('movio.views.components.PhotogalleryCategory', $this->_application, $this, 'm:PhotogalleryCategory', $attribute, $attribute, true, 'edit');
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
                     $this->addChild($c);
                     break;
 
@@ -237,20 +219,17 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
                         }
                     }
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
                     $c->setAttribute('data', 'type=europeanaRelatedContents;search_fields='.$searchFields.';search_fields_labels='.$searchFieldsLabels.';max_result='.$rows);
                     $c->setAttribute('value', '');
                     $this->addChild($c);
-                    $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.JSscript', $this->_application, $this, 'glz:JSscript', '');
-                    $c->setAttribute('folder', 'movio/modules/europeana/views/js');
-                    $c->setAttribute('editableRegion', 'tail');
-                    $this->addChild($c);
+                    $c1 = &org_glizy_ObjectFactory::createComponent('org.glizy.components.JSscript', $this->_application, $this, 'glz:JSscript', '');
+                    $c1->setAttribute('folder', 'movio/modules/europeana/views/js');
+                    $c1->setAttribute('editableRegion', 'tail');
+                    $this->addChild($c1);
                     break;
 
                 case 'attribute.thesaurus':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                    $c->setAttribute('required', $ar->entity_properties_required == 1);
                     $c->setAttribute('cssClass', __Config::get('glizy.formElement.admCssClass'));
                     $proxyParams = json_encode( array('dictionaryId' =>  $ar->entity_properties_params) );
                     $proxyParams = str_replace('"', '##', $proxyParams);
@@ -261,8 +240,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
 
                 case 'attribute.module':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', $attribute, $attribute);
-                    $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                    $c->setAttribute('required', $ar->entity_properties_required == 1);
                     $c->setAttribute('cssClass', __Config::get('glizy.formElement.admCssClass'));
                     $proxyParams = json_encode( array('moduleId' =>  $ar->entity_properties_params) );
                     $proxyParams = str_replace('"', '##', $proxyParams);
@@ -275,8 +252,6 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
                     // se l'attributo è una relazione
                     if (!is_null($ar->entity_properties_target_FK_entity_id)) {
                         $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.Input', $this->_application, $this, 'glz:Input', $attribute, $attribute);
-                        $c->setAttribute('label', __Tp($ar->entity_properties_label_key));
-                        $c->setAttribute('required', $ar->entity_properties_required == 1);
                         $relation = $entityTypeService->getRelation($ar->entity_properties_type);
                         $c->setAttribute('data', 'type=entityselect;entity_type_id='.$ar->entity_properties_target_FK_entity_id.';cardinality='.$relation['cardinality']);
                         $c->setAttribute('cssClass', __Config::get('glizy.formElement.admCssClass'));
@@ -285,6 +260,9 @@ class movio_modules_ontologybuilder_views_components_EntityFormEdit extends movi
                         break;
                     }
             }
+
+            $c->setAttribute('label', $localeService->getTranslation($language, $ar->entity_properties_label_key));
+            $c->setAttribute('required', $ar->entity_properties_required == 1);
         }
     }
 

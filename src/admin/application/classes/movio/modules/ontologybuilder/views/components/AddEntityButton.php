@@ -22,11 +22,14 @@ class movio_modules_ontologybuilder_views_components_AddEntityButton extends org
                   '<ul class="dropdown-menu left forced-left-position">';
 
         $routeUrl = $this->getAttribute('routeUrl');
+        $localeService = $this->_application->retrieveProxy('movio.modules.ontologybuilder.service.LocaleService');
+        $language = $this->_application->getEditingLanguage();
         $it = org_glizy_objectFactory::createModelIterator('movio.modules.ontologybuilder.models.Entity', 'all');
         foreach ($it as $ar) {
             $params = array( 'entityTypeId' => $ar->getId());
             $url = org_glizy_helpers_Link::makeUrl( $routeUrl, $params);
-            $output .= '<li><a href="'.$url.'">'.$ar->entity_name.'</a></li>';
+            $entityName = $localeService->getTranslation($language, $ar->entity_name);
+            $output .= '<li><a href="'.$url.'">'.$entityName.'</a></li>';
         }
 
         $output .= '</ul>'.
