@@ -4,6 +4,8 @@
 	xmlns:cms="org.glizycms.views.components.*"
     xmlns:ms="movio.modules.sharingButtons.views.components.*">
 
+  <cms:GoogleAnalytics/>
+
 	<cms:LanguageNavigation id="languages" cssClass="langs" editableRegion="languages" />
 	<glz:NavigationMenu id="navigation" startFrom="1" showOnlyChilds="true" depth="+5" forceLink="true" selectParent="false" attributeToSelect="class" showPath="true" selectLink="true" cssClass="navigationMenu" editableRegion="leftSidebar" cssCurrent="active" />
     <glz:NavigationMenu id="metanavigation" startFrom="2" showOnlyChilds="true" depth="+1" forceLink="true" selectParent="false" attributeToSelect="class" showPath="true" selectLink="true" cssClass="navigationMenu" editableRegion="metanavigation" flat="true" cssCurrent="active" />
