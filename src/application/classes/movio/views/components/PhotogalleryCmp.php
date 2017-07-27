@@ -20,13 +20,24 @@ class movio_views_components_PhotogalleryCmp extends org_glizy_components_Groupb
     function getContent() {
         $imageCrop = $this->loadContent($this->getId().'-imageCrop');
         $imagePan = $this->loadContent($this->getId().'-imagePan');
+        $imageResize = $this->loadContent($this->getId().'-imageResize');
         $imagePosition = $imageCrop == 1 && $imagePan == 1 ? 'top right' : '50%';
         $content = parent::getContent();
-        return array(   'images' => $content[$this->getId().'-images'],
+        $images = array();
+
+        foreach ($content[$this->getId().'-images'] as $obj) {
+            if ($obj->image['mediaId']) {
+                $images[] = $obj;
+            }
+        }
+
+        return array(   'images' => $images,
                         'imageCrop' => $imageCrop == 1 ? 'true' : 'false',
                         'imagePan' => $imagePan == 1 ? 'true' : 'false',
+                        'imageResize' => $imageResize == 1 ? 'true' : 'false',
                         'imagePosition' => $imagePosition,
-                        'type' => $this->galleryType
+                        'type' => $this->galleryType,
+                        'key' => 'gallery_' . $this->getId()
                     );
     }
 

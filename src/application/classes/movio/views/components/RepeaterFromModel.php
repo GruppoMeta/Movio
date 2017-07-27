@@ -60,12 +60,13 @@ class movio_views_components_RepeaterFromModel extends org_glizy_components_Comp
 
         $filter = $this->_parent->loadContent($this->repeaterId);
         if (is_array($filter) && count($filter)) {
-            $filters = array('media_type' => 'IMAGE',
-                             'media_category' => array());
+			$this->it->setFilters(array('media_type' => 'IMAGE'));
+			
+			$filters = array('media_category' => array());
             foreach($filter as $v) {
                 $filters['media_category'][] = array('field' => 'media_category', 'value' => '%"'.$v.'"%', 'condition' => 'LIKE');
             }
-
+            
             if ($this->getAttribute('queryOr')) {
                 $this->it->setOrFilters($filters);
             } else {

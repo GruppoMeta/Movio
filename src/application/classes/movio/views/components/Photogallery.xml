@@ -12,6 +12,7 @@
     </glz:List>
     <glz:Checkbox id="imageCrop" label="{i18n:Image crop}" defaultValue="1" />
     <glz:Checkbox id="imagePan" label="{i18n:Image pan}" defaultValue="1" />
+    <glz:Checkbox id="imageResize" label="{i18n:Image resize}" defaultValue="0" />
 
     <glz:Repeater id="images" label="{i18n:Images list}" adm:collapsable="false" skin="ImageList.html">
         <glz:Image id="image" label="{i18n:Image}" width="800" height="600" />
