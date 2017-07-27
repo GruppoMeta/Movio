@@ -29,4 +29,30 @@ class movio_views_components_BoxesRepeater extends org_glizy_components_Repeater
 
         return $tempContentContainer;
     }
+
+    function loadContent($id, $bindTo='')
+    {
+        if ($id=='boxes-boxes-image') {
+            switch ($this->_content->width[$this->contentCount]) {
+                case '1':
+                    $width = __Config::get('movio.home.width-size1');
+                    break;
+                case '3':
+                    $width = __Config::get('movio.home.width-size3');
+                    break;
+                case '4':
+                    $width = __Config::get('movio.home.width-size4');
+                    break;
+                default:
+                    $width = __Config::get('movio.home.width-size2');
+                    break;
+            }
+
+            $c = $this->getComponentById('boxes-boxes-image');
+            $c->setAttributes(array('width' => $width, 'height' => '*'));
+        }
+        $id = substr($id, $this->repeaterIdLen + 1);
+        return $this->_content->{$id}[$this->contentCount];
+    }
+
 }
