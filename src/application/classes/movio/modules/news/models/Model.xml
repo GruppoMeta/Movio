@@ -53,11 +53,18 @@
     ]]>
     </model:Script>
 
+    <model:Query name="newsHome" type="function">
+    <![CDATA[
+        $iterator->where('startDate', (string)new org_glizy_types_Date(), '<=')
+                 ->where('endDate', (string)new org_glizy_types_Date(), '>=')
+                 ->orderBy('startDate', 'desc');
+    ]]>
+    </model:Query>
+
     <model:Query name="filterYear" type="function">
     <![CDATA[
         $iterator->selectIndex('year', 'DISTINCT document_index_int_value as k', 'document_index_int_value as v')
                  ->orderBy('year');
     ]]>
     </model:Query>
-
 </model:Model>
