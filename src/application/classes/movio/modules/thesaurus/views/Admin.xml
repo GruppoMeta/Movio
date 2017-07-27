@@ -14,7 +14,7 @@
     <mvc:State name="index">
         <glz:Modifier target="Page" attribute="templateFileName" value="Page.php" />
 
-        <glz:DataProvider id="dp" recordClassName="movio.modules.thesaurus.models.Dictionary" orderBy="title"/>
+        <glz:DataProvider id="dp" recordClassName="movio.modules.thesaurus.models.Dictionary" query="allDictionaries" orderBy="title"/>
         <glz:DataGrid id="dataGrid" label="{i18n: Elenco utenti}" dataProvider="{dp}" tableCssClass="table table-striped table-bordered" cssClass="odd,even" controller="{dataGridEdit}" orderStyle="BLACK">
             <glz:DataGridColumn columnName="title" headerText="{i18n:GLZ_USER_FIRST}" />
             <glz:DataGridColumn columnName="type" headerText="{i18n:Type}" renderCell="movio.modules.thesaurus.views.renderer.CellType"/>

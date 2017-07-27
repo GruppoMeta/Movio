@@ -7,5 +7,11 @@
     <model:Define>
         <model:Field name="title" type="string" length="255" index="true" />
         <model:Field name="type" type="string" length="255" />
+        
+        <model:Query name="allDictionaries" type="function">
+        <![CDATA[
+            $iterator->setOptions(array('type' => 'PUBLISHED_DRAFT'));
+        ]]>
+        </model:Query>
     </model:Define>
 </model:Model>
