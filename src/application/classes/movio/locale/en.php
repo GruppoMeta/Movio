@@ -254,6 +254,7 @@ $strings = array (
   'MW_REGISTRATION_PRIVACY' => 'I agree to data processing according to current regulations',
   'MW_REGISTRATION_CONFIRM' => 'Registration confirm',
   'MW_REGISTRATION_PRIVACY_TEXT' => 'Privacy text',
+  'MW_REGISTRATION_EMAIL_ALREADY_EXISTS' => 'This e-mail is already present: please, request the password for it or register with a different e-mail',
   'MW_LOSTPASSWORD_SEND' => 'Send password',
   'MW_LOSTPASSWORD_TEXT' => 'Testo introduttivo',
   'MW_LOSTPASSWORD_CONFIRM' => 'Testo di conferma',
@@ -431,9 +432,5 @@ $strings = array (
   'Modifica modulo' => 'Modify module',
   'Cancella modulo' => 'Delete module',
   'Profilo' => 'User profile',
-
-
-
-
 );
 org_glizy_locale_Locale::append($strings);

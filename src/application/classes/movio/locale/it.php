@@ -406,6 +406,5 @@ $strings = array (
   'Back' => 'Indietro',
   'Select the file to import' => 'Seleziona il file da importare e le proprietà che indicano i caratteri delimitatori contenuti nel file CSV.<br />La tabella del database avrà lo stesso nome del file CSV, se la tabella è già presente i record verranno aggiunti; se la tabella è presente e il numero dei campi è differente il file non verrà importato.<br />',
   'Show list' => 'Visualizza lista',
-
 );
 org_glizy_locale_Locale::append($strings);
