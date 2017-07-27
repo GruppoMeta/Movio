@@ -13,6 +13,9 @@ class movio_modules_publishApp_controllers_ajax_Export extends org_glizy_mvc_cor
             $mobileFulltextTable = __Config::get('movio.modules.publishApp.mobileFulltextTable');
             org_glizy_dataAccessDoctrine_DataAccess::truncateTable($mobileFulltextTable);
             
+            $mobileLocationTable = __Config::get('movio.modules.publishApp.mobileLocationTable');
+            org_glizy_dataAccessDoctrine_DataAccess::truncateTable($mobileLocationTable);
+            
             $exportService = org_glizy_ObjectFactory::createObject('movio.modules.publishApp.service.ExportService');
             $exportService->export($languageId, $languageCode, $menuIdArray, $title, $subtitle, $creditPageId, $isExhibitionActive);
             $medias = $exportService->getMedias();

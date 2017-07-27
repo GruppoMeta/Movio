@@ -24,7 +24,7 @@ class movio_modules_publishApp_service_ExportService extends GlizyObject
             for ($i = 0; $i < count($links[0]); $i++) {
                 $id = $links[1][$i];
                 $src = $this->addMediaById($id);
-                $newSrc = 'src="'.$src.'"';
+                $newSrc = 'src="'.$src;
                 $text = str_replace($links[0][$i], $newSrc, $text);
             }
         }
@@ -133,7 +133,7 @@ class movio_modules_publishApp_service_ExportService extends GlizyObject
             foreach ($contentJson['timeline']->date as $i => $item) {
                 $media = $contentJson['timeline-timelineDef'][$i]->media->fileName;
             	$thumbnail = $contentJson['timeline-timelineDef'][$i]->media->fileName;
-            	$item->asset->media = $media ? 'media/'.$media : '';
+            	$item->asset->media = $media ? $media : '';
             	$item->asset->thumbnail = $item->asset->media;
             	$item->asset->caption = $this->processText($contentJson['timeline-timelineDef'][$i]->mediaCaption);
             	$item->text = $this->processText($contentJson['timeline-timelineDef'][$i]->text);
@@ -303,7 +303,7 @@ class movio_modules_publishApp_service_ExportService extends GlizyObject
         	    $arMobile->content_type = $ar->menu_type;
         	    $arMobile->content_title = $ar->menudetail_title;
 
-        	    if ($arMobile->content_pageType == 'Storyteller') {
+				if ($arMobile->content_pageType == 'Storyteller') {
         	        $contentJson = $this->processStoryTeller($contentJson);
         	    } elseif ($arMobile->content_pageType == 'Photogallery') {
         	        $contentJson = $this->processPhotoGallery($contentJson);
@@ -324,6 +324,8 @@ class movio_modules_publishApp_service_ExportService extends GlizyObject
         	    }  elseif ($arMobile->content_pageType == 'Home') {
         	        $contentJson['title'] = $title;
         	        $contentJson['subtitle'] = $subtitle;
+        	        
+        	        $this->fixBoxEmptyPage($contentJson);
         	    }  elseif ($arMobile->content_pageType == 'Video') {
         	        $contentJson = $this->processVideo($contentJson);
         	    }  elseif ($arMobile->content_pageType == 'Cover') {
@@ -332,6 +334,8 @@ class movio_modules_publishApp_service_ExportService extends GlizyObject
         	        $contentJson = $this->processGoogleMap($contentJson);
         	    }  elseif ($arMobile->content_pageType == 'Graph') {
         	        $contentJson = $this->processGraph($contentJson, $menuId, $languageCode);
+        	    } elseif (strpos($arMobile->content_pageType, 'movio.modules') !== false) {
+					$contentJson['text'] = $this->processText($contentJson['text']);
         	    }
 
         	    if ($menuId == $creditPageId) {
@@ -341,6 +345,18 @@ class movio_modules_publishApp_service_ExportService extends GlizyObject
 
         	    $arMobile->content_content = json_encode($contentJson);
         	    $contentId = $arMobile->save();
+        	    
+        	    //Verifico la presenza di coordinate geografiche e nel caso le salvo nell'apposita tabella mobilelocation_tbl
+        	    $this->exportCoordinates($arMobile->content_content, $arMobile->content_title, $contentJson['subtitle'], $contentId);
+        	    
+				$moduleName = $this->isMadeWithModuleBuilder($arMobile->content_pageType);
+				if ($moduleName) {
+					$this->processModuleBuilder($moduleName, $contentId);
+				} elseif ($arMobile->content_pageType == 'movio.modules.news.views.FrontEnd') {
+					$this->processNewsModuleRecords($contentId);
+				} elseif ($arMobile->content_pageType == 'movio.modules.touristoperators.views.FrontEnd') {
+					$this->processTouristOperatorsModuleRecords($contentId);
+				}
 
         	    $it = org_glizy_objectFactory::createModelIterator('org.glizycms.core.models.Content');
         	    $fulltextAr = $it->where("id", $menuId)
@@ -355,7 +371,7 @@ class movio_modules_publishApp_service_ExportService extends GlizyObject
             	    $ar->mobilefulltext_subtitle = $contentJson['subtitle'];
             	    $ar->save();
                 }
-
+                
         	    // quando menu_pageType è Entity c'è da scorrere tutti i contenuti dell'entità
         	    // e caricare i dati
         	    // salvare
@@ -408,6 +424,233 @@ class movio_modules_publishApp_service_ExportService extends GlizyObject
         	}
         }
     }
+    
+    private function getModuleRecordTitle($record)
+    {
+    	foreach ($record as $value) {
+    		if (is_string($value))
+    			return $value;
+    	}
+    	
+    	return 'Unknown title';
+    }
+    
+    private function is_json($string)
+    {
+		 json_decode($string);
+		 return (json_last_error() == JSON_ERROR_NONE and !is_numeric($string) and !is_null($string));
+    }
+    
+    private function processModuleBuilder($moduleName, $contentId)
+    {
+		$modelName = $moduleName . '.models.Model';
+		$it = __ObjectFactory::createModelIterator($modelName);
+		foreach ($it as $ar) {
+			$record = $ar->getValuesAsArray();
+			
+			foreach ($record as $key => $value) {
+				if ($this->is_json($value)) {
+					$record[$key] = json_decode($value);
+					if (property_exists($record[$key], 'filename') and property_exists($record[$key], 'src')) {
+						if (!empty($record[$key]->filename)) {
+							$this->addMedia(json_encode($record[$key]));
+						}
+					}
+				}
+			
+				$record[__T($moduleName . '_' . $key)] = $record[$key];
+				unset($record[$key]);
+			}
+			
+			$record['title'] = $this->getModuleRecordTitle($record);
+
+			$this->saveModuleRecord($record, $contentId);
+		}
+    }
+    
+    private function isMadeWithModuleBuilder($pageType)
+    {
+    	if (preg_match('/^(.+?)\.views\.FrontEnd$/', $pageType, $matches)) {
+			$moduleName = $matches[1];
+
+			if (file_exists('../application/classes/userModules/' . $moduleName . '/models/Model.xml')) {
+				return $moduleName;
+			}
+    	}
+    	
+    	return false;
+    }
+    
+    private function getModuleImages($record)
+    {
+		$newImagesArr = array();
+		$images = (array)$record['images'];
+		if (count($images) and array_key_exists('image', $images)) {
+			if (count($images['image'])) {
+				foreach ($images['image'] as $img) {
+					$newImagesArr[] = $this->addMedia($img);
+				}
+				
+				$record['images'] = $newImagesArr;
+			}
+		}
+		
+		return $record;
+    }
+    
+    private function getModuleAttachments($record)
+    {
+    	$newAttachmentsArr = array();
+    	$attachments = (array)$record['attaches'];
+    	if (count($attachments) and array_key_exists('media', $attachments)) {
+    		if (count($attachments['media'])) {
+    			foreach ($attachments['media'] as $att) {
+    				$newAttachmentsArr[] = $this->addMedia($att);
+    			}
+    		}
+    		
+    		$record['attachments'] = $newAttachmentsArr;
+    	}
+    	
+    	unset($record['attaches']);
+    
+    	return $record;
+    }
+    
+    private function processNewsModuleRecords($contentId)
+    {
+    	$it = __ObjectFactory::createModelIterator('movio.modules.news.models.Model');
+    	foreach ($it as $ar) {
+    		if ($ar->document_detail_isVisible and $ar->document_detail_status == 'PUBLISHED') {
+				$record = $ar->getValuesAsArray();
+				$record['bodyShort'] = $this->processText($record['bodyShort']);
+				$record['body'] = $this->processText($record['body']);
+				$record['contacts'] = $this->processText($record['contacts']);
+				
+				$record = $this->getModuleImages($record);
+				$record = $this->getModuleAttachments($record);
+				
+				unset($record['fulltext']);
+				
+    			$this->saveModuleRecord($record, $contentId);
+    		}
+    	}
+    }
+    
+    private function processTouristOperatorsModuleRecords($contentId)
+    {
+    	$it = __ObjectFactory::createModelIterator('movio.modules.touristoperators.models.Model');
+    	foreach ($it as $ar) {
+    		if ($ar->document_detail_isVisible and $ar->document_detail_status == 'PUBLISHED') {
+				$record = $ar->getValuesAsArray();
+				$record['description'] = $this->processText($record['description']);
+				
+				$record = $this->getModuleImages($record);
+				$record = $this->getModuleAttachments($record);
+				
+				unset($record['fulltext']);
+
+    			$this->saveModuleRecord($record, $contentId);
+    		}
+    	}
+    }
+    
+    private function saveModuleRecord($record, $contentId)
+    {
+		$arMobile = org_glizy_objectFactory::createModel('movio.models.Mobilecontents');
+		$arMobile->content_menuId = '0';
+		$arMobile->content_documentId = $record['document_detail_FK_document_id'];
+		$arMobile->content_pageType = 'Page';
+		$arMobile->content_parent = $contentId;
+		$arMobile->content_type = 'ENTITYCHILD';
+		$arMobile->content_title = $record['title'];
+		$arMobile->content_content = $this->getModuleRecordContent($record);
+		
+		$contentId = $arMobile->save();
+		if ($contentId) {
+			$this->exportCoordinates($arMobile->content_content, $arMobile->content_title, '', $contentId);
+		
+			$detail = json_decode($record['document_detail_object']);
+
+			if (property_exists($detail, 'fulltext')) {
+				if (!empty($detail->fulltext)) {
+					$ar = org_glizy_objectFactory::createModel('movio.modules.publishApp.models.Mobilefulltext');
+					$ar->mobilefulltext_FK_content_id = $contentId;
+					$ar->mobilefulltext_text = str_replace(' ##', '', $detail->fulltext);
+					$ar->mobilefulltext_title = $record['title'];
+					$ar->mobilefulltext_subtitle = '';
+					$ar->save();
+				}
+			}
+		}
+    }
+    
+    private function exportCoordinates($text, $title, $subtitle, $contentId)
+    {
+    	if (preg_match_all('/"([0-9]+\.[0-9]+\,[0-9]+\.[0-9]+\,([0-9\.]+))"/', $text, $matches)) {
+			foreach ($matches[1] as $m) {
+				list($lat, $lng, $z) = explode(',', $m);
+			
+				$ar = __ObjectFactory::createModel('movio.modules.publishApp.models.Mobilelocation');
+				$ar->location_FK_content_id = $contentId;
+				$ar->location_lat = $lat;
+				$ar->location_lng = $lng;
+				$ar->location_title = $title;
+				$ar->location_subtitle = $subtitle;
+				
+				$ar->save();
+			}
+		}
+    }
+    
+    private function getModuleRecordContent($record)
+    {
+    	$arr = array();
+    	foreach ($record as $key => $value) {
+    		if (strpos($key, 'document_') === false) {
+    			$arr[$key] = $value;
+    		}
+    	}
+    	
+    	return json_encode($arr);
+    }
+    
+    private function fixBoxEmptyPage(&$contentJson)
+    {
+		if (count($contentJson['boxes-boxes'])) {
+			foreach ($contentJson['boxes-boxes'] as $box) {
+				if ($box->pageId) {
+					list($internal, $pageId) = explode(':', $box->pageId);
+					
+					$menu = org_glizy_ObjectFactory::createModel('org.glizycms.core.models.Menu');
+					$menu->load($pageId);
+					
+					if ($menu->menu_pageType == 'Empty') {
+						$box->pageId = $this->searchForFirstPageNotEmpty($pageId);
+					}
+				}
+			}
+		}
+    }
+    
+    private function searchForFirstPageNotEmpty($pageId)
+    {
+		$it = org_glizy_ObjectFactory::createModelIterator('org.glizycms.core.models.Menu');
+		$it->where('menu_parentId', $pageId, '=');
+		$it->orderBy('menu_order');
+
+		if ($it->count()) {
+			foreach ($it as $ar) {
+				if ($ar->menu_pageType != 'Empty') {
+					return 'internal:' . $ar->menu_id;
+				} else {
+					return $this->searchForFirstPageNotEmpty($ar->menu_id);
+				}
+			}
+		}
+    
+    	return 'internal:' . $pageId;
+    }
 
     private function convertObjectToArray($data)
     {
@@ -451,8 +694,12 @@ class movio_modules_publishApp_service_ExportService extends GlizyObject
         if ($result->type == 'VIDEO') {
             $result->url = GLZ_HOST.'/'.org_glizy_helpers_Media::getFileUrlById($media->id, true);
         } else {
-            $result->fileName = $media->fileName;
-            $this->medias[$media->id] = $media->fileName;
+			if (property_exists($media, 'filename'))
+				$fileName = $media->filename;
+			elseif (property_exists($media, 'fileName'))
+				$fileName = $media->fileName;
+            $result->fileName = $fileName;
+            $this->medias[$media->id] = $fileName;
         }
         return $result;
     }
@@ -469,7 +716,7 @@ class movio_modules_publishApp_service_ExportService extends GlizyObject
             return GLZ_HOST.'/'.org_glizy_helpers_Media::getFileUrlById($media->id);
         } else {
             $this->medias[$media->id] = $media->fileName;
-            return 'media/'.$media->fileName;
+            return 'media/' . $media->fileName;
         }
     }
 
