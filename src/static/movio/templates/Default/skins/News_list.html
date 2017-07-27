@@ -12,7 +12,11 @@
              <span tal:content="item/title" />
           </a>
       </h1>
-        <p tal:condition="php: item.keyInDataExists('bodyShort')" tal:content="structure item/bodyShort" />
+      <h4 tal:condition="php: item.place || item.dateDescription">
+        <span tal:omit-tag="" tal:condition="item/place" tal:content="item/place" /><span tal:omit-tag="" tal:condition="php: item.place && item.dateDescription" tal:content="string:, " />
+        <span tal:omit-tag=""  tal:condition="item/dateDescription" tal:content="item/dateDescription" />
+      </h4>
+      <p tal:condition="php: item.keyInDataExists('bodyShort')" tal:content="structure item/bodyShort" />
     </article>
   </span>
   <span tal:omit-tag="" tal:condition="php: Component.records.count() == 0">
