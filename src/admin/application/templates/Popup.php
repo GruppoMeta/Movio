@@ -13,5 +13,15 @@
         <?php print($content); ?>
     </div>
     <?php print(@$tail); ?>
+    <script type="text/javascript">
+// <![CDATA[
+$(function(){
+    if ($.fn.button && $.fn.button.noConflict) {
+        var bootstrapButton = $.fn.button.noConflict();
+        $.fn.bootstrapBtn = bootstrapButton;
+    }
+})
+// ]]>
+</script>
 </body>
 </html>
