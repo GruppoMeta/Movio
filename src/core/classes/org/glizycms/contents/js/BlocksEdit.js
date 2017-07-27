@@ -19,7 +19,6 @@ Glizy.module('glizycms.BlockEdit', function(){
             this.menuId = this.container.data('menuid');
             this.loadChild();
 
-
             $(this.container).on('click', 'a.js-edit', function(e){
                 e.preventDefault();
                 Glizy.events.broadcast("glizycms.pageEdit", {"menuId": $(this).data("id")});
@@ -44,12 +43,47 @@ Glizy.module('glizycms.BlockEdit', function(){
                 });
             });
 
+            $(this.container).on('click', 'a.js-show', function(e){
+                e.preventDefault();
+                var id = $(this).data("id");
+                $.ajax({
+                        type: 'GET',
+                        url: self.ajaxUrl.replace('pageEdit', 'treeview')+"Show",
+                        data : {
+                            "menuId" : id
+                        },
+                        success : function (r) {
+                            self.loadChild();
+                        }
+                    });
+            });
+
+            $(this.container).on('click', 'a.js-hide', function(e){
+                e.preventDefault();
+                var id = $(this).data("id");
+                $.ajax({
+                        type: 'GET',
+                        url: self.ajaxUrl.replace('pageEdit', 'treeview')+"Hide",
+                        data : {
+                            "menuId" : id
+                        },
+                        success : function (r) {
+                            self.loadChild();
+                        }
+                    });
+            });
 
             $(this.container).on('click', 'div.blockEmpty', function(e){
                 e.preventDefault();
                 Glizy.events.broadcast("glizycms.pageAdd", {"href": 'glizycms_contentsedit/addblock?menuId='+self.menuId});
             });
         }
+
+        // used in title breadcrumbs in ContentEdit.xml:edit
+        $(document).on('click', 'a.js-glizycms-menu-edit', function(e){
+            e.preventDefault();
+            Glizy.events.broadcast("glizycms.pageEdit", {"menuId": $(this).data("id")});
+        });
     };
 
     this.loadChild = function() {
@@ -111,8 +145,10 @@ Glizy.module('glizycms.BlockEdit', function(){
             '<h3><%= item.title %></h3>'+
             '<p><%= item.description %></p>'+
             '<div class="actions">'+
-            '<a alt="Modifica" title="Modifica" class="js-edit" href="#" data-id="<%= item.id %>"><span class="btn-icon icon-pencil"></span></a>'+
-            '<a alt="Elimina" title="Elimina" class="js-delete" href="#" data-id="<%= item.id %>"><span class="btn-icon icon-trash"></span></a>'+
+            '<% if (!item.visible) { %><a alt="{i18n:Show}" title="{i18n:Show}" class="js-show" href="#" data-id="<%= item.id %>"><span class="btn-icon icon-eye-close"></span></a><% } %>'+
+            '<% if (item.visible) { %><a alt="{i18n:Hide}" title="{i18n:Hide}" class="js-hide" href="#" data-id="<%= item.id %>"><span class="btn-icon icon-eye-open"></span></a><% } %>'+
+            '<a alt="{i18n:Edit}" title="{i18n:Edit}" class="js-edit" href="#" data-id="<%= item.id %>"><span class="btn-icon icon-pencil"></span></a>'+
+            '<a alt="{i18n:Delete}" title="{i18n:Delete}" class="js-delete" href="#" data-id="<%= item.id %>"><span class="btn-icon icon-trash"></span></a>'+
             '</div>'+
             '</div>'+
             '<% }); %>'+

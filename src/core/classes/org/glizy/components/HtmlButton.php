@@ -121,17 +121,19 @@ class org_glizy_components_HtmlButton extends org_glizy_components_Component
 
 	private function addTranslateInfo( $target, $label, $buttonValue )
 	{
-		$infoName = '__translateInfo_'.strtolower( $this->_application->getPageId() );
-		$translateInfo = __Session::get( $infoName, array( ) );
-		$newTranslateInfo = array();
-		foreach ( $translateInfo as $value )
-		{
-			if ( $value[ 'target_name' ] != $this->getOriginalId() )
+		if ($target) {
+			$infoName = '__translateInfo_'.strtolower( $this->_application->getPageId() );
+			$translateInfo = __Session::get( $infoName, array( ) );
+			$newTranslateInfo = array();
+			foreach ( $translateInfo as $value )
 			{
-				$newTranslateInfo[] = $value;
+				if ( $value[ 'target_name' ] != $this->getOriginalId() )
+				{
+					$newTranslateInfo[] = $value;
+				}
 			}
+			$newTranslateInfo[] = array( 'target_name' => $this->getOriginalId(), 'target' => $target, 'label' => $label, 'value' => $buttonValue );
+			__Session::set( $infoName, $newTranslateInfo );
 		}
-		$newTranslateInfo[] = array( 'target_name' => $this->getOriginalId(), 'target' => $target, 'label' => $label, 'value' => $buttonValue );
-		__Session::set( $infoName, $newTranslateInfo );
 	}
 }

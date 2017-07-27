@@ -48,6 +48,7 @@ class org_glizy_application_Application extends GlizyObject
         $this->_pathCore         = $pathCore;
         $this->_configHost         = $configHost;
         $this->addEventListener(GLZ_EVT_USERLOGIN, $this);
+        $this->addEventListener(GLZ_EVT_USERLOGOUT, $this);
         $this->_init();
     }
 
@@ -163,28 +164,42 @@ class org_glizy_application_Application extends GlizyObject
         org_glizy_Routing::init();
         org_glizy_Routing::_parseUrl();
         org_glizy_Request::init();
-        if ($this->siteMap) {
-            // gli alias del SiteMap devono essere risolti dopo il routing
-            // perché utilizza il Routing per generare l'URL
-            $this->siteMap->resolveAlias();
-        }
     }
 
 
     function _initLanguage()
     {
         $this->log( "initLanguage", GLZ_LOG_SYSTEM );
-        // inizializza la lingua
-        $this->_language     = org_glizy_Config::get('DEFAULT_LANGUAGE');
+        $currentLanguage = __Session::get('glizy.language', __Config::get('DEFAULT_LANGUAGE'));
+        // NOTA: __Request non è ancora inizializzata
+        // per risolvere il problema che usandolo viene inizializzata
+        // prima del run o runSoft() creando problemi nella translateInfo
+        // leggo direttamente dalla _GET
+        // Da risolvere cambiando l'ordine di inizializzazione delle varie componenti
+        $language = isset($_GET['language']) ? $_GET['language'] : null; // __Request::get('language', NULL);
+
+        if ($language && $language!=$currentLanguage) {
+            // cambio lingua controlla se la lingua richiesta è tra quelle accettate
+            $availableLanguages = explode(',', __Config::get('glizy.languages.available'));
+            if (in_array($language, $availableLanguages)) {
+               $currentLanguage = $language;
+            }
+        }
+
+        $this->_language = $currentLanguage;
+        // NOTA non viene supportato l'id numerico della lingua
         $this->_languageId     = org_glizy_Config::get('DEFAULT_LANGUAGE_ID');
+        org_glizy_ObjectValues::set('org.glizy', 'language', $this->_language);
         org_glizy_ObjectValues::set('org.glizy', 'languageId', $this->_languageId);
+        org_glizy_Session::set('glizy.language', $this->_language);
+        org_glizy_Session::set('glizy.languageId', $this->_languageId);
         $this->_loadLocale();
     }
 
     /**
      * @param bool $forceReload
      */
-    function _initSiteMap($forceReload=false)
+    function createSiteMap($forceReload=false)
     {
         $this->log( "initSiteMap", GLZ_LOG_SYSTEM );
         $this->siteMap = &org_glizy_ObjectFactory::createObject('org.glizy.application.SiteMapSimple');
@@ -196,16 +211,14 @@ class org_glizy_application_Application extends GlizyObject
         $this->log( "readPageId", GLZ_LOG_SYSTEM );
         // legge il pageId della pagina da visualizzare
         $this->_pageId = org_glizy_Request::get('pageId', NULL);
-        if (empty($this->_pageId))
+        $url = org_glizy_Request::get('__url__', NULL);
+
+        if ((!$this->_pageId && __Request::exists('__routingPattern__')) || (!$this->_pageId && !$url))
         {
             $this->_pageId =  org_glizy_Config::get('REMEMBER_PAGEID') ? org_glizy_Session::get('glizy.pageId', org_glizy_Config::get('START_PAGE')) : org_glizy_Config::get('START_PAGE');
         }
 
-        if (org_glizy_Config::get('REMEMBER_PAGEID'))
-        {
-            org_glizy_Session::set('glizy.pageId', $this->_pageId);
-        }
-
+        // TODO: rimuovere questa specializzazione per il cms
         if (!is_numeric($this->_pageId) && ( $this->getClassName()=='org_glizycms_core_application_application') )
         {
             $this->siteMapMenu    = &$this->siteMap->getMenuByPageType($this->_pageId);
@@ -223,7 +236,7 @@ class org_glizy_application_Application extends GlizyObject
             $report['_SERVER'] = var_export($_SERVER, true);
             $this->log( $report, GLZ_LOG_SYSTEM, 'glizy.404' );
 
-            if (!$this->getCurrentUser()->acl($this->siteMapMenu->id, "visible")) {
+            if ($this->siteMapMenu && !$this->getCurrentUser()->acl($this->siteMapMenu->id, "visible", true)) {
                 org_glizy_helpers_Navigation::gotoUrl( __Link::makeUrl( 'link', array( 'pageId' => __Config::get('START_PAGE'))));
             }
             $error404Page = __Config::get( 'ERROR_404');
@@ -231,7 +244,7 @@ class org_glizy_application_Application extends GlizyObject
             {
                 org_glizy_helpers_Navigation::gotoUrl( __Link::makeUrl( 'link', array( 'pageId' => $error404Page ) ) );
             }
-            new org_glizy_Exception(__T('GLZ_ERR_404').'</br>'.__Request::get('pageId'), GLZ_E_404);
+            new org_glizy_Exception(__T('GLZ_ERR_404'), GLZ_E_404);
         }
 
         if (!empty($this->siteMapMenu->select)) {
@@ -242,6 +255,12 @@ class org_glizy_application_Application extends GlizyObject
             }
             org_glizy_helpers_Navigation::gotoUrl( __Link::makeUrl( 'link', array( 'pageId' => $menu->id ) ) );
         }
+
+        if (org_glizy_Config::get('REMEMBER_PAGEID'))
+        {
+            org_glizy_Session::set('glizy.pageId', $this->_pageId);
+        }
+
     }
 
     /**
@@ -249,6 +268,8 @@ class org_glizy_application_Application extends GlizyObject
      */
     function _startProcess($readPageId=true)
     {
+        $middlewareObj = null;
+
         $this->log( "startProcess", GLZ_LOG_SYSTEM );
         if ( $this->_logObj )
         {
@@ -336,10 +357,11 @@ class org_glizy_application_Application extends GlizyObject
                 $this->dispatchEvent($evt);
 
                 $headerErrorCode = __Request::get( 'glizyHeaderCode', '' );
-                if ( $headerErrorCode == '404' )
+                if ( $headerErrorCode )
                 {
-                    header( "HTTP/1.1 404 Not Found" );
-                    header( "Status: 404 Not Found" );
+					$message = $headerErrorCode.' '.org_glizy_helpers_HttpStatus::getStatusCodeMessage( $status );
+					header( "HTTP/1.1 ".$message );
+					header( "Status: ".$message );
                 }
                 header("Content-Type: ".$this->contentType."; charset=".__Config::get('CHARSET'));
 
@@ -374,6 +396,14 @@ class org_glizy_application_Application extends GlizyObject
 
         $evt = array('type' => GLZ_EVT_START_PROCESS);
         $this->dispatchEvent($evt);
+
+        $acl = $this->_rootComponent->getAttribute( 'acl' );
+        if ($acl) {
+            list( $service, $action ) = explode( ',', $acl );
+            if (!$this->_user->acl($service, $action, false)) {
+                org_glizy_helpers_Navigation::accessDenied(false);
+            }
+        }
 
         $ajaxTarget = org_glizy_Request::get('ajaxTarget');
         $targetComponent = &$this->_rootComponent->getComponentById($ajaxTarget);
@@ -648,12 +678,14 @@ class org_glizy_application_Application extends GlizyObject
     {
         if (!org_glizy_ObjectValues::get('org.glizy.JS.Lightbox', 'add', false) && __Config::get( 'GLIZY_ADD_JS_LIB' ) )
         {
-            org_glizy_ObjectValues::set('org.glizy.JS.Lightbox', 'add', true);
+			$colorboxSlideshowAuto = __Config::get('COLORBOX_SLIDESHOWAUTO');
+			$colorboxSlideshowAuto = $colorboxSlideshowAuto ? 'true' : 'false';
+			org_glizy_ObjectValues::set('org.glizy.JS.Lightbox', 'add', true);
             $this->addJSLibCore();
 
             $this->_rootComponent->addOutputCode( org_glizy_helpers_CSS::linkStaticCSSfile('jquery/colorbox/glizy/colorbox.css' ), 'head' );
             $this->_rootComponent->addOutputCode( org_glizy_helpers_JS::linkStaticJSfile('jquery/colorbox/jquery.colorbox-min.js' ), 'head' );
-            $this->_rootComponent->addOutputCode(org_glizy_helpers_JS::JScode( 'jQuery(document).ready(function() { jQuery("a.js-lightbox-image").colorbox({ photo:true, slideshow:true, slideshowSpeed: Glizy.slideShowSpeed, current: "{current} di {total}",
+            $this->_rootComponent->addOutputCode(org_glizy_helpers_JS::JScode( 'jQuery(document).ready(function() { jQuery("a.js-lightbox-image").colorbox({ photo:true, slideshow:true, slideshowAuto:'.$colorboxSlideshowAuto.', slideshowSpeed: Glizy.slideShowSpeed, current: "{current} di {total}",
         previous: "'.__T('GLZ_PREVIOUS').'",
         next: "'.__T('GLZ_NEXT').'",
         close: "'.__T('GLZ_COLSE').'",
@@ -730,14 +762,14 @@ class org_glizy_application_Application extends GlizyObject
         }
         else
         {
-            $this->log( "user not logged", GLZ_LOG_SYSTEM );
-            // utente finto
-            $user = 0;
-            // crea l'utente
-            $this->_user = &org_glizy_ObjectFactory::createObject('org.glizy.application.User', $user);
-            org_glizy_ObjectValues::setByReference('org.glizy', 'user', $this->_user);
-            org_glizy_ObjectValues::set('org.glizy', 'userId', 0);
+            $this->createDummyUser();
         }
+        }
+
+    public function onLogout()
+    {
+        // create dummy user
+        $this->createDummyUser();
     }
 
     /**
@@ -754,5 +786,39 @@ class org_glizy_application_Application extends GlizyObject
     function canViewPage()
     {
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAjaxMode()
+    {
+        return $this->_ajaxMode;
+    }
+
+
+    private function createDummyUser()
+    {
+        // create dummy user
+        $user = 0;
+        $this->_user = &org_glizy_ObjectFactory::createObject('org.glizy.application.User', $user);
+        org_glizy_ObjectValues::setByReference('org.glizy', 'user', $this->_user);
+        org_glizy_ObjectValues::set('org.glizy', 'userId', 0);
+    }
+
+    protected $sitemapFactory = null;
+
+    public function sitemapFactory($factory)
+    {
+        $this->sitemapFactory = $factory;
+    }
+
+    function _initSiteMap($forceReload=false)
+    {
+        if (method_exists($this->sitemapFactory, '__invoke')) {
+            $this->siteMap = $this->sitemapFactory->__invoke($forceReload);
+        } else {
+            $this->createSiteMap($forceReload);
+        }
     }
 }

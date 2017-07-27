@@ -18,8 +18,8 @@ abstract class org_glizy_authentication_AbstractLogin extends GlizyObject
 
     public function loginFromRequest($loginIdField, $passwordFields, $rememberField=false, $readFromCookie=false)
     {
-        $loginId   = trim(__Request::get($loginIdField, $readFromCookie ? $_COOKIE['glizy_username'] : '' ));
-        $psw       = trim(__Request::get($passwordFields, $readFromCookie ? $_COOKIE['glizy_password'] : ''));
+        $loginId   = trim(__Request::get($loginIdField, $readFromCookie ? @$_COOKIE['glizy_username'] : '' ));
+        $psw       = trim(__Request::get($passwordFields, $readFromCookie ? @$_COOKIE['glizy_password'] : ''));
         $remember  = __Request::get($rememberField, 0);
         $this->login($loginId, glz_password($psw), $remember);
     }

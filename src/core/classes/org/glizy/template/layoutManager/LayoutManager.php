@@ -18,7 +18,7 @@ class org_glizy_template_layoutManager_LayoutManager extends GlizyObject
 	function __construct($fileName='', $rootPath='')
 	{
 		$this->fileName = org_glizy_Paths::getRealPath('APPLICATION_TEMPLATE', $this->pathPrefix.$fileName);
-		$this->rootPath = org_glizy_Paths::get('APPLICATION_TEMPLATE');
+		$this->rootPath = $rootPath ? : org_glizy_Paths::get('APPLICATION_TEMPLATE');
 
 		$application = &org_glizy_ObjectValues::get('org.glizy', 'application');
 		$this->currentMenu = $application->getCurrentMenu();
@@ -43,10 +43,12 @@ class org_glizy_template_layoutManager_LayoutManager extends GlizyObject
 
 	function checkRequiredValues( &$regionContent )
 	{
-		if (!isset($regionContent['doctitle']))
+		if (!isset($regionContent['docTitle']))
 		{
-			$regionContent['doctitle'] = $this->currentMenu->title.' - '.__Config::get('APP_NAME');
+			$regionContent['docTitle'] = $this->currentMenu->title.' - '.__Config::get('APP_NAME');
 		}
+		// compatibility fix
+		$regionContent['doctitle'] = $regionContent['docTitle'];
 	}
 
 
@@ -54,7 +56,7 @@ class org_glizy_template_layoutManager_LayoutManager extends GlizyObject
 	{
 		$templateSource = preg_replace("/<(.*?)(href|src|background)\s*=\s*(\'|\")(?!((http|https|ftp|mailto|javascript):|<\?php|\/\/))(.*?)(\'|\")(.*?)>/si", "<$1$2=$3".$this->rootPath.$this->pathPrefix."$6$7$8>", $templateSource);
 
-		$templateSource = preg_replace("/(url\s*?\([\'\"]*)(?!((http|https):))(.*?)([\'\"]*\))/i", "$1".$this->rootPath."$4$5", $templateSource);
+		$templateSource = preg_replace("/(\s+url\s*?\([\'\"]*)(?!((http|https):))(.*?)([\'\"]*\))/i", "$1".$this->rootPath."$4$5", $templateSource);
 
 		return $templateSource;
 	}

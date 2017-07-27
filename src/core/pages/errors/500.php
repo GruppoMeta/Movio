@@ -25,7 +25,7 @@ body {
 	min-height: 400px;
 	width: 500px;
 	margin: auto;
-	background: #fff url( core/pages/errors/monsterError.gif) no-repeat center bottom;
+	background: #fff;
 }
 
 h1 {
@@ -44,9 +44,9 @@ h2 {
 </head>
 <body>
 	<div id="content">
-		<h1>GLIZY framework</h1>
-		<h2><?php echo $e['code'].' : '.$e['description'];?></h2>
-		<p><?php echo $e['message'] ?></p>
+		<h1><?php echo $e['title'];?></h1>
+		<h2><?php echo $e['description'];?></h2>
+
 	</div>
 </body>
 </html>

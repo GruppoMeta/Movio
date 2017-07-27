@@ -1,11 +1,13 @@
 Glizy.oop.declare("glizy.FormEdit.checkbox", {
     $extends: Glizy.oop.get('glizy.FormEdit.standard'),
-    
+
     getValue: function () {
-       return this.$element.attr('checked') ? 1 : 0;
+		return this.$element.is(':checked');
     },
-    
+
     setValue: function (value) {
-        this.$element.attr('checked', value == 1);
+        if (value) {
+            this.$element.attr('checked', value);
+        }
     },
 });

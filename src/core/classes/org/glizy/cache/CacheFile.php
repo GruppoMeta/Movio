@@ -143,6 +143,9 @@ class org_glizy_cache_CacheFile extends Cache_Lite
         if (function_exists('opcache_get_status')) {
             opcache_reset();
         }
+        $evt = array('type' => GLZ_EVT_CACHE_CLEAN, 'data' => $cacheCode);
+        $evtObject = org_glizy_ObjectFactory::createObject('org.glizy.events.Event', null, $evt);
+        org_glizy_events_EventDispatcher::dispatchEvent($evtObject);
     }
 
     /**

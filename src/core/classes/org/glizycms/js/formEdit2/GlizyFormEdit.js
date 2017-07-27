@@ -6,6 +6,7 @@ Glizy.oop.declare("glizy.FormEdit", {
     customValidationInvalid: false,
     lang: null,
     fields: [],
+    formDataJSON: "{}",
 
     $statics: {
         fieldTypes: [],
@@ -14,13 +15,34 @@ Glizy.oop.declare("glizy.FormEdit", {
         }
     },
 
+    getCurrentFormData: function() {
+        var formData = {};
+
+        this.fields.forEach(function(field) {
+            if (!field.isDisabled()) {
+                formData[field.getName()] = field.getValue();
+            }
+        });
+
+        return formData;
+    },
+
+    hasUnmodifiedData: function() {
+        return _.isEmpty(this.glizyOpt.formData) || this.formDataJSON == JSON.stringify(this.getCurrentFormData());
+    },
+
+    updateFormData: function () {
+        this.formDataJSON = JSON.stringify(this.getCurrentFormData());
+    },
+
     initialize: function(formId, glizyOpt) {
+        var self = this;
+
         this.formId = formId;
         this.glizyOpt = glizyOpt;
         this.$form = $('#'+this.formId);
+        this.$form.data('instance', this);
         this.lang = glizyOpt.lang;
-
-        var self = this;
 
         $('#'+this.formId+' input[name]:not( [type="button"], [type="submit"], [type="reset"] ), '+
           '#'+this.formId+' textarea[name], '+
@@ -34,13 +56,28 @@ Glizy.oop.declare("glizy.FormEdit", {
             self.createField(this);
         });
 
-        jQuery('.js-glizycms-save').click(function (e) {
-            $(this).attr("disabled", "disabled");
+        $('.js-glizycms-save').click(function (e) {
+            self.setFormButtonStates(false);
             e.preventDefault();
-            self.save(e.currentTarget, $(this));
+            self.save(e.currentTarget, true, $(this));
         });
 
-        this.enableValidation();
+        $('.js-glizycms-cancel').click(function (e) {
+            self.setFormButtonStates(false);
+            window.onbeforeunload = null;
+        });
+
+        $('.js-glizycms-save-novalidation').click(function (e) {
+            $.each(self.fields, function (index, obj) {
+                obj.removeClass('GFEValidationError');
+                obj.getElement().closest('.control-group').removeClass('GFEValidationError');
+            });
+            self.setFormButtonStates(false);
+            e.preventDefault();
+            self.save(e.currentTarget, false, $(this));
+        });
+
+        this.initValidator();
 
         // aggangia anche l'evento submit per permettere la validazione dei campi
         this.$form.submit(function(event){
@@ -50,7 +87,40 @@ Glizy.oop.declare("glizy.FormEdit", {
             } else {
                 return true;
             }
-        })
+        });
+
+        window.setTimeout( //2s perché ci mette "un po'" ad aggiornare tutti i campi
+            function(){
+                self.updateFormData();
+                window.onbeforeunload = function exitWarning(e) {
+                    if (!self.hasUnmodifiedData()) {
+                        var msg = GlizyLocale.FormEdit.discardConfirmation;
+                        e = e || window.event;
+                        // For IE and Firefox prior to version 4
+                        if (e) {
+                            e.returnValue = msg;
+                        }
+                        // For Safari
+                        return msg;
+                    }
+                };
+            },
+            2000
+        );
+    },
+
+    setFormButtonStates: function(state) {
+        if (state) {
+            $('.js-glizycms-save').removeAttr('disabled');
+            $('.js-glizycms-save-novalidation').removeAttr('disabled');
+            $('.js-glizycms-cancel').removeAttr('disabled');
+            $('.js-glizycms-preview').removeAttr('disabled');
+        } else {
+            $('.js-glizycms-save').attr('disabled', 'disabled');
+            $('.js-glizycms-save-novalidation').attr('disabled', 'disabled');
+            $('.js-glizycms-cancel').attr('disabled', 'disabled');
+            $('.js-glizycms-preview').attr('disabled', 'disabled');
+        }
     },
 
     // restituisce true se l'elemento è contenuto in un altro componente
@@ -80,9 +150,24 @@ Glizy.oop.declare("glizy.FormEdit", {
         }
     },
 
-    enableValidation: function () {
+    initValidator: function() {
         var self = this;
         var firstInvalidObj = null;
+
+        function testInvalidation(obj) {
+            if (obj && !obj.isValid() && obj.getElement().is(":visible")) {
+                obj.addClass('GFEValidationError');
+                obj.getElement().closest('.control-group').addClass('GFEValidationError');
+                self.invalidFields++;
+            }
+        }
+
+        function testValidation(obj) {
+            if (obj && obj.isValid()) {
+                obj.removeClass('GFEValidationError');
+                obj.getElement().closest('.control-group').removeClass('GFEValidationError');
+            }
+        }
 
         self.$form.validVal({
             validate: {
@@ -91,29 +176,14 @@ Glizy.oop.declare("glizy.FormEdit", {
                 }
             },
             fields: {
-                onValidate: function ($form, language) {
-                    var obj = $(this).data('instance');
-                    
-                    if (obj && !obj.isValid()) {
-                        obj.addClass('GFEValidationError');
-                        obj.getElement().closest('.control-group').addClass('GFEValidationError');
-                        self.invalidFields++;
-                        return false;
-                    }
-                },
                 onInvalid: function( $form, language ) {
                     var obj = $(this).data('instance');
-                    if (obj && !obj.isValid()) {
-                        obj.addClass('GFEValidationError');
-                        obj.getElement().closest('.control-group').addClass('GFEValidationError');
-                    }
+                    testInvalidation(obj);
                 },
                 onValid: function( $form, language ) {
                     var obj = $(this).data('instance');
-                    if (obj && obj.isValid())  {
-                        obj.removeClass('GFEValidationError');
-                        obj.getElement().closest('.control-group').removeClass('GFEValidationError');
-                    }
+                    testValidation(obj);
+                    testInvalidation(obj);
                 }
             },
             form: {
@@ -156,6 +226,10 @@ Glizy.oop.declare("glizy.FormEdit", {
                 },
                 onInvalid: function( field_arr, language ) {
                     var $invalidEl = field_arr.first();
+                    if (!$invalidEl.is(":visible")) {
+                        return true;
+                    }
+
                     var obj = $invalidEl.data('instance');
                     obj.focus();
 
@@ -170,21 +244,6 @@ Glizy.oop.declare("glizy.FormEdit", {
                             $('a[data-target="#'+inTab.attr('id')+'"]').tab('show');
                         }
                     }
-                    /*
-                    var $invalidEl = self.filterEditingFields.call(field_arr);
-
-                    if ($invalidEl.length) {
-                        if ($invalidEl.attr('data-type')) {
-                            var obj = $invalidEl.data('instance');
-                            obj.focus();
-                        } else {
-                            $invalidEl.focus();
-                        }
-
-                        $invalidEl.addClass('GFEValidationError');
-                        alert(self.lang.errorValidationMsg);
-                    }
-                    */
                 },
                 onValid: function() {
                     if (self.customValidationInvalid && firstInvalidObj) {
@@ -196,27 +255,21 @@ Glizy.oop.declare("glizy.FormEdit", {
         });
     },
 
-    save: function (el, $saveButton) {
-        var formData = {};
-        var result = this.$form.triggerHandler('submitForm');
-
-        if (result === false || this.invalidFields || this.customValidationInvalid) {
-            this.customValidationInvalid = false;
-            $saveButton.removeAttr("disabled");
-            this.invalidFields = 0;
-            Glizy.events.broadcast("glizy.message.showError", {"title": this.lang.errorValidationMsg, "message": ""});
-            return;
-        }
-
+    save: function (el, enableValidation, $saveButton) {
+        var formData = this.getCurrentFormData();
         var self = this;
 
-        this.fields.forEach(function(field) {
-            if (!field.isDisabled()) {
-                var val = field.getValue();
-                formData[field.getName()] = val;
-            }
-        });
+        if (enableValidation) {
+            self.$form.triggerHandler('submitForm');
 
+            if (self.invalidFields || self.customValidationInvalid) {
+                self.customValidationInvalid = false;
+                self.setFormButtonStates(true);
+                self.invalidFields = 0;
+                Glizy.events.broadcast("glizy.message.showError", {"title": self.lang.errorValidationMsg, "message": ""});
+                return;
+            }
+        }
 
         var triggerAction = $(el).data("trigger");
 
@@ -226,42 +279,56 @@ Glizy.oop.declare("glizy.FormEdit", {
             data: jQuery.param({action: $(el).data("action"), data: JSON.stringify(formData)}),
             type: "POST",
             success: function (data) {
-                if (data.evt) {
-                    window.parent.Glizy.events.broadcast(data.evt, data.message);
-                } else if (data.url) {
-                    if (data.target == 'window') {
-                        parent.window.location.href = data.url;
-                    } else {
-                        document.location.href = data.url;
-                    }
-                } else if (data.set) {
-                    $.each(data.set, function(id, value){
-                        $('#'+id).val(value);
-                    });
-                    Glizy.events.broadcast("glizy.message.showSuccess", {"title": self.lang.saveSuccessMsg, "message": ""});
-                    if (triggerAction) {
-                        triggerAction('click', formData);
-                    }
-                } else if (data.callback) {
-                    window[data.callback](data);
-                } else if (data.errors) {
+                if (data.errors) {
+
                     // TODO localizzare
-                    var errorMsg = '<p>Impossibile salvare questo documento, a causa dei seguenti errori:</p><ul>';
+                    var errorMsg = '<p>' + GlizyLocale.FormEdit.unableToSave + '</p><ul>';
                     $.each(data.errors, function(id, value) {
                         errorMsg += '<li><p class="alert alert-error">'+value+'</p></li>';
                     });
                     Glizy.events.broadcast("glizy.message.showError", {"title": self.lang.errorValidationMsg, "message": errorMsg});
 
                 } else {
-                    if (triggerAction) {
-                        triggerAction('click', formData);
-                        //$(triggerAction).trigger('click');
-                    } else {
+
+                    if (data.evt) {
+
+                        window.parent.Glizy.events.broadcast(data.evt, data.message);
+                    } else if (data.url) {
+
+                        if (data.target == 'window') {
+                            parent.window.location.href = data.url;
+                        } else {
+                            document.location.href = data.url;
+                        }
+
+                    } else if (data.set) {
+
+                        $.each(data.set, function(id, value){
+                            $('#'+id).val(value);
+                        });
                         Glizy.events.broadcast("glizy.message.showSuccess", {"title": self.lang.saveSuccessMsg, "message": ""});
+                        if (triggerAction) {
+                            triggerAction('click', formData);
+                        }
+
+                    } else if (data.callback) {
+
+                        window[data.callback](data);
+
+                    } else {
+
+                        if (triggerAction) {
+                            triggerAction('click', formData);
+                        } else {
+                            Glizy.events.broadcast("glizy.message.showSuccess", {"title": self.lang.saveSuccessMsg, "message": ""});
+                        }
+
                     }
+
+                    self.updateFormData();
                 }
 
-                $saveButton.removeAttr("disabled");
+                self.setFormButtonStates(true);
             }
         });
     }

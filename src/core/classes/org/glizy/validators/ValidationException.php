@@ -9,14 +9,20 @@
 
 class org_glizy_validators_ValidationException extends Exception
 {
+    /**
+     * @var array
+     */
     private $errors;
     
     public function __construct($errors)
     {
         $this->errors = $errors;
-        parent::__construct("There were validation errors, call getErrors() to get them");
+        parent::__construct(sprintf("There were validation errors: %s", implode("\n", $this->errors)));
     }
     
+    /**
+     * @return array
+     */
     public function getErrors()
     {
         return $this->errors;

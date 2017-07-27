@@ -8,7 +8,9 @@ class org_glizy_dataAccessDoctrine_Query_QueryBuilder extends \Doctrine\DBAL\Que
 {
     public function quoteSelectTerm($term) {
         $connection = $this->getConnection();
-        if (preg_match('/DISTINCT ON\((.+)\)(.+)/i', $term, $m)) {
+        if (preg_match('/(\w+)\((\w+) (\w+)\) as (\w+)/i', $term, $m)) {
+            return $m[1].'('.$m[2].' '.$connection->quoteIdentifier($m[3]).') as '.$connection->quoteIdentifier($m[4]);
+        } else if (preg_match('/DISTINCT ON\((.+)\)(.+)/i', $term, $m)) {
             return 'DISTINCT ON('. $connection->quoteIdentifier($m[1]).')'.$m[2];
         } elseif (preg_match('/DISTINCT (.+) as (.+)/i', $term, $m)) {
             return 'DISTINCT '. $connection->quoteIdentifier($m[1]) . ' as ' . $connection->quoteIdentifier($m[2]);
@@ -29,7 +31,11 @@ class org_glizy_dataAccessDoctrine_Query_QueryBuilder extends \Doctrine\DBAL\Que
             if (is_array($sqlPart)) {
                 $i = 0;
                 foreach ($sqlPart as $term) {
-                    $sqlPart[$i] = $this->quoteSelectTerm($term);
+                    if ($term instanceof org_glizy_dataAccessDoctrine_Query_Expression_SqlExpression) {
+                        $sqlPart[$i] = $term;
+                    } else {
+                        $sqlPart[$i] = $this->quoteSelectTerm($term);
+                    }
                     $i++;
                 }
             }
@@ -50,7 +56,11 @@ class org_glizy_dataAccessDoctrine_Query_QueryBuilder extends \Doctrine\DBAL\Que
 
         // Loop through all FROM clauses
         foreach ($this->sqlParts['from'] as $from) {
-            $fromClause = $connection->quoteIdentifier($from['table']) . ' ' . $connection->quoteIdentifier($from['alias']);
+            if ($from['table'] instanceof org_glizy_dataAccessDoctrine_Query_Expression_SqlExpression) {
+                $fromClause = $from['table']. ' ' . $connection->quoteIdentifier($from['alias']);
+            } else {
+                $fromClause = $connection->quoteIdentifier($from['table']) . ' ' . $connection->quoteIdentifier($from['alias']);
+            }
 
             if (isset($this->sqlParts['join'][$from['alias']])) {
                 foreach ($this->sqlParts['join'][$from['alias']] as $join) {

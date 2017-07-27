@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+	xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:model="http://www.glizy.org/dtd/1.0/model/"
+	model:tableName="glizycms.content" model:usePrefix="true" model:type="document">
+
+    <model:Query name="maintenanceDocuments" type="function">
+    <![CDATA[
+        $iterator->setSqlQuery('DELETE documents_tbl, documents_detail_tbl FROM documents_detail_tbl LEFT JOIN documents_tbl ON document_detail_FK_document_id = document_id WHERE document_id is null');
+        $iterator->exec();
+        $iterator->setSqlQuery('DELETE documents_index_datetime_tbl FROM documents_index_datetime_tbl LEFT JOIN documents_detail_tbl detail ON  document_index_datetime_FK_document_detail_id = detail.document_detail_id WHERE document_detail_id is null');
+        $iterator->exec();
+        $iterator->setSqlQuery('DELETE documents_index_date_tbl FROM documents_index_date_tbl LEFT JOIN documents_detail_tbl detail ON  document_index_date_FK_document_detail_id = detail.document_detail_id WHERE document_detail_id is null');
+        $iterator->exec();
+        $iterator->setSqlQuery('DELETE documents_index_fulltext_tbl FROM documents_index_fulltext_tbl LEFT JOIN documents_detail_tbl detail ON  document_index_fulltext_FK_document_detail_id = detail.document_detail_id WHERE document_detail_id is null');
+        $iterator->exec();
+        $iterator->setSqlQuery('DELETE documents_index_int_tbl FROM documents_index_int_tbl LEFT JOIN documents_detail_tbl detail ON  document_index_int_FK_document_detail_id = detail.document_detail_id WHERE document_detail_id is null');
+        $iterator->exec();
+        $iterator->setSqlQuery('DELETE documents_index_text_tbl FROM documents_index_text_tbl LEFT JOIN documents_detail_tbl detail ON  document_index_text_FK_document_detail_id = detail.document_detail_id WHERE document_detail_id is null');
+        $iterator->exec();
+        $iterator->setSqlQuery('DELETE documents_index_time_tbl FROM documents_index_time_tbl LEFT JOIN documents_detail_tbl detail ON  document_index_time_FK_document_detail_id = detail.document_detail_id WHERE document_detail_id is null');
+        $iterator->exec();
+    ]]>
+    </model:Query>
+</model:Model>

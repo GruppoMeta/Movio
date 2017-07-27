@@ -12,102 +12,101 @@
  * @license      http://www.gnu.org/copyleft/lesser.html GNU LESSER GENERAL PUBLIC LICENSE
  * @package      glizy
  * @subpackage   javascript
- * @author		 Daniele Ugoletti <daniele.ugoletti@glizy.com>, Giorgio Braga <giorgio@justattributes.com>
- * @category	 javascript
+ * @author       Daniele Ugoletti <daniele.ugoletti@glizy.com>, Giorgio Braga <giorgio@justattributes.com>
+ * @category     javascript
  * @since        Glizy v 0.01
  * @version      $Rev: 328 $
  * @modifiedby   $LastChangedBy: ugoletti $
  * @lastmodified $Date: 2011-01-24 17:46:02 +0100 (lun, 24 gen 2011) $
  */
 
+var eventPos;
+
+$(window).unload(function(){
+    Glizy.events.unbind("glizycms.onSetMediaPicker", eventPos);
+});
+
 
 function convertURL(url, node, on_save) {
-	return url;
+    return url;
 }
 function trimSize(size) {
-	return size.replace(/([0-9\.]+)px|(%|in|cm|mm|em|ex|pt|pc)/, '$1$2');
+    return size.replace(/([0-9\.]+)px|(%|in|cm|mm|em|ex|pt|pc)/, '$1$2');
 }
 
 function init() {
-	var f = document.forms[0], formObj = f.elements, ed = tinyMCEPopup.editor, dom = ed.dom, elm = ed.selection.getNode();
+    var f = document.forms[0], formObj = f.elements, ed = tinyMCEPopup.editor, dom = ed.dom, elm = ed.selection.getNode();
     var $picker = $("#picker");
-    $picker.attr("src", parent.Glizy.tinyMCE_options.urls.imagePickerTiny).load(function(){
-        jQuery( "img.js-glizyMediaPicker", $picker.contents().get(0)).click( function(){
-            $img = jQuery( this );
-            update( $img.data( "id" ), $img.data( "fileName" ), $img.attr( "title" ), $img.attr( "src" ), $img.data( "width" ), $img.data( "height" ) );
-        });
+    var pickerHeight = Math.max($picker.parent().height(), $(window.top).height() - 250);
+    $picker.height(pickerHeight);
+    $picker.attr("src", parent.Glizy.tinyMCE_options.urls.imagePickerTiny);
+
+    eventPos = Glizy.events.on("glizycms.onSetMediaPicker", function(event){
+        var message = event.message;
+        update( message.id, message.fileName, message.title, message.thumbnail || message.src, message.width, message.height );
     });
 
-	tinyMCEPopup.resizeToInnerSize();
-	if (elm.nodeName == 'IMG') {
-		var src = dom.getAttrib(elm, 'src');
-		src = convertURL(src, elm, true);
-		// Setup form data
-		var style = dom.getAttrib(elm, 'style');
+    tinyMCEPopup.resizeToInnerSize();
+    renderImageStyle();
+    renderImageSized();
+
+    if (elm.nodeName == 'IMG') {
+        var src = dom.getAttrib(elm, 'src');
+        src = convertURL(src, elm, true);
+        // Setup form data
+        var style = dom.getAttrib(elm, 'style');
         var search = src.split("?")[1];
         var els = search.split("&");
         formObj.imgid.value = els[0].split("=")[1];
         var tn = formObj.src.value = src;
-		formObj.alt.value    = dom.getAttrib(elm, 'alt');
-		formObj.title.value  = dom.getAttrib(elm, 'title');
-		var border = dom.getStyle(elm, 'border' );
-		if (border!='')
-		{
-			formObj.border.value = trimSize(border.split(' ')[0]);
-		}
-		else
-		{
-			formObj.border.value = '';
-		}
+        formObj.alt.value    = dom.getAttrib(elm, 'data-caption') || dom.getAttrib(elm, 'title');
+        formObj.title.value  = dom.getAttrib(elm, 'title');
+        formObj.zoom.checked = dom.getAttrib(elm, 'data-zoom') == '1';
+        formObj.caption.checked = dom.getAttrib(elm, 'data-caption') != '';
 
-		var margin = getStyle(elm, 'margin');
-		if (margin!='')
-		{
-			margin = margin.split(' ');
-			formObj.vspace.value = trimSize(margin[0]);
-			formObj.hspace.value = trimSize(margin[margin.length > 1 ? 1 : 0]);
-		}
-		else
-		{
-			formObj.vspace.value = '';
-			formObj.hspace.value = '';
-		}
+        var border = dom.getStyle(elm, 'border' );
+        if (border!='')
+        {
+            formObj.border.value = trimSize(border.split(' ')[0]);
+        }
+        else
+        {
+            formObj.border.value = '';
+        }
 
-		formObj.cssclass.value = dom.getAttrib(elm, 'class');
-		var w = formObj.orw.value = formObj.width.value  = trimSize(dom.getStyle(elm, 'width'));
-		var h = formObj.orh.value = formObj.height.value = trimSize(dom.getStyle(elm, 'height'));
-		formObj.style.value  = style; ///dom.serializeStyle(style);
+        var margin = getStyle(elm, 'margin');
+        if (margin!='')
+        {
+            margin = margin.split(' ');
+            formObj.vspace.value = trimSize(margin[0]);
+            formObj.hspace.value = trimSize(margin[margin.length > 1 ? 1 : 0]);
+        }
+        else
+        {
+            formObj.vspace.value = '';
+            formObj.hspace.value = '';
+        }
+
+        formObj.cssclass.value = dom.getAttrib(elm, 'class');
+        var w = formObj.orw.value = formObj.width.value  = trimSize(dom.getStyle(elm, 'width'));
+        var h = formObj.orh.value = formObj.height.value = trimSize(dom.getStyle(elm, 'height'));
+        formObj.style.value  = style;
         with (f.thumbnail) {
-            if (w>h) {
-                width = 100;
-                height = h/w*100;
-            }
-            else {
-                height = 100;
-                width = w/h*100;
-            }
+            width = 100;
+            height = 100;
             src = tn.indexOf('http://')>-1 ? tn : parent.Glizy.tinyMCE_options.urls.root+tn;
         }
 
-		selectByValue(f, 'align', dom.getStyle(elm, 'float'));
+        selectByValue(f, 'align', dom.getStyle(elm, 'float'));
 
-		updateStyle();
-		changeAppearance();
-	}
-
-	//     // Check action
-	// if (elm != null && elm.nodeName == "IMG")
-	// 	action = "update";
-	//
-	// formObj.insert.value = tinyMCE.getLang('lang_' + action, 'Insert', true);
-	//
-	// if (action == "update") {
-	//
-	// }
+        updateStyle();
+    }
 }
 
+
+
 function update(imgid,url,t,tn,w,h) {
-	var formObj = document.forms[0];
+    var formObj = document.forms[0];
     formObj.imgid.value = imgid;
     with (formObj) {
         title.value = t;
@@ -123,56 +122,56 @@ function update(imgid,url,t,tn,w,h) {
                 height = 100;
                 width = w/h*100;
             }
-            src = parent.Glizy.tinyMCE_options.urls.root+tn;
+            src = tn.indexOf('http')===0 ? tn : parent.Glizy.tinyMCE_options.urls.root+tn;
         }
     }
     updateStyle();
 }
 
 function setAttrib(elm, attrib, value) {
-	var ed = tinyMCEPopup.editor, dom = ed.dom;
-	var formObj = document.forms[0];
-	var valueElm = formObj.elements[attrib];
+    var ed = tinyMCEPopup.editor, dom = ed.dom;
+    var formObj = document.forms[0];
+    var valueElm = formObj.elements[attrib];
 
-	if (typeof(value) == "undefined" || value == null) {
-		value = "";
+    if (typeof(value) == "undefined" || value == null) {
+        value = "";
 
-		if (valueElm)
-			value = valueElm.value;
-	}
+        if (valueElm)
+            value = valueElm.value;
+    }
 
-	if (value != "") {
-		dom.setAttrib(elm, attrib, value);
-	} else
-		elm.removeAttribute(attrib);
+    if (value != "") {
+        dom.setAttrib(elm, attrib, value);
+    } else
+        elm.removeAttribute(attrib);
 }
 
 function makeAttrib(attrib, value) {
-	var formObj = document.forms[0];
-	var valueElm = formObj.elements[attrib];
+    var formObj = document.forms[0];
+    var valueElm = formObj.elements[attrib];
 
-	if (typeof(value) == "undefined" || value == null) {
-		value = "";
+    if (typeof(value) == "undefined" || value == null) {
+        value = "";
 
-		if (valueElm)
-			value = valueElm.value;
-	}
+        if (valueElm)
+            value = valueElm.value;
+    }
 
-	if (value == "")
-		return "";
-	return ' ' + attrib + '="' + value + '"';
+    if (value == "")
+        return "";
+    return ' ' + attrib + '="' + value + '"';
 }
 
 function insertAction() {
-	var ed = tinyMCEPopup.editor, dom = ed.dom;
-	var formObj = document.forms[0];
-	tinyMCEPopup.restoreSelection();
+    var ed = tinyMCEPopup.editor, dom = ed.dom;
+    var formObj = document.forms[0];
+    tinyMCEPopup.restoreSelection();
 
-	// Fixes crash in Safari
-	if (tinymce.isWebKit)
-		ed.getWin().focus();
+    // Fixes crash in Safari
+    if (tinymce.isWebKit)
+        ed.getWin().focus();
 
-	if (formObj.imgid.value) {
+    if (formObj.imgid.value) {
         var src = parent.Glizy.tinyMCE_options.urls.imageResizer
                         .replace('#id#', formObj.imgid.value)
                         .replace('#w#', formObj.width.value)
@@ -180,139 +179,189 @@ function insertAction() {
         formObj.alt.value = formObj.alt.value || formObj.title.value;
         src = convertURL(src, tinyMCE.imgElement);
 
-		var elm = ed.selection.getNode();
-		if (elm && elm.nodeName == 'IMG') {
+        var elm = ed.selection.getNode();
+        if (elm && elm.nodeName == 'IMG') {
             setAttrib(elm, 'src', src);
-            setAttrib(elm, 'alt');
+            setAttrib(elm, 'alt', formObj.title.value);
             setAttrib(elm, 'title');
             setAttrib(elm, 'style');
             setAttrib(elm, 'class', formObj.cssclass.value);
+            setAttrib(elm, 'data-zoom', formObj.zoom.checked ? '1' : '');
+            setAttrib(elm, 'data-caption', formObj.caption.checked ? formObj.alt.value : '');
         } else {
             var html = "<img";
 
             html += makeAttrib('src', src);
-            html += makeAttrib('alt');
+            html += makeAttrib('alt', formObj.title.value);
             html += makeAttrib('title');
             html += makeAttrib('style');
             html += makeAttrib('class', formObj.cssclass.value);
+            html += makeAttrib('data-zoom', formObj.zoom.checked ? '1' : '');
+            html += makeAttrib('data-caption', formObj.caption.checked ? formObj.alt.value : '');
             html += " />";
 
             ed.execCommand("mceInsertContent", false, html, {skip_undo : 1});
-			ed.undoManager.add();
+            ed.undoManager.add();
         }
     }
 
-	tinyMCEPopup.editor.execCommand('mceRepaint');
-	tinyMCEPopup.editor.focus();
-	tinyMCEPopup.close();
+    tinyMCEPopup.editor.execCommand('mceRepaint');
+    tinyMCEPopup.editor.focus();
+    tinyMCEPopup.close();
 }
 
 function cancelAction() {
-	tinyMCEPopup.close();
+    tinyMCEPopup.close();
 }
 
-function changeAppearance() {
-	var formObj = document.forms[0];
-	var img = document.getElementById('alignSampleImg');
 
-	if (img) {
-		img.align = formObj.align.value;
-		img.border = formObj.border.value;
-		img.hspace = formObj.hspace.value;
-		img.vspace = formObj.vspace.value;
-		updateStyle();
-	}
-}
 
 function changeCssClass(elm) {
-	if (elm.selectedIndex !=0)
-	{
-		var formObj = document.forms[0];
-		formObj.cssclass.value = elm.value;
-		elm.selectedIndex = 0;
-	}
+    if (elm.selectedIndex !=0)
+    {
+        var formObj = document.forms[0];
+        formObj.cssclass.value = elm.value;
+        elm.selectedIndex = 0;
+    }
 }
 
 function updateStyle() {
-	var ed = tinyMCEPopup.editor, dom = ed.dom;
-	var formObj = document.forms[0];
-	var st = dom.parseStyle(formObj.style.value);
+    var ed = tinyMCEPopup.editor, dom = ed.dom;
+    var formObj = document.forms[0];
+    var st = dom.parseStyle(formObj.style.value);
 
-	if (ed.settings.inline_styles) {
-		st['width'] = formObj.width.value == '' ? '' : formObj.width.value + "px";
-		st['height'] = formObj.height.value == '' ? '' : formObj.height.value + "px";
-		st['border'] = formObj.border.value == '' ? '' : formObj.border.value + "px solid";
-		if (formObj.vspace.value != '' || formObj.hspace.value != '')
-		{
-			st['margin'] = formObj.vspace.value == '' ? '0' : formObj.vspace.value + "px"
-			st['margin'] += formObj.hspace.value == '' ? ' 0' : ' '+formObj.hspace.value + "px";
-			st['margin'] += formObj.vspace.value == '' ? ' 0' : ' '+formObj.vspace.value + "px"
-			st['margin'] += formObj.hspace.value == '' ? ' 0' : ' '+formObj.hspace.value + "px";
-		}
-		else
-		{
-			delete st['margin'];
-		}
+    if (ed.settings.inline_styles) {
+        st['width'] = formObj.width.value == '' ? '' : formObj.width.value + "px";
+        st['height'] = formObj.height.value == '' ? '' : formObj.height.value + "px";
+        st['border'] = formObj.border.value == '' ? '' : formObj.border.value + "px solid";
+        if (formObj.vspace.value != '' || formObj.hspace.value != '')
+        {
+            st['margin'] = formObj.vspace.value == '' ? '0' : formObj.vspace.value + "px"
+            st['margin'] += formObj.hspace.value == '' ? ' 0' : ' '+formObj.hspace.value + "px";
+            st['margin'] += formObj.vspace.value == '' ? ' 0' : ' '+formObj.vspace.value + "px"
+            st['margin'] += formObj.hspace.value == '' ? ' 0' : ' '+formObj.hspace.value + "px";
+        }
+        else
+        {
+            delete st['margin'];
+        }
 
-	} else {
-		st['width'] = st['height'] = st['border'] = null;
+    } else {
+        st['width'] = st['height'] = st['border'] = null;
 
-		if (st['margin-top'] == st['margin-bottom'])
-			st['margin-top'] = st['margin-bottom'] = null;
+        if (st['margin-top'] == st['margin-bottom'])
+            st['margin-top'] = st['margin-bottom'] = null;
 
-		if (st['margin-left'] == st['margin-right'])
-			st['margin-left'] = st['margin-right'] = null;
-	}
+        if (st['margin-left'] == st['margin-right'])
+            st['margin-left'] = st['margin-right'] = null;
+    }
 
-	st['float'] = formObj.align.value == '' ? '' : formObj.align.value;
-
-	formObj.style.value = dom.serializeStyle(st);
+    formObj.style.value = dom.serializeStyle(st);
 }
 
 function styleUpdated() {
-	var ed = tinyMCEPopup.editor, dom = ed.dom;
-	var formObj = document.forms[0];
-	var st = dom.parseStyle(formObj.style.value);
+    var ed = tinyMCEPopup.editor, dom = ed.dom;
+    var formObj = document.forms[0];
+    var st = dom.parseStyle(formObj.style.value);
 
-	if (st['width'])
-		formObj.width.value = st['width'].replace('px', '');
+    if (st['width'])
+        formObj.width.value = st['width'].replace('px', '');
 
-	if (st['height'])
-		formObj.height.value = st['height'].replace('px', '');
+    if (st['height'])
+        formObj.height.value = st['height'].replace('px', '');
 
-	if (st['margin-top'] && st['margin-top'] == st['margin-bottom'])
-		formObj.vspace.value = st['margin-top'].replace('px', '');
+    if (st['margin-top'] && st['margin-top'] == st['margin-bottom'])
+        formObj.vspace.value = st['margin-top'].replace('px', '');
 
-	if (st['margin-left'] && st['margin-left'] == st['margin-right'])
-		formObj.hspace.value = st['margin-left'].replace('px', '');
+    if (st['margin-left'] && st['margin-left'] == st['margin-right'])
+        formObj.hspace.value = st['margin-left'].replace('px', '');
 
-	if (st['border-width'])
-		formObj.border.value = st['border-width'].replace('px', '');
+    if (st['border-width'])
+        formObj.border.value = st['border-width'].replace('px', '');
 }
 
 function changeHeight() {
-	var formObj = document.forms[0];
+    var formObj = document.forms[0];
 
-	var temp = (formObj.width.value / formObj.orw.value) * formObj.orh.value;
-	formObj.height.value = temp.toFixed(0);
-	updateStyle();
+    var temp = (formObj.width.value / formObj.orw.value) * formObj.orh.value;
+    formObj.height.value = temp.toFixed(0);
+    updateStyle();
 }
 
 function changeWidth() {
-	var formObj = document.forms[0];
+    var formObj = document.forms[0];
 
-	var temp = (formObj.height.value / formObj.orh.value) * formObj.orw.value;
-	formObj.width.value = temp.toFixed(0);
-	updateStyle();
+    var temp = (formObj.height.value / formObj.orh.value) * formObj.orw.value;
+    formObj.width.value = temp.toFixed(0);
+    updateStyle();
+}
+
+function changeSize(elm) {
+    if (elm.selectedIndex !=0)
+    {
+        var formObj = document.forms[0];
+        var values = elm.value.split(',');
+        if (values[0] && values[1]) {
+            formObj.width.value = values[0];
+            formObj.height.value = values[1];
+            updateStyle();
+        } else if (values[0]) {
+            formObj.width.value = values[0];
+            changeHeight()
+        } else if (values[1]) {
+            formObj.height.value = values[1];
+            changeWidth()
+        }
+        elm.selectedIndex = 0;
+    }
 }
 
 function getSelectValue(form_obj, field_name) {
-	var elm = form_obj.elements[field_name];
+    var elm = form_obj.elements[field_name];
 
-	if (elm == null || elm.options == null)
-		return "";
+    if (elm == null || elm.options == null)
+        return "";
 
-	return elm.options[elm.selectedIndex].value;
+    return elm.options[elm.selectedIndex].value;
 }
+
+function renderImageStyle() {
+    var styles = getImageStyles();
+
+    $('#cssClassList').append(renderSelectOptions(styles));
+}
+
+function getImageStyles()
+{
+    var ed = tinyMCEPopup.editor;
+    return parent.Glizy.tinyMCE_imgStyles ? parent.Glizy.tinyMCE_imgStyles : [
+        {"value":"left", "label": ed.translate('GLZ_image.css_left')},
+        {"value":"right", "label": ed.translate('GLZ_image.css_right')},
+        {"value":"center", "label": ed.translate('GLZ_image.css_center')},
+        {"value":"left noBorder", "label": ed.translate('GLZ_image.css_left_noborder')},
+        {"value":"right noBorder", "label": ed.translate('GLZ_image.css_right_noborder')},
+        {"value":"center noBorder", "label": ed.translate('GLZ_image.css_center_noborder')}
+    ]
+}
+
+function renderImageSized() {
+    var sizes = parent.Glizy.tinyMCE_imgSizes;
+    if (sizes) {
+        $('#sizeList').append(renderSelectOptions(sizes));
+    } else {
+        $('#sizeList').hide();
+    }
+}
+
+function renderSelectOptions(items) {
+    var aSel = [];
+    aSel.push('<option value="">-</option>');
+    var styles = getImageStyles();
+    $(items).each(function(index, el){
+        aSel.push('<option value="'+el.value+'">'+el.label+'</option>');
+    });
+    return aSel.join("");
+}
+
 
 tinyMCEPopup.onInit.add(init, null);

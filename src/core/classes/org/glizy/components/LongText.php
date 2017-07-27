@@ -127,6 +127,7 @@ class org_glizy_components_LongText extends org_glizy_components_Text
 		$attributes['label'] = $node->getAttribute('label');
 		$attributes['type'] = 'multiline';
 		$attributes['data'] = '';
+		$attributes['xmlns:glz'] = "http://www.glizy.org/dtd/1.0/";
 
 		if (count($node->attributes))
 		{

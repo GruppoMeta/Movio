@@ -7,15 +7,20 @@
  * file that was distributed with this source code.
  */
 
-class org_glizy_validators_Date extends org_glizy_validators_AbstractValidator
+class org_glizy_validators_Date implements org_glizy_validators_ValidatorInterface
 {
-    public function validate($description, $value)
+    /**
+     * @param string $description
+     * @param string $value
+     *
+     * @return bool|string
+     */
+    public function validate($description, $value, $defaultValue)
     {
         if (preg_match('/^[\d]{2,4}-[\d]{1,2}-[\d]{1,2}$/', $value) || empty($value)) {
             return true;
         }
-        else {
+
             return $description . " deve essere una data";
-        }
     }
 }

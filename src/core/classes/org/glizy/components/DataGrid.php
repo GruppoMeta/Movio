@@ -33,7 +33,7 @@ class org_glizy_components_DataGrid extends org_glizy_components_ComponentContai
         $this->defineAttribute('controller',    false,     NULL,    COMPONENT_TYPE_OBJECT);
         $this->defineAttribute('cssClass',         false,    '',        COMPONENT_TYPE_STRING);
         $this->defineAttribute('tableCssClass',    false,    'list',        COMPONENT_TYPE_STRING);
-        $this->defineAttribute('dataProvider',    true,     NULL,    COMPONENT_TYPE_OBJECT);
+        $this->defineAttribute('dataProvider',    false,     NULL,    COMPONENT_TYPE_OBJECT);
         $this->defineAttribute('filters',        false,     NULL,    COMPONENT_TYPE_OBJECT);
         $this->defineAttribute('label',         false,    '',        COMPONENT_TYPE_STRING);
         $this->defineAttribute('paginate',        false,     NULL,    COMPONENT_TYPE_OBJECT);
@@ -109,20 +109,6 @@ class org_glizy_components_DataGrid extends org_glizy_components_ComponentContai
             $filters = $filtersObj->getFilters();
         }
 
-        // legge i dati dal dataprovider
-        $this->_dataProvider         = &$this->getAttribute('dataProvider');
-        if (is_null($this->_dataProvider))
-        {
-            // TODO
-            // visualizzare errore e uscire
-        }
-
-        $ar                         = $this->_dataProvider->getNewObject();
-        $this->_primarykey             = $ar->getPrimaryKeyName();
-        //$this->_versionFieldName     = $ar->getVersionFieldName();
-        //$this->_languageFieldName     = $ar->getLanguageFieldName();
-
-
         // esegue la paginazione
         $pageLimits    = NULL;
         $paginateClass    = $this->getAttribute("paginate");
@@ -132,77 +118,72 @@ class org_glizy_components_DataGrid extends org_glizy_components_ComponentContai
             $pageLimits = $paginateClass->getLimits();
         }
 
-        if (!is_null($this->_versionFieldName))
-        {
-            $filters[$this->_versionFieldName]     = array('<>', 'OLD');
-            /*
-            TODO
-            con il datagrid ottimizzato questa tecnica non funziona
-            // c'� da creare dinamicamente una query per avere lo stesso risultato
-            //
+        // legge i dati dal dataprovider
+        $this->_dataProvider         = &$this->getAttribute('dataProvider');
+        // if (is_null($this->_dataProvider))
+        // {
+        //     // TODO
+        //     // visualizzare errore e uscire
+        // }
 
-            // legge i valori i dati della lingua di default
-            // questo perch� su Models multilingue
-            // possono esserci delle lingue che non hanno ancora definito tutti i valori
 
-            $ar = &org_glizy_ObjectFactory::createModel('org.glizy.models.Language');
-            $ar->language_isDefault = 1;
-            $ar->find();
-            $filters[$this->_languageFieldName] = $ar->language_id;
-            $iteratorDefault = &$this->_dataProvider->loadQuery('',
-                                                                array(    'filters'     => $filters,
-                                                                        'order'     => array($this->_columns[$this->_orderBy]['columnName'].' '.$this->_orderDirection),
-                                                                        'group'        => $this->_primarykey,
-                                                                        'limit'        => $pageLimits
-                                                                    ));
-            //$this->_totalRecord = $iteratorDefault->count();
+        if ($this->_dataProvider instanceof org_glizy_components_DataProvider) {
+            $ar                         = $this->_dataProvider->getNewObject();
+            $this->_primarykey          = $ar->getPrimaryKeyName();
 
-            while ($iteratorDefault->hasMore())
+            $skipSearch = false;
+            if (!$this->getAttribute('allowEmptySearch'))
             {
-                $ar = &$iteratorDefault->current();
-                $iteratorDefault->next();
-                $values = $ar->getValuesAsArray(true);
-                $this->_contentValue[$values[$this->_primarykey]] = $values;
-            }
-            */
-
-            // $filters[$this->_languageFieldName] = $this->_application->getEditingLanguageId();
-        }
-
-        $skipSearch = false;
-        if (!$this->getAttribute('allowEmptySearch'))
-        {
-            $skipSearch = true;
-            if (count($filters))
-            {
-                foreach($filters as $k=>$v)
+                $skipSearch = true;
+                if (count($filters))
                 {
-                    if (!empty($v))
+                    foreach($filters as $k=>$v)
                     {
-                        $skipSearch = false;
-                        break;
+                        if (!empty($v))
+                        {
+                            $skipSearch = false;
+                            break;
+                        }
                     }
                 }
             }
-        }
 
-        if ( !$skipSearch )
-        {
-            // legge i dati dai record
-            $options = array();
-            $options['filters'] = $filters;
-            $options['limit'] = $pageLimits;
-            $options['numRows'] = true;
-            if (!$this->getAttribute('skipOrder') && isset( $this->_columns[$this->_orderBy] ) && $this->_columns[$this->_orderBy]['columnName'] ) $options['order'] = array($this->_columns[$this->_orderBy]['columnName'] => $this->_orderDirection);
-            if (!$this->getAttribute('skipGroup')) $options['group'] = $this->_primarykey;
-
-        $this->iterator = $this->_dataProvider->loadQuery('', $options);
-            $this->_totalRecord = $this->iterator->count();
-            if ( is_object( $paginateClass ) )
+            if ( !$skipSearch )
             {
-                $paginateClass->setRecordsCount($this->iterator->count());
+                // legge i dati dai record
+                $options = array();
+                $options['filters'] = $filters;
+                $options['limit'] = $pageLimits;
+                $options['numRows'] = true;
+                if (!$this->getAttribute('skipOrder') && isset( $this->_columns[$this->_orderBy] ) && $this->_columns[$this->_orderBy]['columnName'] ) $options['order'] = array($this->_columns[$this->_orderBy]['columnName'] => $this->_orderDirection);
+                if (!$this->getAttribute('skipGroup')) $options['group'] = $this->_primarykey;
+
+                $this->iterator = $this->_dataProvider->loadQuery('', $options);
+                $this->_totalRecord = $this->iterator->count();
             }
+        } else if (
+                $this->_dataProvider instanceof org_glizy_dataAccessDoctrine_SqlRecordIterator ||
+                $this->_dataProvider instanceof org_glizy_dataAccessDoctrine_AbstractRecordIterator
+            ) {
+
+            $this->_primarykey = null;
+            $this->iterator = $this->_dataProvider;
+
+            if (!$this->getAttribute('skipOrder') && isset( $this->_columns[$this->_orderBy] ) && $this->_columns[$this->_orderBy]['columnName'] ) {
+                $this->iterator->orderBy($this->_columns[$this->_orderBy]['columnName'], $this->_orderDirection);
+            }
+
+            $this->iterator->limit($pageLimits);
+            $this->_totalRecord = $this->iterator->count();
+        } else {
+            throw new Exception('Wrong DataProvider in component '.$this->getId());
         }
+
+        if ( is_object( $paginateClass ) )
+        {
+            $paginateClass->setRecordsCount($this->iterator->count());
+        }
+
     }
 
     function render()
@@ -314,7 +295,7 @@ class org_glizy_components_DataGrid extends org_glizy_components_ComponentContai
 
             foreach ($this->iterator as $ar)
             {
-                $v = $ar->getValuesAsArray(true);
+                $v = method_exists($ar, 'getValuesAsArray') ? $ar->getValuesAsArray(true) : (array)$ar;
                 $rowOutput = '';
                 foreach ($this->_columns as $vv)
                 {
@@ -464,21 +445,20 @@ class org_glizy_components_DataGrid extends org_glizy_components_ComponentContai
         $controllerClass     = &$this->getAttribute('controller');
         if (is_object($controllerClass))
         {
-            $jsStateUrl = $controllerClass->changeStateUrl();
-            $jsStateUrl = str_replace(__Link::makeUrl( 'link', array( 'pageId' => $this->_application->getPageId())).'?', '', $jsStateUrl);
-            $jsStateUrl = __Link::removeParams(array($controllerClass->getId().'_recordId'), $jsStateUrl);
             $jsCurrentStateUrl = $controllerClass->changeStateUrl($controllerClass->getState());
+            $jsStateUrl = __Link::addParams(array('state' => ''), false, $jsCurrentStateUrl);
+            $jsStateUrl = __Link::removeParams(array($controllerClass->getId().'_recordId'), $jsStateUrl);
             $controllerId = $controllerClass->getid();
         }
         else
         {
             $jsStateUrl = __Link::removeParams(array($jsId.'_orderBy', $jsId.'_orderDirection'));
-            $jsCurrentStateUrl = $jsStateUrl ;
+            $jsCurrentStateUrl = $jsStateUrl;
             $controllerId = '';
+            if (strpos($jsCurrentStateUrl, '?')===false) {
+                $jsCurrentStateUrl .= '?';
+            }
         }
-
-        $output = '';
-
 
         $output = <<<EOD
 <script language="JavaScript" type="text/JavaScript">

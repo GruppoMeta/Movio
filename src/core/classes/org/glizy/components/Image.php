@@ -59,7 +59,7 @@ class org_glizy_components_Image extends org_glizy_components_Component
         }
 
         if (is_object($mediaId)) {
-        	$mediaId = org_glizycms_Glizycms::getMediaArchiveBridge()->getIdFromJson($mediaId);
+        	$mediaId = org_glizycms_Glizycms::getMediaArchiveBridge()->mediaIdFromJson($mediaId);
         }
 
         if (is_numeric($mediaId) && $mediaId > 0) {
@@ -237,11 +237,12 @@ class org_glizy_components_Image extends org_glizy_components_Component
 	}
 
 	public static function translateForMode_edit($node) {
-		$mediaType = $node->getAttribute('adm:mediaType');
+		$mediaType = $node->hasAttribute('adm:mediaType') ? $node->getAttribute('adm:mediaType') : 'IMAGE';
 		$attributes = array();
 		$attributes['id'] = $node->getAttribute('id');
 		$attributes['label'] = $node->getAttribute('label');
 		$attributes['data'] = $node->getAttribute('data').';type=mediapicker;mediatype='.$mediaType.';preview=true';
+		$attributes['xmlns:glz'] = "http://www.glizy.org/dtd/1.0/";
 
 		if (count($node->attributes))
 		{

@@ -3,7 +3,8 @@ class org_glizycms_contents_controllers_pageEdit_ajax_SaveProperties extends org
 {
     public function execute($data)
     {
-// TODO: controllo acl
+        $this->checkPermissionForBackend();
+
         $data = json_decode($data);
 
         $menu = org_glizy_ObjectFactory::createModel('org.glizycms.core.models.Menu');
@@ -34,7 +35,11 @@ class org_glizycms_contents_controllers_pageEdit_ajax_SaveProperties extends org
         $menu->menudetail_source = $data->menudetail_source;
         $menu->menudetail_relation = $data->menudetail_relation;
         $menu->menudetail_coverage = $data->menudetail_coverage;
+        if ($menu->fieldExists('menudetail_hideInNavigation')) {
+            $menu->menudetail_hideInNavigation = $data->menudetail_hideInNavigation;
+        }
         $menu->save();
+
 
         $menuProxy = org_glizy_ObjectFactory::createObject('org.glizycms.contents.models.proxy.MenuProxy');
         $menuProxy->invalidateSitemapCache();

@@ -4,9 +4,9 @@ class org_glizycms_contents_services_PageTypeService extends GlizyObject
     protected $source = null;
     protected $pageTypesMap = array();
 
-	public function __construct()
+	public function __construct($fileName = 'pageTypes.xml')
 	{
-		$this->source = __Paths::get('APPLICATION').'config/pageTypes.xml';
+		$this->source = __Paths::get('APPLICATION').'config/'.$fileName;
 
         if (file_exists($this->source)) {
     		$options = array(
@@ -16,7 +16,7 @@ class org_glizycms_contents_services_PageTypeService extends GlizyObject
     			'fileExtension' => '.php'
     		);
     		$cacheObj = &org_glizy_ObjectFactory::createObject('org.glizy.cache.CacheFile', $options );
-    		$cacheFileName = $cacheObj->verify( $this->_source, get_class( $this ) );
+    		$cacheFileName = $cacheObj->verify( $this->source, get_class( $this ) );
 
     		if ( $cacheFileName === false )
     		{
@@ -49,7 +49,8 @@ class org_glizycms_contents_services_PageTypeService extends GlizyObject
                                         'label' => $pageType->hasAttribute('label') ? __T($pageType->getAttribute('label')) : $pageType->getAttribute('name'),
                                         'class' => $pageType->getAttribute('class'),
                                         'unique' => $pageType->hasAttribute('unique') ? $pageType->getAttribute('unique') == 'true' : false,
-                                        'acceptParent' => $pageType->hasAttribute('acceptParent') ? $pageType->getAttribute('acceptParent') : ''
+                                        'acceptParent' => $pageType->hasAttribute('acceptParent') ? $pageType->getAttribute('acceptParent') : '',
+                                        'isBlock' => $pageType->hasAttribute('isBlock') ? $pageType->getAttribute('isBlock') == 'true' : false
                                     );
         }
     }

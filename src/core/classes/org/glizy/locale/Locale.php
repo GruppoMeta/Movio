@@ -9,6 +9,7 @@
 
 class org_glizy_locale_Locale extends GlizyObject
 {
+    private static $debugMode = false;
 
     /**
      * @return mixed|string
@@ -17,6 +18,8 @@ class org_glizy_locale_Locale extends GlizyObject
 	{
 		$args = func_get_args();
 		$code = array_shift($args);
+        if (self::$debugMode) return $code;
+
 		$values = &org_glizy_ObjectValues::get('org.glizy.locale.Locale');
 		if (!isset($values[$code]))
 		{
@@ -35,6 +38,8 @@ class org_glizy_locale_Locale extends GlizyObject
 	{
 		$args = func_get_args();
 		$code = array_shift($args);
+        if (self::$debugMode) return $code;
+
 		$values = &org_glizy_ObjectValues::get('org.glizy.locale.Locale');
 		if (!isset($values[$code]))
 		{
@@ -55,6 +60,14 @@ class org_glizy_locale_Locale extends GlizyObject
 		$values = array_merge($values, $newValues);
 	}
 
+    /**
+     * Set the debug mode
+     * @param  bool $state
+     */
+    static function debugMode($state)
+    {
+        self::$debugMode = $state;
+    }
 }
 
 /* shortcut */

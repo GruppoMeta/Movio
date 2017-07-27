@@ -11,39 +11,58 @@
 class org_glizy_ObjectFactory
 {
     /**
-     * @return GlizyObject|mixed
+     * @return object
+     * @throws Exception
      */
 	static function createObject()
     {
         $args = func_get_args();
+
+        // Retrieve class from object name string
         $classPath = array_shift($args);
-        if (substr($classPath, -1, 1)=='*')
-        {
-            // TODO
-            // ERRORE
+        if (substr($classPath, -1, 1) == '*') {
+           throw new \Exception(sprintf('%s: can\'t create class with *', __METHOD__, $classPath));
         }
 
-        $newObj = NULL;
         $classPath = org_glizy_ObjectFactory::resolveClass($classPath);
         $className = str_replace('.', '_', $classPath);
-        if (!class_exists($className))
-        {
-            $r = glz_import($classPath);
-            if ( $r === false )
-            {
-                new Exception( '[ org_glizy_ObjectFactory ] class not found: '.$className );
-            }
-        } else {
-            $costructString = '$newObj = new '.$className.'(';
-            for ($i=0; $i<count($args); $i++)
-            {
-                $costructString .= '$args['.$i.']';
-                if ($i<count($args)-1) $costructString .= ', ';
-            }
-            $costructString .= ');';
-            eval($costructString);
+
+        if (!$className) {
+            // for compatibility
+            // NOTE: in the next version replace with Exception
+            return null;
+        } else if (!class_exists($className)) {
+            throw org_glizy_exceptions_GlobalException::classNotExists($className);
         }
-        return $newObj;
+
+        if (empty($args)) {
+            return new $className();
+        }
+
+        $reflectionClass = new \ReflectionClass($className);
+
+        if (null === $reflectionClass->getConstructor()) {
+            throw new \Exception(sprintf('%s: class %s does not have constructor', __METHOD__, $className));
+        }
+
+        // Can be removed if we are sure constructor parameters are not passed by reference
+        $rewriteArgs = array();
+        $reflectionMethod = new ReflectionMethod($className,  '__construct');
+        $construcParameters = $reflectionMethod->getParameters();
+        $numArgs = count($args);
+        foreach ($construcParameters as $key => $param) {
+            if ($param->isDefaultValueAvailable()) {
+                $rewriteArgs[$key] = $param->getDefaultValue();
+            }
+            if ($key < $numArgs) {
+                if ($param->isPassedByReference()) {
+                    $rewriteArgs[$key] = &$args[$key];
+        } else {
+                    $rewriteArgs[$key] = $args[$key];
+                }
+            }
+        }
+        return $reflectionClass->newInstanceArgs($rewriteArgs);
     }
 
 
@@ -144,7 +163,12 @@ class org_glizy_ObjectFactory
     {
         /** @var org_glizy_dataAccessDoctrine_ActiveRecord $ar */
         $ar = org_glizy_objectFactory::createModel($classPath);
-        $it = $ar->createRecordIterator();
+        if ($ar instanceof Iterator) {
+            $it = $ar;
+        } else {
+            $it = $ar->createRecordIterator();
+        }
+
         if ($queryName) {
             $it->load($queryName, isset($options['params']) ? $options['params'] : null);
 
@@ -226,12 +250,17 @@ class org_glizy_ObjectFactory
         org_glizy_ObjectFactory::createPage($application, $pageType, $path, $options);
         $rootComponent = $application->getRootComponent();
         $rootComponent->init();
+
+        for($i=0; $i<count($rootComponent->childComponents); $i++)
+        {
+            $rootComponent->childComponents[$i]->remapAttributes($remapId);
+        }
+
         $rootComponent->execDoLater();
         $application->_rootComponent = &$originalRootComponent;
 
         for($i=0; $i<count($rootComponent->childComponents); $i++)
         {
-            $rootComponent->childComponents[$i]->remapAttributes($remapId);
             $component->addChild($rootComponent->childComponents[$i]);
             $rootComponent->childComponents[$i]->_parent = &$component;
         }
@@ -250,6 +279,11 @@ class org_glizy_ObjectFactory
         $classMap[$orig] = $dest;
     }
 
+    static function resetRemapClass()
+    {
+        org_glizy_ObjectValues::set('org.glizy.ObjectFactory', 'ClassMap', null);
+    }
+
     /**
      * @param $classPath
      * @return mixed
@@ -265,7 +299,7 @@ class org_glizy_ObjectFactory
      *
      * @return array
      */
-    function resolveClassNew($classPath)
+    static function resolveClassNew($classPath)
     {
         $classMap = &org_glizy_ObjectValues::get('org.glizy.ObjectFactory', 'ClassMap', array());
         $newClassPath = isset($classMap[$classPath]) ? $classMap[$classPath] : $classPath;

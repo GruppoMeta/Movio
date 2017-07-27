@@ -11,6 +11,8 @@ class org_glizy_mvc_components_State extends org_glizy_components_ComponentConta
 {
 	private $actions;
 	private $actionsOriginal;
+	private $actionsOriginalString;
+	private $addChildMethodName = array();
 
 	/**
 	 * Init
@@ -32,6 +34,7 @@ class org_glizy_mvc_components_State extends org_glizy_components_ComponentConta
 		parent::init();
 
 		$this->actionsOriginal = explode(',', $this->getAttribute('name') );
+		$this->actionsOriginalString = strtolower($this->getAttribute('name'));
 		$this->actions = explode(',', strtolower($this->getAttribute('name')));
 	}
 
@@ -42,8 +45,11 @@ class org_glizy_mvc_components_State extends org_glizy_components_ComponentConta
 			// aggiunge i figli
 			if ( !count( $this->childComponents ) )
 			{
-				$function = 'addChild_'.$this->getId();
-				$function ( $this->_application, $this );
+				$methodName = @$this->addChildMethodName[$this->actionsOriginalString];
+				if (!$methodName) {
+					throw new RuntimeException(sprintf('Invalid addChild method for component: %s state: %s', $this->getId(), $this->getActionName()));
+				}
+				$methodName ( $this->_application, $this );
 				$this->initChilds();
 				$this->execDoLater();
 			}
@@ -125,7 +131,17 @@ class org_glizy_mvc_components_State extends org_glizy_components_ComponentConta
 
 	function isCurrentState()
 	{
-		return in_array( strtolower( $this->getAction() ), $this->actions );
+		return in_array( $this->getActionName(), $this->actions );
+	}
+
+	public function setAddChildMethodName($stateName, $methodName)
+	{
+		$this->addChildMethodName[strtolower($stateName)] = $methodName;
+	}
+
+	private function getActionName()
+	{
+		return strtolower($this->getAction());
 	}
 
 	public static function compile($compiler, &$node, &$registredNameSpaces, &$counter, $parent='NULL', $idPrefix, $componentClassInfo, $componentId)
@@ -156,16 +172,34 @@ class org_glizy_mvc_components_State extends org_glizy_components_ComponentConta
 			$compiler->_classSource .= '$n'.$counter.'->setAttributes( $attributes )'.GLZ_COMPILER_NEWLINE;
 		}
 
-		$compiler->_classSource .= 'if ($skipImport || $forceChildCreation) {addChild_'.$componentId.'($application, $n'.$counter.', $skipImport, $idPrefix, $mode);}'.GLZ_COMPILER_NEWLINE;
+		$methodName = 'addChild_'.md5($componentId.microtime(true));
+		$stateName = $node->getAttribute( 'name' );
+		$compiler->_classSource .= '$n'.$counter.'->setAddChildMethodName(\''.$stateName.'\', \''.$methodName.'\')'.GLZ_COMPILER_NEWLINE;
+		$compiler->_classSource .= 'if ($skipImport || $forceChildCreation) {'.$methodName.'($application, $n'.$counter.', $skipImport, $idPrefix, $mode);}'.GLZ_COMPILER_NEWLINE;
 
 		$previusClassSource = $compiler->_classSource;
 		$compiler->_classSource = '';
 		$compiler->_classSource .= '// STATE function '.GLZ_COMPILER_NEWLINE2;
-		$compiler->_classSource .= 'function addChild_'.$componentId.'( &$application, &$n'.$counter.', $skipImport=false, $idPrefix=\'\', $mode=\'\') {'.GLZ_COMPILER_NEWLINE2;
+		$compiler->_classSource .= 'function '.$methodName.'( &$application, &$n'.$counter.', $skipImport=false, $idPrefix=\'\', $mode=\'\') {'.GLZ_COMPILER_NEWLINE2;
 
 		$oldcounter = $counter;
 		foreach( $node->childNodes as $nc )
 		{
+			if ($nc->nodeName == 'mvc:includeState') {
+				if (!$nc->hasAttribute( 'name' )) {
+					throw new RuntimeException('Missing attribute name in mvc:includeState');
+				}
+				$xpath = new DOMXpath($nc->ownerDocument);
+				$elements = $xpath->query('//mvc:State[@name="'.$nc->getAttribute('name').'"]/*');
+				$compiler->_classSource .= '// start mvc:includeState '.$nc->getAttribute('name').GLZ_COMPILER_NEWLINE2;
+				foreach ($elements as $nInState) {
+					$counter++;
+					$compiler->_compileXml($nInState, $registredNameSpaces, $counter, '$n'.$oldcounter, $idPrefix);
+				}
+				$compiler->_classSource .= '// end  mvc:includeState '.$nc->getAttribute('name').GLZ_COMPILER_NEWLINE2;
+				continue;
+            }
+
 			$counter++;
 			$compiler->_compileXml($nc, $registredNameSpaces, $counter, '$n'.$oldcounter, $idPrefix);
 		}

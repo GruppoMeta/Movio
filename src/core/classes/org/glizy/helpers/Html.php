@@ -78,9 +78,9 @@ class org_glizy_helpers_Html extends GlizyObject
 		return $ouput;
 	}
 
-	/**
-     * @param array $attributes
-     *
+    /**
+     * @param array  $attributes
+     * @param string $dataAttributes
      * @return string
      */
     static function renderAttributes($attributes=array(), $dataAttributes = null )
@@ -101,7 +101,7 @@ class org_glizy_helpers_Html extends GlizyObject
 			{
 				if ($k == 'href' || $k == 'src')
 				{
-					$v = preg_replace('/&(?!amp;)/i', '&amp;', $v);
+					$v = htmlspecialchars($v);
 				}
 				else if ($k == 'id')
 				{
@@ -124,7 +124,14 @@ class org_glizy_helpers_Html extends GlizyObject
     static function renderTag($tag, $attributes=array(), $close=true, $content=NULL)
 	{
 		$output  = '<'.$tag;
-		$output .= org_glizy_helpers_Html::renderAttributes($attributes);
+		if (isset($attributes['dataAttributes'])) {
+            $dataAttributes = $attributes['dataAttributes'];
+            unset($attributes['dataAttributes']);
+        }
+		else {
+		    $dataAttributes = "";
+        }
+		$output .= org_glizy_helpers_Html::renderAttributes($attributes, $dataAttributes);
 		if (is_null($content))
 		{
 			$output .= $close ? '/>' : '>';

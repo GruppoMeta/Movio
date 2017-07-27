@@ -24,7 +24,7 @@
         </glz:TabGroup>
 
         <cms:VisualSearch id="filters" label="{i18n:Search}" cssClass="row-fluid clearfix my-filters" model="org.glizycms.models.Media">
-            <cms:VisualSearchItem id="media_author" label="{i18n:Author}" type="facet" />
+            <cms:VisualSearchItem id="media_author" label="{i18n:Author}" type="facetSingle" />
             <cms:VisualSearchItem id="media_category" label="{i18n:Category}" type="facet" />
             <cms:VisualSearchItem id="media_description" label="{i18n:Description}" />
             <cms:VisualSearchItem id="media_originalFileName" label="{i18n:File name}" />
@@ -174,7 +174,7 @@ public function render_html_onStart()
                     <glz:Checkbox id="media_watermark" label="{i18n:Insert watermark}" />
                     <glz:Input id="media_download" label="{i18n:Downloads}" size="90" disabled="true"/>
                 </glz:JSTab>
-                <glz:JSTab id="exifData" label="{i18n:Exif data}">
+                <glz:JSTab id="exifData" label="{i18n:Exif data}" visible="{config:glizycms.mediaArchive.exifEnabled}">
                     <ma:ShowExif imageId="{php:__Request::get(id)}"/>
                 </glz:JSTab>
             </glz:JSTabGroup>
@@ -190,7 +190,9 @@ public function render_html_onStart()
     <glz:SkinDefine id="listSKIN"><![CDATA[
 <span tal:omit-tag="">
     <script>
-$("a.lightbox").colorbox({photo:true, maxHeight: 300, maxWidth: 300, scalePhotos: true});
+$(function(){
+    $("a.lightbox").colorbox({photo:true, maxHeight: 300, maxWidth: 300, scalePhotos: true});
+});
     </script>
     <div class="row-fluid">
     <ul class="thumbnails">
@@ -206,7 +208,7 @@ $("a.lightbox").colorbox({photo:true, maxHeight: 300, maxWidth: 300, scalePhotos
                 <a tal:attributes="href item/__urlPreview__; title php:__T('Preview')" class="lightbox"><i class="icon-eye-open icon-white"></i></a>
                 <a tal:attributes="href item/__urlDownload__; title php:__T('Download')"><i class="icon-download-alt icon-white"></i></a>
                 <a tal:condition="item/__url__" tal:attributes="href item/__url__; title php:__T('Edit')"><i class="icon-pencil icon-white"></i></a>
-                <a tal:condition="item/__urlDelete__" onclick="if (!confirm('conferma cancellazione record')){return false;}" tal:attributes="href item/__urlDelete__; title php:__T('Delete')"><i class="icon-remove icon-white"></i></a>
+                <a tal:condition="item/__urlDelete__" onclick="if (!confirm('Sei sicuro di voler cancellare il record?')){return false;}" tal:attributes="href item/__urlDelete__; title php:__T('Delete')"><i class="icon-remove icon-white"></i></a>
             </div>
         </li>
     </ul>

@@ -37,7 +37,7 @@ class org_glizy_components_JSTabGroup extends org_glizy_components_ComponentCont
 		for ($i=0; $i<count($this->childComponents); $i++)
 		{
 			$visible = $this->childComponents[$i]->getAttribute('visible');
-			if (!$visible) continue;
+			if (!$visible || $this->childComponents[$i]->_tagname!='glz:JSTab') continue;
 
 			$label = $this->childComponents[$i]->getAttribute('label');
 			$routeUrl = $this->childComponents[$i]->getAttribute('routeUrl');
@@ -76,6 +76,14 @@ class org_glizy_components_JSTabGroup extends org_glizy_components_ComponentCont
 		$output .= <<<EOD
 <script>
 jQuery(function(){
+	if (Glizy && Glizy.events) {
+	 	Glizy.events.on("glizy.message.showError", function() {
+			var obj = $('.GFEValidationError').first();
+			var panelId = obj.parents('div.tab-pane').attr('id');
+			$('#{$tabId} a[data-target="#'+panelId+'"]').tab('show');
+		});
+	}
+
 	var navInPanel = function(dir) {
 		var activePanel = $('#{$tabId}_content div[class="tab-pane active"]');
 		if (activePanel.length) {
@@ -124,7 +132,18 @@ jQuery(function(){
 		navInPanel(1);
 	});
 
-	var aFirst = $('#{$tabId} a').first();
+	var aFirst;
+	if (location.hash) {
+		$('#{$tabId} a').each(function(i, el) {
+			if ($(el).data('target')==location.hash) {
+				aFirst = $(el);
+				return false;
+			}
+		});
+	} else {
+		aFirst = $('#{$tabId} a').first();
+	}
+
 	if (aFirst.data('toggle')==='dropdown') {
 		aFirst.parent().find('ul a').first().tab('show');
 	} else {

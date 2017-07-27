@@ -134,7 +134,7 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
 
     public function getFieldType($fieldName)
     {
-        return $this->fields[$fieldName]->type;
+        return isset($this->fields[$fieldName]) ? $this->fields[$fieldName]->type : '';
     }
 
     public function getSiteId()
@@ -144,12 +144,19 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
 
     public function setSiteField($fieldName)
     {
-        $this->siteField = $fieldName;
+        if ($this->fieldExists($fieldName)) {
+        	$this->siteField = $fieldName;
+    	}
     }
 
     public function getSiteField()
     {
         return $this->siteField;
+    }
+
+    public function resetSiteField()
+    {
+        $this->siteField = null;
     }
 
     public function load($id)
@@ -197,6 +204,9 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
             }
             else {
                 foreach ($values as $k => $v) {
+                    if (property_exists($this, $k)) {
+                        $this->$k = $v;
+                    }
                     $this->data->$k = $v;
                 }
             }
@@ -222,39 +232,28 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
         return $newAr ? $this : false;
     }
 
+    /**
+     * @param  array  $values
+     * @param  boolean $isNew
+     * @return boolean
+     */
     public function validate($values = null, $isNew=false)
     {
-        if (is_null($values)) {
-            if (!empty($this->modifiedFields)) {
-                // solo i valori dei campi modificati
-                $values = array_intersect_key(get_object_vars($this->data), $this->modifiedFields);
-            } else if ($isNew) {
-                $values = array_keys($this->fields);
-            } else {
-                return true;
-            }
-        }
-
+        $values = $this->collectValidateFields($values, $isNew);
         $validationErrors = array();
 
         foreach ($values as $fieldName => $value) {
-            if (is_int($fieldName) && $isNew) {
-                $fieldName = $value;
-                if ($fieldName==$this->getPrimaryKeyName()) continue;
-                $value = $this->getField($fieldName);
-            }
             $field = $this->fields[$fieldName];
 
-            if (is_null($field->validator)) {
+            if (is_null($field->validator) || $field->key) {
                 continue;
             }
 
-            $validationResult = $field->validator->validate($field->description, $value);
+            $validationResult = $field->validator->validate($field->description, $value, $field->defaultValue);
 
             if (is_string($validationResult)) {
                 $validationErrors[] = $validationResult;
-            }
-            else if (is_array($validationResult)) {
+            } else if (is_array($validationResult)) {
                 $validationErrors = array_merge($validationErrors, $validationResult);
             }
         }
@@ -284,6 +283,8 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
         $this->relations[$options['name']] = $options;
         $this->{$options['bindTo']} = null;
     }
+
+
 
     protected function buildAllRelations($build = true)
     {
@@ -331,14 +332,23 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
         $this->relationBuilded = false;
     }
 
+    /**
+     * @param  array  $options
+     * @return boolean
+     *
+     * @throws org_glizy_dataAccessDoctrine_exceptions_DataAccessException|\Doctrine\DBAL\DBALException
+     */
     public function find($options=array()) {
         $options = array_merge(get_object_vars($this->data), $options);
-        $qb = $this->connection->createQueryBuilder()
-                ->select('*')
-                ->from($this->tableName, 't1');
+        $qb = $this->createQueryBuilder()
+            ->select('*');
+
         $conditionNumber = 0;
         foreach($options as $k=>$v) {
             if (is_null($v)) continue;
+            if (!isset($this->fields[$k])) {
+                throw org_glizy_dataAccessDoctrine_exceptions_DataAccessException::unknownColumn($k, $this->getTableName());
+            }
             $valueParam = ":value".$conditionNumber++;
             $qb->andWhere($qb->expr()->eq($k, $valueParam));
             $qb->setParameter($valueParam, $this->convertIfDateType($k, $v));
@@ -414,11 +424,13 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
 
         // filtra i campi virtuali e la chiave primaria
         foreach ($values as $fieldName => $value) {
-            $field = $this->fields[$fieldName];
-            if (!$field->virtual && !$field->key) {
-                $insertValues[$fieldName] = $value;
-                $types[] = $field->type;
-            }
+            if (isset($this->fields[$fieldName])) {
+	            $field = $this->fields[$fieldName];
+	            if (!$field->virtual && !$field->key) {
+	                $insertValues[$fieldName] = $value;
+	                $types[] = $field->type;
+	            }
+	        }
         }
 
         if ($this->siteField && !isset($values[$this->siteField])) {
@@ -452,11 +464,13 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
         $types = array();
 
         foreach ($values as $fieldName => $value) {
-            $field = $this->fields[$fieldName];
-            if (!$field->virtual && isset($this->modifiedFields[$fieldName])) {
-                $updateValues[$fieldName] = $value;
-                $types[] = $field->type;
-            }
+            if (isset($this->fields[$fieldName])) {
+	            $field = $this->fields[$fieldName];
+	            if (!$field->virtual && isset($this->modifiedFields[$fieldName])) {
+	                $updateValues[$fieldName] = $value;
+	                $types[] = $field->type;
+	            }
+	        }
         }
 
         if (!empty($updateValues)) {
@@ -516,6 +530,9 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
 
     public function convertIfDateType($fieldName, $value)
     {
+        if (!isset($this->fields[$fieldName])) {
+            return $value;
+        }
         $field = $this->fields[$fieldName];
 
         if ($field->type == Type::DATE || $field->type == Type::DATETIME) {
@@ -530,7 +547,7 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
         if (array_key_exists($name, $this->fields)) {
             $field = $this->fields[$name];
             // La condizione verifica che il campo è stato modificato, non è un campo di sistema
-            if ($this->$name != $value && !$field->isSystemField) {
+            if ($this->$name !== $value && !$field->isSystemField) {
                 $this->modifiedFields[$name] = true;
             }
             $this->data->$name = $this->convertIfDateType($name, $value);
@@ -587,7 +604,7 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
         $result = $this->getValues($getRelationValues, $getVirtualField, $encode, $systemFields);
         foreach($this->fields as $k=>$v) {
             if (!property_exists($result, $k)) {
-                $result->$k = null;
+                $result->$k = $v->defaultValue;
             }
         }
         return $result;
@@ -651,10 +668,19 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
         return $this->modifiedFields[$name] == true;
     }
 
+    /**
+     * @return org_glizy_dataAccessDoctrine_RecordIterator
+     */
     public function createRecordIterator() {
         return new org_glizy_dataAccessDoctrine_RecordIterator($this);
     }
 
+    /**
+     * @param bool|true $addFrom
+     * @param string    $tableAlias
+     *
+     * @return \Doctrine\DBAL\Query\QueryBuilder
+     */
     public function createQueryBuilder($addFrom=true, $tableAlias='t1')
     {
         $qb = $this->connection->createQueryBuilder();
@@ -673,9 +699,36 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
 
     private function loadSequenceName()
     {
+        static $sequenceName;
+        static $sequenceNameLoaded = false;
+        if (!$sequenceNameLoaded) {
+            $sequenceNameLoaded = true;
+            $sm = new org_glizy_dataAccessDoctrine_SchemaManager($this->connection);
+            $sequenceName = $sm->getSequenceName($this->getTableName());
+        }
         $this->sequenceNameLoaded = true;
-        $sm = new org_glizy_dataAccessDoctrine_SchemaManager($this->connection);
-        $sequenceName = $sm->getSequenceName($this->getTableName());
         $this->setSequenceName($sequenceName);
+    }
+
+    /**
+     * @param  array  $values
+     * @param  boolean $isNew
+     * @return boolean
+     */
+    protected function collectValidateFields($values=null, $isNew=false)
+    {
+        if (is_null($values)) {
+            $values = array();
+            foreach ($this->fields as $fieldName => $field) {
+                if ($field->isSystemField || $fieldName==$this->siteField) continue;
+                $values[$fieldName] = $this->$fieldName;
+            }
+
+            if (!$isNew) {
+                $values = array_intersect_key(get_object_vars($this->data), $this->modifiedFields);
+            }
+        }
+
+        return $values;
     }
 }

@@ -24,38 +24,38 @@ class org_glizy_application_SiteMapIterator extends GlizyObject
 
 	function moveNext()
 	{
-		if ($this->_currentNode->hasChildNodes())
-		{
-			$tempNode = $this->_currentNode->firstChild();
+		$tempNode = null;
+		if ($this->_currentNode->hasChildNodes()) {
+			$tempNode = $this->_currentNode->firstChild(false, true);
 		}
-		else
-		{
-			$tempNode = $this->_currentNode->nextSibling();
-			if (is_null($tempNode))
-			{
-				$tempNode = $this->_currentNode;
-				while (true)
-				{
-					$node = $tempNode->parentNode();
 
-					if (!is_null($node))
+		if (!$tempNode) {
+			$tempNode = $this->_currentNode->nextSibling();
+		}
+
+		if (!$tempNode) {
+			$tempNode = $this->_currentNode;
+			while (true)
+			{
+				$node = $tempNode->parentNode();
+
+				if (!is_null($node))
+				{
+					$node2 = $node->nextSibling();
+					if (!is_null($node2))
 					{
-						$node2 = $node->nextSibling();
-						if (!is_null($node2))
-						{
-							$tempNode = $node2;
-							break;
-						}
-						else
-						{
-							$tempNode = $node;
-						}
+						$tempNode = $node2;
+						break;
 					}
 					else
 					{
-						$tempNode = null;
-						break;
+						$tempNode = $node;
 					}
+				}
+				else
+				{
+					$tempNode = null;
+					break;
 				}
 			}
 		}

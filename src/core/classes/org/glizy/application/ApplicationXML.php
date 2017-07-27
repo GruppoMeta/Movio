@@ -11,7 +11,7 @@
 
 class org_glizy_application_ApplicationXML extends org_glizy_application_Application
 {
-	function _initSiteMap($forceReload=false)
+	function createSiteMap($forceReload=false)
 	{
 		$this->siteMap = &org_glizy_ObjectFactory::createObject('org.glizy.application.SiteMapXML');
 		$this->siteMap->getSiteArray($forceReload);

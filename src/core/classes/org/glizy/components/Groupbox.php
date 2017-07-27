@@ -82,6 +82,7 @@ class org_glizy_components_Groupbox extends org_glizy_components_ComponentContai
         $attributes['id'] = $node->getAttribute('id');
         $attributes['label'] = $node->getAttribute('label');
         $attributes['cssClass'] = $node->getAttribute('cssClass');
+		$attributes['xmlns:glz'] = "http://www.glizy.org/dtd/1.0/";
 
         return org_glizy_helpers_Html::renderTag('glz:Panel', $attributes);
     }

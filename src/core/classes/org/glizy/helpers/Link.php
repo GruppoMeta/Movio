@@ -51,9 +51,14 @@ class org_glizy_helpers_Link extends GlizyObject
 			unset($queryVars['rel']);
 		}
 		$icon = '';
-		if (isset($queryVars['icon'])) {
+		if (isset($queryVars['icon']) && $queryVars['icon']) {
 			$icon = '<i class="'.$queryVars['icon'].'"></i> ';
 		}
+		$dataAttributes = '';
+        if (isset($queryVars['dataAttributes'])) {
+            $dataAttributes = $queryVars['dataAttributes'];
+            unset($queryVars['dataAttributes']);
+        }
 
 		$label = isset($queryVars['label']) ? $queryVars['label'] : $queryVars['title'];
 		unset( $queryVars['label'] );
@@ -65,6 +70,7 @@ class org_glizy_helpers_Link extends GlizyObject
 															'title' => glz_encodeOutput( $queryVars['title'] ),
 															'target' => $target,
                                                             'rel' => $rel,
+															'dataAttributes' => $dataAttributes,
 															'onclick' => $onclick),
 													true,
 													$icon.($encode ? glz_encodeOutput( $label ) : $label ));
@@ -195,34 +201,39 @@ class org_glizy_helpers_Link extends GlizyObject
 	}
 
 
-	/**
+    /**
      * @param array $params
      * @param bool  $absolute
+     * @param string  $url
      *
      * @return string
      */
-    static function addParams($params=array(), $absolute=false)
-	{
-		$url = __Routing::$queryString;
+    static function addParams($params=array(), $absolute=false, $url = null)
+    {
+        $nullUrl = is_null( $url );
+        if ( $nullUrl )
+        {
+            $url = __Routing::$queryString;
+        }
 
-		if (count($params))
-		{
-			foreach($params as $k=>$v)
-			{
-				if (preg_match('/'.$k.'=/', $url))
-				{
-					$url = preg_replace('/('.$k.'=)([^\&]*)/', $k.'='.$v, $url);
-				}
-				else
-				{
-					$url .= '&'.$k.'='.$v;
-				}
+        if (count($params))
+        {
+            foreach($params as $k=>$v)
+            {
+                if (preg_match('/'.$k.'=/', $url))
+                {
+                    $url = preg_replace('/('.$k.'=)([^\&]*)/', $k.'='.$v, $url);
+                }
+                else
+                {
+                    $connector = (!$nullUrl && !strpos($url, '?')) ? '?' : '&';
+                    $url .= $connector.$k.'='.$v;
+                }
 
-			}
-		}
-		//$url = preg_replace('/&(?!amp;)/i', '&amp;', $url);
-		return __Routing::scriptUrlWithParams( $url, $absolute );
-	}
+            }
+        }
+        return $nullUrl ? __Routing::scriptUrlWithParams( $url, $absolute ) : $url;
+    }
 
 	/**
      * @param array $params
@@ -243,25 +254,27 @@ class org_glizy_helpers_Link extends GlizyObject
      * @return string
      */
     static function removeParams($params=array(), $url = null)
-	{
-		if ( is_null( $url ) )
-		{
-			$url = __Routing::$queryString;
-		}
+    {
+        $nullUrl = is_null( $url );
+        if ( $nullUrl )
+        {
+            $url = __Routing::$queryString;
+        }
 
-		if (count($params))
-		{
-			foreach($params as $v)
-			{
-				if (preg_match('/('.$v.'=)([^\&]*)(\&?)/', $url))
-				{
-					$url = preg_replace('/('.$v.'=)([^\&]*)(\&?)/', '', $url);
-				}
-			}
-		}
-		$url = trim($url, '&');
-		return __Routing::scriptUrlWithParams( $url );
-	}
+        if (count($params))
+        {
+            foreach($params as $v)
+            {
+                $v = str_replace(array('[', ']'), array('\[', '\]'), $v);
+                if (preg_match('/('.$v.'=)([^\&]*)(\&?)/', $url))
+                {
+                    $url = preg_replace('/('.$v.'=)([^\&]*)(\&?)/', '', $url);
+                }
+            }
+        }
+        $url = trim($url, '&');
+        return $nullUrl ? __Routing::scriptUrlWithParams( $url ) : $url;
+    }
 
 	/**
      * @param array $params
@@ -349,11 +362,15 @@ class org_glizy_helpers_Link extends GlizyObject
 		preg_match_all('/<a.*href=["\'](internal\:)(\d*)["\'].*/Ui', $text, $internalLinks);
 		if (count($internalLinks) && count($internalLinks[0]))
 		{
+            $application = org_glizy_ObjectValues::get('org.glizy', 'application' );
+            $siteMap = $application->getSiteMap();
+
 			for ($i=0; $i<count($internalLinks[0]); $i++)
 			{
-				$link = $serverUrl.org_glizy_helpers_Link::makeURL('link', array('pageId' => $internalLinks[2][$i]));
+                $menu = $siteMap->getNodeById($internalLinks[2][$i]);
+                $link = $menu->url ? $menu->url : org_glizy_helpers_Link::makeURL('link', array('pageId' => $internalLinks[2][$i]));
 				$originaLink = $internalLinks[0][$i];
-				$newLink = str_replace('internal:'.$internalLinks[2][$i], $link, $originaLink);
+				$newLink = str_replace('internal:'.$internalLinks[2][$i], $serverUrl.$link, $originaLink);
 				$text = str_replace($originaLink, $newLink, $text);
 			}
 		}
@@ -402,17 +419,17 @@ class org_glizy_helpers_Link extends GlizyObject
 		}
 
 		// non è il massimo ma la regexp su testi lunghi crasha
-		$text = str_replace( array( 'href="#', 'href=\'#' ), array( 'href="'.__Routing::scriptUrl().'#', 'href=\''.__Routing::scriptUrl().'#' ), $text );
+		$text = str_replace( array( 'href="#', 'href=\'#', '<p></p>' ), array( 'href="'.__Routing::scriptUrl().'#', 'href=\''.__Routing::scriptUrl().'#', '<p>&nbsp;</p>'), $text );
 		// $text = preg_replace("/<(.*?)(href)\s*=\s*(\'|\")#(.*?)(\'|\")(.*?)>/si", "<$1$2=$3".__Routing::scriptUrl()."#$4$5$6>", $text);
 
+        $text = self::formatImagesInText($text, $absolute);
 
-		if ( $absolute )
-		{
-			$text = str_replace( 'src="getImage', 'src="'.$serverUrl.'getImage', $text);
-			$text = str_replace( 'src="cache/', 'src="'.$serverUrl.'cache/', $text);
-		}
 		return $text;
 	}
+
+
+
+
 
 	/**
      * @param        $link
@@ -430,7 +447,7 @@ class org_glizy_helpers_Link extends GlizyObject
         if (is_null($content)) {
             $content = $label;
         }
-        if (!is_null($cssClass)) {
+        if ($cssClass) {
             $cssClass = ' class="' . $cssClass . '"';
         }
 		$link = preg_replace("/^http:\/\//", "", $link);
@@ -467,6 +484,50 @@ class org_glizy_helpers_Link extends GlizyObject
 		$link = '<a href="'.$link.'" rel="'.$target.'" title="'.$label.'"'.$cssClass.'>'.$content.'</a>';
 		return $link;
 	}
+
+    /**
+     * @param  string  $text
+     * @param  boolean $absolute
+     * @return string
+     */
+    static function formatImagesInText($text, $absolute = false)
+    {
+        $serverUrl = $absolute ? GLZ_HOST_ROOT.'/' : '';
+        preg_match_all('/<img[^>]*\ssrc="getImage\.php\?id=([^&]*)(&[^>]*)?"[^>]*\sdata-zoom="1"[^>]*\s\/>/Ui', $text, $match);
+
+        $isImgWxHZoomDefined = false;
+        if (__Config::get( 'IMG_WIDTH_ZOOM' ) && __Config::get( 'IMG_HEIGHT_ZOOM' )) {
+            $isImgWxHZoomDefined = true;
+        }
+
+        $numMatch = count($match[0]);
+        if (count($match) && $numMatch) {
+            for($i=0; $i<$numMatch; $i++) {
+                preg_match_all('/(title|data-caption)="([^"]*)"/Ui', $match[0][$i], $matchTitle);
+                $title = array(
+                    $matchTitle[1][0] => $matchTitle[2][0],
+                    $matchTitle[1][1] => $matchTitle[2][1]
+                );
+
+                $attributes = array();
+                $attributes['title'] = $title['data-caption'] ? $title['data-caption'] : $title['title'];
+                $attributes['class'] = 'js-lightbox-image';
+                $attributes['href'] = $isImgWxHZoomDefined ? org_glizycms_helpers_Media::getImageUrlById($match[1][$i], __Config::get( 'IMG_WIDTH_ZOOM' ), __Config::get( 'IMG_HEIGHT_ZOOM' )) : org_glizycms_helpers_Media::getUrlById($match[1][$i]);
+                $attributes['data-type'] = 'image';
+                $attributes['rel'] = 'lightbox';
+                $html = org_glizy_helpers_Html::renderTag( 'a', $attributes, true, $match[0][$i]);
+                $text = str_replace($match[0][$i], $html, $text);
+            }
+        }
+
+        if ($absolute) {
+            $text = str_replace( 'src="getImage', 'src="'.$serverUrl.'getImage', $text);
+            $text = str_replace( 'src="cache/', 'src="'.$serverUrl.'cache/', $text);
+        }
+
+        return $text;
+    }
+
 
 
 	function makeLinkWithIcon($routeUrl, $iconName, $params, $deleteMsg=NULL, $addParam=array())

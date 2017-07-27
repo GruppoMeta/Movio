@@ -17,16 +17,29 @@
     ]]>
     </model:Query>
     
+    <model:Query name="loginTempPassword" type="function" arguments="loginId,password">
 	<!--
-	<model:Query name="login">
 		Query for login
 		Used in:
 			org.glizy.authentication.Database
+	-->
 	<![CDATA[
-			SELECT * FROM ##TABLE_NAME##
-				INNER JOIN ##TABLE_PREFIX##usergroups_tbl ON (user_FK_usergroup_id=usergroup_id)
-				WHERE user_loginId = :loginId AND user_password = :password
+        $iterator->join('t1', $this->tablePrefix.'usergroups_tbl', 't2', $iterator->expr()->eq('user_FK_usergroup_id', 'usergroup_id'))
+                 ->where('user_loginId', $loginId)
+                 ->where('user_passwordTemp', $password);
 	]]>
 	</model:Query>
-	-->
+
+	<model:Query name="loginById" type="function" arguments="userId">
+		<!--
+            Query for login
+            Used in:
+                org.glizy.authentication.Database
+        -->
+		<![CDATA[
+        $iterator->join('t1', $this->tablePrefix.'usergroups_tbl', 't2', $iterator->expr()->eq('user_FK_usergroup_id', 'usergroup_id'))
+                 ->where('user_id', $userId);
+    ]]>
+	</model:Query>
+
 </model:Model>

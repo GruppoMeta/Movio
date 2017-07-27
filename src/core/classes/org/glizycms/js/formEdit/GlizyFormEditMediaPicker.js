@@ -7,10 +7,14 @@ jQuery.GlizyRegisterType('mediapicker', {
 				glizyOpt = $input.data('glizyOpt'),
 				$mediaPicker =
 					hasPreview ? jQuery('<div id="'+jQuery(this).attr('name')+'-mediapicker" class="mediaPickerSelector mediaPickerField"><div class="mediaPickerCaption"></div><div class="mediaPickerElement">' + GlizyLocale.MediaPicker.imageEmpty + '</div></div>')
-					: jQuery('<input class="mediaPickerField" type="text" size="50" readonly="readonly" style="cursor:pointer" value="' + GlizyLocale.MediaPicker.imageEmptyText + '">');
+					: jQuery('<input class="mediaPickerField" type="text" size="50" readonly="readonly" style="cursor:pointer" value="' + GlizyLocale.MediaPicker.imageEmptyText + '">'),
+				readonly = $input.attr('readonly') == 'readonly';
+
 			$input.data('mediaPicker', $mediaPicker);
 
-			if (!$input.next().hasClass('mediaPickerField')) {
+			if (readonly) {
+				$mediaPicker.insertAfter($input);
+			} else if (!$input.next().hasClass('mediaPickerField')) {
 				$mediaPicker.insertAfter($input).click(function() {
 						var url = glizyOpt.mediaPicker;
 						if (pickerType) {
@@ -18,7 +22,7 @@ jQuery.GlizyRegisterType('mediapicker', {
 						}
 						Glizy.openIFrameDialog( hasPreview ? GlizyLocale.MediaPicker.imageTitle : GlizyLocale.MediaPicker.mediaTitle,
 												url,
-												900,
+												1400,
 												50,
 												50,
 												null,
@@ -73,6 +77,9 @@ jQuery.GlizyRegisterType('mediapicker', {
 				props = JSON.parse(props);
 			}
 			var $this = jQuery(this);
+            if (!$this.prev().length) {
+                return;
+            }
 			if ($this.data('mediaPicker')) {
 				$this = $this.data('mediaPicker');
 			}
@@ -109,7 +116,8 @@ jQuery.GlizyRegisterType('mediapicker', {
 						})
 						.hide();
 
-					$img.attr({title: props.title, src: props.src})
+					var src = $this.prev().data('glizyOpt').imageResizer.replace('#id#', props.id);
+					$img.attr({title: props.title, src: src})
 						.data({id: props.id, fileName: props.fileName});
 
 					if ($img[0].complete && $img[0].naturalWidth !== 0) {

@@ -11,12 +11,12 @@ class org_glizycms_userManager_fe_controllers_user_Registration extends org_gliz
 
     public function executeLater()
     {
-       if ($this->submit && $this->controller->validate()) {
+       if ($this->submit && $this->view->validate()) {
             $email = org_glizy_Request::get('user_email', '');
             $ar = org_glizy_ObjectFactory::createModel('org.glizy.models.User');
             if ($ar->find(array('user_loginId' => $email))) {
 // TODO tradurre
-                $this->view->validateAddError('L\'email è già presente nel database, usare un\'altra email o richiedere la password');
+                $this->view->validateAddError(__T('MW_REGISTRATION_EMAIL_ALREADY_EXISTS'));
                 return;
             }
 

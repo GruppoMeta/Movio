@@ -10,7 +10,7 @@
 // ini_set( "display_errors", "on" );
 // ini_set( "display_startup_errors", "on" );
 
-define('GLZ_CORE_VERSION', '1.5.0 alpha');
+define('GLZ_CORE_VERSION', '1.6.0');
 
 
 // directory contente tutti i file del core
@@ -39,7 +39,7 @@ define('GLZ_EVT_CALL_CONTROLLER', 'onCallController');
 define('GLZ_EVT_START_COMPILE_ROUTING', 'startCompileRouting');
 define('GLZ_EVT_LISTENER_COMPILE_ROUTING', 'listenerCompileRouting');
 define('GLZ_EVT_USERLOGIN', 'login');
-define('GLZ_EVT_USERLOGOUT', 'logout');
+define('GLZ_EVT_USERLOGOUT', 'onLogout');
 define('GLZ_EVT_AR_UPDATE', 'update');
 define('GLZ_EVT_AR_UPDATE_PRE', 'preUpdate');
 define('GLZ_EVT_AR_INSERT', 'insert');
@@ -48,6 +48,9 @@ define('GLZ_EVT_AR_DELETE', 'delete');
 define('GLZ_EVT_SITEMAP_UPDATE', 'siteMapUpdate');
 define('GLZ_EVT_BREADCRUMBS_UPDATE', 'onBreadcrumbsUpdate');
 define('GLZ_EVT_PAGETITLE_UPDATE', 'onPageTitleUpdate');
+define('GLZ_EVT_CACHE_CLEAN', 'cacheClean');
+define('GLZ_EVT_DUMP_EXCEPTION', 'onDumpException');
+
 
 if (!defined('GLZ_LOG_EVENT')) 		define('GLZ_LOG_EVENT', 'logByEvent');
 if (!defined('GLZ_LOG_DEBUG')) 		define('GLZ_LOG_DEBUG', 1);
@@ -105,7 +108,10 @@ function glz_defineBaseHost()
 			$protocol = @$_SERVER["HTTPS"] === true || @$_SERVER["HTTPS"] === 'on' ? 'https://' : 'http://';
 			$host = $protocol.$_SERVER['HTTP_HOST'].$_SERVER["PHP_SELF"];
 			$host = substr( $host, 0, strrpos( $host, '/' ) );
+		} else {
+			__Config::set( 'GLZ_HOST', $host );
 		}
+
 		define('GLZ_HOST', $host);
 	} else {
         $host = GLZ_HOST;
@@ -250,12 +256,12 @@ function glz_loadLocale( $classPath )
 				$pathEn = $p.$classPath.'/locale/en.php';
 				if ( file_exists($path) )
 				{
-					require_once( $path );
+					require( $path );
 					break;
 				}
 				else if ( file_exists($pathEn) )
 				{
-					require_once( $pathEn );
+					require( $pathEn );
 					break;
 				}
 			}
@@ -667,7 +673,7 @@ function glz_sanitizeUrlTitle($title, $force=false) {
 	{
 		$title = glz_slugify($title, true);
 	} else {
-		$title = str_replace(' ', '-', $title);
+		$title = str_replace(' ', '%20', $title);
 	}
 
 	return $title;
@@ -691,7 +697,11 @@ function glz_slugify($text, $strict = false) {
 	    setlocale(LC_CTYPE, 'en_GB.utf8');
 	    // transliterate
 	    if (function_exists('iconv')) {
-	       $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+	       $transliterateText = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+	       if ($transliterateText) {
+	       	// in some *nix iconv//TRANSLIT can fail
+	       	$text = $transliterateText;
+	       }
 	    }
 
 	    // lowercase
@@ -726,6 +736,28 @@ function glz_closeGlizy()
 {
     GlizyClassLoader::unregister();
     GlizyErrorHandler::unregister();
+}
+
+function glz_classNSToClassName($classNameSpace)
+{
+	return str_replace('.', '_', $classNameSpace);
+}
+
+function glz_maybeJsonDecode($string, $inArray) {
+	$result = $string;
+	if (is_string($string)) {
+   		$json = json_decode($string, $inArray);
+   		if ((is_object($json) || is_array($json)) && json_last_error() === JSON_ERROR_NONE) {
+   			$result = $json;
+   		}
+   	}
+   	return $result;
+}
+
+function dd($var)
+{
+	array_map(function ($x) { var_dump($x); }, func_get_args());
+	die;
 }
 
 if ( !function_exists( "stripos" ) )
@@ -806,6 +838,8 @@ class GlizyErrorHandler {
         set_error_handler(array($this, 'onErrorHandler'), E_ALL);
         set_exception_handler(array($this, 'onExceptionHandler'));
         register_shutdown_function(array($this, 'onShutdownFunction'));
+
+		glz_import('org.glizy.Exception');
     }
 
     public static function register()
@@ -829,41 +863,70 @@ class GlizyErrorHandler {
      * @param $errfile
      * @param $errline
      */
-    public function onErrorHandler($errno, $errstr, $errfile, $errline)
-    {
-        if (!self::$isRegistred) return;
-        $errorlevel=error_reporting();
-        if ($errorlevel&$errno && !($errno&E_STRICT))
-        {
-            glz_import('org.glizy.Exception');
-            if (org_glizy_Config::get('ERROR_DUMP') !== '') {
-                org_glizy_Exception::error_dump($errno, $errstr, $errfile, $errline);
-            }
-            org_glizy_Exception::show($errno, $errstr, $errfile, $errline);
-        }
-    }
+	public function onErrorHandler($errno, $errstr, $errfile, $errline)
+	{
+		if (!self::$isRegistred) return;
+		$errorlevel=error_reporting();
+		if ($errorlevel&$errno && !($errno&E_STRICT))
+		{
+			$this->sendLog($errno, $errstr, $errfile, $errline);
+			org_glizy_Exception::show($errno, $errstr, $errfile, $errline);
+		}
+	}
 
     /**
      * @param Exception $exception
      */
-    public function onExceptionHandler($exception)
-    {
-        if (!self::$isRegistred) return;
-        glz_import('org.glizy.Exception');
-        if (org_glizy_Config::get('ERROR_DUMP') !== '') {
-            org_glizy_Exception::error_dump($exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine());
-        }
-        org_glizy_Exception::show($exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine());
-    }
+	public function onExceptionHandler($exception)
+	{
+		if (!self::$isRegistred) return;
+		$this->sendLog($exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine());
+		org_glizy_Exception::show($exception->getCode(), $exception->getMessage(), $exception->getFile(), $exception->getLine());
+	}
 
-    public function onShutdownFunction() {
-        if (!self::$isRegistred) return;
-        $error = error_get_last();
-        if ($error['type'] == 1) {
-            if (org_glizy_Config::get('ERROR_DUMP') !== '') {
-                org_glizy_Exception::error_dump($error['type'], $error['message'], $error['file'], $error['line']);
-            }
-            org_glizy_Exception::show( $error['type'], $error['message'], $error['file'], $error['line']);
-        }
-    }
+
+	public function onShutdownFunction() {
+		if (!self::$isRegistred) return;
+		$error = error_get_last();
+		if ($error['type'] == 1) {
+			$this->sendLog($error['type'], $error['message'], $error['file'], $error['line']);
+			org_glizy_Exception::show($error['type'], $error['message'], $error['file'], $error['line']);
+		}
+	}
+
+	private function sendLog($errno, $errstr, $errfile, $errline)
+	{
+		if (class_exists('org_glizy_Config')) {
+	        $errors = array(
+	            1 => 'E_ERROR',
+	            2 => 'E_WARNING',
+	            4 => 'E_PARSE',
+	            8 => 'E_NOTICE',
+	            16 => 'E_CORE_ERROR',
+	            32 => 'E_CORE_WARNING',
+	            64 => 'E_COMPILE_ERROR',
+	            128 => 'E_COMPILE_WARNING',
+	            256 => 'E_USER_ERROR',
+	            512 => 'E_USER_WARNING',
+	            2047 => 'E_ALL',
+	            2048 => 'E_STRICT',
+	            4096 => 'E_RECOVERABLE_ERROR'
+	        );
+
+	        $e                = array();
+	        $e['code']        = isset($errors[$errno]) ? $errors[$errno] : $errors[1];
+	        $e['description'] = $errstr;
+	        $e['file']       = $errfile;
+	        $e['line']       = $errline;
+	        $e['stacktrace'] = array_slice(debug_backtrace(), 2);
+	        $eventInfo = array( 'type' => GLZ_EVT_DUMP_EXCEPTION,
+	                            'data' => array(
+	                                'level' => GLZ_LOG_FATAL,
+	                                'group' => 'GLZ_E_500',
+	                                'message' => $e
+	                            ));
+	        $evt = org_glizy_ObjectFactory::createObject( 'org.glizy.events.Event', null, $eventInfo );
+	        org_glizy_events_EventDispatcher::dispatchEvent( $evt );
+	    }
+	}
 }

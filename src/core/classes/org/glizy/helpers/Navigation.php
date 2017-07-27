@@ -14,7 +14,7 @@ class org_glizy_helpers_Navigation extends GlizyObject
      * @param $location
      * @param $params
      */
-    static function gotoUrl($location, $params=null, $hash='')
+    public static function gotoUrl($location, $params=null, $hash='')
 	{
 		if ($params) {
 			$location .= (strpos($location, '?')===false ? '?' : '&').http_build_query($params);
@@ -24,10 +24,34 @@ class org_glizy_helpers_Navigation extends GlizyObject
 		exit;
 	}
 
-	function goHere()
+	public static function goHere()
 	{
         /** @var org_glizy_application_Application $application */
 		$application = &org_glizy_ObjectValues::get('org.glizy', 'application');
 		org_glizy_helpers_Navigation::gotoUrl( org_glizy_helpers_Link::makeUrl( 'link', array( 'pageId' => $application->getPageId() ) ) );
 	}
+
+    /**
+     * Show Access Denied page
+     */
+    public static function accessDenied($userIsLogged=false)
+    {
+        org_glizy_Session::set('glizy.loginUrl', org_glizy_helpers_Link::scriptUrl());
+
+        if (!$userIsLogged && org_glizy_Routing::exists('login')) {
+            org_glizy_Session::set('glizy.loginError', __Tp('LOGGER_INSUFFICIENT_GROUP_LEVEL'));
+            org_glizy_Session::set('glizy.loginUrl', org_glizy_helpers_Link::scriptUrl());
+            self::gotoUrl(org_glizy_Routing::makeUrl('login'));
+        } else if (org_glizy_Routing::exists('accessDenied')) {
+            self::gotoUrl(org_glizy_Routing::makeUrl('accessDenied'));
+        } else {
+            org_glizy_Exception::show403(__T('Access is denied'));
+        }
+    }
+
+    public static function notFound($message='')
+    {
+        org_glizy_Exception::show404($message);
+    }
+
 }

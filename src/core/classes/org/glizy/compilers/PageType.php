@@ -350,7 +350,7 @@ class org_glizy_compilers_PageType extends org_glizy_compilers_Compiler
 		$this->addNamespace($newNameSpaces, $registredNameSpaces);
 		if ( $includeXML->documentElement->hasAttribute( 'adm:editComponents' ) )
 		{
-			$this->_classSource .= '$n0->setAttribute( "adm:editComponents", "'.$includeXML->documentElement->getAttribute( 'adm:editComponents' ).'" )'.GLZ_COMPILER_NEWLINE;
+			$this->_classSource .= 'if ($n0) $n0->setAttribute( "adm:editComponents", "'.$includeXML->documentElement->getAttribute( 'adm:editComponents' ).'" )'.GLZ_COMPILER_NEWLINE;
 		}
 
 		$this->_compileXml($includeXML->documentElement, $registredNameSpaces, $counter, $parent, $idPrefix);
@@ -389,7 +389,7 @@ class org_glizy_compilers_PageType extends org_glizy_compilers_Compiler
 		return $this->_path;
 	}
 
-	private function addNamespace($newNameSpaces, &$registredNameSpaces)
+	protected function addNamespace($newNameSpaces, &$registredNameSpaces)
 	{
 		foreach ($newNameSpaces as $key=>$value)
 		{

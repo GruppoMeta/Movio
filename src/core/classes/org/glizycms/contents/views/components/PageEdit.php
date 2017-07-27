@@ -9,11 +9,27 @@
 
 class org_glizycms_contents_views_components_PageEdit  extends org_glizycms_views_components_FormEdit
 {
+    const STATUS_PUBLISHED = 'PUBLISHED';
+    const STATUS_DRAFT = 'DRAFT';
+
 	protected $emptySrc;
 	protected $editSrc;
     protected $_pageTypeObj;
     protected $allowBlocks;
 	protected $menuId;
+
+    protected $statusToEdit;
+    protected $availableStatus;
+    protected $languageId;
+
+    /**
+     * @var org_glizycms_contents_models_proxy_ContentProxy
+     */
+    private $contentProxy;
+    /**
+     * @var org_glizycms_contents_models_proxy_MenuProxy
+     */
+    private $menuProxy;
 
 	/**
 	 * Init
@@ -35,17 +51,19 @@ class org_glizycms_contents_views_components_PageEdit  extends org_glizycms_view
 
 
 	public function process() {
+        $this->params();
+
 		if ($this->getAttribute('mode')=='container') {
 			$this->emptySrc = __Routing::makeUrl('linkChangeAction', array( 'action' => $this->getAttribute('initialState')));
 			$this->editSrc = __Routing::makeUrl('linkChangeAction', array( 'action' => $this->getAttribute('editState'))).'?menuId=';
 		} else {
-	        $this->menuId = __Request::get('menuId');
+
 // TODO: lanciare un'eccezione se l'id non è valido
-			$menuProxy = org_glizy_ObjectFactory::createObject('org.glizycms.contents.models.proxy.MenuProxy');
-	        $menu = $menuProxy->getMenuFromId($this->menuId, org_glizy_ObjectValues::get('org.glizy', 'editingLanguageId'));
+			$menuProxy = $this->getMenuProxy();
+	        $menu = $menuProxy->getMenuFromId($this->menuId, $this->languageId);
 // TODO: il menù viene letto due volte, in questo codice ed in readContentFromMenu
-			$contentProxy = org_glizy_ObjectFactory::createObject('org.glizycms.contents.models.proxy.ContentProxy');
-			$content = $contentProxy->readContentFromMenu($this->menuId, org_glizy_ObjectValues::get('org.glizy', 'editingLanguageId'));
+			$contentProxy = $this->getContentProxy();
+			$content = $contentProxy->readContentFromMenu($this->menuId, $this->languageId, true, $this->statusToEdit);
 			$this->setData($content);
 
 			$this->addComponentsToEdit($menu);
@@ -65,8 +83,7 @@ class org_glizycms_contents_views_components_PageEdit  extends org_glizycms_view
             $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'jquery.pnotify/jquery.pnotify.default.css' ) );
 
     	} else {
-            // TODO: verificare se è da rimuovere
-			$this->addOutputCode('<div id="message-box"></div>');
+            $this->renderStatusSwicth();
 			parent::render_html_onStart();
 		}
 	}
@@ -82,7 +99,36 @@ class org_glizycms_contents_views_components_PageEdit  extends org_glizycms_view
 		}
 	}
 
-	function addComponentsToEdit($menu)
+
+
+    /**
+     * @return string
+     */
+    public function getAjaxUrl()
+    {
+        return 'ajax.php?pageId='.$this->_application->getPageId().'&ajaxTarget='.$this->getId().'&status='.$this->statusToEdit.'&action=';
+    }
+
+
+    /**
+     * @return array
+     */
+    public function availableStatus()
+    {
+        return $this->availableStatus;
+    }
+
+    /**
+     * @return string
+     */
+    public function statusToEdit()
+    {
+        return $this->statusToEdit;
+    }
+
+
+
+	protected function addComponentsToEdit($menu)
 	{
 		$templatePath = org_glizycms_Glizycms::getSiteTemplatePath();
 		$originalRootComponent 	= &$this->_application->getRootComponent();
@@ -113,7 +159,8 @@ class org_glizycms_contents_views_components_PageEdit  extends org_glizycms_view
 				$component->remapAttributes($this->getId().'-');
 				$this->addChild($component);
 				$component->_parent = &$this;
-				$component->setAttribute('visible', true);
+                $component->setAttribute('visible', true);
+				$component->setAttribute('enabled', true);
 			}
 		}
 		else
@@ -166,4 +213,72 @@ class org_glizycms_contents_views_components_PageEdit  extends org_glizycms_view
         $this->addChild($c);
         $c->init();
 	}
+
+    protected function params()
+    {
+        $this->menuId = __Request::get('menuId');
+        $this->languageId = org_glizy_ObjectValues::get('org.glizy', 'editingLanguageId');
+
+        if ($this->menuId && __Config::get('glizycms.content.draft')) {
+            $contentProxy = $this->getContentProxy();
+            $this->availableStatus = $contentProxy->availableContentFromMenu($this->menuId, $this->languageId);
+            $defaultState = !$this->availableStatus ?
+                        self::STATUS_PUBLISHED :
+                        ($this->availableStatus[self::STATUS_DRAFT] ? self::STATUS_DRAFT : self::STATUS_PUBLISHED);
+            $this->statusToEdit = __Request::get('status', $defaultState);
+        } else {
+            $this->statusToEdit = self::STATUS_PUBLISHED;
+        }
+    }
+
+    /**
+     * @return org_glizycms_contents_models_proxy_ContentProxy
+     */
+    protected function getContentProxy()
+    {
+        if (!$this->contentProxy) {
+            $this->contentProxy = org_glizy_ObjectFactory::createObject('org.glizycms.contents.models.proxy.ContentProxy');
+        }
+        return $this->contentProxy;
+    }
+
+    /**
+     * @return org_glizycms_contents_models_proxy_MenuProxy
+     */
+    protected function getMenuProxy()
+    {
+        if (!$this->menuProxy) {
+            $this->menuProxy = org_glizy_ObjectFactory::createObject('org.glizycms.contents.models.proxy.MenuProxy');
+        }
+        return $this->menuProxy;
+    }
+
+    private function renderStatusSwicth()
+    {
+        if (!$this->availableStatus ||
+            ($this->availableStatus[self::STATUS_PUBLISHED] && !$this->availableStatus[self::STATUS_DRAFT])) return;
+        $label = __T('GLZ_RECORD_STATUS_EDIT_LABEL');
+        $linkPublished = !$this->availableStatus[self::STATUS_PUBLISHED] ? '' : __Link::makeSimpleLink(
+                                                    __T('GLZ_RECORD_STATUS_PUBLISHED'),
+                                                    __Link::addParams(array('status' => self::STATUS_PUBLISHED)),
+                                                    '',
+                                                    $this->statusToEdit==self::STATUS_PUBLISHED ? 'active' : ''
+        );
+
+        $linkDraft = !$this->availableStatus[self::STATUS_DRAFT] ? '' :__Link::makeSimpleLink(
+                                                    __T('GLZ_RECORD_STATUS_DRAFT'),
+                                                    __Link::addParams(array('status' => self::STATUS_DRAFT)),
+                                                    '',
+                                                    $this->statusToEdit==self::STATUS_DRAFT ? 'active' : ''
+        );
+
+        $html = <<<EOD
+<ul class="glzFormEdit status-swicth {$this->statusToEdit}">
+    <li>$label</li>
+    <li>$linkPublished</li>
+    <li>$linkDraft</li>
+</ul>
+EOD;
+        $this->addOutputCode($html);
+    }
 }

@@ -33,10 +33,10 @@ class org_glizy_application_User extends GlizyObject
         $this->loginId       = $userInfo['loginId'];
         $this->email         = $userInfo['email'];
         $this->groupId       = $userInfo['groupId'];
-        $this->backEndAccess = $userInfo['backEndAccess'];
+        $this->backEndAccess = $userInfo['backEndAccess']==1;
         $this->language      = isset($userInfo['language']) ? $userInfo['language'] : '';
-        $this->active        = $userInfo['isActive'];
-        $this->dateCreation  = $userInfo['dateCreation'];
+        $this->active        = isset($userInfo['isActive']) ? $userInfo['isActive'] : false;
+        $this->dateCreation  = isset($userInfo['dateCreation']) ? $userInfo['dateCreation'] : '';
 
         // TODO gestire __Config::get('ACL_ENABLED')
         // creando un UserAcl che viene creato se __Config::get('ACL_ENABLED') = true

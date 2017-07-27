@@ -23,8 +23,9 @@ class org_glizy_mvc_scaffold_controllers_Show extends org_glizy_mvc_scaffold_con
 				if ( $this->id > 0 )
 				{
 					$this->ar = org_glizy_ObjectFactory::createModel( $this->modelName );
-					$this->ar->load( $this->id );
-					__Request::setFromArray( $this->ar->getValuesAsArray() );
+					if ($this->ar->load( $this->id )) {
+						__Request::setFromArray( $this->ar->getValuesAsArray() );
+					}
 				}
 			}
 			else

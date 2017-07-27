@@ -25,6 +25,7 @@ class org_glizy_components_SearchFilters extends org_glizy_components_Form
         $this->defineAttribute('filterClass',   false, '',     COMPONENT_TYPE_STRING);
 
         parent::init();
+        $this->setAttribute('addValidationJs', false);
     }
 
     function process()
@@ -89,7 +90,8 @@ class org_glizy_components_SearchFilters extends org_glizy_components_Form
 
     function getFilters()
     {
-        $filterClass = org_glizy_ObjectFactory::createObject($this->getAttribute('filterClass'));
+        $filterClassName = $this->getAttribute('filterClass');
+        $filterClass = $filterClassName ? org_glizy_ObjectFactory::createObject($filterClassName) : null;
         if (!$filterClass) {
             $tempFilters = $this->_filters;
             foreach($this->_filters as $k=>$v)

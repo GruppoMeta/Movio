@@ -10,6 +10,27 @@
 
 class org_glizycms_helpers_Modules extends GlizyObject
 {
+    private static $supportedClasses = array(
+        'org_glizy_components_Fieldset',
+        'org_glizy_components_JSTabGroup',
+        'org_glizy_components_JSTab',
+        'org_glizy_components_Panel',
+        'org_glizy_components_Input'
+    );
+
+    private function isComponentSupported($c){
+        $clss = self::$supportedClasses;
+        $l = count($clss);
+        $i = $l;
+
+        while($i-->0){
+            if (is_a($c, $clss[$i]))
+                return true;
+        }
+
+        return false;
+    }
+
     public function getFields($pageId, $getRepChild = false)
     {
         $editForm = $this->getEditForm($pageId);
@@ -44,7 +65,6 @@ class org_glizycms_helpers_Modules extends GlizyObject
         $siteMap = $application->getSiteMap();
         $siteMapNode = $siteMap->getNodeById($pageId);
         $pageType = $siteMapNode->getAttribute('pageType');
-
         $path = org_glizy_Paths::get('APPLICATION_PAGETYPE');
         $templatePath = org_glizycms_Glizycms::getSiteTemplatePath();
         $options = array(
@@ -69,26 +89,26 @@ class org_glizycms_helpers_Modules extends GlizyObject
             $c = $childComponents[$i];
             $id = $c->getAttribute('id');
             $data = $c->getAttribute('data');
-
             if (( is_subclass_of($c, 'org_glizy_components_HtmlFormElement') ||
-                    ( is_a($c, 'org_glizy_components_Fieldset') && $data)
+                    ( $this->isComponentSupported($c) && $data)
                     ) && substr($id, 0, 2) != '__' ) {
                 $temp = new StdClass;
                 $temp->type = $this->getFieldTypeFromComponent($c);
                  if($getRepChild && ($temp->type == org_glizycms_core_models_enum_FieldTypeEnum::REPEATER_IMAGE
                                   || $temp->type == org_glizycms_core_models_enum_FieldTypeEnum::REPEATER_MEDIA
-                                  || $temp->type == org_glizycms_core_models_enum_FieldTypeEnum::REPEATER) ){
-                    $fields = array_merge($fields, $this->getChildFields($c, $getRepChild));
+                                  || $temp->type == org_glizycms_core_models_enum_FieldTypeEnum::REPEATER
+                                  ) ){
+                     $fields = array_merge($fields, $this->getChildFields($c, $getRepChild));
                 } else {
                     $temp->id = $id;
                     $temp->label = $c->getAttribute('label');
+                    $temp->data = $data;
                     $fields[$id] = $temp;
                 }
-            } else if (is_a($c, 'org_glizy_components_Fieldset') && !$data) {
+            } else if ($this->isComponentSupported($c) && !$data) {
                 $fields = array_merge($fields, $this->getChildFields($c, $getRepChild));
             }
         }
-
         return $fields;
     }
 
@@ -106,7 +126,7 @@ class org_glizycms_helpers_Modules extends GlizyObject
             return org_glizycms_core_models_enum_FieldTypeEnum::URL;
         } else if (strpos($data, 'type=number') !== false) {
             return org_glizycms_core_models_enum_FieldTypeEnum::NUMBER;
-        } else if (strpos($data, 'type=repeat') !== false) {
+        } else if (strpos($data, 'type=repeat') !== false || stripos($data, 'type=FormEditRepeatMandatory') !== false) {
             if (count($component->childComponents)==1) {
                 $temp = $this->getFieldTypeFromComponent($component->childComponents[0]);
                 if ($temp==org_glizycms_core_models_enum_FieldTypeEnum::IMAGE) {

@@ -27,6 +27,7 @@ class org_glizy_rest_core_RestRequest extends GlizyObject
 	protected $responseBody;
 	protected $responseInfo;
     protected $responseError;
+    protected $responseHeaders;
 	protected $authType;
 	protected $disableSslCheck = false;
     protected $contentType;
@@ -34,6 +35,7 @@ class org_glizy_rest_core_RestRequest extends GlizyObject
     protected $proxy;
     protected $proxyPort;
     protected $timeout;
+	protected $header = array();
 
     /**
      * @param null   $url
@@ -52,6 +54,7 @@ class org_glizy_rest_core_RestRequest extends GlizyObject
 		$this->acceptType		= 'application/json';
 		$this->responseBody		= null;
 		$this->responseInfo		= null;
+		$this->responseHeaders	= array();
 		$this->authType 		= CURLAUTH_BASIC;
         $this->contentType      = $contentType;
         $this->cookies          = null;
@@ -146,7 +149,7 @@ class org_glizy_rest_core_RestRequest extends GlizyObject
 			$this->buildPostBody();
 		}
 
-		$this->url .= ( strpos( '?', $this->url ) === false ? '?' : '&' ).$this->requestBody;
+		$this->url .= ( strpos( $this->url, '?' ) === false ? '?' : '&' ).$this->requestBody;
         return $this->doExecute($ch);
 	}
 
@@ -242,6 +245,9 @@ class org_glizy_rest_core_RestRequest extends GlizyObject
         if (preg_match('/^Set-Cookie:\s*([^;]*)/mi', $headerLine, $cookie) == 1) {
             $this->cookies[] = $cookie[1];
         }
+
+        $this->responseHeaders[] = trim($headerLine);
+
         return strlen($headerLine); // Needed by curl
     }
 
@@ -259,13 +265,13 @@ class org_glizy_rest_core_RestRequest extends GlizyObject
 		curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curlHandle, CURLOPT_HEADERFUNCTION, array($this, 'curlResponseHeaderCallback'));
 
-        $header = array('Accept: ' . $this->acceptType);
+		$this->header[] = 'Accept: ' . $this->acceptType;
 
         if ($this->contentType) {
-            $header[] = 'Content-Type: ' . $this->contentType;
+			$this->header[] = 'Content-Type: ' . $this->contentType;
         }
 
-	    curl_setopt($curlHandle, CURLOPT_HTTPHEADER, $header);
+	    curl_setopt($curlHandle, CURLOPT_HTTPHEADER, $this->header);
 
         if ($this->proxy && $this->proxyPort)
         {
@@ -345,6 +351,14 @@ class org_glizy_rest_core_RestRequest extends GlizyObject
     public function getResponseError ()
     {
         return $this->responseError;
+    }
+
+     /**
+     * @return mixed
+     */
+    public function getResponseHeaders ()
+    {
+        return $this->responseHeaders;
     }
 
     /**
@@ -481,5 +495,14 @@ class org_glizy_rest_core_RestRequest extends GlizyObject
 		else {
 			return false;
 		}
+	}
+
+	/**
+	 * Add a header
+	 * @param $value
+	 */
+	public function addHeader($value)
+	{
+		$this->header[] = $value;
 	}
 }

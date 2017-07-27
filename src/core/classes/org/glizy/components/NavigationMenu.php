@@ -37,6 +37,7 @@ class org_glizy_components_NavigationMenu extends org_glizy_components_Component
 		$this->defineAttribute('showPath',			false, 	false, 	COMPONENT_TYPE_BOOLEAN);
 		$this->defineAttribute('maxPathDepth',		false, 	NULL, 	COMPONENT_TYPE_INTEGER);
 		$this->defineAttribute('selectParent',		false, 	false, 	COMPONENT_TYPE_BOOLEAN);
+		$this->defineAttribute('selectPath',		false, 	false, 	COMPONENT_TYPE_BOOLEAN);
 		$this->defineAttribute('startFrom', 		true, 	'*', 	COMPONENT_TYPE_STRING);
 		$this->defineAttribute('startFromDepth',	false, 	NULL, 	COMPONENT_TYPE_INTEGER);
 		$this->defineAttribute('showOnlyChilds',	false, 	false, 	COMPONENT_TYPE_BOOLEAN);
@@ -50,6 +51,8 @@ class org_glizy_components_NavigationMenu extends org_glizy_components_Component
 		$this->defineAttribute('omitId',		false, 	false, 	COMPONENT_TYPE_BOOLEAN);
 		$this->defineAttribute('openFirstLevel',	false, 	false, 	COMPONENT_TYPE_BOOLEAN);
 		$this->defineAttribute('cssCurrent',	false, 	'current', 	COMPONENT_TYPE_STRING);
+		$this->defineAttribute('itemIcon',			false, 	'', 	COMPONENT_TYPE_STRING);
+		$this->defineAttribute('menuUrlRel',		false, 	'', 	COMPONENT_TYPE_STRING);
 
 		// call the superclass for validate the attributes
 		parent::init();
@@ -274,9 +277,15 @@ class org_glizy_components_NavigationMenu extends org_glizy_components_Component
 	function _makeNavigationMenu(&$node, $endDepth, &$menu, $skip=false)
 	{
 		$skip = !$skip ? $node->depth<$this->_startDepth : $skip;
-		if ($node->type == 'BLOCK') return true;
-		if ($node->depth > $endDepth) return true;
-		if ($node->isVisible==0) return true;
+		if (
+				$node->type == 'BLOCK' ||
+				$node->depth > $endDepth ||
+				$node->isVisible==0 ||
+				$node->hideInNavigation ||
+				($node->type == 'SYSTEM' && !$skip) ||
+				!$this->_application->canViewPage( $node->id )
+			) return true;
+
 		if (is_string($node->isVisible) && preg_match("/\{php\:.*\}/i", $node->isVisible)) {
 			$phpcode = org_glizy_helpers_PhpScript::parse($node->isVisible);
 			if (!eval($phpcode)) {
@@ -284,13 +293,11 @@ class org_glizy_components_NavigationMenu extends org_glizy_components_Component
 			}
 		}
 
-		if ($node->type == 'SYSTEM' && !$skip) return true;
-		if ( !$this->_application->canViewPage( $node->id ) ) return true;
-
 		$nodeTitle = empty($node->titleLink) ? $node->title : $node->titleLink;
 		$nodeDescription = empty($node->linkDescription) ? $nodeTitle: $node->linkDescription;
+		$nodeIcon = $node->icon ? : $this->getAttribute('itemIcon');
 		$menuNode = array();
-		if (!$skip)
+		if (!$skip && $nodeTitle)
 		{
 			$menuNode['id'] 	=  $node->id;
 			$menuNode['title'] 	=  $nodeTitle;
@@ -308,7 +315,11 @@ class org_glizy_components_NavigationMenu extends org_glizy_components_Component
 				$cssClass = $this->getAttribute('selectLink') && $this->_currentMenuId==$node->id ? $this->getAttribute('cssCurrent') : '';
 				if (empty($node->url))
 				{
-					$linkParams = array('pageId' => $node->id, 'title' => $nodeDescription, 'label' => $nodeTitle, 'cssClass' => $cssClass, 'icon' => $node->icon );
+					$linkParams = array('pageId' => $node->id,
+										'title' => $nodeDescription,
+										'label' => $nodeTitle,
+										'cssClass' => $cssClass,
+										'icon' => $nodeIcon );
 					$menuNode['node'] = org_glizy_helpers_Link::makeLink('link', $linkParams);
 				}
 				else
@@ -318,23 +329,25 @@ class org_glizy_components_NavigationMenu extends org_glizy_components_Component
 						$url = substr($url, 6);
 						$url = __Routing::makeUrl($url, __Request::getAllAsArray());
 					}
-					$menuNode['node'] =  org_glizy_helpers_Link::makeSimpleLink($nodeTitle, $url, $nodeDescription, $cssClass);
+					$rel = strpos($url, GLZ_HOST)===0 ? '' : $this->getAttribute('menuUrlRel');
+					$menuNode['node'] =  org_glizy_helpers_Link::makeSimpleLink($nodeTitle, $url, $nodeDescription, $cssClass, $rel, array('icon' => $nodeIcon));
 				}
 			}
 
 			if ( !$this->getAttribute('selectLink') )
 			{
-				if ( !$this->getAttribute('selectParent') )
-				{
+				$selectParent = $this->getAttribute('selectParent');
+				$selectPath = $this->getAttribute('selectPath');
+				if ( !$selectParent && !$selectPath) {
 					$menuNode['selected'] = ($this->_currentMenuId==$node->id) ? ' '.$this->getAttribute('attributeToSelect').'="'.$this->getAttribute('cssCurrent').'"' : '';
-				}
-				else
-				{
+				} else if ( $selectParent && !$selectPath) {
 					$parentNode = &$this->_currentMenu->parentNodeByDepth($node->depth);
 					if (is_object($parentNode) && $node->depth > 1)
 					{
 						$menuNode['selected'] = ($parentNode->id==$node->id || $this->_currentMenuId==$node->id) ? ' '.$this->getAttribute('attributeToSelect').'="'.$this->getAttribute('cssCurrent').'"' : '';
 					}
+				} else if (!$selectParent && $selectPath) {
+					$menuNode['selected'] = in_array($node->id, $this->_menuToOpen) ? ' '.$this->getAttribute('attributeToSelect').'="'.$this->getAttribute('cssCurrent').'"' : '';
 				}
 			}
 		}

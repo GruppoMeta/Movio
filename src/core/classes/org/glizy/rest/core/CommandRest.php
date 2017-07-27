@@ -34,4 +34,36 @@ class org_glizy_rest_core_CommandRest extends GlizyObject
     function execute($oldAction = null) {
 		return true;
 	}
+
+		/**
+	 * Check the user permission
+	 * @param  string $service
+	 * @param  string $action [description]
+	 */
+	protected function checkPermission($service=null, $action=null)
+	{
+		$canAccess = $this->user->isLogged();
+
+        if ($canAccess && $service && $action) {
+        	$canAccess = $this->user->acl($service, $action, false);
+        }
+
+        if (!$canAccess) {
+            org_glizy_helpers_Navigation::accessDenied();
+        }
+	}
+
+    /**
+     * Check the user permission
+     * @param  string $service
+     * @param  string $action [description]
+     */
+    protected function checkPermissionForBackend($service=null, $action=null)
+    {
+        if (!$this->user->backEndAccess) {
+            org_glizy_helpers_Navigation::accessDenied(true);
+        }
+
+        $this->checkPermission($service, $action);
+    }
 }

@@ -4,6 +4,7 @@ class org_glizycms_contents_controllers_siteTree_ajax_GetSiteTree extends org_gl
     private $pageTypes;
 
     public function execute($id) {
+        $this->checkPermissionForBackend();
         $this->directOutput = true;
         $output = array();
 
@@ -46,7 +47,7 @@ class org_glizycms_contents_controllers_siteTree_ajax_GetSiteTree extends org_gl
         }
 
         if ( $menu->menu_isLocked == 1 ) {
-            $icon .= ' lock';
+
         }
 
         $node = array(
@@ -68,6 +69,10 @@ class org_glizycms_contents_controllers_siteTree_ajax_GetSiteTree extends org_gl
         if ( !$menu->menudetail_isVisible ) {
             $node['data']['icon'] .= ' hide';
             $node['attr']['class'] .= ' glizycmsSiteTree-nodeHide';
+        }
+        if ($menu->fieldExists('menudetail_hideInNavigation') &&  $menu->menudetail_hideInNavigation == '1' ) {
+            $node['data']['icon'] .= ' pageHideInNav';
+            $node['attr']['class'] .= ' glizycmsSiteTree-pageHideInNav';
         }
         if ($isRoot || $menu->numChild) {
             $node['attr']['rel'] = 'folder';

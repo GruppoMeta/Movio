@@ -13,6 +13,7 @@ class org_glizy_components_DataProvider extends org_glizy_components_Component
     var $_classPath;
     var $_activeRecord;
     var $_recordIterator;
+    private $recordsCount;
 
     /**
      * Init
@@ -33,6 +34,7 @@ class org_glizy_components_DataProvider extends org_glizy_components_Component
         $this->defineAttribute('checkIntegrity',     false,    true,        COMPONENT_TYPE_BOOLEAN);
         $this->defineAttribute('queryOperator',     false, 'AND',     COMPONENT_TYPE_STRING);
         $this->defineAttribute('showAll',     false, false,     COMPONENT_TYPE_BOOLEAN);
+        $this->defineAttribute('filterClass',   false, '',     COMPONENT_TYPE_STRING);
 
         parent::init();
     }
@@ -105,7 +107,13 @@ class org_glizy_components_DataProvider extends org_glizy_components_Component
         $order = $this->getAttribute('order');
         if (!empty($order))
         {
-            $options['order'] = array( $order => $this->getAttribute('orderModifier'));
+            $order = explode(',', $order);
+            $orderModifier = $this->getAttribute('orderModifier');
+            $options['order'] = array();
+            foreach($order as $v) {
+                list($field, $dir) = explode(' ', $v);
+                $options['order'][$field] = $dir ? :$orderModifier;
+            }
         }
 
 		if ($this->getAttribute('useQueryParams') && isset($options['filters'])) {
@@ -121,6 +129,17 @@ class org_glizy_components_DataProvider extends org_glizy_components_Component
 
         if ($this->getAttribute('limit')) $options['limit'] = explode(',', $this->getAttribute('limit'));
         if ($this->getAttribute('filters')) $options['filters'] = $this->getAttribute('filters');
+
+        $filterClassName = $this->getAttribute('filterClass');
+        $filterClass = $filterClassName ? org_glizy_ObjectFactory::createObject($filterClassName) : null;
+        if ($filterClass) {
+            if ($filterClass instanceof org_glizy_components_interfaces_IDataProviderFilter) {
+                $options = $filterClass->getFilters($queryName, $options);
+            } else {
+                throw org_glizy_exceptions_InterfaceException::notImplemented('org.glizy.components.interfaces.IDataProviderFilter', $filterClassName);
+            }
+        }
+
 
         // TODO
         // if ($this->getAttribute('categories')) $options['categories'] = $this->getAttribute('categories');
@@ -146,14 +165,20 @@ class org_glizy_components_DataProvider extends org_glizy_components_Component
             $it->limit($options['limit']);
         }
 
-        // glz_dbdebug(true);
-
+        $this->recordsCount = $it->count();
         return $it;
     }
 
     function &load($id)
     {
-        $this->_activeRecord->load($id);
+        $queryName = strtolower($this->getAttribute('query'));
+        if ($queryName && $queryName!=='all') {
+            $it = &org_glizy_ObjectFactory::createModelIterator($this->getAttribute('recordClassName'));
+            $it->load($queryName, array('id' => $id));
+            $this->_activeRecord = $it->first();
+        } else {
+            $this->_activeRecord->load($id);
+        }
         return $this->getObject();
     }
 
@@ -164,7 +189,6 @@ class org_glizy_components_DataProvider extends org_glizy_components_Component
     {
         return $this->_activeRecord;
     }
-
 
     function &getNewObject()
     {
@@ -197,5 +221,10 @@ class org_glizy_components_DataProvider extends org_glizy_components_Component
     function getLastSql()
     {
         return $this->_activeRecord->lastSql;
+    }
+
+    function getRecordsCount()
+    {
+        return $this->recordsCount;
     }
 }

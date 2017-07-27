@@ -2,7 +2,7 @@
 <model:Model
 	xmlns:glz="http://www.glizy.org/dtd/1.0/"
     xmlns:model="http://www.glizy.org/dtd/1.0/model/"
-	model:tableName="languages_tbl" model:usePrefix="true">
+	model:tableName="languages_tbl" model:usePrefix="true" model:siteField="language_FK_site_id">
 	
 	<model:Query name="getLanguageDictionary" type="function">
     <![CDATA[

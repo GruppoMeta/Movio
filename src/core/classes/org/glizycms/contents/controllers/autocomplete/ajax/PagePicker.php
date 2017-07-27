@@ -3,6 +3,7 @@ class org_glizycms_contents_controllers_autocomplete_ajax_PagePicker extends org
 {
     function execute($term, $id, $protocol, $filterType)
     {
+        $this->checkPermissionForBackend();
         $this->directOutput = true;
 
         $speakingUrlManager = $this->application->retrieveProxy('org.glizycms.speakingUrl.Manager');

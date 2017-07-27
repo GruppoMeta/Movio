@@ -17,13 +17,13 @@ class org_glizy_Routing
 	static $baseUrl = '';
 	static $baseUrlParam = '';
 
-	function org_glizy_Routing()
+	function __construct()
 	{
 	}
 
-	static function init()
+	public static function init()
 	{
-		$configArray = &org_glizy_Routing::_getValuesArray();
+		$configArray = &self::_getValuesArray();
 
 		$scriptName = '/' . str_replace( '/', '\/', str_replace( '\\', '/', $_SERVER["SCRIPT_NAME"] ) ) . '/';
     	$dirName =  '/^' . str_replace( '/', '\/', str_replace( '\\', '/', dirname( $_SERVER["SCRIPT_NAME"] ) )) . '\//';
@@ -58,9 +58,9 @@ class org_glizy_Routing
 		}
 	}
 
-	static function dump()
+	public static function dump()
 	{
-		var_dump(org_glizy_Routing::_getValuesArray());
+		var_dump(self::_getValuesArray());
 	}
 
 
@@ -69,7 +69,7 @@ class org_glizy_Routing
      *
      * @return string
      */
-    static function scriptUrl( $removeGetParams=false )
+    public static function scriptUrl( $removeGetParams=false )
 	{
 		if ( $removeGetParams )
 		{
@@ -87,9 +87,10 @@ class org_glizy_Routing
      *
      * @return string
      */
-    static function scriptUrlWithParams( $params, $absolute = false )
+    public static function scriptUrlWithParams( $params, $absolute = false )
 	{
 		$host = $absolute && org_glizy_Config::get('SEF_URL') == true ? GLZ_HOST.'/'  : '';
+		$params = ltrim($params, '&');
 		$params = preg_replace( '/^&amp;/', '', $params );
 		return rtrim($host.self::$baseUrl.self::$requestUrl.self::$baseUrlParam.$params, '?&');
 	}
@@ -109,12 +110,23 @@ class org_glizy_Routing
 		}
 		if ( org_glizy_Config::get('SEF_URL') == false)
 		{
-			return org_glizy_Routing::_makeURL_NOSEF( $route, $queryVars, $addParam );
+			return self::_makeURL_NOSEF( $route, $queryVars, $addParam );
 		}
 		else
 		{
-			return org_glizy_Routing::_makeURL_SEF( $route, $queryVars, $addParam );
+			return self::_makeURL_SEF( $route, $queryVars, $addParam );
 		}
+	}
+
+	/**
+	 * Verify if the routing exixts
+	 * @param  string $route Routing name
+	 * @return boolean        return true if the routing exixts
+	 */
+	public static function exists($route)
+	{
+		$configArray = &self::_getValuesArray();
+		return isset($configArray[strtolower($route)]);
 	}
 
 	/**
@@ -124,12 +136,12 @@ class org_glizy_Routing
      *
      * @return string
      */
-    public static function _makeURL_NOSEF($route='', $queryVars=array(), $addParam=array())
+    private static function _makeURL_NOSEF($route='', $queryVars=array(), $addParam=array())
 	{
 		$queryVars = array_merge( $queryVars, $addParam );
 		if (!empty($route))
 		{
-			$configArray = &org_glizy_Routing::_getValuesArray();
+			$configArray = &self::_getValuesArray();
 			/** @var $application org_glizy_application_Application */
             $application = &org_glizy_ObjectValues::get('org.glizy', 'application');
 			/** @var org_glizy_application_SiteMap $siteMap */
@@ -233,7 +245,7 @@ class org_glizy_Routing
      *
      * @return mixed|string
      */
-    static function _makeURL_SEF($route='', $queryVars=array(), $addParam=array())
+    private static function _makeURL_SEF($route='', $queryVars=array(), $addParam=array())
 	{
 		if ( !isset( $addParam[ '__modal__' ] ) && __Request::exists( '__modal__' ) )
 		{
@@ -243,12 +255,12 @@ class org_glizy_Routing
 		$url = '';
 		if (!empty($route))
 		{
-			$configArray = &org_glizy_Routing::_getValuesArray();
+			$configArray = &self::_getValuesArray();
 			/** @var org_glizy_application_Application $application */
             $application = &org_glizy_ObjectValues::get('org.glizy', 'application');
 			/** @var org_glizy_application_SiteMap $siteMap */
             $siteMap = &$application->getSiteMap();
-			$isApplicationDB = $siteMap->getType() == 'db';
+			$isApplicationDB = $siteMap && $siteMap->getType() == 'db';
 
 			// TODO
 			// controllare se il route richiesto esiste.
@@ -258,6 +270,9 @@ class org_glizy_Routing
 			// i dati in un array statico
 			// conviene fare una classe base e estendere questa
 			//
+			if (!isset($configArray[strtolower($route)])) {
+				return $route;
+			}
 			$routing = $configArray[strtolower($route)];
 			if ( isset( $routing[0] ) )
 			{
@@ -323,8 +338,14 @@ class org_glizy_Routing
 								}
 							}
 
-							$value =  $page->id;
-							$value2 = $isApplicationDB ? $page->title : '';
+							if ($page->url) {
+								$value =  $page->url;
+								$value2 = '';
+								$sanitize = false;
+							} else {
+								$value =  $page->id;
+								$value2 = $isApplicationDB ? $page->title : '';
+							}
 						}
 						else
 						{
@@ -356,8 +377,13 @@ class org_glizy_Routing
 						}
 						break;
 					case 'value':
+					case 'valuePlain':
 					case 'integer':
 						$value =  isset($queryVars[$command[1]]) ? $queryVars[$command[1]] : __Request::get( $command[1], '' );
+						$sanitize = $command[0]!=='valuePlain';
+						if (!$sanitize) {
+							$value = urlencode($value);
+						}
 						break;
 					case 'static':
 						$value =  '';
@@ -388,11 +414,11 @@ class org_glizy_Routing
 			// aggiunge in coda i valori della query string che non sono usati
 			if (is_array($addParam) && count($addParam))
 			{
-				$url .= self::$baseUrlParam;
-				foreach($addParam as $k=>$v)
-				{
-					$url .= '&'.$k.'='.urlencode($v);
+				$qs = '';
+				foreach($addParam as $k=>$v) {
+					$qs .= '&'.$k.'='.urlencode($v);
 				}
+				$url .= self::$baseUrlParam.trim($qs, '&');
 			} else if (is_string($addParam)) {
 				$url .= $addParam;
 			}
@@ -402,9 +428,9 @@ class org_glizy_Routing
 		return !preg_match('/^(javascript:|http:|https:)/', $url) ? self::$baseUrl.$url : $url;
 	}
 
-	function _compile()
+	private static function _compile()
 	{
-		$configArray = &org_glizy_Routing::_getValuesArray();
+		$configArray = &self::_getValuesArray();
 
 		// compila il file di routing custom
 		$fileName = org_glizy_Paths::getRealPath('APPLICATION', 'config/routing_custom.xml');
@@ -429,8 +455,8 @@ class org_glizy_Routing
 	{
 		$newParser = __Config::get('glizy.routing.newParser');
 		$scriptUrl = self::$requestUrl;
-		$scriptUrl = preg_replace('/(.*)\/?(\&.*$)/Ui', '$1', $scriptUrl);
-		$configArray = &org_glizy_Routing::_getValuesArray();
+		$scriptUrl = preg_replace('/(.*)\/?\?(.*)?/i', '$1', $scriptUrl);
+		$configArray = &self::_getValuesArray();
 		$method = strtolower( @$_SERVER['REQUEST_METHOD'] );
 
 		foreach( $configArray as $k => $v )
@@ -472,6 +498,7 @@ class org_glizy_Routing
                     }
                 }
 
+
 				$urlValues[ '__params__' ] = array_values( $urlValues );
 				$urlValues[ '__routingName__' ] = $k;
 				$urlValues[ '__routingPattern__' ] = $urlPattern;
@@ -483,24 +510,24 @@ class org_glizy_Routing
 		}
 	}
 
-	function &_getValuesArray()
+	public static function &_getValuesArray()
 	{
 		// Array associativo (PATH_CODE=>PATH)
 		static $_configArray = null;
 		if (is_null($_configArray))
 		{
 			$_configArray = array();
-			org_glizy_Routing::_compile();
+			self::_compile();
 		}
 		return $_configArray;
 	}
 
-	static function getAllAsArray()
+	public static function getAllAsArray()
 	{
-		return org_glizy_Routing::_getValuesArray();
+		return self::_getValuesArray();
 	}
 
-    static function destroy()
+    public static function destroy()
     {
         $configArray = &self::_getValuesArray();
         $configArray = null;

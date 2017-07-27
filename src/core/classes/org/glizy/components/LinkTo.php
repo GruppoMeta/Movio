@@ -95,6 +95,7 @@ class org_glizy_components_LinkTo extends org_glizy_components_Component
 		$attributes = array();
 		$attributes['id'] = $node->getAttribute('id');
 		$attributes['label'] = $node->getAttribute('label');
+		$attributes['xmlns:glz'] = "http://www.glizy.org/dtd/1.0/";
 
 		if (count($node->attributes))
 		{

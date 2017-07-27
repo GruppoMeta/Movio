@@ -5,6 +5,7 @@ class org_glizycms_contents_models_ContentVO
     public $__title = '';
     public $__url = '';
     public $__comment = '';
+    public $__status = '';
     public $__indexFields = array();
 
     public function setId($value)

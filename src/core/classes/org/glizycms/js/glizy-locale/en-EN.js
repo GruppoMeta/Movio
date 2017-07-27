@@ -1,6 +1,8 @@
 GlizyLocale.FormEdit = {
     saveSuccessMsg: "Data saved correctly",
     errorValidationMsg: "Error saving data",
+    add: "Add",
+    preview: "Preview",
 	addRecord: "Add record",
 	minRecords: "Minimum Records: ",
 	maxRecords: " / Maximum Records: ",
@@ -18,7 +20,10 @@ GlizyLocale.FormEdit = {
 	insertComment: "Insert a note",
 	search: "Search",
 	googleMapError_1: "Enter an address or coordinates",
-	googleMapError_2: "Geocode was not successful for the following reason"
+	googleMapError_2: "Geocode was not successful for the following reason",
+	unableToSave: "This document was not successfully saved because of the following errors:",
+	interruptProcess: "Warning: by coming out from this page, the process will be stopped.",
+	discardConfirmation: "There are some unsaved changes, you will discard them by proceeding. Do you wish to proceed?"
 };
 
 GlizyLocale.FineUploader = {
@@ -78,4 +83,9 @@ GlizyLocale.HotSpot = {
     urlEx: 'Url',
     urlInt: 'Page',
     description: 'text'
+};
+
+GlizyLocale.selectfrom = {
+    formatNoMatches: 'No matches found',
+    formatSearching: 'Searching...'
 };

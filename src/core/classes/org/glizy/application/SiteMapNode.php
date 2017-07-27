@@ -15,6 +15,7 @@ class org_glizy_application_SiteMapNode extends GlizyObject
 	var $pageType;
 	var $isPublished;
 	var $isVisible;
+	var $hideInNavigation;
 	var $title;
 	var $titleLink;
 	var $linkDescription;
@@ -49,6 +50,7 @@ class org_glizy_application_SiteMapNode extends GlizyObject
 		$this->titleLink 			= javascript_to_html($this->attributes['titleLink']);
 		$this->order 				= $this->attributes['order'];
 		$this->isVisible 			= $this->attributes['isVisible'];
+		$this->hideInNavigation     = $this->attributes['hideInNavigation'];
 		$this->depth 				= $this->attributes['depth'];
 		$this->type 				= $this->attributes['type'];
 		$this->isLocked 			= $this->attributes['isLocked'];
@@ -58,7 +60,9 @@ class org_glizy_application_SiteMapNode extends GlizyObject
 		$this->hasComment 			= $this->attributes['hasComment'];
 		$this->printPdf 			= $this->attributes['printPdf'] == 1;
 		$this->cssClass 			= $this->attributes['cssClass'];
-		$this->icon 				= $this->attributes['icon'];
+		$this->keywords 			= $this->attributes['keywords'];
+		$this->description 			= $this->attributes['description'];
+		$this->icon 				= @$this->attributes['icon'];
 		if (isset($this->attributes['linkDescription'])) $this->linkDescription = javascript_to_html($this->attributes['linkDescription']);
 		if (isset($this->attributes['moduleClass'])) $this->url = $this->attributes['moduleClass'];
 		if (isset($this->attributes['extendsPermissions'])) $this->url = $this->attributes['extendsPermissions'];
@@ -72,15 +76,22 @@ class org_glizy_application_SiteMapNode extends GlizyObject
 		return count($this->attributes['childNodes'])>0;
 	}
 
-	function &firstChild($onlyVisible=false)
+	function &firstChild($onlyVisible=false, $onlyPage=true)
 	{
 		if (!$this->hasChildNodes()) return NULL;
 		$menu = NULL;
 		foreach($this->attributes['childNodes'] as $id) {
 			$menu = $this->_treeManager->getNodeById($id);
+			if ($onlyPage && $menu->type=='BLOCK') {
+				continue;
+			}
 			if (!$onlyVisible || $menu->isVisible) {
 				break;
 			}
+			$menu = null;
+		}
+
+		if ($onlyPage && $menu->type=='BLOCK') {
 			$menu = null;
 		}
 		return $menu;
@@ -139,10 +150,11 @@ class org_glizy_application_SiteMapNode extends GlizyObject
 
 	function &nextSibling()
 	{
-    	if ($this->parentId === 0) return NULL;
+		$nullNode = null;
+    	if ($this->parentId === 0) return $nullNode;
 		$parentNode = $this->_treeManager->getNodeById($this->parentId);
 		$childNodes = &$parentNode->attributes['childNodes'];
-		if ($childNodes === NULL) return NULL;
+		if ($childNodes === NULL) return $nullNode;
         $pos = array_search($this->id, $childNodes);
 
         if ($pos<count($childNodes)-1)
@@ -151,16 +163,17 @@ class org_glizy_application_SiteMapNode extends GlizyObject
 		}
 		else
 		{
-			return NULL;
+			return $nullNode;
 		}
 	}
 
 	function &previousSibling()
 	{
-		if ($this->parentId === 0) return NULL;
+		$nullNode = null;
+		if ($this->parentId === 0) return $nullNode;
 		$parentNode = $this->_treeManager->getNodeById($this->parentId);
 		$childNodes = &$parentNode->attributes['childNodes'];
-	    if ($childNodes === NULL) return NULL;
+	    if ($childNodes === NULL) return $nullNode;
         $pos = array_search($this->id, $childNodes);
 
         if ($pos>0)
@@ -169,7 +182,7 @@ class org_glizy_application_SiteMapNode extends GlizyObject
 		}
 		else
 		{
-			return NULL;
+			return $nullNode;
 		}
 	}
 
@@ -177,24 +190,6 @@ class org_glizy_application_SiteMapNode extends GlizyObject
 	{
 		// TODO controllare che l'attrinbuto esiste
 		return $this->attributes[$attribute];
-	}
-
-	function loadDetails()
-	{
-		if (is_integer($this->id)) {
-			$application = &org_glizy_ObjectValues::get('org.glizy', 'application');
-			$ar = &org_glizy_ObjectFactory::createModel('org.glizycms.core.models.MenuDetail');
-			$ar->menudetail_FK_menu_id = $this->id;
-			$ar->menudetail_FK_language_id = $application->getLanguageId();
-			$ar->find();
-			$values = $ar->getValuesAsArray();
-			foreach ($values as $k=>$v)
-			{
-				$propName = str_replace('menudetail_', '', $k);
-				if ($propName=='id') continue;
-				$this->$propName = glz_encodeOutput($v);
-			}
-		}
 	}
 
 	function getSiteMap()

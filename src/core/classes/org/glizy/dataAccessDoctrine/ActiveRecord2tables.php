@@ -133,7 +133,9 @@ class org_glizy_dataAccessDoctrine_ActiveRecord2tables extends org_glizy_dataAcc
 
     public function setLanguageField($fieldName)
     {
-        $this->languageField = $fieldName;
+        if ($this->fieldExists($fieldName)) {
+            $this->languageField = $fieldName;
+        }
     }
 
     public function load($id, $idDetail = null)
@@ -175,9 +177,9 @@ class org_glizy_dataAccessDoctrine_ActiveRecord2tables extends org_glizy_dataAcc
         }
 
         if (__Config::get('glizy.dataAccess.validate')) {
-            $this->validate();
+            $this->validate($values, $forceNew);
         }
-       
+
         if ($this->processRelations) {
             $this->buildAllRelations();
             $this->saveAllRelations(true);
@@ -251,8 +253,9 @@ class org_glizy_dataAccessDoctrine_ActiveRecord2tables extends org_glizy_dataAcc
         $types = array();
 
         foreach ($values as $fieldName => $value) {
-            $field = $this->fields[$fieldName];
-            if (isset($this->modifiedFields[$fieldName]) && !$field->virtual && $this->detailFieldsMap[$fieldName] == false) {
+            $field = isset($this->fields[$fieldName]) ? $this->fields[$fieldName] : null;
+            $detailFields = isset($this->detailFieldsMap[$fieldName]) ? $this->detailFieldsMap[$fieldName] : false;
+            if (isset($this->modifiedFields[$fieldName]) && !$field->virtual && $detailFields == false) {
                 $insertValues[$fieldName] = $values[$fieldName];
                 $types[] = $field->type;
             }
@@ -340,8 +343,9 @@ class org_glizy_dataAccessDoctrine_ActiveRecord2tables extends org_glizy_dataAcc
         $types = array();
 
         foreach ($values as $fieldName => $value) {
-            $field = $this->fields[$fieldName];
-            if (isset($this->modifiedFields[$fieldName]) && !$field->virtual && $this->detailFieldsMap[$fieldName] == true) {
+            $field = isset($this->fields[$fieldName]) ? $this->fields[$fieldName] : null;
+            $detailFields = isset($this->detailFieldsMap[$fieldName]) ? $this->detailFieldsMap[$fieldName] : false;
+            if (isset($this->modifiedFields[$fieldName]) && !$field->virtual && $detailFields == true) {
                 $insertValues[$fieldName] = $values[$fieldName];
                 $types[] = $field->type;
             }
@@ -402,6 +406,13 @@ class org_glizy_dataAccessDoctrine_ActiveRecord2tables extends org_glizy_dataAcc
         return new org_glizy_dataAccessDoctrine_RecordIterator2tables($this);
     }
 
+    /**
+     * @param bool|true $addFrom
+     * @param string    $tableAlias
+     * @param string    $tableDetailAlias
+     *
+     * @return \Doctrine\DBAL\Query\QueryBuilder
+     */
     public function createQueryBuilder($addFrom=true, $tableAlias='t1', $tableDetailAlias='detail') {
         $qb = $this->connection->createQueryBuilder();
 
@@ -432,13 +443,42 @@ class org_glizy_dataAccessDoctrine_ActiveRecord2tables extends org_glizy_dataAcc
 
     private function loadSequenceName()
     {
+        static $sequenceName;
+        static $detailSequenceName;
+        static $sequenceNameLoaded = false;
+        if (!$sequenceNameLoaded) {
+            $sm = new org_glizy_dataAccessDoctrine_SchemaManager($this->connection);
+            $sequenceName = $sm->getSequenceName($this->getTableName());
+            $detailSequenceName = $sm->getSequenceName($this->getDetailTableName());
+        }
         $this->sequenceNameLoaded = true;
-        $sm = new org_glizy_dataAccessDoctrine_SchemaManager($this->connection);
-        $sequenceName = $sm->getSequenceName($this->getTableName());
         $this->setSequenceName($sequenceName);
-
-        $sm = new org_glizy_dataAccessDoctrine_SchemaManager($this->connection);
-        $detailSequenceName = $sm->getSequenceName($this->getDetailTableName());
         $this->setDetailSequenceName($detailSequenceName);
+    }
+
+    /**
+     * @param  array  $values
+     * @param  boolean $isNew
+     * @return boolean
+     */
+    protected function collectValidateFields($values=null, $isNew=false)
+    {
+        if (is_null($values)) {
+            $values = array();
+            $skipFields = $this->joinFields;
+            $skipFields[] = $this->siteField;
+            $skipFields[] = $languageField->siteField;
+
+            foreach ($this->fields as $fieldName => $field) {
+                if ($field->isSystemField ||  in_array($fieldName, $skipFields)) continue;
+                $values[$fieldName] = $this->$fieldName;
+            }
+
+            if (!$isNew) {
+                $values = array_intersect_key(get_object_vars($this->data), $this->modifiedFields);
+            }
+        }
+
+        return $values;
     }
 }

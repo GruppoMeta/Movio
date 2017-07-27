@@ -29,7 +29,10 @@ class org_glizy_Registry
 				$params[$path] = $rs->registry_value;
 				return $rs->registry_value;
 			}
-			else return $defaultValue;
+			else {
+				$params[$path] = $defaultValue;
+				return $defaultValue;
+			}
 		}
 	}
 

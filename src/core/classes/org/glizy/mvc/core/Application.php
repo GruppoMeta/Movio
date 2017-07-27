@@ -79,7 +79,7 @@ class org_glizy_mvc_core_Application extends org_glizy_application_Application
     /**
      * @param bool $forceReload
      */
-	function _initSiteMap($forceReload=false)
+	function createSiteMap($forceReload=false)
 	{
 		if ( $this->useXmlSiteMap )
 		{
@@ -88,7 +88,7 @@ class org_glizy_mvc_core_Application extends org_glizy_application_Application
 		}
 		else
 		{
-			parent::_initSiteMap();
+			parent::createSiteMap($forceReload);
 		}
 	}
 

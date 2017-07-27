@@ -25,7 +25,7 @@ class org_glizy_Modules
     /**
      * @return null|org_glizy_ModuleVO
      */
-	function &getModulesSorted()
+	public static function &getModulesSorted()
 	{
 		$modules = &org_glizy_ObjectValues::get('org.glizy', 'modules', array());
 		uasort($modules, function($a, $b) {
@@ -56,6 +56,11 @@ class org_glizy_Modules
 			$moduleVO->enabled = false;
 		}
 		$modules[ $moduleVO->id ] = $moduleVO;
+
+
+        if ($moduleVO->enabled && $moduleVO->path) {
+            __Paths::addClassSearchPath($moduleVO->path);
+        }
 	}
 
     /**
@@ -89,7 +94,7 @@ class org_glizy_Modules
 		org_glizy_cache_CacheFile::cleanPHP();
 	}
 
-	function deleteCache()
+	static function deleteCache()
 	{
 		org_glizy_cache_CacheFile::cleanPHP();
 	}
@@ -100,69 +105,6 @@ class org_glizy_Modules
 		var_dump( $modules );
 	}
 
-}
-
-/**
- * Class org_glizy_ModuleVO
- */
-class org_glizy_ModuleVO
-{
-	public $id;
-	public $name;
-	public $description;
-	public $classPath;
-	public $pageType = '';
-	public $model = null;
-	public $pluginSnippet = '';
-	public $enabled = true;
-	public $unique = true;
-	public $show = true;
-	public $edit = true;
-	public $pluginInPageType = false;
-	public $pluginInModules = false;
-	public $pluginInSearch = false;
-	public $canDuplicated = false;
-}
-
-/**
- * Class org_glizy_ModuleDescription
- */
-class org_glizy_ModuleDescription
-{
-	private $moduleVO;
-	public $name;
-	public $author;
-	public $authorUrl;
-	public $pluginUrl;
-	public $version;
-	public $description;
-	public $installScript;
-	public $uninstallScript;
-
-    /**
-     * @param org_glizy_ModuleVO $moduleVO
-     */
-	function __construct( org_glizy_ModuleVO $moduleVO )
-	{
-		$this->moduleVO = $moduleVO;
-		$this->name = $moduleVO->name;
-
-		$path = glz_findClassPath( $moduleVO->classPath );
-		if ( !is_null( $path ) && file_exists( $path . '/info.xml' ) )
-		{
-            /** @var org_glizy_parser_XML $xml */
-			$xml = org_glizy_ObjectFactory::createObject( 'org.glizy.parser.XML' );
-			$xml->loadAndParseNS( $path . '/info.xml' );
-			foreach( $xml->documentElement->childNodes as $n )
-			{
-				if ( property_exists( $this, $n->tagName ) )
-				{
-					$this->{ $n->tagName } = utf8_decode( $n->nodeValue );
-				}
-			}
-
-		}
-	}
 }
 
 // shortcut version

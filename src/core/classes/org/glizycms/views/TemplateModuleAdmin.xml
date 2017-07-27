@@ -12,27 +12,36 @@
     <glz:templateDefine name="model" required="true" />
     <glz:templateDefine name="grid_fields" required="true" />
     <glz:templateDefine name="form_fields" required="true" />
+	<glz:templateDefine name="extrabutton_fields" required="false" defaultValue=""/>
     <glz:templateDefine name="custom_states" required="false" defaultValue="" />
     <glz:templateDefine name="primary_key" required="false" defaultValue="document_id" />
+    <glz:templateDefine name="visibility_field" required="false" defaultValue="document_detail_isVisible" />
     <glz:templateDefine name="controller_name" required="false" defaultValue="org.glizycms.contents.controllers.moduleEdit.*" />
     <glz:templateDefine name="show_external_id" required="false" defaultValue="true" />
     <glz:templateDefine name="show_permissions" required="false" defaultValue="true" />
     <glz:templateDefine name="render_cell" required="false" defaultValue="org.glizycms.contents.views.renderer.CellEditDeleteVisible" />
+    <glz:templateDefine name="filter_class" required="false" defaultValue="" />
+    <glz:templateDefine name="formedit_new_code" required="false" defaultValue="false" />
 
 	<glz:Import src="_common.xml" />
 
     <mvc:State name="index">
-       <glz:Link label="{i18n:GLZ_ADD_NEW_RECORD}" cssClass="{config:glizycms.form.actionLink.cssClass}" icon="icon-plus" routeUrl="actionsMVCAdd" editableRegion="actions" acl="*,new"/>
-       <glz:DataGridAjax id="dataGrid" recordClassName="##model##" cssClass="table table-bordered table-striped">
+       <glz:Hidden controllerName="##controller_name##" />
+			##extrabutton_fields##
+       <glz:Link id="addNewRecord" label="{i18n:GLZ_ADD_NEW_RECORD}" cssClass="{config:glizycms.form.actionLink.cssClass}" icon="icon-plus" routeUrl="actionsMVCAdd" editableRegion="actions" acl="*,new"/>
+	   <glz:DataGridAjax id="dataGrid" recordClassName="##model##" cssClass="table table-bordered table-striped" filterClass="##filter_class##">
             ##grid_fields##
             <glz:DataGridColumn columnName="##primary_key##" sortable="false" searchable="false" cssClass="actions" renderCell="##render_cell##" />
         </glz:DataGridAjax>
     </mvc:State>
 
     <mvc:State name="edit">
-        <cms:FormEdit id="editForm" controllerName="##controller_name##">
+        <cms:FormEdit id="editForm" controllerName="##controller_name##" newCode="##formedit_new_code##">
             <glz:Hidden id="__id" />
             <glz:Hidden id="__model" value="##model##"/>
+            <glz:if condition="##visibility_field##">
+                <glz:Hidden id="##visibility_field##" />
+            </glz:if>
             <glz:Input id="external_id" label="{i18n:ID}" size="90" disabled="true" visible="##show_external_id##" />
             ##form_fields##
 
@@ -50,10 +59,12 @@
 
     <mvc:State name="delete">
         <glz:Hidden controllerName="##controller_name##" />
+        <glz:Hidden id="__model" value="##model##"/>
     </mvc:State>
 
     <mvc:State name="togglevisibility">
         <glz:Hidden controllerName="##controller_name##" />
+        <glz:Hidden id="__model" value="##model##"/>
     </mvc:State>
 
     ##custom_states##

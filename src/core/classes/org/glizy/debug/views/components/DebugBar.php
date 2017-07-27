@@ -19,8 +19,7 @@ class org_glizy_debug_views_components_DebugBar extends org_glizy_components_Com
         $debugBar = org_glizy_debug_Module::$debugBar;
 
         $this->debugbarRenderer = $debugBar->getJavascriptRenderer(GLZ_HOST.'/'.__Paths::get('CORE').'libs/DebugBar/Resources/');
-
-
+        $this->debugbarRenderer->setIncludeVendors(false);
     }
 
 

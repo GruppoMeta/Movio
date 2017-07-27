@@ -71,6 +71,6 @@ class org_glizy_components_Hidden extends org_glizy_components_HtmlFormElement
 			array( 'class' => $this->getAttribute( 'cssClass' )),
 			$this->getAttribute( 'data' )
 			 );
-		$this->addOutputCode($this->applyItemTemplate('', $output, true));
+		$this->addOutputCode($this->applyItemTemplate('', $output));
 	}
 }

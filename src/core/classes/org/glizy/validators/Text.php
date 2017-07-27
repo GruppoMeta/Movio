@@ -7,15 +7,20 @@
  * file that was distributed with this source code.
  */
 
-class org_glizy_validators_Text extends org_glizy_validators_AbstractValidator
+class org_glizy_validators_Text implements org_glizy_validators_ValidatorInterface
 {
-    public function validate($description, $value)
+    /**
+     * @param string $description
+     * @param string $value
+     *
+     * @return bool|string
+     */
+    public function validate($description, $value, $defaultValue)
     {
         if (is_string($value) || empty($value)) {
             return true;
         }
-        else {
-            return $description . " deve essere una stringa";
-        }
+
+        return $description . " deve essere una stringa";
     }
 }

@@ -384,6 +384,12 @@ class org_glizy_dataAccessDoctrine_ActiveRecordSimpleDocument extends org_glizy_
         return new org_glizy_dataAccessDoctrine_RecordIteratorSimpleDocument($this);
     }
 
+    /**
+     * @param bool|true $addFrom
+     * @param string    $tableAlias
+     *
+     * @return \Doctrine\DBAL\Query\QueryBuilder
+     */
     public function createQueryBuilder($addFrom=true, $tableAlias='t1') {
         $qb = $this->connection->createQueryBuilder();
 
@@ -396,9 +402,15 @@ class org_glizy_dataAccessDoctrine_ActiveRecordSimpleDocument extends org_glizy_
 
     private function loadSequenceName()
     {
+        static $sequenceName;
+        static $sequenceNameLoaded = false;
+        if (!$sequenceNameLoaded) {
+            $sequenceNameLoaded = true;
+            $sm = new org_glizy_dataAccessDoctrine_SchemaManager($this->connection);
+            $sequenceName = $sm->getSequenceName($this->getTableName());
+        }
         $this->sequenceNameLoaded = true;
-        $sm = new org_glizy_dataAccessDoctrine_SchemaManager($this->connection);
-        $sequenceName = $sm->getSequenceName($this->getDocumentTableName());
         $this->setSequenceName($sequenceName);
     }
+
 }

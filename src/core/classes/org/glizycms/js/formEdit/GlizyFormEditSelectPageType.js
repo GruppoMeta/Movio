@@ -57,10 +57,7 @@ jQuery.GlizyRegisterType('selectpagetype', {
 
             updateItemVisibility();
         }
-
         $that.next().show();
-
-
 	},
 
 	getValue: function () {

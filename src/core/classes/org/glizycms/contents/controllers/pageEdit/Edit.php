@@ -3,6 +3,7 @@ class org_glizycms_contents_controllers_pageEdit_Edit extends org_glizy_mvc_core
 {
     public function execute($menuId)
     {
+        $this->checkPermissionForBackend();
         // TODO controllo permessi
         if ($menuId) {
             // controlla se il menù è di tipo Block
@@ -20,8 +21,34 @@ class org_glizycms_contents_controllers_pageEdit_Edit extends org_glizy_mvc_core
                 $this->setComponentsAttribute('propertiesState', 'draw', false);
                 $this->setComponentsAttribute('templateState', 'draw', false);
 
+                $breadCrumbs = array($arMenu->menudetail_title);
+                while ($arMenu->menu_type == org_glizycms_core_models_enum_MenuEnum::BLOCK) {
+                    $arMenu = $menuProxy->getMenuFromId($arMenu->menu_parentId, org_glizy_ObjectValues::get('org.glizy', 'editingLanguageId'));
+                    $breadCrumbs[] = '<a href="#" data-id="'.$arMenu->menu_id.'" class="js-glizycms-menu-edit">'.$arMenu->menudetail_title.'</a>';
+                }
 
+                $this->view->resetPageTitleModifier();
+                $this->view->addPageTitleModifier(new org_glizycms_views_components_FormEditPageTitleModifierVO(
+                                'edit',
+                                __T('Edit page', implode(' > ', array_reverse($breadCrumbs))),
+                                false,
+                                '__id',
+                                ''));
             }
         }
     }
+
+    public function executeLater($menuId)
+    {
+        $statusToEdit = $this->view->statusToEdit();
+        $availableStatus = $this->view->availableStatus();
+
+        if (!$availableStatus) {
+            $this->setComponentsVisibility(array('saveDraft', 'savePublish'), false);
+        } else {
+            $this->setComponentsVisibility(array('savePublish'), $statusToEdit==org_glizycms_contents_views_components_PageEdit::STATUS_DRAFT);
+            $this->setComponentsVisibility(array('save'), $statusToEdit==org_glizycms_contents_views_components_PageEdit::STATUS_PUBLISHED);
+        }
+    }
+
 }

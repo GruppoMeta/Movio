@@ -26,31 +26,39 @@ class org_glizy_helpers_Mail extends GlizyObject
 		try
         {
 			require_once(GLZ_LIBS_DIR."phpmailer/class.phpmailer.php");
+            $host = org_glizy_Config::get('SMTP_HOST');
 
             /** @var PHPMailer $mail */
 			$mail = new PHPMailer();
             $mail->CharSet = __Config::get('CHARSET');
-			if (org_glizy_Config::get('SMTP_HOST')!='')
+			if ($host!='')
 			{
-				$mail->IsSMTP(); 									// telling the class to use SMTP
-				$mail->Host = org_glizy_Config::get('SMTP_HOST'); 	// SMTP server
-				if (org_glizy_Config::get('SMTP_USER')!='')
+				$mail->IsSMTP();
+				$mail->Host = $host;
+
+                $port = org_glizy_Config::get('SMTP_PORT');
+                $username = org_glizy_Config::get('SMTP_USER');
+                $smtpSecure = org_glizy_Config::get('SMTP_SECURE');
+
+				if ($username!='')
 				{
-					$mail->Username = org_glizy_Config::get('SMTP_USER');
+                    $mail->SMTPAuth = true;
+					$mail->Username = $username;
 					$mail->Password = org_glizy_Config::get('SMTP_PSW');
 				}
-				$port = org_glizy_Config::get('SMTP_PORT');
+
 				if ($port) {
 					$mail->Port = $port;
 				}
+                if ($smtpSecure) {
+                    $mail->SMTPSecure = $smtpSecure;
+                }
 			}
 
 			$mail->From 	= trim($from['email']);
-			$mail->FromName = $from['name'];
-			$mail->AddAddress(trim($to['email']), $to['name']);
+			$mail->FromName = trim($from['name']);
+			$mail->AddAddress(trim($to['email']), trim($to['name']));
 			$mail->Subject 	= $subject;
-
-            $mail->AddAddress(trim($to['email']), $to['name']);
 
             if ($cc)
 			{
@@ -145,7 +153,7 @@ class org_glizy_helpers_Mail extends GlizyObject
 
         $eventInfo = array('type' => GLZ_LOG_EVENT, 'data' => array(
                                     'level' => $r['status'] ? GLZ_LOG_DEBUG : GLZ_LOG_ERROR,
-                                    'group' => 'glizy.helpers.Mail',
+                                    'group' => 'glizy.helpers.mail',
             						'message' => array('result' => $r,
                                             'to' => $to,
                                             'from' => $from,
@@ -193,8 +201,13 @@ class org_glizy_helpers_Mail extends GlizyObject
                 file_get_contents($templatePath . $htmlTemplateFooter);
         }
 
-        return org_glizy_helpers_Mail::sendEmail(    array('email' => $info['EMAIL'], 'name' => $info['FIRST_NAME'].' '.$info['LAST_NAME'] ),
-            array('email' => org_glizy_Config::get('SMTP_EMAIL'), 'name' => org_glizy_Config::get('SMTP_SENDER')),
+        $sender = isset($info['SENDER']) ? $info['SENDER'] : array(
+                                'email' => org_glizy_Config::get('SMTP_EMAIL'),
+                                'name' => org_glizy_Config::get('SMTP_SENDER'));
+
+        return org_glizy_helpers_Mail::sendEmail(
+            array('email' => $info['EMAIL'], 'name' => $info['FIRST_NAME'].' '.$info['LAST_NAME'] ),
+            $sender,
             $emailTitle,
             $emailBody,
             $info['ATTACHS'],

@@ -138,15 +138,15 @@ class org_glizy_application_SiteMap extends GlizyObject
 		}
 	}
 
-	public function resolveAlias()
-	{
-	}
-
 	/* */
 	function &getNodeById($id)
 	{
 		$id = is_numeric($id) ? $id : strtolower($id);
-		if (!array_key_exists($id, $this->_siteMapArray)) return NULL;
+		if (!array_key_exists($id, $this->_siteMapArray)) {
+			$a = NULL;
+			return $a;
+		}
+
 		if (!is_object($this->_siteMapArray[$id]['nodeObj']))
 		{
 			$a =  new org_glizy_application_SiteMapNode($this, $this->_siteMapArray[$id]);
@@ -178,7 +178,9 @@ class org_glizy_application_SiteMap extends GlizyObject
 
 	function &getSiteArray($forceReload=false)
 	{
+		if (!$this->_siteMapArray || $forceReload) {
 		$this->loadTree($forceReload);
+		}
 		return $this->_siteMapArray;
 	}
 

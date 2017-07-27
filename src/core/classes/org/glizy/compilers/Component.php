@@ -42,10 +42,23 @@ class org_glizy_compilers_Component extends org_glizy_compilers_PageType
 		$className = glz_basename($this->_cacheObj->getFileName());
 		$componentClassInfo = $this->_getComponentClassInfo($pageRootNode->nodeName, $registredNameSpaces);
 
-		//if (!empty($componentClassInfo['classPath']))
-		//{
-		//	$this->_classSource .= 'glz_import(\''.$componentClassInfo['classPath'].'\')'.GLZ_COMPILER_NEWLINE;
-		//}
+		if (class_exists($componentClassInfo['className']))
+		{
+			try {
+				$compileTranslateMethod = new ReflectionMethod( $componentClassInfo['className'].'::translateForMode_'.$this->mode );
+			    if (!$compileTranslateMethod->isStatic()) $compileTranslateMethod = null;
+			} catch (Exception $e) {}
+			if ($compileTranslateMethod) {
+				$newNodeXml = $compileTranslateMethod->invoke(null, $pageRootNode);
+				if ($newNodeXml) {
+					$partXml = org_glizy_ObjectFactory::createObject( 'org.glizy.parser.XML' );
+					$partXml->loadXmlAndParseNS( $newNodeXml , LIBXML_NOERROR );
+					$newNode = $partXml->documentElement;
+					$this->addNamespace($partXml->namespaces, $registredNameSpaces);
+					$componentClassInfo = $this->_getComponentClassInfo($newNode->nodeName, $registredNameSpaces);
+				}
+			}
+		}
 
 		$this->_classSource .= 'class '.$className.' extends '.$componentClassInfo['className'].' {'.GLZ_COMPILER_NEWLINE2;
 		$this->_classSource .= 'function '.$className.'(&$application, &$parent, $tagName=\'\', $id=\'\', $originalId=\'\', $skipImport=false) {'.GLZ_COMPILER_NEWLINE2;

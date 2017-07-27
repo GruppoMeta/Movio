@@ -13,6 +13,15 @@ class org_glizycms_mediaArchive_controllers_Add extends org_glizy_mvc_core_Comma
                 $c->setAttribute('visible', false);
             }
         }
+
+        if (!__Config::get('glizycms.mediaArchive.addFromZipEnabled')) {
+            $c = $this->view->getComponentById('addFromZip');
+            if ($c) {
+                $c->setAttribute('label', null);
+                $c->setAttribute('visible', false);
+            }
+        }
+
     }
 }
 

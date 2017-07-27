@@ -2,20 +2,34 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
     $extends: Glizy.oop.get('glizy.FormEdit.standard'),
     id: null,
     idParent: null,
+    formValue:null,
     children: [],
     isCollapsable: null,
     minRec: null,
     maxRec: null,
     noAddRowButton: null,
+    noEmptyMessage: null,
+    customAddRowLabel: null,
     sortable: null,
     glizyOpt: null,
     form: null,
+    readOnly: null,
+    childActive: null,
+
+    originalId: function () {
+      function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+          .toString(16)
+          .substring(1);
+      }
+      return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+    },
 
     initialize: function (element, glizyOpt, form, addBtnId, idParent) {
         this.$super(element);
-        this.idParent = idParent;
-
         this.id = element.attr('id');
+        this.idParent = idParent || this.id;
         this.glizyOpt = glizyOpt;
         this.form = form;
 
@@ -33,9 +47,14 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
         var $fields = this.$element.children(':not(legend)');
         var $fieldSet = this.$element;
 
+		if(this.noEmptyMessage) {
+			$fieldSet.children('legend').before('<div class="border-legend"></div>');
+		}
+
         // TODO: spostare tutta la logica di template in un file appaorte (es handlebars.js)
-        if (!this.noAddRowButton) {
-            this.$element.append('<div class="GFEFooter"><div class="GFEButtonContainer"><input type="button" id="'+addBtnId+'-addRowBtn" value="' + GlizyLocale.Repeater.addRecord + '" class="btn GFEAddRow"></div><div class="GFEStatusContainer">' + GlizyLocale.Repeater.minRecords + this.minRec + (this.maxRec ? (GlizyLocale.Repeater.maxRecords + this.maxRec) : '') + '</div><div class="GFESideClearer"></div></div>');
+        if (!this.noAddRowButton && !this.readOnly) {
+            var label = this.customAddRowLabel ? this.customAddRowLabel : GlizyLocale.Repeater.addRecord;
+            this.$element.append('<div class="GFEFooter"><div class="GFEButtonContainer"><input type="button" id="'+addBtnId+'-addRowBtn" value="' + label + '" class="btn GFEAddRow"></div><div class="GFEStatusContainer">' + GlizyLocale.Repeater.minRecords + this.minRec + (this.maxRec ? (GlizyLocale.Repeater.maxRecords + this.maxRec) : '') + '</div><div class="GFESideClearer"></div></div>');
         } else {
             this.$element.append('<div class="GFEFooter"></div>');
         }
@@ -44,21 +63,24 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
 
         var $rowContainer = $fieldSet.children('.GFERowContainer');
 
-        if (this.isCollapsable) {
-            $fields.wrapAll('<div class="GFERowExpanded" />');
+        if(!this.readOnly)
+        {
+          if (this.isCollapsable) {
+              $fields.wrapAll('<div class="GFERowExpanded" />');
 
-            var rowhandler = this.sortable ? '<span class="GFERowHandler"><img width="16" height="38" title="' + GlizyLocale.Repeater.drag + '" alt="' + GlizyLocale.Repeater.drag + '" src="./application/templates/images/dragHandler.gif"></span>' : '';
+              var rowhandler = this.sortable ? '<span class="GFERowHandler" title="' + GlizyLocale.Repeater.drag + '"></span>' : '';
 
-            $rowContainer
-                .append('<div class="GFERowCollapsed"><div class="GFERowHeader">'+rowhandler+'<span class="GFERecordTitle">' + GlizyLocale.Repeater.record + ' <span class="GFERecordId">1</span></span><span class="GFERowPreview"></span></div><div class="GFERowPanel"><img width="16" height="16" class="icon GFERowEdit" title="' + GlizyLocale.Repeater.edit + '" alt="' + GlizyLocale.Repeater.edit + '" src="./application/templates/images/icon_edit.gif"><img width="16" height="16" class="icon GFERowDelete " title="' + GlizyLocale.Repeater.remove + '" alt="' + GlizyLocale.Repeater.remove + '" src="./application/templates/images/icon_delete.gif"></div><div class="GFESideClearer"></div></div>')
-            .children('.GFERowExpanded')
-                .append('<div class="GFERowButtonContainer"><input type="button" value="' + GlizyLocale.Repeater.confirm + '" class="btn btn-primary GFERowDoCollapse  GFERowDoConfirm">&nbsp;<input type="button" value="' + GlizyLocale.Repeater.cancel + '" class="btn GFERowDoCollapse"></div>')
-                .hide();
-        }
-        else {
-            var rowhandler = this.sortable ? '<span class="GFERowHandler GFERowHandlerExpanded"><img width="16" style="height:100%" title="' + GlizyLocale.Repeater.drag + '" widalt="' + GlizyLocale.Repeater.drag + '" src="./application/templates/images/dragHandler.gif"></span>' : '';
-            $rowContainer
-                .append(rowhandler + '<img width="16" height="16" class="icon GFERowDelete GFERightIcon" title="' + GlizyLocale.Repeater.remove + '" alt="' + GlizyLocale.Repeater.remove + '" src="./application/templates/images/icon_delete.gif">')
+                $rowContainer
+                    .append('<div class="GFERowCollapsed"><div class="GFERowHeader">'+rowhandler+'<span class="GFERecordTitle">' + GlizyLocale.Repeater.record + ' <span class="GFERecordId">1</span> <span class="GFERecordLabel"></span></span><span class="GFERowPreview"></span></div><div class="GFERowPanel"><i class="icon icon-pencil GFERowEdit" /> <i class="trashButton fa fa-trash btn-icon icon-trash GFERowDelete" /></div><div class="GFESideClearer"></div></div>')
+                .children('.GFERowExpanded')
+                    .append('<div class="GFERowButtonContainer"><input type="button" value="' + GlizyLocale.Repeater.confirm + '" class="btn btn-primary GFERowDoCollapse  GFERowDoConfirm">&nbsp;<input type="button" value="' + GlizyLocale.Repeater.cancel + '" class="btn GFERowDoCollapse"></div>')
+                    .hide();
+          }
+          else {
+              var rowhandler = this.sortable ? '<span class="GFERowHandler GFERowHandlerExpanded" title="' + GlizyLocale.Repeater.drag + '"><i class="fa fa-ellipsis-v dragAndDrop"></i><i class="fa fa-ellipsis-v dragAndDrop"></i></span>' : '';
+              $rowContainer
+                  .append(rowhandler + '<div class="trashButtonDiv"><i class="trashButton fa fa-trash btn-icon icon-trash GFERowDelete GFERightIcon" ></i></div>')
+          }
         }
 
         $fieldSet.data('rowModel', $rowContainer.clone(true)
@@ -67,12 +89,10 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
 
         $rowContainer.remove();
 
-        if (!this.noAddRowButton) {
+        if (!this.noAddRowButton && !this.readOnly && !this.noEmptyMessage) {
             $fieldSet.prepend('<div class="GFEEmptyMessage">' + (this.minRec ? GlizyLocale.Repeater.noRecordEntered1 + this.minRec + GlizyLocale.Repeater.noRecordEntered2 : GlizyLocale.Repeater.clickAddRecordButton) + '</div>');
+			$fieldSet.prepend('<div class="border-legend"></div>');
         }
-
-        // TODO: aggiungere solo se non è stato aggiunto in precedenza
-        $('body').append('<div class="GFETranslucentCover"></div>');
 
         this.makeSortable();
 
@@ -81,7 +101,7 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
 
         $fieldSet.data('instance', self);
 
-        $(document).on('click', '.GFERowDoCollapse', function () {
+        $(this.$element).off("click").on('click', '.GFERowDoCollapse', function () {
             var $button = $(this),
                 hasConfirmed = $button.hasClass('GFERowDoConfirm'),
                 $rowCont = $button.closest('.GFERowContainer'),
@@ -89,56 +109,58 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
                 //$inputFields = $('input:not([type=button]), textarea', $rowCont),
                 fieldPrev = '';
 
-            if (hasConfirmed && (form.triggerHandler('submitForm') === false && invalidFields || customValidationInvalid)) {
-                customValidationInvalid = false;
-                return;
-            }
+            // if (hasConfirmed && (form.triggerHandler('submitForm') === false && invalidFields || customValidationInvalid)) {
+            //     customValidationInvalid = false;
+            //     return;
+            // }
             $rowCont.removeClass('GFEEditingRow').children('.GFERowCollapsed').show()
                 .end().children('.GFERowExpanded').hide();
 
+            var child = _.find(self.children,{"originalId":$rowCont.data('originalId')});
+            var childIndex = _.findIndex(self.children,{"originalId":$rowCont.data('originalId')});
+
+            $('#GFETranslucentCover_'+$rowCont.data('originalId')).remove();
+
             // TODO rivedere questa parte, forse conviene usare this.children
             if (hasConfirmed) {
-                $inputFields.each(function () {
-                    var $this = $(this);
-                    var obj = $this.data('instance');
-                    if (obj) {
-                        var val = obj.getValue();
-                        if (val) {
-                            $this.data('oldVal', val);
-                            //fieldPrev += getFieldPreview.call($this, val);
-                        }
-                    }
-                });
+                self.registryOldVal($inputFields);
                 $('.GFERowPreview', $rowCont).html(fieldPrev);
                 $rowCont.removeData('justCreated');
+                var orId = $rowCont.data('originalId');
+                if (child && orId && orId.indexOf("new-")!==-1) {
+                    orId = orId.replace("new-","");
+                    child.originalId = orId;
+                    $rowCont.data('originalId',orId);
+                }
+                try{
+                    var msg = {
+                        formValue:self.getChildValue(child),
+                        pos:childIndex
+                    };
+                    Glizy.events.broadcast("glizy.formEdit2.repeat.setValue",msg);
+                    self.updateEtichetta($fieldSet,$rowCont,msg.formValue);
+                }
+                catch(err){
+                    console.log("Errore nel glizy.formEdit2.repeat.setValue");
+                }
             }
             else {
-                $inputFields.each(function () {
-                    var $this = $(this);
-                    var obj = $this.data('instance');
-
-                    if (obj) {
-                        var val = obj.setValue($(this).data('oldVal') || '');
-                    }
-
-                    if (!$this.data('overloadCalled')) {
-                        $this.val($this.data('oldVal') || '');
-                    }
-                    $this.removeClass('GFEValidationError');
-                });
-                if ($rowCont.data('justCreated')) {
+                self.registryOldVal($inputFields);
+                $('.GFERowPreview', $rowCont).html(fieldPrev);
+                $rowCont.removeData('justCreated');
+                var orId = $rowCont.data('originalId');
+                if (orId && orId.indexOf("new-")!==-1) {
                     $rowCont.remove();
                 }
             }
-
-            $('.GFETranslucentCover').hide();
         });
 
-        $(document).on('click', '.GFERowEdit', function () {
+        $(this.$element).on('click', '.GFERowEdit', function () {
             var $container = $(this).closest('.GFERowContainer'),
                 $contBound = $container[0].getBoundingClientRect(),
                 $window = $(window),
                 wHeight = $window.height();
+            self.childActive = $($container).data("originalId");
 
             $container.addClass('GFEEditingRow')
                 .children('.GFERowCollapsed').hide()
@@ -146,10 +168,11 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
 
             $window.scrollTop($container.offset().top - Math.max((wHeight - $container.height()) / 2, 0));
 
-            $('.GFETranslucentCover').show();
+            $('body').append('<div class="GFETranslucentCover" id="GFETranslucentCover_'+self.childActive+'"></div>');
+            $('#GFETranslucentCover_'+self.childActive).show();
         });
 
-        $('#'+addBtnId+'-addRowBtn').on('click', function () {
+        $('#'+addBtnId+'-addRowBtn').off("click").on('click', function () {
             var $button = $(this),
                 $fieldSet = $button.parents('fieldset:first'),
                 self = $fieldSet.data('instance'),
@@ -160,7 +183,7 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
             }
 
             if (self.maxRec && $rows.length == self.maxRec - 1) {
-                $button.addClass('GButtonDisabled').attr('disabled', 'disabled').blur();
+                $button.hide();
             }
 
             var newRowId;
@@ -175,11 +198,14 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
                 newRowId = 0;
             }
 
-            self.addRow($fieldSet, $button.closest('.GFEFooter'), newRowId, true);
+            self.addRow($fieldSet, $button.closest('.GFEFooter'), newRowId, true, undefined, null, true);
             //self.makeSortable();
         });
 
         Glizy.events.on("glizycms.fileUpload", function(e) {
+            if (self.id != e.message.targetId)  {
+                return;
+            }
             var $footer = $fieldSet.children('.GFEFooter');
             var $rows = $fieldSet.children('.GFERowContainer');
 
@@ -197,6 +223,47 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
                 $title.val(e.message.fileName.replace(/\.[^/.]+$/, ""));
             }
         });
+    },
+
+    registryOldVal:function(fields){
+        fields.each(function () {
+            var $this = $(this);
+            var obj = $this.data('instance');
+            if (obj) {
+                var val = obj.getValue();
+                if (val) {
+                    $this.data('oldVal', val);
+                    //fieldPrev += getFieldPreview.call($this, val);
+                }
+            }
+        });
+    },
+
+    setOldVal:function(fields){
+        fields.each(function () {
+            var $this = $(this);
+            var obj = $this.data('instance');
+
+            if (obj) {
+                var val = obj.setValue($(this).data('oldVal') || '');
+            }
+
+            if (!$this.data('overloadCalled')) {
+                $this.val($this.data('oldVal') || '');
+            }
+            $this.removeClass('GFEValidationError');
+        });
+    },
+
+    getFormData:function($form){
+        var unindexed_array = $form.serializeArray();
+        var indexed_array = {};
+
+        $.map(unindexed_array, function(n, i){
+            indexed_array[n['name']] = n['value'];
+        });
+
+        return indexed_array;
     },
 
     verifySelectWithTarget: function($container) {
@@ -236,18 +303,21 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
         this.maxRec = parseInt(this.$element.attr('data-repeatmax') || 0);
         this.noAddRowButton = this.$element.attr('data-noAddRowButton') == 'true';
         this.sortable = this.$element.attr('data-sortable') == 'true' || this.$element.attr('data-sortable') === undefined;
+        this.readOnly = this.$element.attr('data-readOnly') == 'true';
+        this.noEmptyMessage = this.$element.attr('data-noEmptyMessage') == 'true';
+        this.customAddRowLabel = this.$element.attr('data-customAddRowLabel');
     },
 
     addDeleteHandler : function(containerId) {
         var self = this;
 
-        $('#'+containerId+' img.GFERowDelete').on('click', function () {
+        $('#'+containerId+' > .trashButtonDiv > .GFERowDelete').on('click', function () {
             var $container = $('#'+containerId),
                 $fieldSet = $container.parent(),
                 $rows = $fieldSet.children('.GFERowContainer');
 
-            var id = $container.data('id');
-
+            var id = $container.data('originalId');
+            var instance = $container.data('instance');
             //overloadCaller.call($('#fileuploader'), 'removeFile', i);
 
             if ($rows.length == 0) {
@@ -255,14 +325,20 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
                 return;
             }
 
-            for (var field in self.children[id]) {
-                var fieldObj = self.children[id][field];
-                fieldObj.destroy();
+            var childIndex = _.findIndex(self.children,{"originalId":id});
+
+            for (var field in self.children[childIndex]) {
+                if(field!=="originalId"){
+                    var fieldObj = self.children[childIndex][field];
+                    fieldObj.destroy();
+                }
             }
 
-            self.children.splice(id, 1);
+            self.children.splice(childIndex, 1);
+            
+            var $footer = $fieldSet.children('.GFEFooter');
 
-            $('.GFEAddRow').removeClass('GButtonDisabled').removeAttr('disabled');
+            $footer.find('.GFEAddRow').show();
             $container.remove();
 
             if (!$fieldSet.children('.GFERowContainer').length) {
@@ -271,25 +347,76 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
         });
     },
 
-    addRow: function (fieldSet, footer, id, justCreated, noVerifySelectWithTarget) {
+    getEtichetta:function(fieldSet,id,formValue){
+        var self=this;
+        var etichetta;
+        try{
+            etichetta = id===0 || id ? formValue[id][fieldSet.data("etichette")] : formValue[fieldSet.data("etichette")];
+            if(typeof etichetta === "object")
+                etichetta=etichetta[0];
+            if(fieldSet.data('etichette_schema')){
+                var schema = fieldSet.data('etichette_schema');
+                for(var i=0; i<schema.length; i++){
+                    if(etichetta==schema[i].value)
+                        etichetta=schema[i].description;
+                }
+            }
+            if(!etichetta){
+                var numInserted = 0;
+                etichetta = "Valori inseriti: ";
+                var form = id===0 || id ? formValue[id] : formValue;
+                _.forEach(form,function(value,key){
+                    if(numInserted<2 && value && typeof value ==="string"){
+                        etichetta+=value + ", ";
+                        numInserted++
+                    }
+                });
+                etichetta=etichetta.substring(0,etichetta.length-2);
+            }
+        }
+        catch(err){
+            etichetta = "";
+        }
+        return etichetta;
+    },
+
+    updateEtichetta:function(fieldSet,container,formValue){
+        var self=this;
+        var etichetta = self.getEtichetta(fieldSet,null,formValue);
+        if(etichetta)
+            etichetta = "- "+etichetta;
+        container.find(".GFERecordLabel").text(etichetta);
+    },
+
+    addRow: function (fieldSet, footer, id, justCreated, noVerifySelectWithTarget, value, newRow) {
+        if(typeof id === "string")
+            id=parseInt(id);
         var idParentPrefix = (this.idParent === null) ? '' : this.idParent+'-';
         var self = this;
         var fieldSetId = fieldSet.attr('id');
         var containerId = idParentPrefix+fieldSetId+id;
         var $container = fieldSet.data('rowModel').clone(true);
-        $container.find('.GFERecordId').text(id + 1);
+        //elimino il numero dal titolo del Record (se si vuole ripristinare modificare con la riga sotto)
+        $container.find('.GFERecordId').text("");
+        //$container.find('.GFERecordId').text(id + 1);
+        var etichetta = self.getEtichetta(fieldSet,id,value);
+        if(etichetta)
+            etichetta = "- "+etichetta;
+        $container.find('.GFERecordLabel').text(etichetta);
         $container.attr('id', containerId);
 
         footer.before($container);
 
         $('#'+containerId).data('justCreated', justCreated || false);
         $('#'+containerId).data('id', id);
+        var orId = newRow ? "new-" + self.originalId() : self.originalId();
+        $('#'+containerId).data('originalId', orId);
 
         this.addDeleteHandler(containerId);
 
         $('.GFEEmptyMessage:first', fieldSet).hide();
 
-        this.children.splice(id, 0, {});
+        this.children.push({"originalId":orId});
 
         $('#'+containerId+' input[name]:not( [type="button"], [type="submit"], [type="reset"] ), '+
           '#'+containerId+' select[name], '+
@@ -305,11 +432,11 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
                 self.createChild(id, element, addBtnId, containerId);
             }
         });
-        
+
         if (noVerifySelectWithTarget === undefined) {
             this.verifySelectWithTarget($container);
         }
-        
+
         return $container;
     },
 
@@ -317,7 +444,8 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
         var type = element.data('type') || 'standard';
         var obj = Glizy.oop.create("glizy.FormEdit."+type, element, this.glizyOpt, this.$form, addBtnId, containerId);
         var name = obj.getName();
-        this.children[rowId][name] = obj;
+        var child = this.children.length-1;
+        this.children[child][name] = obj;
     },
 
     makeSortable: function () {
@@ -327,6 +455,12 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
             items: '.GFERowContainer',
             handle: '.GFERowHandler',
             start: function (ev, ui) {
+                var isTinymce = $(ui.item[0]).find("textarea[data-type='tinymce']");
+                if(isTinymce.length){
+                    _.forEach(isTinymce,function(value){
+                        tinyMCE.execCommand('mceRemoveControl', false, value.id);
+                    })
+                }
                 from = ui.item.index()-2;
             },
             stop: function (ev, ui) {
@@ -340,10 +474,32 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
                 }
 
                 if (from !== to) {
-                    arraymove(self.children, from, to);
+                    arraymove(self.children, from-1, to-1);
+                }
+                var isTinymce = $(ui.item[0]).find("textarea[data-type='tinymce']");
+                if(isTinymce.length){
+                    _.forEach(isTinymce,function(value){
+                        tinyMCE.execCommand('mceAddControl', false, value.id);
+                    })
                 }
             }
         });
+    },
+
+    getChildValue: function (child) {
+        var row = child;
+        var obj = {};
+        for (var field in row) {
+            if(field!=="originalId"){
+                var fieldObj = row[field];
+                if (!fieldObj.isDisabled()) {
+                    var val = fieldObj.getValue();
+                    obj[field] = val;
+                }
+            }
+        }
+
+        return obj;
     },
 
     getValue: function () {
@@ -352,11 +508,13 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
             var row = this.children[i];
             var obj = {};
             for (var field in row) {
-                var fieldObj = row[field];
+                if(field!=="originalId"){
+                    var fieldObj = row[field];
 
-                if (!fieldObj.isDisabled()) {
-                    var val = fieldObj.getValue();
-                    obj[field] = val;
+                    if (!fieldObj.isDisabled()) {
+                        var val = fieldObj.getValue();
+                        obj[field] = val;
+                    }
                 }
             }
             data.push(obj);
@@ -366,22 +524,31 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
     },
 
     setValue: function (value) {
+        value = this.convertFromOldFormat(value);
+
         if (value && value.length > 0) {
             var $fieldSet = this.$element;
             var $footer = $fieldSet.children('.GFEFooter');
 
             for (var i in value) {
-                var $container = this.addRow($fieldSet, $footer, i, true, true);
+                var $container = this.addRow($fieldSet, $footer, i, true, true, value);
                 var row = value[i];
                 for (var field in row) {
-                    var v = row[field];
-                    var obj = this.children[i][field];
-                    
-                    if (obj) {
-                        obj.setValue(v);
+                    if(field!=="originalId"){
+                        var v = row[field];
+                        var obj = this.children[i][field];
+
+                        if (obj) {
+                            obj.setValue(v);
+                        }
                     }
                 }
+                var $inputFields = $('[name]', $container);
                 this.verifySelectWithTarget($container);
+
+                if (this.maxRec && i >= this.maxRec - 1) {
+                    $footer.find('.GFEAddRow').hide();
+                }
             }
         }
     },
@@ -397,17 +564,23 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
     isValid: function() {
         if (this.minRec == 0 || this.children.length >= this.minRec) {
             var isValid = true;
-
             for (var i in this.children) {
                 var row = this.children[i];
                 for (var field in row) {
-                    var fieldObj = row[field];
+                    if(field!=="originalId"){
+                        var fieldObj = row[field];
 
-                    if (!fieldObj.isValid()) {
-                        fieldObj.addClass('GFEValidationError');
-                        isValid = false;
-                    } else {
-                        fieldObj.removeClass('GFEValidationError');
+                        if (!fieldObj.isValid()) {
+                            fieldObj.addClass('GFEValidationError');
+                            fieldObj.getElement().parents('.GFERowContainer').addClass('GFEValidationError');
+                            isValid = false;
+                        } else {
+                            fieldObj.removeClass('GFEValidationError');
+                            if(isValid)
+                            {
+                              fieldObj.getElement().parents('.GFERowContainer').removeClass('GFEValidationError');
+                            }
+                        }
                     }
                 }
             }
@@ -415,5 +588,42 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
         } else {
             return false;
         }
+    },
+
+    /**
+     * Check anche convert the values if are stored with old format
+     * @param  object|array value
+     * @return array
+     */
+    convertFromOldFormat: function(value) {
+        return value;
+        if (value) {
+            var keys = Object.keys(value),
+                canConvert = true,
+                numItems;
+
+            keys.forEach(function (item) {
+                if (Object.prototype.toString.call(value[item]) === '[object Array]' ) {
+                    if (!numItems) {
+                        numItems = value[item].length;
+                    }
+                    canConvert = canConvert && numItems==value[item].length;
+                }
+            });
+
+            if (canConvert) {
+                var newValue = [];
+                for (var i=0; i<numItems; i++) {
+                    var tempItem = {};
+                    keys.forEach(function (item) {
+                        tempItem[item] = value[item][i];
+                    });
+                    newValue.push(tempItem);
+                }
+
+                value = newValue;
+            }
+        }
+        return value;
     }
 });

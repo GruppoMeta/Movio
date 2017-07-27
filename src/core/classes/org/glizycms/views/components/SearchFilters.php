@@ -25,6 +25,7 @@ class org_glizycms_views_components_SearchFilters extends org_glizy_components_S
 		$attributes['label'] = $node->getAttribute('label');
 		$attributes['data'] = '';
 		$attributes['noChild'] = 'true';
+		$attributes['xmlns:glz'] = "http://www.glizy.org/dtd/1.0/";
 
 		return org_glizy_helpers_Html::renderTag('glz:Checkbox', $attributes);
 	}

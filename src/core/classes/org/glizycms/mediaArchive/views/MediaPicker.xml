@@ -17,7 +17,7 @@
             <glz:Button id="btnNoImage" value="{i18n:MW_NO_MEDIA}" cssClass="btn js-glizycmsMediaPicker-noMedia" />
         </glz:Panel>
         <cms:VisualSearch id="filters" label="{i18n:Search}" removeGetValues="false" cssClass="row-fluid clearfix my-filters" model="org.glizycms.models.Media">
-            <cms:VisualSearchItem id="media_author" label="{i18n:Author}" type="facet" />
+            <cms:VisualSearchItem id="media_author" label="{i18n:Author}" type="facetSingle" />
             <cms:VisualSearchItem id="media_category" label="{i18n:Category}" type="facet" />
             <cms:VisualSearchItem id="media_description" label="{i18n:Description}" type="facet" />
             <cms:VisualSearchItem id="media_originalFileName" label="{i18n:File name}" />
@@ -109,7 +109,7 @@ $(function(){
     <ul class="thumbnails">
         <li class="span2" tal:repeat="item Component/records">
             <a class="thumbnail js-glizyMediaPicker-a" style="cursor:pointer;" tal:attributes="title php:__T('Select')">
-                <img class="js-glizyMediaPicker" tal:attributes="src item/thumb_filename; data-id item/media_id; data-filename item/media_fileName; title item/media_title; data-width item/media_w; data-height item/media_h; data-category item/media_category; data-author item/media_author; data-date item/media_date; data-copyright item/media_copyright; data-type item/media_type; data-jsonmedia item/__jsonMedia" />
+                <img class="js-glizyMediaPicker" tal:attributes="src item/thumb_filename; data-id item/media_id; data-jsonmedia item/__jsonMedia" />
             </a>
             <div class="title">
                 <div class="inner" tal:content="php: glz_strtrim(item.media_title, 20)"></div>

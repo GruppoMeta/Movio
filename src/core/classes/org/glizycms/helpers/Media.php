@@ -22,7 +22,7 @@ class org_glizycms_helpers_Media extends GlizyObject
 		$attributes['class'] = $cssClass;
 		$attributes['style'] = $style;
 		$attributes['onclick'] = $onclick;
-		$attributes['src'] = $direct ? $media->getFileName() : org_glizycms_Glizycms::getMediaArchiveBridge()->getImageById($id);
+		$attributes['src'] = $direct ? $media->getFileName() : org_glizycms_Glizycms::getMediaArchiveBridge()->imageByIdUrl($id);
 		;
 		return org_glizy_helpers_Html::renderTag('img', $attributes);
 	}
@@ -43,14 +43,14 @@ class org_glizycms_helpers_Media extends GlizyObject
 		$attributes['class'] = $cssClass;
 		$attributes['style'] = $style;
 		$attributes['onclick'] = $onclick;
-		$attributes['src'] = $direct ? $thumb['fileName'] : org_glizycms_Glizycms::getMediaArchiveBridge()->getImageByIdAndResize($id, $width, $height, $crop);
+		$attributes['src'] = $direct ? $thumb['fileName'] : org_glizycms_Glizycms::getMediaArchiveBridge()->imageByIdAndResizedUrl($id, $width, $height, $crop);
 		;
 		return org_glizy_helpers_Html::renderTag('img', $attributes);
 	}
 
 	public static function getImageUrlById($id, $width, $height, $crop=false, $cropOffset=1, $forceSize=false, $useThumbnail=false )
 	{
-		return org_glizycms_Glizycms::getMediaArchiveBridge()->getImageByIdAndResize($id, $width, $height, $crop, $cropOffset, $forceSize, $useThumbnail);
+		return org_glizycms_Glizycms::getMediaArchiveBridge()->imageByIdAndResizedUrl($id, $width, $height, $crop, $cropOffset, $forceSize, $useThumbnail);
 	}
 
 	public static function getResizedImageUrlById($id, $direct=false, $width, $height, $crop=false, $cropOffset=1, $forceSize=false )
@@ -72,7 +72,7 @@ class org_glizycms_helpers_Media extends GlizyObject
 			$media = &org_glizycms_mediaArchive_MediaManager::getMediaById($id);
 			return is_null($media) ? '' : $media->getFileName();
 		} else {
-			return org_glizycms_Glizycms::getMediaArchiveBridge()->getImageById($id);
+			return org_glizycms_Glizycms::getMediaArchiveBridge()->imageByIdUrl($id);
 		}
 	}
 
@@ -82,7 +82,7 @@ class org_glizycms_helpers_Media extends GlizyObject
 			$media = &org_glizycms_mediaArchive_MediaManager::getMediaById($id);
 			return is_null($media) ? '' : $media->getFileName(false);
 		} else {
-			return org_glizycms_Glizycms::getMediaArchiveBridge()->getMediaById($id);
+			return org_glizycms_Glizycms::getMediaArchiveBridge()->mediaByIdUrl($id);
 		}
 	}
 

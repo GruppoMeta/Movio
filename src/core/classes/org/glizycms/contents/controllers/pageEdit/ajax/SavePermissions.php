@@ -3,7 +3,8 @@ class org_glizycms_contents_controllers_pageEdit_ajax_SavePermissions extends or
 {
     public function execute($data)
     {
-// TODO: controllo acl
+        $this->checkPermissionForBackend();
+
         $data = json_decode($data);
 
         $aclBack = implode(',', $data->aclBack);

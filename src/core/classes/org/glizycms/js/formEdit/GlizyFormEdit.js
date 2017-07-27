@@ -2,6 +2,13 @@ jQuery( (function( $ ){
     var fieldTypes = {};
     var imageAllowExt = 'jpg|jpeg|png|gif|tiff|tif';
 
+    $(document).on('click', 'fieldset.collapsible > legend', function () {
+        var $divs = $(this).siblings();
+        $divs.toggle();
+        $(this).toggleClass('open');
+        $(this).parent().toggleClass('open');
+    });
+
     $.GlizyRegisterType = function (type, typeDef) {
 
         fieldTypes[type] = typeDef;
@@ -55,6 +62,7 @@ jQuery( (function( $ ){
 
             invalidFields = 0,
             customValidationInvalid = false,
+            backupData = '',
 
             cutText = function (text, len, reverse) {
 
@@ -137,7 +145,11 @@ jQuery( (function( $ ){
                             filter: function( fields ) {
                                 var newFields = [];
                                 $(fields).each(function(index, el){
-                                    if ($(el).parent().parent().css('display')!=='none') {
+                                    var $el = $(el);
+                                    if ($el.parent().parent().css('display')!=='none') {
+                                        if (!$el.data('validValField')) {
+                                            $form.trigger( "addField.vv", $el );
+                                        }
                                         newFields.push(el);
                                     }
                                 });
@@ -229,6 +241,12 @@ jQuery( (function( $ ){
                                         }
                                     }
                                 });
+
+                                if (states[index]=="1") {
+                                    $container.find("#"+elName).show().find("[name]").closest("div.control-group").show();
+                                } else {
+                                    $container.find("#"+elName).hide().find("[name]").closest("div.control-group").hide();
+                                }
                             });
 
                             var container = $(this).closest('.GFERowContainer');
@@ -401,17 +419,29 @@ jQuery( (function( $ ){
         });
 
         $form.find(':input[name]').each(function () {
-            var type = $(this).attr('data-type');
-            if ( glizyOpt.formData[this.name] !== undefined ) {
-                jQuery(this).val(glizyOpt.formData[this.name]);
+            var $el = $(this);
+            var type = $el.attr('data-type');
+            var value = glizyOpt.formData[this.name];
+            if (!type && value===null) {
+                value = '';
+            } else if (!type && typeof(value)==='object') {
+                value = JSON.stringify(value);
             }
-            jQuery(this).data('origValue', glizyOpt.formData[this.name] || '');
+            if ( value !== undefined ) {
+                if ($el.prop('type') == 'select-multiple' && typeof(value)==='string' && value != '') {
+                    value = JSON.parse(value);
+                }
+                $el.val(value);
+            } else {
+                // non c'è il valore salvato nei dati
+                // lo imposta con il valore del campo
+                value = $el.attr('type')=='checkbox' ? this.checked : $el.val();
+            }
+            jQuery(this).data('origValue', value || '');
             if ($(this).data('glz-inRepeater')!==true) {
                 overloadCaller.call(this, '__construct');
             }
         });
-
-
 
 
         $('#mediaFileServer').change(function(e) {
@@ -567,7 +597,11 @@ jQuery( (function( $ ){
             setFormButtonStates(true);
             if (data.evt) {
                 window.parent.Glizy.events.broadcast(data.evt, data.message);
-            } else if (data.url) {
+                if (!data.continue) {
+                    return;
+                }
+            }
+            if (data.url) {
                 if (data.target == 'window') {
                     parent.window.location.href = data.url;
                 } else {
@@ -582,7 +616,7 @@ jQuery( (function( $ ){
                 window[data.callback](data);
             } else if (data.errors) {
                 // TODO localizzare
-                var errorMsg = '<p>Impossibile salvare questo documento, a causa dei seguenti errori:</p><ul>';
+                var errorMsg = '<p>'+GlizyLocale.FormEdit.unableToSave+'</p><ul>';
                 $.each(data.errors, function(id, value) {
                     errorMsg += '<li><p class="alert alert-error">'+value+'</p></li>';
                 });
@@ -599,8 +633,43 @@ jQuery( (function( $ ){
                 Glizy.events.broadcast("glizycms.renameTitle");
             }
         }
+
+        var collectFormData = function() {
+            var data = {};
+            var titleChanged = false;
+
+            $form.find('fieldset[data-type=repeat]').each(function () {
+                var el = jQuery(this);
+                data[el.attr('id')] = {};
+            });
+            $form.find('[name]:not([type=button],[type=submit])').each(function () {
+                var el = jQuery(this);
+                var val = overloadCaller.call(this, 'getValue'), m;
+
+                if (val === undefined) {
+                    val = el.val();
+                }
+                titleChanged = titleChanged || (el.attr('name') == '__title' && val!=el.data('origValue'));
+
+                if (val !== undefined) {
+                    // name = this.name.replace(/[^\[]*\[([^\]]*)]\[\d\]$/, '$1'),
+                    // if (m = this.name.match(/^(.*)\[(\d+)\]$/)) {
+                    if (m = this.name.match(/^([^\[]*)\[([^\]]*)]\[(\d+)\]$/)) {
+                        if (!data[m[1]]) data[m[1]] = {};
+                        if (!data[m[1]][m[2]]) data[m[1]][m[2]] = [];
+                        data[m[1]][m[2]][parseInt(m[3])] = val;
+                    }
+                    else {
+                        data[this.name] = val;
+                    }
+                }
+            });
+            return {data: data, titleChanged: titleChanged}
+        }
+
         jQuery('.js-glizycms-cancel').click(function (e) {
             e.preventDefault();
+            window.onbeforeunload = null;
             setFormButtonStates(false);
             jQuery.ajax(glizyOpt.AJAXAction, {
                 data: jQuery.param({action: $(e.currentTarget).data("action")}),
@@ -651,50 +720,71 @@ jQuery( (function( $ ){
             setIndexFields();
             e.preventDefault();
 
-            var data = {};
-            var titleChanged = false;
-
             if ($form.triggerHandler('submitForm') === false && invalidFields || customValidationInvalid) {
                 customValidationInvalid = false;
                 return;
             }
+
+            var repeaterMinValuesError = null;
+            $form.find('fieldset[data-type=repeat]').each(function (i, el) {
+                var $fieldSet = $(el);
+                var minRecords = $fieldSet.attr('data-repeatmin') || 0;
+                $rows = $fieldSet.children('.GFERowContainer')
+                if ($rows.length < minRecords) {
+                    repeaterMinValuesError = $fieldSet.find('legend').html()+': '+lang.minRecordMsg + minRecords;
+                    return false;
+                }
+            });
+            if (repeaterMinValuesError) {
+                Glizy.events.broadcast("glizy.message.showError", {"title": repeaterMinValuesError, "message": ""});
+                return;
+            }
+
             setFormButtonStates(false);
-            $form.find('fieldset[data-type=repeat]').each(function () {
-                var el = jQuery(this);
-                data[el.attr('id')] = {};
-            });
-            $form.find('[name]:not([type=button],[type=submit])').each(function () {
-                var el = jQuery(this);
-                var val = overloadCaller.call(this, 'getValue'), m;
+            var formData = collectFormData();
+            var data = formData.data;
+            var titleChanged = formData.titleChanged;
+            backupData = JSON.stringify(formData.data);
 
-                if (val === undefined) {
-                    val = el.val();
-                }
-                titleChanged = titleChanged || (el.attr('name') == '__title' && val!=el.data('origValue'));
-
-                if (val !== undefined) {
-                    // name = this.name.replace(/[^\[]*\[([^\]]*)]\[\d\]$/, '$1'),
-                    // if (m = this.name.match(/^(.*)\[(\d+)\]$/)) {
-                    if (m = this.name.match(/^([^\[]*)\[([^\]]*)]\[(\d+)\]$/)) {
-                        if (!data[m[1]]) data[m[1]] = {};
-                        if (!data[m[1]][m[2]]) data[m[1]][m[2]] = [];
-                        data[m[1]][m[2]][parseInt(m[3])] = val;
+            if (glizyOpt.AJAXAction.indexOf('js:')===0) {
+                window[glizyOpt.AJAXAction.substr(3)](data);
+            } else {
+                var triggerAction = $(e.currentTarget).data("trigger");
+                jQuery.ajax(glizyOpt.AJAXAction, {
+                    data: jQuery.param({action: $(e.currentTarget).data("action"), data: JSON.stringify(data)}),
+                    type: "POST",
+                    success: function(data){
+                        saveOrCancelSuccess(data, triggerAction, titleChanged);
                     }
-                    else {
-                        data[this.name] = val;
-                    }
-                }
-            });
-
-            var triggerAction = $(e.currentTarget).data("trigger");
-            jQuery.ajax(glizyOpt.AJAXAction, {
-                data: jQuery.param({action: $(e.currentTarget).data("action"), data: JSON.stringify(data)}),
-                type: "POST",
-                success: function(data){
-                    saveOrCancelSuccess(data, triggerAction, titleChanged);
-                }
-            });
+                });
+            }
         });
+
+
+        if (jQuery('.js-glizycms-save').length || jQuery('.js-glizycms-savecomment').length) {
+            // memorizza i dati iniziali per il confronto del backup
+            var formData = collectFormData();
+            backupData = formData.data;
+            for (var k in backupData) {
+                if (typeof(backupData[k])=='string' && !backupData[k]) {
+                    backupData[k] = glizyOpt.formData[k] ? glizyOpt.formData[k] : '';
+                }
+            }
+            backupData = JSON.stringify(backupData);
+            window.onbeforeunload = function exitWarning(e) {
+                var formData = collectFormData();
+                if (backupData!=JSON.stringify(formData.data)) {
+                    var msg = GlizyLocale.FormEdit.interruptProcess;
+                    e = e || window.event;
+                    // For IE and Firefox prior to version 4
+                    if (e) {
+                      e.returnValue = msg;
+                    }
+                    // For Safari
+                    return msg;
+                }
+            };
+        }
 
         Glizy.events.broadcast("glizycms.formEdit.onReady");
         return this;

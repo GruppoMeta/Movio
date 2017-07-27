@@ -2,7 +2,7 @@
 <model:Model
     xmlns:glz="http://www.glizy.org/dtd/1.0/"
     xmlns:model="http://www.glizy.org/dtd/1.0/model/"
-    model:tableName="logs_tbl" model:usePrefix="true">
+    model:tableName="logs_tbl" model:usePrefix="true" model:siteField="log_FK_site_id">
 
     <model:Query name="report" type="function">
     <![CDATA[

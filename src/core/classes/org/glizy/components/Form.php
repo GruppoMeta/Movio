@@ -32,7 +32,9 @@ class org_glizy_components_Form extends org_glizy_components_ComponentContainer
 		$this->defineAttribute('enctype', 	false, '', 		COMPONENT_TYPE_STRING);
 		$this->defineAttribute('removeGetValues', false, true, 		COMPONENT_TYPE_STRING );
 		$this->defineAttribute('readOnly',			false, 	false,	COMPONENT_TYPE_BOOLEAN);
+		$this->defineAttribute('routeUrl',	false, 	'',		COMPONENT_TYPE_STRING);
 		$this->defineAttribute('dataProvider',	false, 	NULL,	COMPONENT_TYPE_OBJECT);
+        $this->defineAttribute('autocomplete',  false, 	'', COMPONENT_TYPE_STRING);
 
 		// call the superclass for validate the attributes
 		parent::init();
@@ -118,12 +120,14 @@ class org_glizy_components_Form extends org_glizy_components_ComponentContainer
 		$attributes 				= array();
 		$attributes['id'] 			= $this->getId();
 
-		if ( !is_null($this->getAttribute('action')) )
-		{
-			$attributes['action'] = $this->getAttribute('action');
-		}
-		else
-		{
+		$action = $this->getAttribute('action');
+		$routeUrl = $this->getAttribute('routeUrl');
+
+		if (!is_null($action)) {
+			$attributes['action'] = $action;
+		} else if ($routeUrl) {
+			$attributes['action'] = __Link::makeUrl($routeUrl);
+		} else {
 			$removeValues = $this->getAttribute('removeGetValues');
 			if ( $removeValues === true || $removeValues == 'true' )
 			{
@@ -138,6 +142,9 @@ class org_glizy_components_Form extends org_glizy_components_ComponentContainer
 		$attributes['onsubmit'] 	= $this->getAttribute('onsubmit');
 		$attributes['class'] 		= $this->getAttribute('cssClass');
 		$attributes['enctype'] 		= $this->getAttribute('enctype');
+        if ($this->getAttribute('autocomplete')) {
+            $attributes['autocomplete'] = $this->getAttribute('autocomplete');
+        }
 
 		$output  = '<form '.$this->_renderAttributes($attributes).'>';
 		if ($this->getAttribute('fieldset')) $output .= '<fieldset>';

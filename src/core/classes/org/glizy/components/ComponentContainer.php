@@ -25,17 +25,19 @@ class org_glizy_components_ComponentContainer extends org_glizy_components_Compo
 
 	function addOutputCode($output, $editableRegion='', $atEnd=false)
 	{
-		if ($this->acceptOutput)
-		{
-			if ($this->overrideEditableRegion)
+		if ($output) {
+			if ($this->acceptOutput)
 			{
-				$editableRegion = $this->getAttribute('editableRegion');
+				if ($this->overrideEditableRegion)
+				{
+					$editableRegion = $this->getAttribute('editableRegion');
+				}
+				$this->_output[] = array('editableRegion' => empty($editableRegion) ? $this->getEditableRegion() : $editableRegion, 'code' => $output, 'atEnd' => $atEnd);
 			}
-			$this->_output[] = array('editableRegion' => empty($editableRegion) ? $this->getEditableRegion() : $editableRegion, 'code' => $output, 'atEnd' => $atEnd);
-		}
-		else
-		{
-			$this->addParentOutputCode($output, $editableRegion, $atEnd);
+			else
+			{
+				$this->addParentOutputCode($output, $editableRegion, $atEnd);
+			}
 		}
 	}
 

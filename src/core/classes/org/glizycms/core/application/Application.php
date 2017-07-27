@@ -30,6 +30,12 @@ class org_glizycms_core_application_Application extends org_glizy_mvc_core_Appli
         $this->readSiteProperties();
     }
 
+    function _init()
+    {
+        org_glizy_ObjectValues::set('org.glizy', 'siteId', __Config::get('glizy.multisite.id'));
+        parent::_init();
+    }
+
     function _initLanguage()
     {
         $this->log( "initLanguage", GLZ_LOG_SYSTEM );
@@ -42,12 +48,10 @@ class org_glizycms_core_application_Application extends org_glizy_mvc_core_Appli
             // try to read the browser language
             $this->log( "Read browser language", GLZ_LOG_SYSTEM );
             $ar = org_glizy_ObjectFactory::createModel('org.glizycms.core.models.Language');
-            if (!$ar->find(array('language_code' => $lang, 'language_FK_site_id' => __Config::get( 'SITE_ID' )))) {
+            if (!$ar->find(array('language_code' => $lang))) {
                 $this->log( "Read defaul language", GLZ_LOG_SYSTEM );
                 $ar->emptyRecord();
-                $ar->find(array('language_isDefault' => 1,
-                                'language_FK_site_id' => __Config::get( 'SITE_ID' )
-                                ));
+                $ar->find(array('language_isDefault' => 1));
             }
 
             $this->_language = $ar->language_code;
@@ -68,7 +72,7 @@ class org_glizycms_core_application_Application extends org_glizy_mvc_core_Appli
         }
     }
 
-    function _initSiteMap($forceReload=false)
+    function createSiteMap($forceReload=false)
     {
         $this->log( "initSiteMap", GLZ_LOG_SYSTEM );
         $this->siteMap = &org_glizy_ObjectFactory::createObject('org.glizycms.core.application.SiteMapDB');
@@ -228,31 +232,27 @@ class org_glizycms_core_application_Application extends org_glizy_mvc_core_Appli
         return $this->_templateName;
     }
 
+
     private function setTemplateFolder()
     {
-        // read the template name
-        $this->_templateName = org_glizy_Registry::get( __Config::get( 'REGISTRY_TEMPLATE_NAME' ), '');
-        if (org_glizy_Request::get('template', '') != '')
-        {
-            $this->_templateName = org_glizy_Request::get('template', '');
+        $this->_templateName = __Config::get('glizycms.template.default');
+        if (__Config::get('glizycms.contents.templateEnabled')) {
+            $this->_templateName = org_glizy_Registry::get( __Config::get( 'REGISTRY_TEMPLATE_NAME' ), $this->_templateName);
         }
 
-        $browser = strpos($_SERVER['HTTP_USER_AGENT'],"iPhone") || strpos($_SERVER['HTTP_USER_AGENT'],"Android");
-        if ($browser == true)
-        {
-            if ( file_exists( org_glizy_Paths::get('APPLICATION_STATIC').'templates/'.$this->_templateName.'-mobile' ) )
-            {
-                $this->_templateName .= '-iPhone';
-            }
-            else if ( file_exists( org_glizy_Paths::get('APPLICATION_STATIC').'templates/mobile' ) )
-            {
-                $this->_templateName = 'iPhone';
+        if (__Config::get('glizycms.mobile.template.enabled')) {
+            $browser = strpos($_SERVER['HTTP_USER_AGENT'],"iPhone") || strpos($_SERVER['HTTP_USER_AGENT'],"Android");
+            if ($browser === true) {
+                if ( file_exists( org_glizy_Paths::get('APPLICATION_STATIC').'templates/'.$this->_templateName.'-mobile' ) ) {
+                    $this->_templateName .= '-iPhone';
+                }
+                else if ( file_exists( org_glizy_Paths::get('APPLICATION_STATIC').'templates/mobile' ) )
+                {
+                    $this->_templateName = 'iPhone';
+                }
             }
         }
-        if (empty($this->_templateName))
-        {
-            $this->_templateName = __Config::get('glizycms.template.default');
-        }
+
         org_glizy_Paths::set('APPLICATION_TEMPLATE', org_glizy_Paths::get('APPLICATION_STATIC').'templates/'.$this->_templateName.'/');
         org_glizy_Paths::set('APPLICATION_TEMPLATE_DEFAULT', org_glizy_Paths::get('APPLICATION_STATIC').'templates/Default/');
     }

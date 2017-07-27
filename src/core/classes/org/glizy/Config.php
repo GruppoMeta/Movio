@@ -51,21 +51,33 @@ class org_glizy_Config
 		$value = isset($configArray[$code]) ? $configArray[$code] : NULL;
 		if( strpos($value, "{{") !== false )
         {
-            if ( strstr($value, "{{env:") !== false )
-            {
-                return getenv(substr($value, 6, -2));
-            }
+            preg_match_all( "/\{\{env:([^\{]*)\}\}/U", $value, $resmatch );
+			if (count($resmatch)) {
+				foreach( $resmatch[1] as $varname)
+				{
+					list($envName, $envDefaultValue) = explode(',', $varname);
+					$envValue = getenv($envName);
+					if (($enValue===false || is_null($enValue)) && $envDefaultValue) {
+						$envValue = $envDefaultValue;
+					}
+					$value = str_replace('{{env:'.$varname.'}}', $envValue, $value);
+				}
+			}
 
       		preg_match_all( "/\{\{path:([^\{]*)\}\}/U", $value, $resmatch );
-            foreach( $resmatch[1] as $varname)
-            {
-            	$value = str_replace('{{path:'.$varname.'}}', org_glizy_Paths::get( $varname ), $value);
+			if (count($resmatch)) {
+				foreach( $resmatch[1] as $varname)
+				{
+					$value = str_replace('{{path:'.$varname.'}}', org_glizy_Paths::get( $varname ), $value);
+				}
             }
 
             preg_match_all( "/\{\{([^\{]*)\}\}/U", $value, $resmatch );
-            foreach( $resmatch[1] as $varname)
-            {
-            	$value = str_replace('{{'.$varname.'}}', org_glizy_Config::get( $varname ), $value);
+			if (count($resmatch)) {
+				foreach( $resmatch[1] as $varname)
+				{
+					$value = str_replace('{{'.$varname.'}}', org_glizy_Config::get( $varname ), $value);
+				}
             }
         }
 
@@ -95,6 +107,16 @@ class org_glizy_Config
 		// 	org_glizy_Request::removeAll();
 		// }
 	}
+
+    /**
+     * @param  string $code
+     * @return boolean
+     */
+    public function exists($code)
+    {
+        $configArray = &org_glizy_Config::_getConfigArray();
+        return isset($configArray[$code]);
+    }
 
     public static function dump()
 	{
@@ -140,6 +162,7 @@ class org_glizy_Config
 		$configArray['SESSION_TIMEOUT'] 	= 1800;
 		$configArray['DEFAULT_LANGUAGE'] 	= 'en';
 		$configArray['DEFAULT_LANGUAGE_ID'] = '1';
+		$configArray['glizy.languages.available'] = '{{DEFAULT_LANGUAGE}}';
 		$configArray['CHARSET'] 			= 'utf-8';
 		$configArray['DB_LAYER'] 			= 'pdo';
 		$configArray['DB_TYPE'] 			= 'mysql';
@@ -155,6 +178,7 @@ class org_glizy_Config
 		$configArray['SMTP_PORT'] 			= 25;
 		$configArray['SMTP_USER'] 			= '';
 		$configArray['SMTP_PSW'] 			= '';
+		$configArray['SMTP_SECURE'] 		= '';
 		$configArray['SMTP_SENDER'] 		= '';
 		$configArray['SMTP_EMAIL'] 			= '';
 		$configArray['START_PAGE'] 			= 'HOME';
@@ -196,7 +220,7 @@ class org_glizy_Config
 		$configArray['FORM_ITEM_TEMPLATE']	= '<div class="formItem">##FORM_LABEL####FORM_ITEM##<br /></div>';
 		$configArray['FORM_ITEM_RIGHT_LABEL_TEMPLATE']	= '<div class="formItemRigthLabel">##FORM_LABEL####FORM_ITEM##<br /></div>';
 		$configArray['FORM_ITEM_HIDEN_TEMPLATE'] = '<div class="formItemHidden">##FORM_ITEM##</div>';
-		$configArray['SITE_ID']				= NULL;
+		$configArray['SITE_ID']				= '{{glizy.multisite.id}}';
 		$configArray['ALLOW_MODE_OVERRIDE']	= false;
 		$configArray['USER_DEFAULT_ACTIVE_STATE'] = 0;
 		$configArray['USER_DEFAULT_USERGROUP'] = 4;
@@ -220,7 +244,13 @@ class org_glizy_Config
 		$configArray['TINY_MCE_BUTTONS1'] 	= 'bold,italic,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,outdent,indent,blockquote';
 		$configArray['TINY_MCE_BUTTONS2'] 	= 'formatselect,|,undo,redo,pastetext,pasteword,removeformat,|,link,unlink,anchor,image,hr,charmap,|,code,fullscreen';
 		$configArray['TINY_MCE_BUTTONS3'] 	= '';
+        $configArray['TINY_MCE_STYLES']     = '[]';
+        $configArray['TINY_MCE_IMG_STYLES']     = '';
+        $configArray['TINY_MCE_IMG_SIZES']  = '';
+		$configArray['TINY_MCE_TEMPLATES'] 	= '';
 		$configArray['TINY_MCE_INTERNAL_LINK'] 	= true;
+		$configArray['TINY_MCE_ALLOW_LINK_TARGET'] 	= false;
+		$configArray['COLORBOX_SLIDESHOWAUTO'] 	= true;
 		$configArray['BASE_REGISTRY_PATH'] 			= 'org/glizy';
 		$configArray['REGISTRY_TEMPLATE_NAME'] 		= '{{BASE_REGISTRY_PATH}}/templateName';
 		$configArray['REGISTRY_TEMPLATE_VALUES'] 	= '{{BASE_REGISTRY_PATH}}/templateValues/';
@@ -245,9 +275,10 @@ class org_glizy_Config
 		$configArray['glizy.dataAccess.schemaManager.cacheLife'] 		= 36000;
 		$configArray['glizy.dataAccess.serializationMode'] 				= 'json';
 		$configArray['glizy.dataAccess.document.enableComment'] 		= false;
-		$configArray['glizy.dataAccess.validate'] = true;
 		$configArray['glizy.session.store'] 		= '';
-
+		$configArray['glizy.dataAccess.validate'] = true;
+        $configArray['glizy.multisite.sitename'] = '';
+		$configArray['glizy.multisite.id'] = 0;
 
         if (!$serverName) {
             $configFileName = org_glizy_Paths::get('APPLICATION').'config/config.xml';
@@ -296,6 +327,10 @@ class org_glizy_Config
 		if ( $configArray['ALLOW_MODE_OVERRIDE'] && isset( $_GET['mode'] ) )
 		{
 			org_glizy_Config::setMode( $_GET['mode'] );
+		}
+
+		if (isset($configArray['glizy.config.mode'])) {
+			org_glizy_Config::setMode($configArray['glizy.config.mode']);
 		}
 
 		define( 'GLZ_CHARSET', __Config::get( 'CHARSET' ) );

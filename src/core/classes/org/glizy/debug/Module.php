@@ -14,7 +14,7 @@ class org_glizy_debug_Module extends GlizyObject
 
     static function registerModule()
     {
-        if (__Config::get('DEBUG')) {
+        if (isset($_SERVER["SERVER_NAME"]) && __Config::get('DEBUG')) {
             include_once('Helpers.php');
             self::$debugBar = org_glizy_ObjectFactory::createObject('org.glizy.debug.GlizyDebugBar');
             org_glizy_ObjectFactory::createObject('org.glizy.debug.Whoops');

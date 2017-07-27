@@ -13,7 +13,7 @@
 class org_glizy_compilers_Routing extends org_glizy_compilers_Compiler
 {
 	private $language;
-	private $prog;
+	private $prog = 0;
 
     /**
      *
@@ -75,7 +75,6 @@ class org_glizy_compilers_Routing extends org_glizy_compilers_Compiler
 	private function compileXml($xml, $prefix='', $middleware='')
 	{
 		if ($xml->hasChildNodes()) {
-			$this->prog = 0;
 
 			foreach ($xml->childNodes as $node) {
 				if ( $node->nodeName == "glz:Routing" ) {
@@ -205,15 +204,25 @@ class org_glizy_compilers_Routing extends org_glizy_compilers_Compiler
 										$page = $siteMap->getMenuByPageType( $module->pageType );
 									}
 								}
-							}
 
-							if ( $isApplicationDB )
-							{
-								$urlPartValue =  strtolower('('.$page->id.'\/[^\/]*?)');
 							}
-							else
-							{
-								$urlPartValue =  strtolower('('.str_replace('/', '\/', $page->id).')');
+							if ( is_null( $page ) ) {
+								$urlPartValue = 'not:available:'.$command[1];
+							} else {
+
+								if ( $isApplicationDB )
+								{
+									if ($page->url) {
+										$urlPartValue =  strtolower('('.$page->url.'[^\/]*?)');
+										$staticValues[ 'pageId' ] = $page->id;
+									} else {
+										$urlPartValue =  strtolower('('.$page->id.'\/[^\/]*?)');
+									}
+								}
+								else
+								{
+									$urlPartValue =  strtolower('('.str_replace('/', '\/', $page->id).')');
+								}
 							}
 						}
 						else
@@ -226,7 +235,7 @@ class org_glizy_compilers_Routing extends org_glizy_compilers_Compiler
 						$urlPartValue = '([^\/]*)';
 						break;
 					case 'value':
-						$urlPartValue = '([^\/]*)';
+						$urlPartValue = '([^\/?]*)';
 						break;
 					case 'integer':
 						$urlPartValue = '(\d*)';

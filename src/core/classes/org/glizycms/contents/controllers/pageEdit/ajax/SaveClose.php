@@ -3,6 +3,8 @@ class org_glizycms_contents_controllers_pageEdit_ajax_SaveClose extends org_gliz
 {
     public function execute($data)
     {
+        $this->checkPermissionForBackend();
+
         $r = parent::execute($data);
 
         if ($r===true) {

@@ -18,10 +18,14 @@ class org_glizycms_contents_models_proxy_ContentProxy extends GlizyObject
      * @param  int  $languageId Language id
      * @return org_glizycms_contents_models_ContentVO   Content
      */
-    public function readContentFromMenu($menuId, $languageId, $setMenuTitle=true)
+    public function readContentFromMenu($menuId, $languageId, $setMenuTitle=true, $status='PUBLISHED')
     {
-        $menuDocument = $this->readRawContentFromMenu($menuId, $languageId);
+        $menuDocument = $this->readRawContentFromMenu($menuId, $languageId, $status);
         $contentVO = $menuDocument ? $menuDocument->getContentVO() : $this->getContentVO();
+
+        if ($menuDocument && $contentVO->__status!=$status) {
+            $contentVO = $this->getContentVO();
+        }
 
         // il contenuto può non esserci
         // viene caricato il titolo e l'id dal menù
@@ -39,6 +43,23 @@ class org_glizycms_contents_models_proxy_ContentProxy extends GlizyObject
         return $contentVO;
     }
 
+    public function availableContentFromMenu($menuId, $languageId)
+    {
+        $menuDocument = $this->readRawContentFromMenu($menuId, $languageId, org_glizy_dataAccessDoctrine_ActiveRecordDocument::STATUS_PUBLISHED_DRAFT);
+
+        $hasPublishedVersion = $menuDocument->hasPublishedVersion();
+        $hasDraftVersion = $menuDocument->hasDraftVersion();
+
+        if (is_null($hasPublishedVersion) && is_null($hasDraftVersion)) {
+            $hasPublishedVersion = true;
+        }
+
+        return array(
+                        'PUBLISHED' => $hasPublishedVersion,
+                        'DRAFT' => $hasDraftVersion
+                    );
+    }
+
 
     /**
      * Read the content for a menu
@@ -51,30 +72,41 @@ class org_glizycms_contents_models_proxy_ContentProxy extends GlizyObject
      * @param  int  $languageId Language id
      * @return org_glizycms_contents_models_Content   Content
      */
-    public function readRawContentFromMenu($menuId, $languageId)
+    public function readRawContentFromMenu($menuId, $languageId, $status)
     {
         $it = org_glizy_objectFactory::createModelIterator('org.glizycms.core.models.Content');
-        $it->setOptions(array('type' => 'PUBLISHED_DRAFT'));
+        $options = array('type' => $status);
+        if ($status==org_glizy_dataAccessDoctrine_ActiveRecordDocument::STATUS_PUBLISHED_DRAFT) {
+            $options['language'] = $languageId;
+        } else {
+            $it->whereLanguageIs($languageId);
+        }
+        $it->setOptions($options);
         $menuDocument = $it->where('id', $menuId)->first();
         if (!$menuDocument) {
-            $languageProxy = __ObjectFactory::createObject('org.glizycms.languages.models.proxy.LanguagesProxy');
-            $it = org_glizy_objectFactory::createModelIterator('org.glizycms.core.models.Content')
-                ->setOptions(array('type' => 'PUBLISHED_DRAFT'))
-                ->whereLanguageIs($languageProxy->getDefaultLanguageId())
-                ->where('id', $menuId);
-            $menuDocument = $it->first(true);
+            $it = org_glizy_objectFactory::createModelIterator('org.glizycms.core.models.Content');
+            $it->setOptions(array('type' => $status=='PUBLISHED' ? 'DRAFT' : 'PUBLISHED'));
+            $it->whereLanguageIs($languageId);
+            $menuDocument = $it->where('id', $menuId)->first();
         }
-
+        if (!$menuDocument) {
+            $menuDocument = org_glizy_objectFactory::createModel('org.glizycms.core.models.Content');
+        }
         return $menuDocument;
     }
+
 
     /**
      * Save the content for a menu
      * @param  org_glizycms_contents_models_ContentVO $data       Content to save
      * @param  int  $languageId Language id
-     * @param  boolean  $publish    Publish or save
+     * @param  boolean  $saveHistory    Publish or save
+     * @param  boolean  $setMenuTitle
+     * @param  boolean  $updateModificationDate
+     * @param  boolean  $draft
+     * @param  boolean  $publishDraft
      */
-    public function saveContent(org_glizycms_contents_models_ContentVO $data, $languageId, $publish=true, $setMenuTitle=true)
+    public function saveContent(org_glizycms_contents_models_ContentVO $data, $languageId, $saveHistory=true, $setMenuTitle=true, $updateModificationDate=true, $draft=false, $publishDraft=false)
     {
         $speakingUrlProxy = __Config::get('glizycms.speakingUrl') ? org_glizy_ObjectFactory::createObject('org.glizycms.speakingUrl.models.proxy.SpeakingUrlProxy') : null;
 
@@ -83,7 +115,7 @@ class org_glizycms_contents_models_proxy_ContentProxy extends GlizyObject
         if ($menuId) {
             $invalidateSitemapCache = false;
 
-            $menuDocument = $this->readRawContentFromMenu($menuId, $languageId);
+            $menuDocument = $this->readRawContentFromMenu($menuId, $languageId, $draft ? 'DRAFT' : 'PUBLISHED');
             $originalUrl = $menuDocument->url;
             $menuDocument->setDataFromContentVO($data);
 
@@ -94,11 +126,23 @@ class org_glizycms_contents_models_proxy_ContentProxy extends GlizyObject
                 }
             }
 
-            // salva i dati
-            if ($publish) {
-                $menuDocument->publish(null, $data->getComment());
-            } else {
-                $menuDocument->save(null, false, 'PUBLISHED', $data->getComment());
+            try {
+                if (($saveHistory && !$draft) || $publishDraft===true) {
+                    $id = $menuDocument->publish(null, $data->getComment());
+                    if (!$saveHistory) {
+                        // delete all OLD
+                        $menuDocument->deleteStatus('OLD');
+                    }
+                } else if ($saveHistory && $draft) {
+                    $id = $menuDocument->saveHistory(null, false, $data->getComment());
+                } else if (!$saveHistory && !$draft) {
+                    $id = $menuDocument->save(null, false, 'PUBLISHED', $data->getComment());
+                } else if (!$saveHistory && $draft) {
+                    $id = $menuDocument->save(null, false, 'DRAFT', $data->getComment());
+                }
+            }
+            catch (org_glizy_validators_ValidationException $e) {
+                return $e->getErrors();
             }
 
             if ($speakingUrlProxy && $originalUrl!=$menuDocument->url) {
@@ -114,7 +158,9 @@ class org_glizycms_contents_models_proxy_ContentProxy extends GlizyObject
 
             // aggiorna il titolo della pagina
             $menuProxy = org_glizy_ObjectFactory::createObject('org.glizycms.contents.models.proxy.MenuProxy');
-            $menuProxy->touch($menuId, $languageId);
+            if ($updateModificationDate) {
+                $menuProxy->touch($menuId, $languageId);
+            }
             $menu = $menuProxy->getMenuFromId($menuId, $languageId);
             if ($setMenuTitle && $menu->menudetail_title != $menuDocument->title) {
                 $menuProxy->rename($menuId, $languageId, $menuDocument->title);
@@ -149,6 +195,11 @@ class org_glizycms_contents_models_proxy_ContentProxy extends GlizyObject
 
         if ($menuDocument) {
             $menuDocument->delete();
+        }
+
+        if (__Config::get('glizycms.speakingUrl')) {
+            $speakingUrlProxy = org_glizy_ObjectFactory::createObject('org.glizycms.speakingUrl.models.proxy.SpeakingUrlProxy');
+            $speakingUrlProxy->deleteUrl(org_glizy_ObjectValues::get('org.glizy', 'editingLanguageId'), $menuId, 'org.glizycms.core.models.Content');
         }
     }
 }

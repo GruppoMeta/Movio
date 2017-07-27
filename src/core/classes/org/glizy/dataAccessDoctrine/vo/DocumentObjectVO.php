@@ -5,7 +5,7 @@ class org_glizy_dataAccessDoctrine_vo_DocumentObjectVO extends GlizyObject
     const DOCUMENT_DETAIL_OBJECT = 'document_detail_object';
     const DOCUMENT_DETAIL_STATUS = 'document_detail_status';
 
-    protected $data;
+    protected $data = array();
     protected $hasPublishedVersion;
     protected $hasDraftVersion;
 
@@ -33,7 +33,7 @@ class org_glizy_dataAccessDoctrine_vo_DocumentObjectVO extends GlizyObject
         }
 
         foreach ($data as $k => $v) {
-            if (is_array($v)) {
+            if (!is_null($index) && is_array($v)) {
                 $this->data[$k] = $v[$index];
             } else {
                 $this->data[$k] = $v;

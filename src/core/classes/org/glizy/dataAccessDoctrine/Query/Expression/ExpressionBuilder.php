@@ -6,7 +6,7 @@ use \Doctrine\DBAL\Connection,
 class org_glizy_dataAccessDoctrine_Query_Expression_ExpressionBuilder extends \Doctrine\DBAL\Query\Expression\ExpressionBuilder
 {
     protected $conn = null;
-    
+
     /**
      * Initializes a new <tt>ExpressionBuilder</tt>.
      *
@@ -17,7 +17,7 @@ class org_glizy_dataAccessDoctrine_Query_Expression_ExpressionBuilder extends \D
         parent::__construct($connection);
         $this->conn =  $connection;
     }
-    
+
     /**
      * Creates a comparison expression.
      *
@@ -31,7 +31,7 @@ class org_glizy_dataAccessDoctrine_Query_Expression_ExpressionBuilder extends \D
         if (strtoupper($operator) == 'LIKE') {
             return $this->like($x, $y, $cast);
         }
-        
+
         return $this->conn->quoteIdentifier($x) . ' ' . $operator . ' ' . $this->conn->quoteIdentifier($y);
     }
 
@@ -58,7 +58,7 @@ class org_glizy_dataAccessDoctrine_Query_Expression_ExpressionBuilder extends \D
     {
         return $this->conn->quoteIdentifier($x) . ' IS NOT NULL';
     }
-    
+
     /**
      * Creates a LIKE() comparison expression with the given arguments.
      *
@@ -75,5 +75,10 @@ class org_glizy_dataAccessDoctrine_Query_Expression_ExpressionBuilder extends \D
         else {
             return $this->conn->quoteIdentifier($x) . ' LIKE ' . $this->conn->quoteIdentifier($y);
         }
+    }
+
+    public function sql($x)
+    {
+        return new org_glizy_dataAccessDoctrine_Query_Expression_SqlExpression($x);
     }
 }

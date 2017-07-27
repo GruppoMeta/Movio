@@ -3,6 +3,7 @@ class org_glizycms_contents_controllers_moduleEdit_Delete extends org_glizy_mvc_
 {
     public function execute($id, $model)
     {
+        $this->checkPermissionForBackend();
 // TODO controllo ACL
         if ($id) {
             $contentproxy = org_glizy_objectFactory::createObject('org.glizycms.contents.models.proxy.ModuleContentProxy');

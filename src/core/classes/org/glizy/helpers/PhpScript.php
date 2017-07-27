@@ -12,7 +12,7 @@ class org_glizy_helpers_PhpScript
 	static function parse($phpcode)
 	{
 		$phpcode = preg_replace("/\{php\:(.*)\}/i", "$1", $phpcode);
-		$phpcode = str_replace('.',				'->',	$phpcode);
+		$phpcode = preg_replace('/(\$\w+)[.]/', '$1->',	$phpcode);
 		$phpcode = str_replace('->->',			'.',	$phpcode);
 		$phpcode = preg_replace('/\bnot\b/i', 	' !',	$phpcode);
 		$phpcode = preg_replace('/\bne\b/i', 	' != ',	$phpcode);

@@ -1,16 +1,20 @@
 <?php
 class org_glizycms_speakingUrl_PageResolver extends org_glizycms_speakingUrl_AbstractUrlResolver implements org_glizycms_speakingUrl_IUrlResolver
 {
+    private $multilanguage;
+
     public function __construct()
     {
         parent::__construct();
         $this->type = 'org.glizycms.core.models.Content';
         $this->protocol = 'internal:';
+        $this->multilanguage = __Config::get('MULTILANGUAGE_ENABLED');
     }
 
     public function compileRouting($ar)
     {
-        return '<glz:Route skipLanguage="true" value="'.$ar->language_code.'/'.$ar->speakingurl_value.'" pageId="'.$ar->speakingurl_FK.'" language="'.$ar->language_code.'"/>';
+        $language = $this->multilanguage ? $ar->language_code.'/' : '';
+        return '<glz:Route skipLanguage="true" value="'.$language.$ar->speakingurl_value.'" pageId="'.$ar->speakingurl_FK.'" language="'.$ar->language_code.'"/>';
     }
 
 
@@ -31,7 +35,7 @@ class org_glizycms_speakingUrl_PageResolver extends org_glizycms_speakingUrl_Abs
                 $id = $this->getIdFromLink($id);
             }
 
-            $it->load('autocompletePagePicker', array('search' => '', 'languageId' => $languageId, 'menuId' => $id));
+            $it->load('autocompletePagePicker', array('search' => '', 'languageId' => $languageId, 'menuId' => $id, 'pageType' => ''));
         }  else  {
             return $result;
         }
@@ -49,30 +53,33 @@ class org_glizycms_speakingUrl_PageResolver extends org_glizycms_speakingUrl_Abs
 
     public function makeUrl($id)
     {
-        list($protocol, $id) = explode(':', $id);
-        if ($protocol.':' == $this->protocol && is_numeric($id)) {
-            return $this->makeUrlFromId($id);
-        }
-        return false;
+        $resolvedVO = $this->resolve($id);
+        return $resolvedVO ? $resolvedVO->url : false;
     }
 
     public function makeLink($id)
     {
-        list($protocol, $id) = explode(':', $id);
-        if ($protocol.':' == $this->protocol && is_numeric($id)) {
-            return $this->makeUrlFromId($id, true);
+        $resolvedVO = $this->resolve($id);
+        return $resolvedVO ? $resolvedVO->link : false;
+    }
+
+    public function resolve($id)
+    {
+        $info = $this->extractProtocolAndId($id);
+        if ($info->protocol.':' === $this->protocol && is_numeric($info->id)) {
+            return $this->createResolvedVO($info->id);
         }
         return false;
     }
 
-
     public function makeUrlFromRequest()
     {
         $id = __Request::get('pageId', __Config::get('START_PAGE'));
-        return $this->makeUrlFromId($id);
+        $resolvedVO = $this->createResolvedVO($id);
+        return $resolvedVO->url;
     }
 
-    private function makeUrlFromId($id, $fullLink=false)
+    protected function createResolvedVO($id)
     {
         $siteMap = $this->application->getSiteMap();
         $menu = $siteMap->getNodeById($id);
@@ -81,11 +88,17 @@ class org_glizycms_speakingUrl_PageResolver extends org_glizycms_speakingUrl_Abs
             $menuTitle = $menu->title;
             $url = $menuUrl ? GLZ_HOST.'/'.$menuUrl : __Link::makeUrl('link', array('pageId' => $id, 'title' => $menuTitle));
 
-            return $fullLink ? __Link::makeSimpleLink($menuTitle, $url) : $url;
+            $resolvedVO = org_glizycms_speakingUrl_ResolvedVO::create(
+                        $menu,
+                        $url,
+                        __Link::makeSimpleLink($menuTitle, $url),
+                        $menuTitle
+                    );
+            return $resolvedVO;
         }
 
         // the menu isn't found or isn't visible in this language
         // redirect to home
-        return $this->makeUrlFromId(__Config::get('START_PAGE'), $fullLink);
+        return $this->createResolvedVO(__Config::get('START_PAGE'));
     }
 }

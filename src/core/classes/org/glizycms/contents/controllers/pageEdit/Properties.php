@@ -3,6 +3,7 @@ class org_glizycms_contents_controllers_pageEdit_Properties extends org_glizy_mv
 {
     public function execute($menuId)
     {
+        $this->checkPermissionForBackend();
         if ($menuId) {
             $menu = org_glizy_ObjectFactory::createModel('org.glizycms.core.models.Menu');
             $menu->load($menuId);
@@ -14,6 +15,9 @@ class org_glizycms_contents_controllers_pageEdit_Properties extends org_glizy_mv
             $menuDetail = org_glizy_ObjectFactory::createModel('org.glizycms.core.models.MenuDetail');
             $menuDetail->find(array('menudetail_FK_menu_id' => $menuId, 'menudetail_FK_language_id' => org_glizy_ObjectValues::get('org.glizy', 'editingLanguageId')));
             $data = array_merge($data, $menuDetail->getValuesAsArray());
+            $data['menu_creationDate'] = preg_replace('/ \d{2}:\d{2}:\d{2}/', '', $data['menu_creationDate']);
+
+            $this->setComponentsVisibility('menudetail_hideInNavigation', $menuDetail->fieldExists('menudetail_hideInNavigation'));
 
             if ($menu->menu_parentId) {
                 $menuParent = org_glizy_ObjectFactory::createModel('org.glizycms.core.models.Menu');

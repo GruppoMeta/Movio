@@ -58,16 +58,8 @@ class org_glizy_mvc_components_Page extends org_glizy_components_Page
 	 */
 	function process()
 	{
-		$acl = $this->getAttribute( 'acl' );
-		if ( !empty( $acl ) )
-		{
-			list( $service, $action ) = explode( ',', $acl );
-			if ( !$this->_user->acl( $service, $action ) )
-			{
-				$this->breakCycle();
-				$this->addOutputCode( "403 Forbidden" );
-				return;
-			}
+		if (!$this->_application->canViewPage() || !$this->checkAcl()) {
+			org_glizy_helpers_Navigation::accessDenied();
 		}
 
 		$this->sessionEx = org_glizy_ObjectFactory::createObject('org.glizy.SessionEx', $this->getId());
@@ -87,6 +79,21 @@ class org_glizy_mvc_components_Page extends org_glizy_components_Page
 		$this->canCallController = true;
 		$this->action = strtolower( $this->action );
 		parent::process();
+
+		if ($this->action) {
+			$isStateActive = false;
+			$numStates = 0;
+			foreach ( $this->childComponents  as $c ) {
+				if ( is_a( $c, 'org_glizy_mvc_components_State' ) ) {
+					$numStates++;
+					$isStateActive = $isStateActive || $c->isCurrentState();
+				}
+			}
+
+			if (!$isStateActive && $numStates) {
+				 new org_glizy_Exception(__T('GLZ_ERR_404'), GLZ_E_404);
+			}
+		}
 
 		$this->sessionEx->set( $this->actionName, $oldAction );
 	}

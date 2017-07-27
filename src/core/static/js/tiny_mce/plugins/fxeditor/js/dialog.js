@@ -8,9 +8,12 @@ var FormulaEditorDialog = {
 	undoMngr : null,
 		
 	init : function() {
-		var selectedTxt = tinyMCEPopup.editor.selection.getContent({format : 'text'});
+		var selectedTxt = tinyMCEPopup.editor.selection.getContent({format : ''});
 		var arg = tinyMCEPopup.getWindowArg('some_custom_arg');
+		var $elementsToHide = $('a.hide');
 
+		// Replace span delimiter
+		selectedTxt = selectedTxt.replace(/(<span.*?>)(.*)(<\/span>)/g, '$2');
 		// Replace mathjax delimitators
 		selectedTxt = selectedTxt.replace(/^ *\\\[|\\\] *$|^ *`|` *$/g, '');
 		
@@ -31,6 +34,10 @@ var FormulaEditorDialog = {
 			if (tinyMCEPopup.editor.selection.getNode().getAttribute("data-encoded") == "true") {
 				selectedTxt = tinyMCEPopup.dom.decode(selectedTxt);
 			}
+		}
+
+		if (FormulaEditorDialog.mathjaxMode == "am") {
+			$elementsToHide.css({"pointer-events": "none", "cursor": "default", "color":"#98a3a3", "opacity": "0.6"});
 		}
 		
 		// sets in textarea the selected formula in tinymce
@@ -95,9 +102,17 @@ var FormulaEditorDialog = {
         });
 		
 		
+
+		var $elementsToHide = $('a.hide');
 		// select tex|ascii|mathml change event
 		$('#mathjax-mode-select').change(function() {
 			FormulaEditorDialog.mathjaxMode = $(this).attr('value');
+
+			// Hides symbols not defined in AsciiMath
+			$elementsToHide.removeAttr("style");
+			if (FormulaEditorDialog.mathjaxMode == "am") {
+				$elementsToHide.css({"pointer-events": "none", "cursor": "default", "color":"#98a3a3", "opacity": "0.6"});
+			}
 			FormulaEditorDialog.preview();
 		});
 	},
@@ -143,10 +158,10 @@ var FormulaEditorDialog = {
 			mathmlSpan +
 			'</span>';
 		*/
+		var cleanText = FormulaEditorDialog.decodeHTML(newformula);
 		var toInsert = '<span class="mceNonEditable formula"' +
 			' data-fx-type="' + FormulaEditorDialog.mathjaxMode + '"' +
-			'>' +
-			newformula + '</span>';
+			'>' + cleanText + '</span>';
 
 		// Insert the contents from the input into the document
 		tinyMCEPopup.editor.execCommand('mceInsertContent', false, toInsert);
@@ -294,6 +309,12 @@ var FormulaEditorDialog = {
 		FormulaEditorDialog.undoMngr.update("");
 		FormulaEditorDialog.preview();
 		$("#texformula").focus();
+	},
+
+	decodeHTML : function(html) {
+		var txt = document.createElement("textarea");
+		txt.innerHTML = html;
+		return txt.value;
 	}
 
 };

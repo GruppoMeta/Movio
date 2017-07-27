@@ -12,32 +12,32 @@ class org_glizycms_core_application_AdminApplication extends org_glizy_mvc_core_
     var $_pathApplicationToAdmin;
     public $hostApplicationToAdmin;
 
-    function __construct($pathApplication='', $pathCore='', $pathApplicationToAdmin='', $configHost='')
+    function __construct($pathApplication='', $pathCore='', $pathApplicationToAdmin='', $configHost='', $createSessionPrefix=true)
     {
         $this->_pathApplicationToAdmin = $pathApplicationToAdmin;
 
         org_glizy_ObjectValues::set('org.glizy', 'admin', true);
         org_glizy_Paths::init($pathApplication, $pathCore);
         org_glizy_Paths::set('APPLICATION_MEDIA_ARCHIVE', $this->_pathApplicationToAdmin.'mediaArchive/');
-        // org_glizy_Paths::set('CACHE', $this->_pathCore.'../cache/');
-        // org_glizy_Paths::set('CACHE_CODE', $this->_pathCore.'../cache/');
-        // org_glizy_Paths::set('CACHE_IMAGES', $this->_pathCore.'../cache/');
-        // org_glizy_Paths::set('STATIC_DIR', $this->_pathCore.'../static/');
-        // org_glizy_Paths::set('CORE_STATIC_DIR', $this->_pathCore.'../static/org_glizy/');
         org_glizy_Paths::add('APPLICATION_TO_ADMIN', $this->_pathApplicationToAdmin);
         org_glizy_Paths::add('APPLICATION_TO_ADMIN_CACHE', $this->_pathApplicationToAdmin.'../cache/');
         org_glizy_Paths::add('APPLICATION_TO_ADMIN_PAGETYPE', $this->_pathApplicationToAdmin.'pageTypes/');
         org_glizy_Paths::addClassSearchPath( $this->_pathApplicationToAdmin.'classes/' );
 
-        //if (org_glizy_Config::get('SESSION_PREFIX')=='') org_glizy_Config::set('SESSION_PREFIX', 'admin');
-        parent::__construct($pathApplication, $pathCore, $configHost);
+        if ($createSessionPrefix) {
+            org_glizy_Config::init($configHost);
+            org_glizy_Config::set('SESSION_PREFIX', org_glizy_Config::get('SESSION_PREFIX').'_admin');
+        }
 
+        parent::__construct($pathApplication, $pathCore, $configHost);
         $this->addEventListener(org_glizycms_contents_events_Menu::INVALIDATE_SITEMAP, $this);
     }
 
 
+
     function _init()
     {
+        org_glizy_ObjectValues::set('org.glizy', 'siteId', __Config::get('glizy.multisite.id'));
         parent::_init();
 
         // inizialize the editing language
@@ -47,19 +47,19 @@ class org_glizycms_core_application_AdminApplication extends org_glizy_mvc_core_
         {
             $ar = org_glizy_ObjectFactory::createModel('org.glizycms.core.models.Language');
             $ar->language_isDefault = 1;
-            $ar->language_FK_site_id = org_glizy_Config::get( 'SITE_ID' );
-            $ar->find();
-            org_glizy_Session::set('glizy.editingLanguage', $ar->language_code);
-            org_glizy_Session::set('glizy.editingLanguageId', $ar->language_id);
-            org_glizy_Session::set('glizy.editingLanguageIsDefault', $ar->language_isDefault);
-            $language = $ar->language_id;
+            if ($ar->find()) {
+                org_glizy_Session::set('glizy.editingLanguage', $ar->language_code);
+                org_glizy_Session::set('glizy.editingLanguageId', $ar->language_id);
+                org_glizy_Session::set('glizy.editingLanguageIsDefault', $ar->language_isDefault);
+                $language = $ar->language_id;
+            } else {
+                throw org_glizycms_core_application_ApplicationException::notDefaultLanguage('Default language not defined');
+            }
         }
 
         org_glizy_ObjectValues::set('org.glizy', 'editingLanguageId', $language);
 
         $it = org_glizy_ObjectFactory::createModelIterator('org.glizycms.core.models.Language');
-        //$it = org_glizy_ObjectFactory::createModelIterator('org.glizycms.core.models.Language');
-
         $languagesId = array();
 
         foreach ($it as $ar) {

@@ -18,6 +18,7 @@ class org_glizy_components_Authenticator extends org_glizy_components_Component
      */
     function init()
     {
+        $this->defineAttribute('backend',           false,  true,                      COMPONENT_TYPE_BOOLEAN);
         $this->defineAttribute('cssClass',        false,     '',        COMPONENT_TYPE_STRING);
         $this->defineAttribute('accessPageId',    true,     '',        COMPONENT_TYPE_STRING);
         $this->defineAttribute('logoutPageId',    false,     '',        COMPONENT_TYPE_STRING);
@@ -26,6 +27,7 @@ class org_glizy_components_Authenticator extends org_glizy_components_Component
         $this->defineAttribute('showErrorMessage',    false,     true, COMPONENT_TYPE_BOOLEAN);
         $this->defineAttribute('checkAcl',     false,     false, COMPONENT_TYPE_BOOLEAN);
         $this->defineAttribute('icon',            false,     'icon-signout',        COMPONENT_TYPE_STRING);
+        $this->defineAttribute('showWelcome',   false,  false,   COMPONENT_TYPE_BOOLEAN);
 
         parent::init();
     }
@@ -33,10 +35,13 @@ class org_glizy_components_Authenticator extends org_glizy_components_Component
 
     function process()
     {
+        $backend = $this->getAttribute('backend');
         $allowGroups = $this->getAttribute('allowGroups')!='' ? explode(',', $this->getAttribute('allowGroups')) : array();
 
-        if ( ( !org_glizy_Session::get('glizy.userLogged') || !(count($allowGroups) ? in_array($this->_user->groupId, $allowGroups) : true)  )  && $this->getAttribute( 'enabled' ) )
-        {
+        if ((!$this->_user->isLogged() ||
+            (count($allowGroups) && !in_array($this->_user->groupId, $allowGroups))  ||
+            ($backend && !$this->_user->backEndAccess))
+            && $this->getAttribute( 'enabled' ) ) {
             if (org_glizy_helpers_Link::scriptUrl() != org_glizy_helpers_Link::makeUrl('link', array('pageId' => org_glizy_Config::get('START_PAGE'))))
             {
                 if ( $this->getAttribute( 'showErrorMessage' ) )
@@ -50,8 +55,7 @@ class org_glizy_components_Authenticator extends org_glizy_components_Component
         }
 
         if ($this->getAttribute('checkAcl') && !$this->_user->acl($this->_application->getPageId(), 'visible')) {
-            header('HTTP/1.0 403 Forbidden');
-            exit();
+            org_glizy_helpers_Navigation::accessDenied($this->_user->isLogged());
         }
     }
 
@@ -59,7 +63,13 @@ class org_glizy_components_Authenticator extends org_glizy_components_Component
     {
         if ( $this->getAttribute( 'logoutPageId' ) )
         {
-            $output = org_glizy_helpers_Link::makeLink('link', array(    'pageId' => $this->getAttribute('logoutPageId'),
+            $output = '';
+            if ( $this->getAttribute('showWelcome') ) {
+                $user = &$this->_application->getCurrentUser();
+                $output .= org_glizy_locale_Locale::get('LOGGED_MESSAGE', $user->firstName).'&nbsp;';
+            }
+
+            $output .= org_glizy_helpers_Link::makeLink('link', array(    'pageId' => $this->getAttribute('logoutPageId'),
                                                                         'title' => $this->getAttribute( 'label' ),
                                                                         'cssClass' => $this->getAttribute( 'cssClass' ),
                                                                         'icon' => $this->getAttribute( 'icon' )) );

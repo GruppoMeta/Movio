@@ -161,17 +161,19 @@ class org_glizycms_mediaArchive_media_Image extends org_glizycms_mediaArchive_me
 
 		if ( $usePiramidalSizes && $resize )
 		{
-			$useSize = null;
-			foreach ( $this->_piramidImageSizes as $v )
-			{
-				if ( $v[ 0 ] > $width && $v[ 1 ] > $height )
+			 $finalSizes = $this->resizeImageGetFinalSizes($width, $height, $crop, $cropOffset, $forceSize);
+			 $finalWidth = $finalSizes['width'];
+			 $finalHeight = $finalSizes['height'];
+			 $useSize = null;
+			 foreach ( $this->_piramidImageSizes as $v )
+			 {
+				if ( $v[ 0 ] > $finalWidth && $v[ 1 ] > $finalHeight )
 				{
 					$useSize = $v;
 				}
 			}
 
-			if ( !is_null( $useSize ) )
-			{
+			if ( !is_null( $useSize ) ) {
 				$oldWatermark = $this->watermark;
 				$this->watermark = false;
 				$resizedPiramidImage =  $this->getResizeImage( $useSize[ 0 ], $useSize[ 1 ], false, 1, false, true, false);
@@ -423,7 +425,7 @@ class org_glizycms_mediaArchive_media_Image extends org_glizycms_mediaArchive_me
 
 		if ( is_null( $originalWidth  ) ) return;
 
-		if ( ( $width == '*' || is_null( $width ) || $width == 0 ) && ($height == '*' || is_null( $height ) || $height == 0) )
+		if ( ( $width == '*' || !$width) && ($height == '*' || !$height) )
 		{
 			$width = $originalWidth;
 			$height = $originalHeight;

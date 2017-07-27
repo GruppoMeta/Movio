@@ -12,7 +12,7 @@ use Doctrine\DBAL\Types\Type;
 class org_glizy_dataAccessDoctrine_SqlRecordIterator extends GlizyObject implements Iterator
 {
     protected $connectionNumber;
-    protected $querySqlToExec = '';
+    protected $querySqlToExec = [];
     protected $returnClass;
     protected $EOF = false;
     protected $lastParams = NULL;
@@ -21,6 +21,7 @@ class org_glizy_dataAccessDoctrine_SqlRecordIterator extends GlizyObject impleme
     protected $statement = NULL;
     protected $data = NULL;
     protected $count = NULL;
+    protected $hasLimit = false;
 
 
     /**
@@ -33,20 +34,28 @@ class org_glizy_dataAccessDoctrine_SqlRecordIterator extends GlizyObject impleme
 
     /**
      * @param string $query
-     * @param null $params
+     * @param array $params
      *
      * @return $this
+     *
+     * @throws \BadMethodCallException
      */
     public function load($query, $params=null)
     {
         if (method_exists($this, $query)) {
             $this->querySqlToExec = org_glizy_helpers_PhpScript::callMethodWithParams($this, $query, $params);
         } else {
-            // TODO errore
+            throw new \BadMethodCallException("The query do not exists '".$query."'");
         }
 
+        $this->data = null;
+        $this->returnClass = null;
+        $this->pos = 0;
+        $this->EOF = false;
         $this->lastQuery = $query;
         $this->lastParams = null;
+        $this->count = NULL;
+        $this->statement = NULL;
 
         return $this;
     }
@@ -77,7 +86,7 @@ class org_glizy_dataAccessDoctrine_SqlRecordIterator extends GlizyObject impleme
         // $orderBy = $this->qb->getQueryPart('orderBy');
         // $sql['sql'] .= $orderBy ? ' ORDER BY ' . implode(', ', $orderBy) : '';
 
-        if (count($sql['filters'])) {
+        if (!empty($sql['filters'])) {
             $index = 0;
             $filtersSql = array();
             foreach($sql['filters'] as $k=>$v) {
@@ -106,13 +115,12 @@ class org_glizy_dataAccessDoctrine_SqlRecordIterator extends GlizyObject impleme
         $this->count = $this->statement->rowCount();
 
         $this->returnClass = isset($sql['return']) ? $sql['return'] : '';
-// TODO implementare meglio
-        // $firstResult = $this->qb->getFirstResult();
-        // $maxResults = $this->qb->getMaxResults();
-        // if (!is_null($firstResult) && !is_null($maxResults)) {
-        //     $sql['sql'] = $connection->getDatabasePlatform()->modifyLimitQuery($sql['sql'], $maxResults, $firstResult);
-        //     $this->statement = $connection->executeQuery($sql['sql'], $params);
-        // }
+
+        if ($this->hasLimit) {
+            $stmt = $this->connection->executeQuery('SELECT FOUND_ROWS() as tot;');
+            $row = $stmt->fetch();
+            $this->count = (int)$row['tot'];
+        }
     }
 
     public function next()
@@ -172,7 +180,8 @@ class org_glizy_dataAccessDoctrine_SqlRecordIterator extends GlizyObject impleme
 
         // se non ci sono record
         if ($this->EOF) {
-            return null;
+            $r = NULL;
+            return $r;
         }
 
         if (!$this->returnClass) {
@@ -214,6 +223,60 @@ class org_glizy_dataAccessDoctrine_SqlRecordIterator extends GlizyObject impleme
     {
         return $this->pos;
     }
+
+    /**
+     * @return string
+     */
+    public function getArType()
+    {
+        return 'table';
+    }
+
+    /**
+     * @param  string $fieldName
+     * @param  string $order
+     * @return org_glizy_dataAccessDoctrine_SqlRecordIterator
+     */
+    public function orderBy($fieldName, $order = 'ASC')
+    {
+        if (is_array($this->querySqlToExec) && stripos($this->querySqlToExec['sql'], ' ORDER BY ')!==false) {
+            throw new \Exception("The query already have order '".$this->querySqlToExec['sql']."'");
+        }
+
+        $this->querySqlToExec['sql'] .= ' ORDER BY '. $fieldName.' '.$order;
+        return $this;
+    }
+
+    /**
+     * @param  int|array  $offset
+     * @param  integer $limit
+     * @param  boolean $performCount
+     * @return org_glizy_dataAccessDoctrine_SqlRecordIterator
+     */
+    public function limit($offset, $limit = -1, $performCount=true)
+    {
+        if (is_array($this->querySqlToExec) && stripos($this->querySqlToExec['sql'], ' LIMIT ')!==false) {
+            throw new \Exception("The query already have limit '".$this->querySqlToExec['sql']."'");
+        }
+
+        if (is_array($offset)) {
+            if (!isset($offset['start'])) {
+                list($offset, $limit) = array_values($offset);
+            } else {
+                $limit = $offset['pageLength'];
+                $offset = $offset['start'];
+            }
+        }
+        $this->querySqlToExec['sql'] .= ' LIMIT '.$offset.', '.$limit;
+        $this->hasLimit = $performCount;
+
+        if ( $performCount && stripos( $this->querySqlToExec['sql'], 'SELECT SQL_CALC_FOUND_ROWS' ) === false ) {
+            $pos = stripos($this->querySqlToExec['sql'], 'SELECT' );
+            $this->querySqlToExec['sql'] = 'SELECT SQL_CALC_FOUND_ROWS '.substr($this->querySqlToExec['sql'], $pos + 7 );
+        }
+        return $this;
+    }
+
 
     private function fetch()
     {

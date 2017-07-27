@@ -130,10 +130,10 @@
                         <li><a href="javascript:void(0);" data-tex-command="subsup"><script type="math/tex; mode=display">c_a^b</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="tilde"><script type="math/tex; mode=display">\widetilde{ab}</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="hat"><script type="math/tex; mode=display">\widehat{ab}</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="vecl"><script type="math/tex; mode=display">\overleftarrow{ab}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="vecl" class="hide"><script type="math/tex; mode=display">\overleftarrow{ab}</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="vec"><script type="math/tex; mode=display">\overrightarrow{ab}</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="overbr"><script type="math/tex; mode=display">\overbrace{ab}</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="underbr"><script type="math/tex; mode=display">\underbrace{ab}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="overbr" class="hide"><script type="math/tex; mode=display">\overbrace{ab}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="underbr" class="hide"><script type="math/tex; mode=display">\underbrace{ab}</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="underl"><script type="math/tex; mode=display">\underline{ab}</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="overl"><script type="math/tex; mode=display">\overline{ab}</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="bmatrix"><script type="math/tex; mode=display">\begin{bmatrix}a & b \\c & d \end{bmatrix}</script></a></li>
@@ -145,12 +145,12 @@
                         <li><a href="javascript:void(0);" data-tex-command="integr"><script type="math/tex; mode=display">\int_{a}^{b}</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="ointegr"><script type="math/tex; mode=display">\oint_a^b</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="prod"><script type="math/tex; mode=display">\prod_a^b</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="coprod"><script type="math/tex; mode=display">\coprod_a^b</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="coprod" class="hide"><script type="math/tex; mode=display">\coprod_a^b</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="bigcap"><script type="math/tex; mode=display">\bigcap_a^b </script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="bigcup"><script type="math/tex; mode=display">\bigcup_a^b</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="bigvee"><script type="math/tex; mode=display">\bigvee_a^b</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="bigwed"><script type="math/tex; mode=display">\bigwedge_a^b</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="bigsqc"><script type="math/tex; mode=display">\bigsqcup_a^b</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="bigsqc" class="hide"><script type="math/tex; mode=display">\bigsqcup_a^b</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="sum"><script type="math/tex; mode=display">\sum_{n=0}^\infty</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="arrayab"><script type="math/tex; mode=display">\left(\begin{array}{c}a\\ b\end{array}\right)</script></a></li>
                     </ul>
@@ -234,17 +234,23 @@
                         <li><a href="javascript:void(0);" data-tex-command="leq"><script type="math/tex; mode=display">\leq</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="geq"><script type="math/tex; mode=display">\geq</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="sim"><script type="math/tex; mode=display">\sim</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="notsim"><script type="math/tex; mode=display">\not\sim</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="approx"><script type="math/tex; mode=display">\approx</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="notapprox"><script type="math/tex; mode=display">\not\approx</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="cong"><script type="math/tex; mode=display">\cong</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="equiv"><script type="math/tex; mode=display">\equiv</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="notequiv"><script type="math/tex; mode=display">\not\equiv</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="propto"><script type="math/tex; mode=display">\propto</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="ll"><script type="math/tex; mode=display">\ll</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="gg"><script type="math/tex; mode=display">\gg</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="in_"><script type="math/tex; mode=display">\in</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="notin"><script type="math/tex; mode=display">\notin</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="ni"><script type="math/tex; mode=display">\ni</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="notni"><script type="math/tex; mode=display">\not\ni</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="subset"><script type="math/tex; mode=display">\subset</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="supset"><script type="math/tex; mode=display">\supset</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="subseteq"><script type="math/tex; mode=display">\subseteq</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="supseteq"><script type="math/tex; mode=display">\supseteq</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="prec"><script type="math/tex; mode=display">\prec</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="preceq"><script type="math/tex; mode=display">\preceq</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="simeq"><script type="math/tex; mode=display">\simeq</script></a></li>
@@ -268,10 +274,10 @@
                     </ul>
                     <ul class="formula">
                         <li><a href="javascript:void(0);" data-tex-command="hata"><script type="math/tex; mode=display">\hat{a}</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="checka"><script type="math/tex; mode=display">\check{a}</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="brevea"><script type="math/tex; mode=display">\breve{a}</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="acutea"><script type="math/tex; mode=display">\acute{a}</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="gravea"><script type="math/tex; mode=display">\grave{a}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="checka" class="hide"><script type="math/tex; mode=display">\check{a}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="brevea" class="hide"><script type="math/tex; mode=display">\breve{a}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="acutea" class="hide"><script type="math/tex; mode=display">\acute{a}</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="gravea" class="hide"><script type="math/tex; mode=display">\grave{a}</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="tildea"><script type="math/tex; mode=display">\tilde{a}</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="bara"><script type="math/tex; mode=display">\bar{a}</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="veca"><script type="math/tex; mode=display">\vec{a}</script></a></li>
@@ -305,6 +311,7 @@
                         <li><a href="javascript:void(0);" data-tex-command="leftarrow"><script type="math/tex; mode=display">\leftarrow</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="Leftarrow"><script type="math/tex; mode=display">\Leftarrow</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="rightarrow"><script type="math/tex; mode=display">\rightarrow</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="xrightarrow" class="hide"><script type="math/tex; mode=display">\xrightarrow{H+}</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="Rightarrow"><script type="math/tex; mode=display">\Rightarrow</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="leftrightarrow"><script type="math/tex; mode=display">\leftrightarrow</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="Leftrightarrow"><script type="math/tex; mode=display">\Leftrightarrow</script></a></li>
@@ -431,7 +438,7 @@
                         <li><a href="javascript:void(0);" data-tex-command="diamond"><script type="math/tex; mode=display">\diamond</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="circ"><script type="math/tex; mode=display">\circ</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="hslash"><script type="math/tex; mode=display">\hslash</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="hbar"><script type="math/tex; mode=display">\hbar</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="hbar" class="hide"><script type="math/tex; mode=display">\hbar</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="mho"><script type="math/tex; mode=display">\mho</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="eth"><script type="math/tex; mode=display">\eth</script></a></li>
                         <li><a href="javascript:void(0);" data-tex-command="blacktriangleleft"><script type="math/tex; mode=display">\blacktriangleleft</script></a></li>
@@ -449,14 +456,14 @@
                 <div id="format-tab" class="side-sx">
                     <ul class="formula">
                         <li><a href="javascript:void(0);" data-tex-command="bold"><script type="math/tex; mode=display">\bf Bold</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="italic"><script type="math/tex; mode=display">\it italic</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="typewriter"><script type="math/tex; mode=display">\tt Typewriter</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="tiny"><script type="math/tex; mode=display">\scriptsize tiny</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="scriptsize"><script type="math/tex; mode=display">\scriptsize script</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="small"><script type="math/tex; mode=display">\small small</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="normalsize"><script type="math/tex; mode=display">\normalsize normal</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="large"><script type="math/tex; mode=display">\large large</script></a></li>
-                        <li><a href="javascript:void(0);" data-tex-command="huge"><script type="math/tex; mode=display">\large huge</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="italic" class="hide"><script type="math/tex; mode=display">\it italic</script></a></li>
+                        <!--<li><a href="javascript:void(0);" data-tex-command="typewriter"><script type="math/tex; mode=display">\tt Typewriter</script></a></li>-->
+                        <li><a href="javascript:void(0);" data-tex-command="tiny" class="hide"><script type="math/tex; mode=display">\tiny tiny</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="scriptsize" class="hide"><script type="math/tex; mode=display">\scriptsize script</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="small" class="hide"><script type="math/tex; mode=display">\small small</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="normalsize" class="hide"><script type="math/tex; mode=display">\normalsize normal</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="large" class="hide"><script type="math/tex; mode=display">\large large</script></a></li>
+                        <li><a href="javascript:void(0);" data-tex-command="huge" class="hide"><script type="math/tex; mode=display">\LARGE huge</script></a></li>
                     </ul>
                     <ul class="formula">
                         <li><a href="javascript:void(0);" data-tex-command="aqua"><script type="math/tex; mode=display">\color{aqua} {acqua}</script></a></li>

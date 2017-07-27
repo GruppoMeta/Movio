@@ -33,13 +33,19 @@ class org_glizy_compilers_Model extends org_glizy_compilers_Compiler
                               $xmlRootNode->getAttribute('model:usePrefix') == 'true' ? 'true' : 'false';
         $languageField      = $xmlRootNode->hasAttribute('model:languageField') ? '$this->setLanguageField(\''.$xmlRootNode->getAttribute('model:languageField').'\');' : '';
         $siteField          = $xmlRootNode->hasAttribute('model:siteField') ? '$this->setSiteField(\''.$xmlRootNode->getAttribute('model:siteField').'\');' : '';
-        $originalClassName = isset($options['originalClassName']) ? '$this->_className = \''.$options['originalClassName'].'\';' : '';
+        $originalClassName  = isset($options['originalClassName']) ? '$this->_className = \''.$options['originalClassName'].'\';' : '';
+        $baseClass          = $xmlRootNode->hasAttribute('model:baseClass') ? glz_classNSToClassName($xmlRootNode->getAttribute('model:baseClass')) : null;
 
         if ($modelType == '2tables') {
             list($tableName, $detailTableName) = explode(',', $tableName);
         }
 
         $baseclassName = $this->resolveBaseClass($modelType);
+
+        if ($baseClass) {
+            $baseclassName['activeRecord'] = $baseClass;
+        }
+
         $fields = $this->compileFields($xmlRootNode);
         $queries = $this->compileQueries($xmlRootNode);
         $script = $this->compileScript($xmlRootNode);
@@ -55,8 +61,11 @@ class $className extends {$baseclassName['activeRecord']}
         \$this->setTableName('$tableName',
                 $usePrefix ? org_glizy_dataAccessDoctrine_DataAccess::getTablePrefix(\$connectionNumber) : '' );
 
-        \$sm = new org_glizy_dataAccessDoctrine_SchemaManager(\$this->connection);
-        \$fields = \$sm->getFields(\$this->getTableName());
+        static \$fields;
+        if (!\$fields) {
+            \$sm = new org_glizy_dataAccessDoctrine_SchemaManager(\$this->connection);
+            \$fields = \$sm->getFields(\$this->getTableName());
+        }
 
         foreach (\$fields as \$field) {
             \$this->addField(\$field);
@@ -95,16 +104,19 @@ class $className extends {$baseclassName['activeRecord']}
 
         \$this->setJoinFields('$joinFields[0]', '$joinFields[1]');
 
-        \$sm = new org_glizy_dataAccessDoctrine_SchemaManager(\$this->connection);
-        \$fields = \$sm->getFields(\$this->getTableName());
+        static \$fields;
+        static \$fieldsDetail;
+        if (!\$fields) {
+            \$sm = new org_glizy_dataAccessDoctrine_SchemaManager(\$this->connection);
+            \$fields = \$sm->getFields(\$this->getTableName());
+            \$fieldsDetail = \$sm->getFields(\$this->getDetailTableName());
+        }
 
         foreach (\$fields as \$field) {
             \$this->addField(\$field);
         }
 
-        \$fields = \$sm->getFields(\$this->getDetailTableName());
-
-        foreach (\$fields as \$field) {
+        foreach (\$fieldsDetail as \$field) {
             \$this->addField(\$field, true);
         }
 
@@ -265,28 +277,25 @@ EOD;
         $sql = str_replace('##TABLE_NAME##', "'.\$this->getTableName().'", $sql);
         $sql = str_replace('##TABLE_PREFIX##',"'.\$this->tablePrefix.'", $sql);
         $sql = str_replace('##SELECT_ALL##', "'.\$this->query_all().'", $sql);
-        $sql = str_replace('##SITE_ID##',"'.__Config::get('SITE_ID').'", $sql);
+        $sql = str_replace('##SITE_ID##',"'.__Config::get('glizy.multisite.id').'", $sql);
         $sql = str_replace('##USER_ID##', "'.org_glizy_ObjectValues::get('org.glizy', 'user')->id.'", $sql);
         $sql = str_replace('##USER_GROUP_ID##', "'.org_glizy_ObjectValues::get('org.glizy', 'user')->group.'", $sql);
         $sql = str_replace('##LANGUAGE_ID##', "'.org_glizy_ObjectValues::get('org.glizy', 'languageId').'", $sql);
         $sql = str_replace('##EDITING_LANGUAGE_ID##', "'.org_glizy_ObjectValues::get('org.glizy', 'editingLanguageId').'", $sql);
 
         $params = '';
-        if( strstr($sql, "??") != FALSE )
-        {
+        if (strstr($sql, "??") != FALSE ) {
             preg_match_all( "/\?\?([^\?]*)\?\?/U", $sql, $resmatch );
             foreach( $resmatch[1] as $varname)
             {
-                // if ( strpos( $varname, ':' ) !== false )
-                // {
-                //     list( $filterName, $functionOrClass, $method ) = explode( ':', $varname );
-                //     $value = $method ? $functionOrClass.'::'.$method.'(__Request::get(\''.$filterName.'\'))' : $functionOrClass.'(__Request::get(\''.$filterName.'\'))'
-                // }
                 $sql = str_replace('??'.$varname.'??',  ':'.$varname, $sql);
                 $params .= '\':'.$varname.'\' => __Request::get(\''.$varname.'\'),';
             }
         }
-
+        if (preg_match("/\{config\:.*\}/i", $sql)) {
+            $varname = preg_replace("/(.*)\{config\:(.*)\}(.*)?/i", "$2", $sql);
+            $sql = preg_replace("/(.*)\{config\:(.*)\}(.*)?/i", "$1 ".__Config::get($varname)." $3", $sql);
+        }
         return 'array(\'sql\' =>\''.$sql.'\', \'params\' => array('.$params.'), \'filters\' => array())';
     }
 
@@ -426,6 +435,10 @@ EOD;
 
                 case 'text':
                     $validatorClass[] = 'new org_glizy_validators_Text()';
+                    break;
+
+                case 'notempty':
+                    $validatorClass[] = 'new org_glizy_validators_NotEmpty()';
                     break;
             }
         }

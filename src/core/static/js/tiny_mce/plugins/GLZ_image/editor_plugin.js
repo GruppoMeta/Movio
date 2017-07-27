@@ -37,7 +37,7 @@
 				ed.windowManager.open({
 					file : url + '/image.htm',
 					width : $(window).width() - 80 + parseInt(ed.getLang('GLZ_image.delta_width', 0)),
-					height : 530 + parseInt(ed.getLang('GLZ_image.delta_height', 0)),
+					height : Math.max(530, $(window).height() - 150) + parseInt(ed.getLang('GLZ_image.delta_height', 0)),
 					inline : 1
 				}, {
 					plugin_url : url

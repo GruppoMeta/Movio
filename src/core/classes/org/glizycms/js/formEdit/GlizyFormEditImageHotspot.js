@@ -61,7 +61,7 @@ jQuery.GlizyRegisterType('imageHotspot', {
                 .attr('id', 'image')
                 .addClass('js-image')
                 .attr('src', '')
-                .css('display', 'none')
+                .css({'max-width': 'none', 'display': 'none'})
                 .load({container: hotspotsContainer, list: hotspotsList}, function(e) {
                     var h = $(this).height() + 8;
                     contH = h + 45;

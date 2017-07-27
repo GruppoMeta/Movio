@@ -34,6 +34,13 @@ jQuery.GlizyRegisterType('CmsPagePicker', {
                 return data.text+' <small>'+data.path+'</small>';
             }
         });
+		if (multiple) {
+			el.parent().find("ul.select2-choices").sortable({
+	            containment: 'parent',
+				start: function() { el.select2("onSortStart"); },
+			    update: function() { el.select2("onSortEnd"); }
+	        });
+		}
 
         var value = el.data('origValue');
         if (value) {

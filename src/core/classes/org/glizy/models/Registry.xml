@@ -2,5 +2,5 @@
 <model:Model
     xmlns:glz="http://www.glizy.org/dtd/1.0/"
     xmlns:model="http://www.glizy.org/dtd/1.0/model/"
-    model:tableName="registry_tbl" model:usePrefix="true">
+    model:tableName="registry_tbl" model:usePrefix="true" model:siteField="registry_FK_site_id">
 </model:Model>

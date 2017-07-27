@@ -3,6 +3,7 @@ class org_glizycms_contents_controllers_activeRecordEdit_ajax_Cancel extends org
 {
     public function execute($data)
     {
+        $this->checkPermissionForBackend();
         $this->directOutput = true;
         return array('url' => $this->changeAction(''));
     }

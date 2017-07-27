@@ -10,6 +10,7 @@ define('GLZ_E_ERROR', E_ERROR);
 define('GLZ_E_WARNING', E_WARNING);
 define('GLZ_E_NOTICE', E_NOTICE);
 define('GLZ_E_404', 404);
+define('GLZ_E_403', 403);
 define('GLZ_E_500', 500);
 
 /**
@@ -30,27 +31,32 @@ class org_glizy_Exception
             $message    = vsprintf($messageStr, $message);
         }
 
-        if ($errono != GLZ_E_404) {
-            self::show($errono, '', '', '', $message);
+
+        if ($errono == GLZ_E_403) {
+            self::show403($message);
+        } else if ($errono == GLZ_E_404) {
+            self::show404($message);
         } else {
-            self::show404($errono, $message);
+            self::show($errono, '', '', '', $message);
         }
-        exit();
     }
 
     /**
      * @param int $errno
      * @param string $message
      */
-    static public function show404($errno, $message)
+    static public function show404($message)
     {
-        $e                = array();
-        $e['code']        = $errno;
-        $e['description'] = $message;
-        $e['message']     = '';
-        header("HTTP/1.0 404 Not Found");
-        include_once(dirname(__FILE__) . '/../../../pages/errors/404.php');
-        exit();
+        self::loadErrorPage(404, 'Not Found', $message);
+    }
+
+    /**
+     * @param int $errno
+     * @param string $message
+     */
+    static public function show403($message)
+    {
+        self::loadErrorPage(403, 'Forbidden', $message);
     }
 
     /**
@@ -63,9 +69,7 @@ class org_glizy_Exception
      */
     static public function show($errno, $errstr, $errfile, $errline, $message = '', $headerCode = 500)
     {
-        $eventInfo = array('type' => 'dumpException', 'data' => array('message' => $message, 'errono' => $errono, 'file' => $errfile, 'errline' => $errline));
-        $evt = &org_glizy_ObjectFactory::createObject('org.glizy.events.Event', $this, $eventInfo);
-        org_glizy_events_EventDispatcher::dispatchEvent($evt);
+        // $eventInfo = array('type' => 'dumpException', 'data' => array('message' => $message, 'errono' => $errno, 'file' => $errfile, 'errline' => $errline));
 
         @header('HTTP/1.0 500 Internal Server Error');
         $errors = array(
@@ -95,8 +99,34 @@ class org_glizy_Exception
             $e['stacktrace'] = array_slice(debug_backtrace(), 2);
             include_once(dirname(__FILE__) . '/../../../pages/errors/debug.php');
         } else {
-            include_once(dirname(__FILE__) . '/../../../pages/errors/general.php');
+            self::loadErrorPage(500, 'Internal Server Error', $e['code'].': '.$e['description'].'<br>'.$e['message']);
         }
-        exit();
+        exit;
+    }
+
+    /**
+     * Load the error page
+     * Check if the developer have defined a custome page
+     * @param  int $code            Error code
+     * @param  string $codeDescription Error code description
+     * @param  string $message         Error message
+     */
+    private static function loadErrorPage($code, $codeDescription, $message)
+    {
+        $e                = array();
+        $e['title']       = class_exists('org_glizy_Config') ? org_glizy_Config::get('APP_NAME') : 'GLIZY framework';
+        $e['code']        = $code;
+        $e['description'] = $message;
+        $e['message']     = '';
+        header('HTTP/1.0 '.$code.' '.$codeDescription);
+
+        if (file_exists('error-'.$code.'.html')) {
+            include_once('error-'.$code.'.html');
+        } else if (file_exists('error-'.$code.'.php')) {
+            include_once('error-'.$code.'.php');
+        } else {
+            include_once(dirname(__FILE__) . '/../../../pages/errors/'.$code.'.php');
+        }
+        exit;
     }
 }

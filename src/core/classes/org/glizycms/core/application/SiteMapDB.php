@@ -12,6 +12,8 @@ class org_glizycms_core_application_SiteMapDB extends org_glizy_application_Site
 {
     var $_type = 'db';
     private $cache;
+    private $application;
+    private $speakingUrlManager;
 
     function __construct()
     {
@@ -21,6 +23,9 @@ class org_glizycms_core_application_SiteMapDB extends org_glizy_application_Site
                                                 __Config::get('glizycms.sitemap.cacheLife'),
                                                 false,
                                                 __Paths::getRealPath('APPLICATION_TO_ADMIN_CACHE'));
+
+        $this->application = &org_glizy_ObjectValues::get('org.glizy', 'application');
+        $this->speakingUrlManager = $this->application->retrieveProxy('org.glizycms.speakingUrl.Manager');
     }
 
     function loadTree($forceReload=false)
@@ -28,10 +33,12 @@ class org_glizycms_core_application_SiteMapDB extends org_glizy_application_Site
         if ($forceReload) $this->init();
         $emptyMenu = serialize($this->getEmptyMenu());
         $siteId = org_glizy_ObjectValues::get('org.glizy', 'siteId');
-        $application = &org_glizy_ObjectValues::get('org.glizy', 'application');
+        $application = $this->application;
         $languageId = $application->getLanguageId();
         $speakingUrl = __Config::get('glizycms.speakingUrl') === true;
-        $this->_siteMapArray = $this->cache->get(__METHOD__.$siteId.'_'.$languageId, array(), function() use ($emptyMenu, $application, $speakingUrl) {
+        $multilanguage = __Config::get('MULTILANGUAGE_ENABLED');
+
+        $this->_siteMapArray = $this->cache->get(__METHOD__.$siteId.'_'.$languageId, array(), function() use ($emptyMenu, $application, $speakingUrl, $multilanguage) {
             $siteMapArray = array();
             $isAdmin = $application->isAdmin();
             $user = $application->getCurrentUser();
@@ -79,8 +86,12 @@ class org_glizycms_core_application_SiteMapDB extends org_glizy_application_Site
                 $menu['depth']          = 1;
                 $menu['childNodes']     = array();
                 $menu['isLocked']       = $ar->menu_isLocked == '1';
-                $menu['url']            = $ar->menu_url;
+                $menu['hideInNavigation'] = $ar->fieldExists('menudetail_hideInNavigation') && $ar->menudetail_hideInNavigation == '1';
+                $menu['url']            = $ar->menu_url && $ar->menu_url!='alias:' ? $ar->menu_url : '';
                 $menu['cssClass']       = $ar->menu_cssClass;
+                $menu['description']       = $ar->menudetail_description;
+                $menu['keywords']       = $ar->menudetail_keywords;
+
                 // solo admin
                 $menu['order']          = $ar->menu_order;
                 $menu['type']           = $ar->menu_type;
@@ -89,11 +100,12 @@ class org_glizycms_core_application_SiteMapDB extends org_glizy_application_Site
                 $menu['hasComment']     = $ar->menu_hasComment;
                 $menu['printPdf']       = $ar->menu_printPdf;
 
+                
                 //$menu['extendsPermissions']    = $ar->menu_extendsPermissions;
                 $menu['nodeObj']        = NULL;
 
                 if ($speakingUrl && !$menu['url'] && $ar->speakingurl_value) {
-                    $menu['url'] = $ar->language_code.'/'.$ar->speakingurl_value;
+                    $menu['url'] = ($multilanguage ? $ar->language_code.'/' : '').$ar->speakingurl_value;
                 }
 
                 $siteMapArray[$menu["id"]] = $menu;
@@ -113,20 +125,25 @@ class org_glizycms_core_application_SiteMapDB extends org_glizy_application_Site
         }
     }
 
-    public function resolveAlias()
+    function &getNodeById($id)
     {
-        $application = &org_glizy_ObjectValues::get('org.glizy', 'application');
-        $speakingUrlManager = $application->retrieveProxy('org.glizycms.speakingUrl.Manager');
+        $id = is_numeric($id) ? $id : strtolower($id);
+        if (!array_key_exists($id, $this->_siteMapArray)) {
+            $a = NULL;
+            return $a;
+        }
 
-        $IDs = array_keys($this->_siteMapArray);
-        foreach ($IDs as $key)
+        if (!is_object($this->_siteMapArray[$id]['nodeObj']))
         {
-            $menu = &$this->_siteMapArray[$key];
+            $menu = $this->_siteMapArray[$id];
             if (strpos($menu['url'], 'alias:')===0) {
                 $url = substr($menu['url'], 6);
-                $menu['url'] = $speakingUrlManager->makeUrl($url);
+                $menu['url'] = $this->speakingUrlManager->makeUrl($url);
             }
+            $a =  new org_glizy_application_SiteMapNode($this, $menu);
+            $this->_siteMapArray[$id]['nodeObj'] = &$a;
+            return $a;
         }
+        return $this->_siteMapArray[$id]['nodeObj'];
     }
-
 }

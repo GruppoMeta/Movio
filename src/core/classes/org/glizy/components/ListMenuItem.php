@@ -59,38 +59,16 @@ class org_glizy_components_ListMenuItem extends org_glizy_components_Component
 			}
 			$label = $this->addWrap($label);
 			$url = org_glizy_helpers_Link::makeLink( $routeUrl, array( 'pageId' => $value, 'title' => $title, 'label' => $label ), array(), '', false );
-			$condition = $this->getAttribute( 'selected' );
-			if ( !$condition ) $condition = $value;
-			$condition = explode( ',', $condition );
-
-			if ( count( $condition ) > 1 )
-			{
-				$selected = false;
-				for ($i=0; $i < count( $condition ); $i++)
-				{
-					if ( __Request::get( $condition[ $i ] ) == $condition[ $i + 1 ] )
-					{
-						$selected = true;
-						break;
-					}
-					$i++;
-				}
-			}
-			else
-			{
-				$selected = $value == $this->_application->getPageId();
-			}
-
-			return array( 'url' => $url, 'selected' => $selected );
+			return array( 'url' => $url, 'selected' => $this->checkSelected($value, $this->_application->getPageId()) );
 		}
 		else if ( $url )
 		{
-			return array( 'url' => org_glizy_helpers_Link::makeSimpleLink($this->addWrap($label), $url, $label, $cssClass ), 'selected' => $value == __Request::get( '__url__' ) );
+			return array( 'url' => org_glizy_helpers_Link::makeSimpleLink($this->addWrap($label), $url, $label, $cssClass ), 'selected' => $this->checkSelected($value, __Request::get( '__url__' )) );
 		}
 		else if ( $value )
 		{
             $url = org_glizy_helpers_Link::makeLink( $value, array( 'label' => $this->addWrap($label),'title' => $label, 'cssClass' => $cssClass ), array(), '', false );
-			return array( 'url' => $url, 'selected' => $value == __Request::get( '__url__' ) );
+			return array( 'url' => $url, 'selected' => $this->checkSelected($value, __Request::get( '__url__' ))	 );
 		}
 		else
 		{
@@ -104,5 +82,27 @@ class org_glizy_components_ListMenuItem extends org_glizy_components_Component
 			$label = '<'.$wrapTag.'>'.$label.'</'.$wrapTag.'>';
 		}
 		return $label;
+	}
+
+	private function checkSelected($value, $valueToCheck)
+	{
+		$condition = $this->getAttribute( 'selected' );
+		if ( !$condition ) $condition = $value;
+		$condition = explode( ',', $condition );
+
+		if ( count( $condition ) > 1 ) {
+			$selected = true;
+			for ($i=0; $i < count( $condition ); $i++) {
+				if ( __Request::get( $condition[ $i ] ) != $condition[ $i + 1 ] ) {
+					$selected = false;
+					break;
+				}
+				$i++;
+			}
+
+			return $selected;
+		} else {
+			return $condition == $valueToCheck;
+		}
 	}
 }

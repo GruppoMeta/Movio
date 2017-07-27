@@ -3,6 +3,7 @@ class org_glizycms_contents_controllers_pageEdit_ajax_GetChildBlocks extends org
 {
     public function execute($id)
     {
+        $this->checkPermissionForBackend();
         $this->directOutput = true;
         $output = array();
 
@@ -12,18 +13,20 @@ class org_glizycms_contents_controllers_pageEdit_ajax_GetChildBlocks extends org
 
         $itMenus = $menuProxy->getChildMenusFromId($id, $languageId, false);
         foreach($itMenus as $subMenu) {
-            $content = $contentProxy->readRawContentFromMenu($subMenu->menu_id, $languageId);
+            if ($subMenu->menu_type!=='BLOCK') continue;
+            $content = $contentProxy->readRawContentFromMenu($subMenu->menu_id, $languageId, 'PUBLISHED');
             $description = '';
             if ($content) {
                 $description = property_exists($content->content, 'text') ? $content->content->text :
                                 (property_exists($content->content, 'description') ? $content->content->description : '');
             }
 
-;            $output[] = array(
-                    'id' => $subMenu->menu_id,
-                    'title' => $subMenu->menudetail_title,
-                    'description' => glz_strtrim($description).' ('.$subMenu->menu_pageType.')'
-                );
+            $output[] = array(
+                'id' => $subMenu->menu_id,
+                'title' => $subMenu->menudetail_title,
+                'visible' => $subMenu->menudetail_isVisible,
+                'description' => glz_strtrim($description).' ('.__T($subMenu->menu_pageType).')'
+            );
 
         }
 

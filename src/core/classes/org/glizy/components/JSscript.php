@@ -25,6 +25,7 @@ class org_glizy_components_JSscript extends org_glizy_components_Component
 		$this->defineAttribute('inline', false, false, COMPONENT_TYPE_BOOLEAN);
 		$this->defineAttribute('editableRegion', 	false, 	'head', COMPONENT_TYPE_STRING);
 		$this->defineAttribute('extension', false, 'js', COMPONENT_TYPE_STRING);
+		$this->defineAttribute('minify', false, !__Config::get('DEBUG'), COMPONENT_TYPE_BOOLEAN);
 
 		parent::init();
 	}
@@ -58,6 +59,8 @@ class org_glizy_components_JSscript extends org_glizy_components_Component
 				unset($params['__routingPattern__']);
 				unset($params['__url__']);
 				unset($params['__back__url__']);
+				unset($params['PHP_AUTH_USER']);
+				unset($params['PHP_AUTH_PW']);
 				$params = json_encode($params);
 				$jsCode = <<<EOD
 var GlizyApp = {};
@@ -74,7 +77,7 @@ EOD;
 			}
 
 			// include tutta una cartella
-			$jsFileName = $this->includeFolder( $folder );
+			$jsFileName = $this->includeFolder( $folder, $language);
 			if ( $this->getAttribute('inline')) {
 				$js = file_get_contents($jsFileName);
 				if ( strpos($js, '<script') !== false ) {
@@ -83,7 +86,8 @@ EOD;
 					$this->addOutputCode( org_glizy_helpers_JS::JScode( $js, $type ) );
 				}
 			} else {
-				$this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jsFileName.(__Config::get( 'DEBUG' ) ? '?'.microtime(true) : '') , null, $type) );
+				$minify = $this->getAttribute('minify');
+				$this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jsFileName.(!$minify ? '?'.microtime(true) : '') , null, $type) );
 			}
 		}
 		else
@@ -99,7 +103,7 @@ EOD;
 		}
 	}
 
-	private function includeFolder( $folder )
+	private function includeFolder( $folder, $language )
 	{
 		// controlla se il file in cache è valido
 		$options = array(
@@ -109,7 +113,7 @@ EOD;
 			'fileExtension' => '.js'
 		);
 
-		$cacheSignature = get_class( $this ).$folder;
+		$cacheSignature = get_class( $this ).$folder.$language;
 		$cacheObj = org_glizy_ObjectFactory::createObject( 'org.glizy.cache.CacheFile', $options );
 		$jsFileName = $cacheObj->verify( $cacheSignature );
 		if ($jsFileName===false)
@@ -128,7 +132,12 @@ EOD;
 				$jsFile .= $jsCode."\n";
 	        }
 
-			if ( __Config::get( 'DEBUG' ) || $this->getAttribute('inline'))
+			// NOTE: necesssario per la macchina vagrant
+            // per problemi di sincronizzazione del file
+            @unlink($cacheObj->getFileName());
+
+	        $minify = $this->getAttribute('minify');
+			if ( !$minify || $this->getAttribute('inline'))
 			{
 				$cacheObj->save( $jsFile, NULL, get_class($this) );
 			}

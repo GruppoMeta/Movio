@@ -18,8 +18,36 @@ class org_glizy_authentication_Database extends org_glizy_authentication_Abstrac
             ->load('login', array('loginId' => $loginId, 'password' => $psw));
 
         if ($it->count()) {
+            return $this->logUser($it->current(), false, $remember);
+        } else {
+            $arUser = org_glizy_ObjectFactory::createModel('org.glizy.models.User');
+
+            if ($arUser->fieldExists('user_passwordTemp')) {
+                $it = org_glizy_ObjectFactory::createModelIterator('org.glizy.models.User')
+                    ->load('loginTempPassword', array('loginId' => $loginId, 'password' => $psw));
+
+                if ($it->count()) {
+                    return $this->logUser($it->current(), true, $remember);
+                }
+            }
+
+            // wrong username or password
+            throw org_glizy_authentication_AuthenticationException::wrongLoginIdOrPassword();
+        }
+    }
+
+    protected function logUser($arUser, $copyTempPassword=false, $remember=false)
+    {
+        if ($arUser->fieldExists('user_passwordTemp')) {
+            if ($copyTempPassword) {
+                $arUser->user_password = $arUser->user_passwordTemp;
+            }
+            $arUser->user_passwordTemp = '';
+            $arUser->save();
+        }
+
             // login success
-            $this->arUser = $it->current();
+        $this->arUser = $arUser;
 
             if ($this->arUser->user_isActive==0) {
                 throw org_glizy_authentication_AuthenticationException::userNotActive();
@@ -79,10 +107,6 @@ class org_glizy_authentication_Database extends org_glizy_authentication_Abstrac
             $evt = array('type' => GLZ_EVT_USERLOGIN, 'data' => $user);
             $this->dispatchEvent($evt);
             return $user;
-        } else {
-            // wrong username or password
-            throw org_glizy_authentication_AuthenticationException::wrongLoginIdOrPassword();
-        }
     }
 
     public function logout()

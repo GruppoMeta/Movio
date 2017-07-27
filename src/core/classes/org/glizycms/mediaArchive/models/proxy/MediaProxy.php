@@ -32,7 +32,7 @@ class org_glizycms_mediaArchive_models_proxy_MediaProxy extends GlizyObject
         $ar = org_glizy_ObjectFactory::createModel('org.glizycms.models.Media');
     	$result = $ar->find(array('media_fileName' => $mediaMappingName));
         if ($result) {
-            return org_glizycms_Glizycms::getMediaArchiveBridge()->getJsonFromAr($ar);
+            return org_glizycms_Glizycms::getMediaArchiveBridge()->jsonFromModel($ar);
         } else {
             return null;
         }
@@ -179,8 +179,8 @@ class org_glizycms_mediaArchive_models_proxy_MediaProxy extends GlizyObject
         }
 
         if ($saveExifData) {
-            if ($exif['COMPUTED']['Copyright'] && empty($ar->media_copyright)) {
-                $ar->media_copyright = $exif['COMPUTED']['Copyright'];
+            if ($exif['COMPUTED']['Copyright'] && empty($media->media_copyright)) {
+                $media->media_copyright = $exif['COMPUTED']['Copyright'];
             }
         }
 

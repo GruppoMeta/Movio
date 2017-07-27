@@ -153,15 +153,31 @@ class org_glizy_components_Input extends org_glizy_components_HtmlFormElement
 				$rootComponent->addOutputCode(org_glizy_helpers_JS::linkCoreJSfile('tiny_mce.js?v='.GLZ_CORE_VERSION, 'tiny_mce/', false), 'head');
 				$rootComponent->addOutputCode(org_glizy_helpers_JS::linkCoreJSfile('Glizy_tiny_mce.js?v='.GLZ_CORE_VERSION), 'head', true);
 
+				$imgStyles = __Config::get( 'TINY_MCE_IMG_STYLES' );
+				$imgSizes = __Config::get( 'TINY_MCE_IMG_SIZES' );
+				$templates = __Config::get( 'TINY_MCE_TEMPLATES' );
+				$imgStyles = $imgStyles ? : '""';
+				$imgSizes = $imgSizes ? : '""';
+				$templates = $templates ? : '""';
+
 				$jsCode = 'Glizy.tinyCSS = "'.__Config::get( 'TINY_MCE_CSS' ).'";';
 				$jsCode .= 'Glizy.tinyMCE_plugins = "'.__Config::get( 'TINY_MCE_DEF_PLUGINS' ).'";';
 				$jsCode .= 'Glizy.tinyMCE_btn1 = "'.__Config::get( 'TINY_MCE_BUTTONS1' ).'";';
 				$jsCode .= 'Glizy.tinyMCE_btn2 = "'.__Config::get( 'TINY_MCE_BUTTONS2' ).'";';
 				$jsCode .= 'Glizy.tinyMCE_btn3 = "'.__Config::get( 'TINY_MCE_BUTTONS3' ).'";';
-				if ( __Config::get( 'TINY_MCE_PLUGINS' ) != '' )
-				{
-					$jsCode .= 'Glizy.tinyMCE_plugins .= ",'.__Config::get( 'TINY_MCE_PLUGINS' ).'";';
+				$jsCode .= 'Glizy.tinyMCE_styles = '.__Config::get( 'TINY_MCE_STYLES' ).';';
+				$jsCode .= 'Glizy.tinyMCE_imgStyles = '.$imgStyles.';';
+				$jsCode .= 'Glizy.tinyMCE_imgSizes = '.$imgSizes.';';
+				$jsCode .= 'Glizy.tinyMCE_templates = '.$templates.';';
+				$jsCode .= 'Glizy.tinyMCE_allowLinkTarget = '.(__Config::get( 'TINY_MCE_ALLOW_LINK_TARGET' ) ? 'true' : 'false').';';
+				$validElements = __Config::get( 'TINY_MCE_VALID_ELEMENTS' );
+        		$jsCode .= 'Glizy.tinyMCE_validElements = "'.($validElements ? : '').'";';
+				$plugins = __Config::get( 'TINY_MCE_PLUGINS' );
+				if ( $plugins ) {
+					$jsCode .= 'Glizy.tinyMCE_plugins .= ",'.$plugins.'";';
 				}
+				$tableClassList = __Config::get('TINY_MCE_TABLE_CLASS_LIST');
+				$jsCode .= 'Glizy.tinyMCE_tableClassList = "'.$tableClassList.'";';
 				$rootComponent->addOutputCode(org_glizy_helpers_JS::JScode( $jsCode ), 'head');
 			}
 

@@ -11,7 +11,7 @@ class org_glizycms_userManager_fe_controllers_user_LostPassword extends org_gliz
 
     public function executeLater($email)
     {
-        if ($this->submit && $this->controller->validate()) {
+        if ($this->submit && $this->view->validate()) {
             $ar = org_glizy_ObjectFactory::createModel('org.glizy.models.User');
             if (!$ar->find(array('user_email' => $email))) {
                 // utente non trovato

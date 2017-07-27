@@ -2,7 +2,7 @@ jQuery.GlizyRegisterType('inputguid', {
     __construct: function () {
         var self = $(this).data('formEdit');
         self.element = $(this);
-        if (''==self.element.val()) {
+        if (''==self.element.val() || 'NaN'==self.element.val()) {
             self.element.val(self.element.data('base')+(new Date().getTime()));
         }
     },

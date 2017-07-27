@@ -100,6 +100,8 @@ $strings = array (
     "GPS coordinates" => "Coordinate GPS",
     "GPS time" => "Orario GPS",
     "Select" => "Seleziona",
+    
+    'MW_REGISTRATION_EMAIL_ALREADY_EXISTS' => 'L\'email è già presente nel database, usare un\'altra email o richiedere la password',
 );
 org_glizy_locale_Locale::append($strings);
 

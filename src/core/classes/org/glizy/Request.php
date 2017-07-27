@@ -11,6 +11,7 @@ if (!defined('GLZ_REQUEST_ALL')) define('GLZ_REQUEST_ALL', 0);
 if (!defined('GLZ_REQUEST_GET')) define('GLZ_REQUEST_GET', 1);
 if (!defined('GLZ_REQUEST_POST')) define('GLZ_REQUEST_POST', 2);
 if (!defined('GLZ_REQUEST_ROUTING')) define('GLZ_REQUEST_ROUTING', 3);
+if (!defined('GLZ_REQUEST_AUTH')) define('GLZ_REQUEST_AUTH', 4);
 if (!defined('GLZ_REQUEST_VALUE')) define('GLZ_REQUEST_VALUE', 0);
 if (!defined('GLZ_REQUEST_TYPE')) define('GLZ_REQUEST_TYPE', 1);
 
@@ -24,6 +25,8 @@ class org_glizy_Request
 	static $skipDecode = false;
 	static $translateInfo = true;
 	static $method = '';
+
+	private static $backupValues;
 
 	function org_glizy_Request()
 	{
@@ -62,18 +65,24 @@ class org_glizy_Request
 			$params[$k]= array($v, GLZ_REQUEST_POST);
 		}
 
-		$contentType = @$_SERVER[ 'CONTENT_TYPE' ];
+		$contentType = self::getContentType();
 		$body = @file_get_contents('php://input');
 		if ( $body && $contentType && $contentType != 'application/x-www-form-urlencoded' )
 		{
 			$params['__postBody__'] = array($body, GLZ_REQUEST_POST);
-			parse_str( $body, $output );
-			foreach($output as $k=>$v)
-			{
-				if ( !isset( $params[ $k ] ) )
+			if ('application/json'===$contentType) {
+				$output = @json_decode($body);
+			} else {
+				parse_str( $body, $output );
+			}
+			if ($output) {
+	 			foreach($output as $k=>$v)
 				{
-					$url .= '&'.$k.'='.$v;
-					$params[$k]= array($v, GLZ_REQUEST_POST);
+					if ( !isset( $params[ $k ] ) )
+					{
+						if (is_string($v)) $url .= '&'.$k.'='.$v;
+						$params[$k]= array($v, GLZ_REQUEST_POST);
+					}
 				}
 			}
 		}
@@ -91,6 +100,7 @@ class org_glizy_Request
 				if ( isset($params[ $v[ 'target_name' ] ]) && $params[ $v[ 'target_name' ] ][ GLZ_REQUEST_VALUE ] == $v[ 'label' ] )
 				{
 					$params[ $v[ 'target' ] ][ GLZ_REQUEST_VALUE ] =  $v[ 'value' ];
+					$params[ $v[ 'target' ] ][ GLZ_REQUEST_TYPE ] =  GLZ_REQUEST_POST;
 				}
 			}
 			__Session::remove( '__translateInfo_'.$pageId );
@@ -105,6 +115,17 @@ class org_glizy_Request
 			}
 			__Session::remove( '__valuesForNextRefresh' );
 		}
+
+		self::parseBasicAuth();
+		self::$backupValues = array_merge($params, array());
+
+		// controlla se c'è da applicare un filtro
+		$inputFilter = org_glizy_Config::get('glizy.request.inputFilter');
+		if ($inputFilter) {
+			self::applyInputFilter($inputFilter);
+		}
+
+
 	}
 
     static function get($name, $defaultValue=NULL, $type=GLZ_REQUEST_ALL)
@@ -181,6 +202,27 @@ class org_glizy_Request
 		return $result;
 	}
 
+	/**
+	 * Return the request Content Type
+	 * @return String
+	 */
+	static function getContentType()
+	{
+		$headerContentType = isset($_SERVER[ 'CONTENT_TYPE' ]) ? $_SERVER[ 'CONTENT_TYPE' ] : '';
+		list($contentType) = explode(';', $headerContentType);
+	    return strtolower(trim($contentType));
+	}
+
+
+	/**
+	 * Return the post body
+	 * @return String
+	 */
+	static function getBody()
+	{
+	    return self::get('__postBody__', null);
+	}
+
 	static function setFromArray($values, $type=GLZ_REQUEST_ALL)
 	{
 		$params	= &org_glizy_Request::_getValuesArray( true );
@@ -197,6 +239,25 @@ class org_glizy_Request
 		__Session::set( '__valuesForNextRefresh', $values );
 	}
 
+	/**
+	 * Apply the input filter
+	 * @param  string  $filterName        Filter class path
+	 * @param  array  $excludedFields    Fields to exclude
+	 * @param  boolean $restoreFromBackup Restore from backup
+	 */
+	public static function applyInputFilter($filterName, $excludedFields=null, $restoreFromBackup=false)
+	{
+		$filterClass = org_glizy_ObjectFactory::createObject($filterName);
+		if (!$filterClass) {
+            throw org_glizy_exceptions_GlobalException::classNotExists($filterName);
+        } else if (!$filterClass instanceof org_glizy_request_interfaces_IInputFilter) {
+            throw org_glizy_exceptions_InterfaceException::notImplemented('org.glizy.request.interfaces.IInputFilter', $filterName);
+        }
+
+		$params = !$restoreFromBackup ? org_glizy_Request::_getValuesArray() : self::$backupValues;
+        $newParams = $filterClass->filter($params, $excludedFields);
+        self::setFromArray($newParams);
+	}
 
 	static function dump($name=null)
 	{
@@ -262,6 +323,35 @@ class org_glizy_Request
         $valuesArray = &self::_getValuesArray();
         $valuesArray = array();
     }
+
+	public static function getMethod()
+	{
+		 return strtoupper(self::$method);
+	}
+
+	public static function getUser()
+	{
+		return self::get('PHP_AUTH_USER');
+	}
+
+	public static function getPassword()
+	{
+		return self::get('PHP_AUTH_PW');
+	}
+
+	private static function parseBasicAuth()
+	{
+		$httpAuth = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) ? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] : '');
+
+		if ($httpAuth && preg_match('/Basic\s+(.*)$/i', $httpAuth, $matches)) {
+            list($user, $password) = explode(':', base64_decode($matches[1]));
+            $_SERVER['PHP_AUTH_USER'] = $user;
+            $_SERVER['PHP_AUTH_PW'] = $password;
+        }
+
+		self::set('PHP_AUTH_USER', @$_SERVER['PHP_AUTH_USER'], GLZ_REQUEST_AUTH);
+		self::set('PHP_AUTH_PW', @$_SERVER['PHP_AUTH_PW'], GLZ_REQUEST_AUTH);
+	}
 }
 
 // shortcut version

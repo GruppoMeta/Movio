@@ -54,7 +54,7 @@
     <![CDATA[
         $expr = $iterator->expr();
 
-        $iterator->select("t1.menu_id", "t5.menudetail_title", "t6.menudetail_title as p3", "t7.menudetail_title as p2", "t8.menudetail_title as p1")
+        $iterator->select("distinct t1.menu_id", "t5.menudetail_title", "t6.menudetail_title as p3", "t7.menudetail_title as p2", "t8.menudetail_title as p1")
                  ->leftJoin("t1", $this->tablePrefix."menus_tbl", "t2", $expr->eq("t1.menu_parentId", "t2.menu_id"))
                  ->leftJoin("t1", $this->tablePrefix."menus_tbl", "t3", $expr->eq("t2.menu_parentId", "t3.menu_id"))
                  ->leftJoin("t1", $this->tablePrefix."menus_tbl", "t4", $expr->eq("t3.menu_parentId", "t4.menu_id"))
@@ -64,7 +64,7 @@
                  ->leftJoin("t1", $this->tablePrefix."menudetails_tbl", "t8", $expr->andX($expr->eq("t8.menudetail_FK_menu_id", "t4.menu_id"), $expr->eq("t8.menudetail_FK_language_id", ":languageId")))
                  ->setParameter(':languageId', $languageId)
                  ->where("t1.menu_type", 'BLOCK', '!=')
-                 ->limit(0, 10)
+                 ->limit(0, __Config::get('glizycms.autocompletePagePicker.limit'))
                  ->orderBy("t5.menudetail_title");
 
         if ($pageType) {
@@ -82,83 +82,37 @@
     ]]>
     </model:Query>
 
-    <model:Query name="mysql_getChildMenus">
+    <model:Query name="getChildMenus" type="function" arguments="menuId,languageId,skipBlock">
     <!--
-        Get a child menu.
         Used in:
             org.glizycms.contents.models.proxy.MenuProxy
     -->
     <![CDATA[
-        SELECT t1.*,
-            menudetail_title,
-            menudetail_titleLink,
-            menudetail_linkDescription,
-            menudetail_isVisible,
-            (SELECT count(*) FROM ##TABLE_PREFIX##menus_tbl as t2 WHERE t2.menu_parentId = t1.menu_id) as numChild
-        FROM ##TABLE_PREFIX##menus_tbl as t1
-        INNER JOIN ##TABLE_PREFIX##menudetails_tbl ON (menudetail_FK_menu_id=menu_id)
-        WHERE t1.menu_parentId=:menuId AND menudetail_FK_language_id=:languageId
-        ORDER BY t1.menu_order, t1.menu_id
-    ]]>
-    </model:Query>
+        $expr = $iterator->expr();
+        $sqlNumChild = 'SELECT count(*) FROM '.$this->getTableName().' as t2 WHERE t2.menu_parentId = t1.menu_id';
+        if ($skipBlock) {
+            $iterator->where('t1.menu_type', 'BLOCK', '!=');
+            $sqlNumChild .= ' AND t2.menu_type!="BLOCK"';
+        }
 
-    <model:Query name="mysql_getChildMenusNoBlock">
-    <!--
-        Get a child menu.
-        Used in:
-            org.glizycms.contents.models.proxy.MenuProxy
-    -->
-    <![CDATA[
-        SELECT t1.*,
-            menudetail_title,
-            menudetail_titleLink,
-            menudetail_linkDescription,
-            menudetail_isVisible,
-            (SELECT count(*) FROM ##TABLE_PREFIX##menus_tbl as t2 WHERE t2.menu_parentId = t1.menu_id AND t2.menu_type!='BLOCK') as numChild
-        FROM ##TABLE_PREFIX##menus_tbl as t1
-        INNER JOIN ##TABLE_PREFIX##menudetails_tbl ON (menudetail_FK_menu_id=menu_id)
-        WHERE t1.menu_parentId=:menuId AND menudetail_FK_language_id=:languageId AND t1.menu_type!='BLOCK'
-        ORDER BY t1.menu_order, t1.menu_id
-    ]]>
-    </model:Query>
+        $selectFields = array(
+            't1.*',
+            'detail.menudetail_title',
+            'detail.menudetail_titleLink',
+            'detail.menudetail_linkDescription',
+            'detail.menudetail_isVisible',
+            $expr->sql('('.$sqlNumChild.') as numChild')
+        );
 
-    <model:Query name="pgsql_getChildMenus">
-    <!--
-        Get a child menu.
-        Used in:
-            org.glizycms.contents.models.proxy.MenuProxy
-    -->
-    <![CDATA[
-        SELECT t1.*,
-            menudetail_title,
-            "menudetail_titleLink",
-            "menudetail_linkDescription",
-            "menudetail_isVisible",
-            (SELECT count(*) FROM ##TABLE_PREFIX##menus_tbl as t2 WHERE t2."menu_parentId" = t1.menu_id) as "numChild"
-        FROM ##TABLE_PREFIX##menus_tbl as t1
-        INNER JOIN ##TABLE_PREFIX##menudetails_tbl ON ("menudetail_FK_menu_id" = menu_id)
-        WHERE t1."menu_parentId"=:menuId AND "menudetail_FK_language_id"=:languageId
-        ORDER BY t1.menu_order, t1.menu_id
-    ]]>
-    </model:Query>
+        if ($this->fieldExists('menudetail_hideInNavigation')) {
+            $selectFields[] =  'detail.menudetail_hideInNavigation';
+        }
 
-    <model:Query name="pgsql_getChildMenusNoBlock">
-    <!--
-        Get a child menu.
-        Used in:
-            org.glizycms.contents.models.proxy.MenuProxy
-    -->
-    <![CDATA[
-        SELECT t1.*,
-            menudetail_title,
-            "menudetail_titleLink",
-            "menudetail_linkDescription",
-            "menudetail_isVisible",
-            (SELECT count(*) FROM ##TABLE_PREFIX##menus_tbl as t2 WHERE t2."menu_parentId" = t1.menu_id AND t2.menu_type!='BLOCK') as "numChild"
-        FROM ##TABLE_PREFIX##menus_tbl as t1
-        INNER JOIN ##TABLE_PREFIX##menudetails_tbl ON ("menudetail_FK_menu_id" = menu_id)
-        WHERE t1."menu_parentId"=:menuId AND "menudetail_FK_language_id"=:languageId AND t1.menu_type!='BLOCK'
-        ORDER BY t1.menu_order, t1.menu_id
+        $iterator->select($selectFields)
+                 ->where('t1.menu_parentId', $menuId, '=')
+                 ->whereLanguageIs($languageId)
+                 ->orderBy('t1.menu_order')
+                 ->orderBy('t1.menu_id');
     ]]>
     </model:Query>
 
@@ -169,7 +123,21 @@
             org.glizycms.core.application.SiteMapDB
     -->
     <![CDATA[
-        $iterator->select('t1.*', 'detail.menudetail_title', 'detail.menudetail_titleLink', 'detail.menudetail_linkDescription', 'detail.menudetail_isVisible' )
+        $selectFields = array(
+            't1.*',
+            'detail.menudetail_title',
+            'detail.menudetail_titleLink',
+            'detail.menudetail_linkDescription',
+            'detail.menudetail_isVisible',
+            'detail.menudetail_description',
+            'detail.menudetail_keywords'
+        );
+
+        if ($this->fieldExists('menudetail_hideInNavigation')) {
+            $selectFields[] =  'detail.menudetail_hideInNavigation';
+        }
+
+        $iterator->select($selectFields)
                  ->whereLanguageIs($languageId)
                  ->orderBy('t1.menu_parentId')
                  ->orderBy('t1.menu_order')
@@ -177,7 +145,10 @@
 
         if (__Config::get('glizycms.speakingUrl')) {
             $expr = $iterator->expr();
-             $iterator->select('t1.*', 'detail.menudetail_title', 'detail.menudetail_titleLink', 'detail.menudetail_linkDescription', 'detail.menudetail_isVisible', 't3.speakingurl_value', 't2.language_code' )
+            $selectFields[] =  't3.speakingurl_value';
+            $selectFields[] =  't2.language_code';
+
+            $iterator->select($selectFields)
                  ->leftJoin("t1", $this->tablePrefix."speakingurls_tbl", "t3",
                     $expr->andX(
                         $expr->eq("t1.menu_id", "t3.speakingurl_FK"),
@@ -191,7 +162,7 @@
     ]]>
     </model:Query>
 
-    <model:Query name="getChildrenMenuInOrder" type="function" arguments="menuId">
+    <model:Query name="getChildrenMenuInOrder" type="function" arguments="menuId,isBlock">
     <!--
         Get the children of a menu
         Used in:
@@ -200,6 +171,7 @@
     <![CDATA[
         $iterator->select('menu_id', 'menu_order', 'menudetail_id')
                  ->where('menu_parentId', $menuId)
+                 ->where('menu_type', 'BLOCK', $isBlock ? '=' : '!=')
                  ->orderBy('menu_order');
     ]]>
     </model:Query>

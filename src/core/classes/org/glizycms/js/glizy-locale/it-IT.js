@@ -1,6 +1,8 @@
 GlizyLocale.FormEdit = {
     saveSuccessMsg: "Dati salvati correttamente",
     errorValidationMsg: "Errore nell'inserimento dati",
+    add: "Aggiungi",
+    preview: "Anteprima",
     addRecord: "Aggiungi un record",
     minRecords: "Record Minimi: ",
     maxRecords: " / Record Massimi: ",
@@ -18,8 +20,11 @@ GlizyLocale.FormEdit = {
     insertComment: "Inserisci un commento",
     search: "Cerca",
     googleMapError_1: "Inserire un indirizzo o le coordinate longitudine/latitudine",
-    googleMapError_2: "Errore nella ricerca dell'indirizzo"
-}
+    googleMapError_2: "Errore nella ricerca dell'indirizzo",
+    interruptProcess: "Attenzione, uscendo da questa pagina verra\' interrotto il processo!",
+    unableToSave: "Impossibile salvare questo documento, a causa dei seguenti errori:",
+    discardConfirmation: "Proseguendo, si perdono le modifiche non salvate. Continuare?"
+};
 
 GlizyLocale.FineUploader = {
     uploadButton: 'Trascina qui i files da caricare',
@@ -78,4 +83,9 @@ GlizyLocale.HotSpot = {
     urlEx: 'Url',
     urlInt: 'Pagina',
     description: 'descrizione'
+};
+
+GlizyLocale.selectfrom = {
+    formatNoMatches: 'Nessun risultato',
+    formatSearching: 'Ricerca in corso...'
 };

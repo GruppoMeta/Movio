@@ -13,6 +13,16 @@
 
 class org_glizy_rest_core_Application extends org_glizy_mvc_core_Application
 {
+    private $initSiteMap = false;
+
+    /**
+     * @param boolean $initSiteMap
+     */
+    public function setInitSiteMap($initSiteMap)
+    {
+        $this->initSiteMap = $initSiteMap;
+    }
+
 	function run()
 	{
 		$this->log( "Run Rest application", GLZ_LOG_SYSTEM );
@@ -23,6 +33,9 @@ class org_glizy_rest_core_Application extends org_glizy_mvc_core_Application
 		}
 
 		glz_defineBaseHost();
+        if ($this->initSiteMap) {
+            $this->_initSiteMap();
+        }
 		$this->_initRequest();
 
 		glz_require_once_dir(org_glizy_Paths::getRealPath('APPLICATION_CLASSES'));
@@ -133,9 +146,8 @@ class org_glizy_rest_core_Application extends org_glizy_mvc_core_Application
 		header('Cache-Control: no-cache');
 		header('Pragma: no-cache');
 		header('Expires: -1');
-		header( $_SERVER['SERVER_PROTOCOL'].' '.$status.' '.$this->getStatusCodeMessage( $status ) );
-
-		if ( $result )
+		header( $_SERVER['SERVER_PROTOCOL'].' '.$status.' '.org_glizy_helpers_HttpStatus::getStatusCodeMessage( $status ) );
+		if ( !is_null($result) )
 		{
 			if ( $httpAccept == 'json' )
 			{
@@ -173,7 +185,6 @@ class org_glizy_rest_core_Application extends org_glizy_mvc_core_Application
 	    foreach($data as $key => $value){
 	    	if ( $key == "_className" || is_null( $value ) ) continue;
 
-
 	        if( is_string( $key) && is_object( $value ) )
 	        {
 	            $xml->startElement($key);
@@ -198,9 +209,13 @@ class org_glizy_rest_core_Application extends org_glizy_mvc_core_Application
 				{
 		            foreach( $value as $v )
 		            {
-			            $xml->startElement( $wrapTag );
-			            $this->createXmlNode($xml, $v);
-			            $xml->endElement();
+		            	if (is_string($v)) {
+							$xml->writeElement($key, $v);
+		            	} else {
+				            $xml->startElement( $wrapTag );
+				            $this->createXmlNode($xml, $v);
+				            $xml->endElement();
+		            	}
 		            }
 				}
 				else
@@ -222,53 +237,6 @@ class org_glizy_rest_core_Application extends org_glizy_mvc_core_Application
 	        }
 
 	    }
-	}
-
-	private function getStatusCodeMessage($status)
-	{
-		$codes = array(
-		    200 => 'OK',
-		    201 => 'Created',
-		    202 => 'Accepted',
-		    203 => 'Non-Authoritative Information',
-		    204 => 'No Content',
-		    205 => 'Reset Content',
-		    206 => 'Partial Content',
-		    300 => 'Multiple Choices',
-		    301 => 'Moved Permanently',
-		    302 => 'Found',
-		    303 => 'See Other',
-		    304 => 'Not Modified',
-		    305 => 'Use Proxy',
-		    306 => '(Unused)',
-		    307 => 'Temporary Redirect',
-		    400 => 'Bad Request',
-		    401 => 'Unauthorized',
-		    402 => 'Payment Required',
-		    403 => 'Forbidden',
-		    404 => 'Not Found',
-		    405 => 'Method Not Allowed',
-		    406 => 'Not Acceptable',
-		    407 => 'Proxy Authentication Required',
-		    408 => 'Request Timeout',
-		    409 => 'Conflict',
-		    410 => 'Gone',
-		    411 => 'Length Required',
-		    412 => 'Precondition Failed',
-		    413 => 'Request Entity Too Large',
-		    414 => 'Request-URI Too Long',
-		    415 => 'Unsupported Media Type',
-		    416 => 'Requested Range Not Satisfiable',
-		    417 => 'Expectation Failed',
-		    500 => 'Internal Server Error',
-		    501 => 'Not Implemented',
-		    502 => 'Bad Gateway',
-		    503 => 'Service Unavailable',
-		    504 => 'Gateway Timeout',
-		    505 => 'HTTP Version Not Supported'
-		);
-
-		return (isset($codes[$status])) ? $codes[$status] : '';
 	}
 
 	function executeCommand( $command )

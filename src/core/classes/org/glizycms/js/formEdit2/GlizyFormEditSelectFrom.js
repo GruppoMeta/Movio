@@ -1,11 +1,11 @@
 Glizy.oop.declare("glizy.FormEdit.selectfrom", {
     $extends: Glizy.oop.get('glizy.FormEdit.standard'),
     multiple: null,
-    
+
     initialize: function (element) {
         element.data('instance', this);
         this.$element = element;
-        
+
         element.removeAttr('value');
         element.css('width', '500px');
 
@@ -23,9 +23,9 @@ Glizy.oop.declare("glizy.FormEdit.selectfrom", {
         var originalName = element.data('originalName');
         var getId = element.data('get_id');
         var selectedCallback = element.data('selected_callback');
-    	var minimumInputLength = $(this).data('min_input_length') || 0;
-    	var formatSelection = $(this).data('format_selection');
-        var formatResult = $(this).data('format_result');
+    	var minimumInputLength = element.data('min_input_length') || 0;
+    	var formatSelection = element.data('format_selection');
+        var formatResult = element.data('format_result');
 
         if (originalName !== undefined && element.data('override')!==false) {
             fieldName = originalName;
@@ -73,7 +73,7 @@ Glizy.oop.declare("glizy.FormEdit.selectfrom", {
             formatSelection: function(data) {
                 if (selectedCallback) {
                     var term = data.text;
-                    
+
                     $.ajax({
                         url: Glizy.ajaxUrl+"&controllerName="+selectedCallback,
                         data: {
@@ -88,12 +88,23 @@ Glizy.oop.declare("glizy.FormEdit.selectfrom", {
                         type: "POST"
                     });
                 }
-    
+
                 return formatSelection === undefined ? data.text : window[formatSelection](data);
-            }
+            },
+            formatNoMatches: function () { return GlizyLocale.selectfrom.formatNoMatches; },
+            formatSearching: function () { return GlizyLocale.selectfrom.formatSearching; }
         });
+
+        if (this.multiple) {
+            element.parent().find("ul.select2-choices").sortable({
+                containment: 'parent',
+                start: function() { element.select2("onSortStart"); },
+                update: function() { element.select2("onSortEnd"); }
+            });
+        }
+
     },
-    
+
     getValue: function () {
         if (this.$element.data('return_object')) {
             return this.$element.select2('data');
@@ -101,7 +112,7 @@ Glizy.oop.declare("glizy.FormEdit.selectfrom", {
             return this.$element.select2('val');
         }
     },
-    
+
     setValue: function (value) {
         if (!this.multiple) {
             if (value) {
@@ -112,12 +123,12 @@ Glizy.oop.declare("glizy.FormEdit.selectfrom", {
                 }
             }
         }
-        else if (value !== undefined && value.length > 0) {
-            var arrayVal = []
+        else if (Array.isArray(value)) {
+            var arrayVal = [];
 
             $.each(value, function(index, v) {
                 if (typeof(v)=="object") {
-                    arrayVal.push(v);   
+                    arrayVal.push(v);
                 }
                 else {
                     arrayVal.push({id: v, text: v});
@@ -135,18 +146,18 @@ Glizy.oop.declare("glizy.FormEdit.selectfrom", {
     focus: function () {
         this.$element.select2('focus');
     },
-    
+
     destroy: function() {
     },
-    
+
     isDisabled: function() {
         return this.$element.attr('disabled') == 'disabled';
     },
-    
+
     addClass: function(className) {
         this.$element.addClass(className);
     },
-    
+
     removeClass: function(className) {
         this.$element.removeClass(className);
     }

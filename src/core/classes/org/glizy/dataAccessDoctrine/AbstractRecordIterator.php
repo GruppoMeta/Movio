@@ -10,7 +10,14 @@
 
 abstract class org_glizy_dataAccessDoctrine_AbstractRecordIterator extends GlizyObject implements Iterator
 {
+    /**
+     * @var org_glizy_dataAccessDoctrine_ActiveRecord
+     */
     protected $ar;
+
+    /**
+     * @var \Doctrine\DBAL\Query\QueryBuilder
+     */
     protected $qb;
     protected $pos = 0;
     protected $statement = NULL;
@@ -25,13 +32,18 @@ abstract class org_glizy_dataAccessDoctrine_AbstractRecordIterator extends Glizy
     protected $siteSet;
     protected $expr;
 
-    function __construct($ar)
+    protected $fetchMode = PDO::FETCH_BOTH;
+
+    /**
+     * @param org_glizy_dataAccessDoctrine_ActiveRecord $ar
+     */
+    public function __construct($ar)
     {
         $this->ar = $ar;
         $this->expr = $ar->getConnection()->getExpressionBuilder();
         $this->resetQuery();
     }
-    
+
     public function getArType()
     {
         return $this->ar->getBaseClassName();
@@ -51,13 +63,26 @@ abstract class org_glizy_dataAccessDoctrine_AbstractRecordIterator extends Glizy
         return $this->expr;
     }
 
+    /**
+     * @return \Doctrine\DBAL\Query\QueryBuilder
+     */
     public function qb()
     {
         return $this->qb;
     }
 
+    /**
+     * @param string $query
+     * @param array $params
+     *
+     * @return org_glizy_dataAccessDoctrine_interfaces_IteratorInterface
+     *
+     * @throws \BadMethodCallException|\Doctrine\DBAL\DBALException
+     */
     public function load($query, $params=null)
     {
+        $this->resetQuery();
+
         $driverName = $this->ar->getDriverName();
 
         if (method_exists($this->ar, 'query_'.$query)) {
@@ -76,6 +101,9 @@ abstract class org_glizy_dataAccessDoctrine_AbstractRecordIterator extends Glizy
             $this->querySqlToExec = org_glizy_helpers_PhpScript::callMethodWithParams($this->ar, 'querysql_'.$query);
         }
 
+        $this->data = null;
+        $this->pos = 0;
+        $this->EOF = false;
         $this->lastQuery = $query;
         $this->lastParams = $params;
 
@@ -91,22 +119,27 @@ abstract class org_glizy_dataAccessDoctrine_AbstractRecordIterator extends Glizy
 
     abstract protected function processUnionFields($fieldName, $value);
 
+    /**
+     * @param array $filters
+     *
+     * @return $this
+     */
     public function setFilters($filters)
     {
         if ($this->querySqlToExec) {
             $filtersSql = array();
             foreach ($filters as $fieldName => $value) {
-                if ($fieldName == '__OR__') {
+                if (strpos($fieldName, '__OR__')===0) {
                     $this->setOrFilters($value);
                     continue;
                 }
 // TODO implementare il quoting per postgress
                 if (is_array($value)) {
                     if (isset($value['value']) && !is_array($value['value'])) {
-                        $filtersSql[] = (isset($value['field']) ? $value['field'] : $fieldName).$value['condition'].'"'.$value['value'].'"';
+                        $filtersSql[] = (isset($value['field']) ? $value['field'] : $fieldName).' '.$value['condition'].' "'.$value['value'].'"';
                     } else {
                         foreach ($value as $v) {
-                            $filtersSql[] = $v['field'].$v['condition'].'"'.$v['value'].'"';
+                            $filtersSql[] = $v['field'].' '.$v['condition'].' "'.$v['value'].'"';
                         }
                     }
                 } else {
@@ -121,7 +154,7 @@ abstract class org_glizy_dataAccessDoctrine_AbstractRecordIterator extends Glizy
         }
 
         foreach ($filters as $fieldName => $value) {
-            if ($fieldName == '__OR__') {
+            if (strpos($fieldName, '__OR__')===0) {
                 $this->setOrFilters($value);
                 continue;
             }
@@ -162,17 +195,16 @@ abstract class org_glizy_dataAccessDoctrine_AbstractRecordIterator extends Glizy
 // TODO implementare il quoting per postgress
                 if (is_array($value)) {
                     if (isset($value['value']) && !is_array($value['value'])) {
-                        $filtersSql[] = (isset($value['field']) ? $value['field'] : $fieldName).$value['condition'].'"'.$value['value'].'"';
+                        $filtersSql[] = (isset($value['field']) ? $value['field'] : $fieldName).' '.$value['condition'].' "'.$value['value'].'"';
                     } else {
                         foreach ($value as $v) {
-                            $filtersSql[] = $v['field'].$v['condition'].'"'.$v['value'].'"';
+                            $filtersSql[] = $v['field'].' '.$v['condition'].' "'.$v['value'].'"';
                         }
                     }
                 } else {
                     $filtersSql[] = $fieldName.' like "%'.$value.'%"';
                 }
             }
-
             if (count($filtersSql)) {
                 $this->querySqlToExec['filters'][] = '('.implode(' OR ', $filtersSql).')';
             }
@@ -293,6 +325,12 @@ abstract class org_glizy_dataAccessDoctrine_AbstractRecordIterator extends Glizy
         return $this;
     }
 
+    public function whereIsNull($fieldName)
+    {
+        $this->qb->andWhere($this->expr->isNull($fieldName));
+        return $this;
+    }
+
     public function disableSiteConditionIs()
     {
         $this->siteSet = true;
@@ -336,23 +374,34 @@ abstract class org_glizy_dataAccessDoctrine_AbstractRecordIterator extends Glizy
             $this->lastQuery = $this->qb;
             $this->statement = $this->qb->execute();
 
-            // TODO la count rallenta le query
-            // renderla opzionale
             if ($this->hasLimit) {
-               $qb = clone $this->qb;
+                $qb = clone $this->qb;
+                // resetta i limiti della query
+                $qb->setFirstResult(null);
+                $qb->setMaxResults(null);
 
-               // elimina la parte select e orderBy perchè non servono per il conteggio
-               $qb->resetQueryParts(array('select', 'orderBy'));
+                $select = implode(' ', $qb->getQueryPart('select'));
+                if (stripos($select, 'distinct ')!==false) {
+                    $qb->resetQueryParts(array('orderBy'));
+                    $qb2 = $this->ar->getConnection()->createQueryBuilder();
+                    $expr = $qb2->expr();
 
-               // resetta i limiti della query
-               $qb->setFirstResult(null);
-               $qb->setMaxResults(null);
+                    $qb2->select('COUNT(*) AS tot')
+                        ->from($qb2->expr()->sql($qb->getSql()), 'my_table')
+                        ->setParameters($qb->getParameters());
+                    $stmt = $qb2->execute();
 
-               // aggiunge il conteggio alla query
-               $qb->select('COUNT(*) AS tot');
-               $stmt = $qb->execute();
-               $row = $stmt->fetch();
-               $this->count = $row['tot'];
+                } else {
+                    // elimina la parte select e orderBy perchè non servono per il conteggio
+                    $qb->resetQueryParts(array('select', 'orderBy'));
+
+                    // aggiunge il conteggio alla query
+                    $qb->select('COUNT(*) AS tot');
+                    $stmt = $qb->execute();
+                }
+
+                $row = $stmt->fetch();
+                $this->count = $row['tot'];
             }
         }
 
@@ -414,7 +463,8 @@ abstract class org_glizy_dataAccessDoctrine_AbstractRecordIterator extends Glizy
 
         // se non ci sono record
         if ($this->EOF) {
-            return null;
+            $a = null;
+            return $a;
         }
 
         $ar = clone $this->ar;
@@ -443,7 +493,8 @@ abstract class org_glizy_dataAccessDoctrine_AbstractRecordIterator extends Glizy
 
     private function fetch()
     {
-        $this->data = $this->statement->fetch(PDO::FETCH_NAMED);
+        $this->data = $this->statement->fetch($this->fetchMode);
+
         $this->EOF = $this->data === false;
         $this->pos++;
 

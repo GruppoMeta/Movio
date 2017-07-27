@@ -43,10 +43,8 @@ class org_glizy_components_Page extends org_glizy_components_ComponentContainer
 	 */
 	function process()
 	{
-		if ( !$this->_application->canViewPage() )
-		{
-			org_glizy_Session::set('glizy.loginUrl', org_glizy_helpers_Link::scriptUrl());
-			org_glizy_helpers_Navigation::gotoUrl( org_glizy_helpers_Link::makeUrl( 'accessDenied' ) );
+		if (!$this->_application->canViewPage() || !$this->checkAcl()) {
+			org_glizy_helpers_Navigation::accessDenied($this->_user->isLogged());
 		}
 
 		$this->processChilds();
@@ -131,5 +129,15 @@ class org_glizy_components_Page extends org_glizy_components_ComponentContainer
 
 	public function setOutputCode($keyName, $value) {
 		$this->addOutputCode($value, $keyName);
+	}
+
+	protected function checkAcl()
+	{
+		$acl = $this->getAttribute( 'acl' );
+		if ($acl) {
+			list( $service, $action ) = explode( ',', $acl );
+			return $this->_user->acl($service, $action, false);
+		}
+		return true;
 	}
 }

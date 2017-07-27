@@ -63,7 +63,7 @@ class org_glizycms_mediaArchive_controllers_mediaEdit_ajax_Save extends org_gliz
         $medias = $data->medias;
 
         $r = $this->checkDuplicates($medias);
-        if (!$r) {
+        if ($r!==false) {
             return $r;
         }
 
@@ -149,7 +149,7 @@ class org_glizycms_mediaArchive_controllers_mediaEdit_ajax_Save extends org_gliz
                 }
             }
         }
-        return true;
+        return false;
     }
 
     private function decompressFiles($medias)

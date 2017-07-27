@@ -54,7 +54,7 @@ EOD;
 		$q = __Request::get('q');
 		$result = array();
 		if ($mode == 'users') {
-			$it = org_glizy_ObjectFactory::createModelIterator('org.glizycms.userManager.models.UserGroup', 'all');
+			$it = org_glizy_ObjectFactory::createModelIterator('org.glizycms.userManager.models.User', 'all');
             $it->setOrFilters(array(
                                 "user_firstName" => $q,
                                 "user_lastName" => $q,

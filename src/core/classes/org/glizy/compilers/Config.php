@@ -32,8 +32,13 @@ class org_glizy_compilers_Config extends org_glizy_compilers_Compiler
 	function _compileXml($fileName)
 	{
 		$dirPath = dirname($fileName).'/';
+		libxml_use_internal_errors( true );
 		$xml = org_glizy_ObjectFactory::createObject( 'org.glizy.parser.XML' );
 		$xml->load( $fileName );
+	    $errors = libxml_get_errors();
+		if (!empty($errors)) {
+			throw new Exception(json_encode($errors));
+		}
 		foreach( $xml->documentElement->childNodes as $nc )
 		{
 			$this->_compileXmlNode( $nc, $dirPath );
@@ -73,6 +78,12 @@ class org_glizy_compilers_Config extends org_glizy_compilers_Compiler
 					}
 					$src .= $configName;
 				}
+				
+				$importRealPath = realpath($dirPath.$src);
+					
+				if ($importRealPath === false) {
+					throw new Exception($this->_fileName.PHP_EOL.' sta importando un file non esistente '.$dirPath.$src);
+				}	
 
 				$this->_compileXml(realpath($dirPath.$src));
 				break;
@@ -102,9 +113,9 @@ class org_glizy_compilers_Config extends org_glizy_compilers_Compiler
 				$modeName 	= $node->getAttribute('name');
 				$tempConfig = $this->_config;
 				$this->_config = array();
-				for ($i=0; $i<count($node->childNodes); $i++)
+				foreach ($node->childNodes as $n)
 				{
-					$this->_compileXmlNode($node->childNodes[$i], $dirPath);
+					$this->_compileXmlNode($n, $dirPath);
 				}
 
 				$this->_modes .= '$configArray[\'__modes__\'][\''.$modeName.'\'] = array()'.GLZ_COMPILER_NEWLINE;

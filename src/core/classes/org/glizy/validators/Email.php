@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the COPYRIGHT.txt
  * file that was distributed with this source code.
  */
-class org_glizy_validators_Email extends org_glizy_validators_AbstractValidator
+class org_glizy_validators_Email implements org_glizy_validators_ValidatorInterface
 {
 
     /**
@@ -15,7 +15,7 @@ class org_glizy_validators_Email extends org_glizy_validators_AbstractValidator
      *
      * @return bool|string
      */
-    public function validate($description, $value)
+    public function validate($description, $value, $defaultValue)
     {
         if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
             return true;

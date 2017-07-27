@@ -31,6 +31,8 @@ class org_glizy_application_Acl extends GlizyObject
 
     function acl($name, $action, $default=NULL)
     {
+        if ($this->id==0) return false;
+
         $action = strtolower($action);
         $name   = $name=='*' ? strtolower($this->application->getPageId()) : strtolower($name);
         if (isset($this->_acl[$name]))

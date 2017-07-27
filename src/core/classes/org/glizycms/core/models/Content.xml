@@ -18,6 +18,7 @@ public function getContentVO()
     $vo->__id = $this->id;
     $vo->__title = $this->title;
     $vo->__url = $this->url;
+    $vo->__status = $this->{self::DOCUMENT_DETAIL_STATUS};
 
     $content = $this->data->content;
     if ($content) {
@@ -67,7 +68,7 @@ protected function addInFulltext($value, &$fulltext)
         }
     } else {
         if (strpos($value, '{"')===0) return;
-        $stripped = trim(strip_tags($value));
+        $stripped = trim(html_entity_decode(strip_tags($value)));
         if (!is_numeric($value) && strlen($stripped) > org_glizycms_Glizycms::FULLTEXT_MIN_CHAR ) {
             $fulltext .= $stripped.org_glizycms_Glizycms::FULLTEXT_DELIMITER;
         }
@@ -86,6 +87,7 @@ public function addFieldsToIndex($indexFields)
     $addedFields = array();
     foreach($indexFields as $k=>$v) {
         $fieldPath = explode('.', $k);
+        $fieldPathLength = count($fieldPath);
         $targetObj = $this->content;
         $targetKeyName = '';
         $targetKeyNamePart = '';
@@ -98,7 +100,9 @@ public function addFieldsToIndex($indexFields)
                 $found = false;
                 break;
             }
-            if (is_object($targetObj->{$p})) $targetObj = $targetObj->{$p};
+            if ($fieldPathLength>1 && is_object($targetObj->{$p})) {
+                $targetObj = $targetObj->{$p};
+            }
             $targetKeyName = $p;
         }
         if (!$found || is_null($targetObj->{$targetKeyName})) continue;

@@ -14,7 +14,9 @@ class org_glizycms_mediaArchive_services_ExifService extends GlizyObject
     	    $ar->exif_exposureTime = $this->simplify($exif['ExposureTime']);
     		$ar->exif_fNumber = $exif['FNumber'];
         	$ar->exif_exposureProgram = $exif['ExposureProgram'];
+    		if (!is_array($exif['ISOSpeedRatings'])) {
     		$ar->exif_ISOSpeedRatings = $exif['ISOSpeedRatings'];
+    		}
         	$ar->exif_dateTimeOriginal = $exif['DateTimeOriginal'];
         	$ar->exif_dateTimeDigitized = $exif['DateTimeDigitized'];
             $ar->exif_GPSCoords = $this->getGPSCoords($exif['GPSLatitudeRef'], $exif['GPSLatitude'], $exif['GPSLongitudeRef'], $exif['GPSLongitude']);
@@ -39,10 +41,13 @@ class org_glizycms_mediaArchive_services_ExifService extends GlizyObject
         $xResolution = $this->eval_rational($xResolution);
         $yResolution = $this->eval_rational($yResolution);
         
+        if ($xResolution < 0 || $yResolution < 0) {
+            return '';
+        }
+
         if ($resolutionUnit == 3) {
             return $xResolution/2.54 . 'x' . $yResolution/2.54;
-        }
-        else {
+        } else {
             return $xResolution . 'x' . $yResolution;
         }
     }

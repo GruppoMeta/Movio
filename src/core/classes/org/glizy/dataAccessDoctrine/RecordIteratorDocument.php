@@ -37,12 +37,15 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
     protected $unionArray;
     protected $unionArrayParams;
     protected $unionOrderBy;
+    protected $unionLimit;
     protected $conditionsMap;
     protected $options;
 
     function __construct($ar)
     {
         parent::__construct($ar);
+        $this->fetchMode = PDO::FETCH_NAMED;
+        $this->options = array();
     }
 
     public function setOptions($options)
@@ -56,24 +59,35 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
     protected function initQueryBuilder()
     {
         if ($this->options['type'] == 'PUBLISHED_DRAFT') {
-            $options = array(
-                'type' => 'PUBLISHED_DRAFT',
-                'tableAlias' => self::DOCUMENT_TABLE_ALIAS,
-                'tableDetailPublishedAlias' => self::DOCUMENT_DETAIL_TABLE_PUBLISHED_ALIAS,
-                'tableDetailDraftAlias' => self::DOCUMENT_DETAIL_TABLE_DRAFT_ALIAS,
+            $options = array_merge(
+                $this->options,
+                array(
+                    'type' => 'PUBLISHED_DRAFT',
+                    'tableAlias' => self::DOCUMENT_TABLE_ALIAS,
+                    'tableDetailPublishedAlias' => self::DOCUMENT_DETAIL_TABLE_PUBLISHED_ALIAS,
+                    'tableDetailDraftAlias' => self::DOCUMENT_DETAIL_TABLE_DRAFT_ALIAS,
+                )
             );
             $this->qb = $this->ar->createQueryBuilder($options);
 
             $languageProxy = __ObjectFactory::createObject('org.glizycms.languages.models.proxy.LanguagesProxy');
             $defaultLanguageId = $languageProxy->getDefaultLanguageId();
             if ($defaultLanguageId != $this->ar->getLanguageId()) {
-                $this->qb->select(
-                    self::DOCUMENT_TABLE_ALIAS.'.*',
-                    self::DOCUMENT_DETAIL_TABLE_PUBLISHED_ALIAS.'.*',
-                    self::DOCUMENT_DETAIL_TABLE_DRAFT_ALIAS.'.*',
-                    self::DOCUMENT_DETAIL_TABLE_PUBLISHED_ALIAS.'_defaultLanguage.*',
-                    self::DOCUMENT_DETAIL_TABLE_DRAFT_ALIAS.'_defaultLanguage.*'
-                );
+                if ($this->options['multiLanguage'] === false) {
+                    $this->qb->select(
+                        self::DOCUMENT_TABLE_ALIAS.'.*',
+                        self::DOCUMENT_DETAIL_TABLE_PUBLISHED_ALIAS.'.*',
+                        self::DOCUMENT_DETAIL_TABLE_DRAFT_ALIAS.'.*'
+                    );
+                } else {
+                    $this->qb->select(
+                        self::DOCUMENT_TABLE_ALIAS.'.*',
+                        self::DOCUMENT_DETAIL_TABLE_PUBLISHED_ALIAS.'.*',
+                        self::DOCUMENT_DETAIL_TABLE_DRAFT_ALIAS.'.*',
+                        self::DOCUMENT_DETAIL_TABLE_PUBLISHED_ALIAS.'_defaultLanguage.*',
+                        self::DOCUMENT_DETAIL_TABLE_DRAFT_ALIAS.'_defaultLanguage.*'
+                    );
+                }
             } else {
                 $this->qb->select(self::DOCUMENT_TABLE_ALIAS.'.*', self::DOCUMENT_DETAIL_TABLE_PUBLISHED_ALIAS.'.*', self::DOCUMENT_DETAIL_TABLE_DRAFT_ALIAS.'.*');
             }
@@ -82,10 +96,15 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
             $this->languageSet = true;
         } else {
             $options = array(
-                'type' => 'PUBLISHED',
                 'tableAlias' => self::DOCUMENT_TABLE_ALIAS,
                 'tableDetailAlias' => self::DOCUMENT_DETAIL_TABLE_ALIAS,
             );
+
+            if (isset($this->options['type'])) {
+                $options['type'] = $this->options['type'];
+            }
+
+
             $this->qb = $this->ar->createQueryBuilder($options);
             $this->qb->select(self::DOCUMENT_TABLE_ALIAS.'.*', self::DOCUMENT_DETAIL_TABLE_ALIAS.'.*');
 
@@ -123,6 +142,9 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
         $this->unionArray = array();
         $this->unionArrayParams = array();
         $this->unionOrderBy = array();
+
+        $this->unionLimit = array();
+        $this->conditionsMap = array();
     }
 
     protected function processUnionFields($fieldName, $value)
@@ -148,11 +170,22 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
     {
         $i = 0;
 
+        /**
+         La forma del filters può essere
+         $filters['nome campo'] = 'valore';
+         $filters['nome campo'] = array('value' => '', 'condition' => '');
+         $filters['nome campo'] = array(array('field' => '', value' => '', 'condition' => ''), array('field' => '', 'value' => '', 'condition' => ''))
+         */
         foreach ($filters as $fieldName => $value) {
             if (is_array($value)) {
-                $this->where($fieldName, $value['value'], $value['condition']);
-            }
-            else {
+               if (isset($value['value']) && !is_array($value['value'])) {
+                    $this->where(isset($value['field']) ? $value['field'] : $fieldName, $value['value'], $value['condition']);
+                } else {
+                    foreach ($value as $v) {
+                        $this->where($v['field'], $v['value'], $v['condition']);
+                    }
+                }
+            } else {
                 $this->where($fieldName, $value);
             }
 
@@ -167,7 +200,7 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
 
     public function selectDistinct($fieldName)
     {
-        $indexData = $this->addIndex($fieldName);
+        $indexData = $this->addIndex($fieldName, $this->options['type']);
         $indexValue = $indexData['indexFieldPrefixAlias'].'_value';
         $this->qb->resetQueryPart('select');
         if ($this->ar->getDriverName() == 'mysql') {
@@ -179,13 +212,13 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
         return $this;
     }
 
-    protected function addIndex($fieldName, $indexAliasPrefix='index')
+    protected function addIndex($fieldName, $type=null, $joinType=null, $force=false)
     {
-        if ($this->conditionsMap[$fieldName]) {
+        if (isset($this->conditionsMap[$fieldName]) && !$force) {
             return $this->conditionsMap[$fieldName];
         }
 
-        $indexAlias = $indexAliasPrefix.$this->indexNumber;
+        $indexAlias = 'index'.$this->indexNumber;
         $indexType = $this->ar->getIndexFieldType($fieldName);
 
         $documentDetailIdName = $this->ar->getDocumentDetailTableIdName();
@@ -196,24 +229,33 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
         $documentIndexFieldPrefix = $this->ar->getDocumentIndexFieldPrefix();
         $indexFieldPrefixAlias = $indexAlias.'.'.$documentIndexFieldPrefix.$indexType;
 
-        if ($this->options['type'] == 'PUBLISHED_DRAFT') {
-            $this->qb->leftJoin(
-                self::DOCUMENT_TABLE_ALIAS, $indexTablePrefix.'_tbl', $indexAlias,
-                $this->qb->expr()->andX(
-                    $this->expr->eq(self::DOCUMENT_DETAIL_TABLE_PUBLISHED_ALIAS.'.'.$documentDetailIdName, $indexFieldPrefixAlias."_FK_document_detail_id"),
-                    $this->expr->eq("{$indexFieldPrefixAlias}_name", ":name{$this->indexNumber}")
-                )
-            );
-        } else {
-            $this->qb->join(
-                self::DOCUMENT_TABLE_ALIAS, $indexTablePrefix.'_tbl', $indexAlias,
-                $this->qb->expr()->andX(
-                    $this->expr->eq(self::DOCUMENT_DETAIL_TABLE_ALIAS.".".$documentDetailIdName, $indexFieldPrefixAlias."_FK_document_detail_id"),
-                    $this->expr->eq("{$indexFieldPrefixAlias}_name", ":name{$this->indexNumber}")
-                )
-            );
+        switch ($type) {
+            case 'PUBLISHED_DRAFT':
+                $detailTableAlias = self::DOCUMENT_DETAIL_TABLE_PUBLISHED_ALIAS;
+                $joinType = 'LEFT_JOIN';
+                break;
+
+            case 'PUBLISHED':
+                $detailTableAlias =  self::DOCUMENT_DETAIL_TABLE_PUBLISHED_ALIAS;
+                break;
+
+            case 'DRAFT':
+                $detailTableAlias = self::DOCUMENT_DETAIL_TABLE_DRAFT_ALIAS;
+                break;
+
+            default:
+                $detailTableAlias = self::DOCUMENT_DETAIL_TABLE_ALIAS;
         }
 
+        $expr = $this->qb->expr()->andX(
+            $this->expr->eq($detailTableAlias.'.'.$documentDetailIdName, $indexFieldPrefixAlias."_FK_document_detail_id"),
+            $this->expr->eq("{$indexFieldPrefixAlias}_name", ":name{$this->indexNumber}")
+        );
+        if ($joinType == 'LEFT_JOIN') {
+            $this->qb->leftJoin(self::DOCUMENT_TABLE_ALIAS, $indexTablePrefix.'_tbl', $indexAlias, $expr);
+        } else {
+            $this->qb->join(self::DOCUMENT_TABLE_ALIAS, $indexTablePrefix.'_tbl', $indexAlias, $expr);
+        }
         $this->qb->setParameter(":name{$this->indexNumber}", $fieldName);
 
         $indexData = array(
@@ -233,7 +275,7 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
     // il primo parametro è il campo da cui si ricava l'indice da selezionare
     public function selectIndex($fieldName, $key, $value)
     {
-        $indexData = $this->addIndex($fieldName);
+        $indexData = $this->addIndex($fieldName, $this->options['type']);
         $indexAlias = $indexData['indexAlias'];
         $this->select($indexAlias.'.'.$key, $indexAlias.'.'.$value);
         return $this;
@@ -258,8 +300,25 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
 
     protected function whereCondition($fieldName, $value, $condition = '=', $composite = null)
     {
-        $indexData = $this->addIndex($fieldName);
+        if ($this->options['type'] == 'PUBLISHED_DRAFT') {
+            $indexDataPublished = $this->addIndex($fieldName, 'PUBLISHED', 'LEFT_JOIN', true);
+            $indexDataDraft = $this->addIndex($fieldName, 'DRAFT', 'LEFT_JOIN', true);
+            $expr = $this->qb->expr()->orX(
+                $this->getExpr($fieldName, $value, $condition, $indexDataPublished),
+                $this->getExpr($fieldName, $value, $condition, $indexDataDraft)
+            );
+        } else {
+            $indexData = $this->addIndex($fieldName);
+            $expr = $this->getExpr($fieldName, $value, $condition, $indexData);
+        }
 
+        $this->qb->andWhere($expr);
+
+        return $this;
+    }
+
+    protected function getExpr($fieldName, $value, $condition, $indexData)
+    {
         $indexFieldPrefixAlias = $indexData['indexFieldPrefixAlias'];
         $indexNumber = $indexData['indexNumber'];
 
@@ -267,7 +326,8 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
         $valueParam =  ":value{$indexNumber}";
 
         $cast = $indexData['indexType'] != 'text' && $indexData['indexType'] != 'fulltext';
-        $this->qb->andWhere($this->qb->expr()->comparison($valueColumn, $condition, $valueParam, $cast));
+
+        $fieldType = $this->ar->getField($fieldName)->type;
 
         // NOTA: nel caso di un campo di tipo array
         // viene passato 'array' come tipo di ricerca nel where e crea dei problemi perché non trova nulla
@@ -277,7 +337,12 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
 
         $this->qb->setParameter($valueParam, $value, $fieldType);
 
-        return $this;
+        if ($indexData['indexType']=='fulltext') {
+            // NOTA: valido solo per mysql
+            return $this->qb->expr()->sql('MATCH ('.$valueColumn.') AGAINST ('.$valueParam.' IN BOOLEAN MODE)');
+        }
+
+        return $this->qb->expr()->comparison($valueColumn, $condition, $valueParam, $cast);
     }
 
     public function newQueryInOr()
@@ -372,6 +437,25 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
         return $this;
     }
 
+    public function limit($offset, $limit = -1, $performCount=true)
+    {
+        if (!empty($this->unionArray)) {
+            if (is_array($offset)) {
+                if (!isset($offset['start'])) {
+                    list($offset, $limit) = array_values($offset);
+                } else {
+                    $limit = $offset['pageLength'];
+                    $offset = $offset['start'];
+                }
+            }
+
+            $this->unionLimit = array($limit, $offset);
+            return $this;
+        }
+
+        return parent::limit($offset, $limit, $performCount);
+    }
+
     public function orderBy($fieldName, $order = 'ASC')
     {
         if (!empty($this->unionArray)) {
@@ -382,7 +466,7 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
         if ($this->ar->getField($fieldName)->isSystemField) {
             return $this->orderBySystemField($fieldName, $order);
         } else {
-            $indexData = $this->addIndex($fieldName);
+            $indexData = $this->addIndex($fieldName, $this->options['type']);
             $indexFieldPrefixAlias = $indexData['indexFieldPrefixAlias'];
             $this->qb->addOrderBy("{$indexFieldPrefixAlias}_value", $order);
             return $this;
@@ -456,7 +540,7 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
             if (__Config::get('ACL_ROLES')) {
                 $application = org_glizy_ObjectValues::get('org.glizy', 'application');
                 $user = $application->getCurrentUser();
-                if ($user->id && !$user->acl($application->getPageId(), 'all')) {
+                if ($user->id && $application->getPageId() && !$user->acl($application->getPageId(), 'all')) {
                     $this->addAcl();
                 }
             }
@@ -499,8 +583,9 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
 
                     $this->unionArrayParams[":orderIndex"] = $fieldName;
 
-                    $orderSql = "ORDER BY {$indexFieldPrefix}_value";
-                } else {
+                    $orderSql = "ORDER BY {$indexFieldPrefix}_value $order";
+                }
+                else {
                     $orderSql = "ORDER BY $fieldName $order";
                 }
             }
@@ -520,6 +605,9 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
 
             if (!empty($this->unionOrderBy)) {
                 $sql .= $orderSql;
+            }
+            if ($this->unionLimit && count($this->unionLimit)) {
+                $sql .= ' LIMIT '.$this->unionLimit[0].' OFFSET '.$this->unionLimit[1];
             }
 
             try {

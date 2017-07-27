@@ -66,6 +66,13 @@ class org_glizy_dataAccessDoctrine_RecordIterator extends org_glizy_dataAccessDo
             $lastMatch = count($m[0]) - 1;
             $sql['sql'] = str_replace($m[1][$lastMatch], '('.$m[1][$lastMatch].') AND ('.$filtersSql.') ', $sql['sql']);
         }
+
+        if (isset($options['replace'])) {
+            foreach ($options['replace'] as $k => $v) {
+                $sql['sql'] = str_replace($k, $v, $sql['sql']);
+            }
+        }
+
         $params = isset($options['params']) ? $options['params'] : ( is_array($options) ? $options : array());
         $params = isset($sql['params']) ? array_merge($sql['params'], $params) : $params;
 

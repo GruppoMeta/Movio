@@ -57,7 +57,7 @@ class org_glizycms_views_components_EditLanguage_render extends org_glizy_compon
 	function getDefaultSkin()
 	{
 		$skin = <<<EOD
-<div tal:attributes="id id; class Component/cssClass">
+<div tal:attributes="id id; class Component/cssClass" tal:condition="Component/records">
 	<span tal:omit-tag="" tal:content="Component/label" />
     <div class="btn-group">
     	<a tal:attributes="data-target php: '#' . id . 'menu'" data-toggle="dropdown" class="btn dropdown-toggle action-link"><i class="icon-chevron-down"></i> <span tal:omit-tag="" tal:content="Component/current" /></a>

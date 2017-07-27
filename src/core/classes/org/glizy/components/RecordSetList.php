@@ -132,6 +132,7 @@ class org_glizy_components_RecordSetList extends org_glizy_components_ComponentC
             for ($i=0; $i<count($this->childComponents);$i++)
             {
                 $id = preg_replace('/^'.$this->getId().'\-/', '', $this->childComponents[$i]->getId());
+                $this->childComponents[$i]->setText('');
                 $this->childComponents[$i]->process();
                 $r = $this->childComponents[$i]->getContent($this->_tagname);
                 $this->_content->records->current()->{$id} = $r;
@@ -179,6 +180,7 @@ class org_glizy_components_RecordSetList extends org_glizy_components_ComponentC
             $attributes['id'] = $node->getAttribute('id');
             $attributes['label'] = $node->getAttribute('label');
             $attributes['data'] = "type=checkbox";
+            $attributes['xmlns:glz'] = "http://www.glizy.org/dtd/1.0/";
             return org_glizy_helpers_Html::renderTag('glz:Checkbox', $attributes);
         }
     }

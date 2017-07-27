@@ -38,26 +38,38 @@ class org_glizy_cache_CacheFunction extends GlizyObject
         $this->_cacheObj = &org_glizy_ObjectFactory::createObject('org.glizy.cache.CacheFile', $options);
     }
 
+    /**
+     * @param string   $method
+     * @param array    $args
+     * @param Callable $lambda
+     * @return bool|mixed|string
+     */
     public function get($method, $args, $lambda)
     {
-        $fileName = $method.serialize($args);
-        $memId = $fileName.$this->group;
+        $fileName = $method . serialize($args);
+        $memId = $fileName . $this->group;
+
+        // 1. Search data in memory cache
         $data = $this->getMemoryCache($memId);
-
-        if ( $data !== false) {
+        if ($data !== false) {
             return $data;
-        } else  {
-            $data = $this->_cacheObj->get($fileName, $this->group);
-            if ($data===false) {
-               $data = $lambda();
-               $this->_cacheObj->save($this->serialize($data), $fileName, $this->group);
-            } else {
-                $data = $this->unserialize($data);
-            }
+        }
 
+        // 2. Search data in file cache, then put it in memory cache
+        $data = $this->_cacheObj->get($fileName, $this->group);
+        if ($data !== false) {
+            $data = $this->unserialize($data);
             $this->setMemoryCache($memId, $data);
             return $data;
         }
+
+        // 3. Generate data and keep it in memory and in file
+
+        $data = $lambda();
+		$this->_cacheObj->save($this->serialize($data), $fileName, $this->group);
+        $this->setMemoryCache($memId, $data);
+      
+        return $data;
     }
 
     public function invalidateGroup()

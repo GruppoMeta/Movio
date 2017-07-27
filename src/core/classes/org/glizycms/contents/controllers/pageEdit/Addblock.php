@@ -3,6 +3,7 @@ class org_glizycms_contents_controllers_pageEdit_Addblock extends org_glizycms_c
 {
     public function execute($menuId)
     {
+        $this->checkPermissionForBackend();
         if ($menuId) {
             parent::execute($menuId);
 

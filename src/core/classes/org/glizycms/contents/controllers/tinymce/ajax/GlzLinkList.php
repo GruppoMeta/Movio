@@ -3,6 +3,7 @@ class org_glizycms_contents_controllers_tinymce_ajax_GlzLinkList extends org_gli
 {
     function execute()
     {
+        $this->checkPermissionForBackend();
         $this->directOutput = true;
         $links = array('internal' => array());
 

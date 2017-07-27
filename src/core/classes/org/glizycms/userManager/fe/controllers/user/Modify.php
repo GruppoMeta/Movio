@@ -22,7 +22,7 @@ class org_glizycms_userManager_fe_controllers_user_Modify extends org_glizy_mvc_
 
     public function executeLater()
     {
-        if ($this->user->isLogged() && $this->submit && $this->controller->validate()) {
+        if ($this->user->isLogged() && $this->submit && $this->view->validate()) {
             $ar = org_glizy_ObjectFactory::createModel('org.glizy.models.User');
             $ar->load($this->user->id);
 

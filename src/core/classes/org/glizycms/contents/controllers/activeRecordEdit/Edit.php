@@ -3,6 +3,7 @@ class org_glizycms_contents_controllers_activeRecordEdit_Edit extends org_glizy_
 {
     public function execute($id)
     {   
+        $this->checkPermissionForBackend();
         if ($id) {
             $c = $this->view->getComponentById('__model');
             $model = $c->getAttribute('value');

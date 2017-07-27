@@ -41,8 +41,12 @@ class org_glizy_dataAccessDoctrine_DbField
         $this->virtual = $virtual;
         $this->description = $description !== '' ? $description : $name;
         $this->index = $index;
-        $this->option = $option;
+        $this->option = glz_maybeJsonDecode($option, true);
 
+        // TODO c'è un problema con il valore di option
+        // nelle schede ICCD è un stringa che punta d un altro model
+        // il compilatore di Model usa una stringa
+        // ma qui per ARRAY_ID vuole un oggetto, credo che sia usato anche in Content.xml come oggetto
 
         if (    $this->type == org_glizy_dataAccessDoctrine_types_Types::ARRAY_ID &&
                 (is_null($this->option) || !isset($this->option[org_glizy_dataAccessDoctrine_types_Types::ARRAY_ID])) ) {

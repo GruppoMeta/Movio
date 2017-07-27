@@ -14,7 +14,7 @@ class org_glizy_components_Repeater extends org_glizy_components_ComponentContai
     protected $repeaterIdLen;
     protected $numRecords;
     protected $contentCount;
-
+	protected $newDataFormat;
 
     /**
      * Init
@@ -45,9 +45,16 @@ class org_glizy_components_Repeater extends org_glizy_components_ComponentContai
         $this->repeaterId = $this->getId();
         $this->repeaterIdLen = strlen($this->repeaterId);
         $this->_content = $this->_parent->loadContent($this->repeaterId);
-        $child = $this->childComponents[0];
-        $childId = $child->getOriginalId();
-        $this->numRecords = count($this->_content->$childId);
+
+		$this->newDataFormat = is_array($this->_content);
+
+		if ($this->newDataFormat) {
+			$this->numRecords = count($this->_content);
+		} else {
+			$child = $this->childComponents[0];
+	        $childId = $child->getOriginalId();
+	        $this->numRecords = count($this->_content->$childId);
+		}
     }
 
 
@@ -79,7 +86,7 @@ class org_glizy_components_Repeater extends org_glizy_components_ComponentContai
     function loadContent($id, $bindTo='')
     {
         $id = substr($id, $this->repeaterIdLen + 1);
-        return $this->_content->{$id}[$this->contentCount];
+        return $this->newDataFormat ? $this->_content[$this->contentCount]->{$id} : $this->_content->{$id}[$this->contentCount];
     }
 
     public static function compileAddPrefix($compiler, &$node, $componentId, $idPrefix)
@@ -96,6 +103,8 @@ class org_glizy_components_Repeater extends org_glizy_components_ComponentContai
         $attributes['id'] = $node->getAttribute('id');
         $attributes['label'] = $node->getAttribute('label');
         $attributes['data'] = 'type=repeat;repeatMin='.$min.';repeatMax='.$max.';collapsable='.$collapsable;
+        $attributes['xmlns:glz'] = "http://www.glizy.org/dtd/1.0/";
+
         if ($node->hasAttribute('adm:data')) {
             $attributes['data'] .= ';'.$node->getAttribute('adm:data');
         }

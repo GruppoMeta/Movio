@@ -11,24 +11,27 @@ class org_glizycms_mediaArchive_views_renderer_CellMediaArchive extends org_gliz
 {
 	public function renderCell( &$ar )
 	{
+		$mediaBridge = org_glizycms_Glizycms::getMediaArchiveBridge();
 		$media = org_glizycms_mediaArchive_MediaManager::getMediaByRecord( $ar );
-		$sizes = method_exists( $media, 'getOriginalSizes') ? $media->getOriginalSizes() : array( 'width' => 0, 'height' => 0 );
-		$thumbnail = $media->getThumbnail( 	__Config::get('THUMB_WIDTH'),
+		$ar->thumb_filename = $mediaBridge->imageByIdAndResizedUrl(
+											$ar->media_id,
+											__Config::get('THUMB_WIDTH'),
 											__Config::get('THUMB_HEIGHT'),
 											__Config::get('ADM_THUMBNAIL_CROP'),
 											__Config::get('ADM_THUMBNAIL_CROPPOS'));
-		$ar->thumb_filename = $thumbnail['fileName'];
-		$ar->thumb_w = $thumbnail['width'];
-		$ar->thumb_h = $thumbnail['height'];
+
+		$sizes = method_exists( $media, 'getOriginalSizes') ? $media->getOriginalSizes() : array( 'width' => 0, 'height' => 0 );
 		$ar->media_w = $sizes['width'];
 		$ar->media_h = $sizes['height'];
-		if ($ar->media_title=='') {
+		if ($ar->media_title==='') {
 			$ar->media_title = $ar->media_originalFileName;
 		}
 		if (!$ar->media_date) $ar->media_date = '';
 		if (!$ar->media_copyright) $ar->media_copyright = '';
 		if (!$ar->media_description) $ar->media_description = '';
-		$ar->__jsonMedia = org_glizycms_Glizycms::getMediaArchiveBridge()->getJsonFromAr($ar);
+
+		$ar->__jsonMedia = $mediaBridge->jsonFromModel($ar);
+
         $application = $this->application;
         $user = $application->_user;
 		$ar->__url__ =  $user->acl($application->getPageId(),'edit') ? __Routing::makeUrl('actionsMVC', array('action' => 'edit', 'id' => $ar->media_id)) : false;

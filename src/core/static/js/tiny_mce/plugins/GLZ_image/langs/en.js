@@ -51,6 +51,9 @@ tinyMCE.addI18n('en.GLZ_image',{
 	"tab_appearance":"Appearance",
 	"tab_general":"General",
 	width:"Width",
-	height:"Height"
+	height:"Height",
+    zoom:"Image zoom",
+    caption:"Show caption"
+
 });
 

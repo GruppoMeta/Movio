@@ -23,6 +23,7 @@ jQuery.GlizyRegisterType('selectfrom', {
 		var minimumInputLength = $(this).data('min_input_length') || 0;
         var formatSelection = $(this).data('format_selection');
         var formatResult = $(this).data('format_result');
+        var ajaxUrl = $(this).data('glizyOpt').AJAXAction;
 
         if (originalName !== undefined && $(this).data('override')!==false) {
             fieldName = originalName;
@@ -35,7 +36,7 @@ jQuery.GlizyRegisterType('selectfrom', {
             placeholder: placeholder === undefined ? '' : placeholder,
             allowClear: true,
             ajax: {
-                url: Glizy.ajaxUrl + "&controllerName=org.glizycms.contents.controllers.autocomplete.ajax.FindTerm",
+                url: ajaxUrl + "&controllerName=org.glizycms.contents.controllers.autocomplete.ajax.FindTerm",
                 dataType: 'json',
                 quietMillis: 250,
                 data: function(term, page) {
@@ -74,12 +75,25 @@ jQuery.GlizyRegisterType('selectfrom', {
            self._getValue();
         })
 
+        if (multiple) {
+            var el = $(this);
+			el.parent().find("ul.select2-choices").sortable({
+	            containment: 'parent',
+				start: function() { el.select2("onSortStart"); },
+			    update: function() { el.select2("onSortEnd"); }
+	        });
+		}
+
         this._setValue = function(value) {
             var baseValue = value || $(this).data('origValue');
             var multiple = $(this).data('multiple');
 
             try {
-                value = JSON.parse(baseValue);
+                if( Object.prototype.toString.call(baseValue)==='[object Array]') {
+                    value = baseValue
+                } else {
+                    value = JSON.parse(baseValue);
+                }
             } catch (e) {
                 value = baseValue;
             }
@@ -92,8 +106,8 @@ jQuery.GlizyRegisterType('selectfrom', {
                     }
                 }
             }
-            else if (value !== undefined && value.length > 0) {
-                var arrayVal = []
+            else if (Array.isArray(value)) {
+                var arrayVal = [];
 
                 $.each(value, function(index, v) {
                     if (typeof(v)=="object") {

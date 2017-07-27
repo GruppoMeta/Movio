@@ -2,7 +2,7 @@
 <model:Model
     xmlns:glz="http://www.glizy.org/dtd/1.0/"
     xmlns:model="http://www.glizy.org/dtd/1.0/model/"
-    model:tableName="userlogs_tbl" model:usePrefix="true">
+    model:tableName="userlogs_tbl" model:usePrefix="true" model:siteField="userlog_FK_site_id">
 <!--
     <glz:ModelDefine>
         <glz:ModelField name="userlog_date" attribute="defaultInsertValue" value="NOW()" />

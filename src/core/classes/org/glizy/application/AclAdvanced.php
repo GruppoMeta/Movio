@@ -11,11 +11,13 @@ class org_glizy_application_AclAdvanced extends org_glizy_application_Acl
 {
     protected $roles;
     protected $aclMatrix;
+    protected $debugBackdoor;
 
     function __construct($id, $groupId)
     {
         parent::__construct($id, $groupId);
 
+        $this->debugBackdoor = __Config::get('ACL_DEBUG_BACKDOOR')===true;
         $this->roles = array();
         $this->aclMatrix = array();
 
@@ -54,8 +56,14 @@ class org_glizy_application_AclAdvanced extends org_glizy_application_Acl
 
     function acl($name, $action, $default=null)
     {
+        if ($this->debugBackdoor) return $this->debugBackdoor;
+
         $name = $name=='*' ? strtolower($this->application->getPageId()) : strtolower($name);
-        return $this->aclMatrix[$name]['all'] || $this->aclMatrix[$name][$action];
+        if (isset($this->aclMatrix[$name])) {
+            return $this->aclMatrix[$name]['all'] || $this->aclMatrix[$name][$action];
+        } else {
+            return is_null($default) ? false : $default;
+        }
     }
 
     function inRole($roleId)

@@ -35,7 +35,9 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
     const DOCUMENT_INDEX_FIELD_PREFIX = 'document_index_';
     const DOCUMENT_BASE_PREFIX = 'document_';
 
+    // TODO portare fuori dalla classe
     const STATUS_PUBLISHED = 'PUBLISHED';
+    const STATUS_PUBLISHED_DRAFT = 'PUBLISHED_DRAFT';
     const STATUS_DRAFT = 'DRAFT';
     const STATUS_OLD = 'OLD';
 
@@ -163,10 +165,11 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
         return $this->{self::DOCUMENT_DETAIL_FK_LANGUAGE};
     }
 
-    public function setLanguage($languageId)
+    public function setDetailFromLanguageId($languageId)
     {
         $this->{self::DOCUMENT_DETAIL_FK_LANGUAGE} = $languageId;
         $this->modifiedFields[self::DOCUMENT_DETAIL_FK_LANGUAGE] = true;
+        $this->{$this->detailPrimaryKeyName} = null;
     }
 
     public function isTranslated()
@@ -303,35 +306,31 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
             return false;
         }
 
+        if ($status=='LAST_MODIFIED') {
+            // NOTA: per compatibilità con il passato
+            // da rimuovere alla prossima release
+            $status = self::STATUS_PUBLISHED_DRAFT;
+        }
+
         if ($languageId === null) {
             $languageId = $this->getLanguageId();
         }
 
-        $qb = $this->createQueryBuilder(array('type' => 'PUBLISHED'));
+        $qb = $this->createQueryBuilder(array(
+                    'type' => $status,
+                    'tableAlias' => self::DOCUMENT_TABLE_ALIAS,
+                    'tableDetailPublishedAlias' => self::DOCUMENT_DETAIL_TABLE_PUBLISHED_ALIAS,
+                    'tableDetailDraftAlias' => self::DOCUMENT_DETAIL_TABLE_DRAFT_ALIAS,
+            ));
         $expr = $qb->expr();
-
         $qb->select('*')
-            ->where($expr->eq($this->primaryKeyName, ':id'))
-            ->andWhere($expr->eq(self::DOCUMENT_DETAIL_FK_LANGUAGE, ':language'))
+            ->andWhere($expr->eq($this->primaryKeyName, ':id'))
             ->setParameter(':id', $id)
-            ->setParameter(':language', $languageId)
             ->setMaxResults(1);
 
-        // restituisce prima PUBLISHED se c'è, altrimenti DRAFT grazie all'orderBy sullo status
-        if ($status == 'PUBLISHED') {
-            $or = $expr->orX();
-            $or->add($expr->eq(self::DOCUMENT_DETAIL_STATUS, ':status1'))
-               ->add($expr->eq(self::DOCUMENT_DETAIL_STATUS, ':status2'));
-
-            $qb->andWhere($or)
-               ->setParameter(':status1', self::STATUS_DRAFT)
-               ->setParameter(':status2', self::STATUS_PUBLISHED)
-               ->orderBy(self::DOCUMENT_DETAIL_STATUS, 'DESC');
-        } else if ($status == 'DRAFT') {
-            $qb->andWhere($expr->eq(self::DOCUMENT_DETAIL_STATUS, ':status1'))
-               ->setParameter(':status1', self::STATUS_DRAFT);
-        } else if ($status == 'LAST_MODIFIED') {
-            $qb->orderBy(self::DOCUMENT_DETAIL_MODIFICATION_DATE, 'DESC');
+        if ($status!==self::STATUS_PUBLISHED_DRAFT) {
+            $qb->andWhere($expr->eq(self::DOCUMENT_DETAIL_FK_LANGUAGE, ':language'))
+                ->setParameter(':language', $languageId);
         }
 
         if ($this->siteField) {
@@ -339,7 +338,7 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
                ->setParameter(':site', $this->getSiteId());
         }
 
-        $r = $qb->execute()->fetch();
+        $r = $qb->execute()->fetch(PDO::FETCH_NAMED);
 
         if ($r) {
             $this->loadFromArray($r);
@@ -348,6 +347,7 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
             $this->emptyRecord();
             return false;
         }
+
     }
 
     public function hasPublishedVersion()
@@ -366,7 +366,6 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
             $this->emptyRecord();
 
             $documentObjVo = __ObjectFactory::createObject('org.glizy.dataAccessDoctrine.vo.DocumentObjectVO', $values);
-
             $this->hasPublishedVersion = $documentObjVo->hasPublishedVersion();
             $this->hasDraftVersion = $documentObjVo->hasDraftVersion();
 
@@ -449,8 +448,8 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
             $this->loadFromArray($values, true);
         }
 
-        if (__Config::get('glizy.dataAccess.validate')) {
-            $this->validate();
+        if ($status == self::STATUS_PUBLISHED && __Config::get('glizy.dataAccess.validate')) {
+            $this->validate($values, $forceNew);
         }
 
         if ( $this->isNew() || $forceNew )
@@ -465,7 +464,11 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
         {
             $evt = array('type' => GLZ_EVT_AR_UPDATE_PRE.'@'.$this->getClassName(), 'data' => $this);
             $this->dispatchEvent($evt);
-            $result = $this->update($values, $comment);
+            if ($this->getDetailId() && $this->getStatus()==$status) {
+                $result = $this->update($values, $comment);
+            } else {
+                $result = $this->insertDetailOnly($values, $this->getStatus(), $status, $comment);
+            }
             $evt = array('type' => GLZ_EVT_AR_UPDATE.'@'.$this->getClassName(), 'data' => $this);
             $this->dispatchEvent($evt);
         }
@@ -493,7 +496,16 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
                 if (!($field->index & $field::ONLY_INDEX) && !is_null($value) && $value !== '') {
                     $valArray[$fieldName] = $value;
                 }
-                $valArrayIndex[$fieldName] = is_string($value) ? trim(strip_tags($value)) : $value;
+
+                if (is_string($value)) {
+                    if (!$field->option || $field->option->strip_tags != false) {
+                        $value = strip_tags($value);
+                    }
+
+                    $value = trim($value);
+                }
+
+                $valArrayIndex[$fieldName] = $value;
             }
         }
 
@@ -622,13 +634,17 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
 
     public function reIndex($reloadContent=true)
     {
-        list($documentDetailIds, $languages) =  $this->findDetailRecords($this->getId());
+        list($documentDetailIds, $languages) = $this->findDetailRecords($this->getId());
         foreach ($documentDetailIds as $documentDetailId => $data)  {
             if ($reloadContent) {
                 $this->loadFromArray($data);
             }
             $fields = $this->fields;
-            unset($fields['fulltext']);
+
+            if ($this->fieldExists('fulltext')) {
+                $this->fulltext = org_glizycms_core_helpers_Fulltext::make($data, $this);
+            }
+
             $values = get_object_vars($this->data);
             foreach ($fields as $fieldName => $field) {
                 if (is_null($values[$fieldName])) {
@@ -655,7 +671,7 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
 
         $valArray = array();
         foreach ($values as $fieldName => $value) {
-            $field = $this->fields[$fieldName];
+            $field = isset($this->fields[$fieldName]) ? $this->fields[$fieldName] : null;
             if ($field && !$field->isSystemField) {
                 if (!($field->index & $field::ONLY_INDEX) && !is_null($value) && $value !== '') {
                     $valArray[$fieldName] = $value;
@@ -673,6 +689,7 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
         $identifier = array(self::DOCUMENT_DETAIL_ID => $this->getDetailId());
 
         $documentDetail = array(
+            self::DOCUMENT_DETAIL_STATUS => $this->getStatus(),
             self::DOCUMENT_DETAIL_TRANSLATED => true,
             self::DOCUMENT_DETAIL_MODIFICATION_DATE => new org_glizy_types_DateTime(),
             self::DOCUMENT_DETAIL_IS_VISIBLE => $this->isVisible[$this->getLanguageId()]
@@ -771,7 +788,16 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
                     $valArray[$fieldName] = $values[$fieldName];
                 }
                 $value = $values[$fieldName];
-                $valArrayIndex[$fieldName] = is_string($value) ? trim(strip_tags($value)) : $value;
+
+                if (is_string($value)) {
+                    if (!$field->option || $field->option->strip_tags != false) {
+                        $value = strip_tags($value);
+                    }
+
+                    $value = trim($value);
+                }
+
+                $valArrayIndex[$fieldName] = $value;
             }
         }
 
@@ -805,8 +831,13 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
                 }
 
                 if ($updateOld) {
+                    /*
+                    //Questa versione è commentata perché provocava lentezze enormi sul DB
                     $oldStatus = array(self::DOCUMENT_DETAIL_STATUS => self::STATUS_OLD);
                     $this->connection->update($this->getDocumentDetailTableName(), $oldStatus, $identifier);
+                    */
+
+                    $this->refreshDetailsOnOLD($id, $languageId);
                 }
 
                 $newDetailId = $this->insertValues($id, $valArray, $newStatus, $languageId, $comment);
@@ -836,13 +867,13 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
         return $returnDetailId;
     }
 
-    private function findDetailRecords($id, $status = null)
+    private function findDetailRecords($id, $status = 'PUBLISHED')
     {
-        $qb = $this->createQueryBuilder(array('type' => 'PUBLISHED'));
+        $qb = $this->createQueryBuilder(array('type' => $status));
 
         // cerca gli id dei record nella tabella dettaglio collegati alla tabella principale del documento da cancellare
         $qb->select('*')
-            ->where($qb->expr()->eq(self::DOCUMENT_ID, ':id'))
+            ->andWhere($qb->expr()->eq(self::DOCUMENT_ID, ':id'))
             ->setParameter(':id', $id);
 
         if ($status != null) {
@@ -878,7 +909,7 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
                return null;
             }
         }
-        return $value;
+        return !is_object($value) ? $value : null;
     }
 
     // se il record è nuovo viene salvato con lo stato DRAFT
@@ -886,8 +917,8 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
     // e inserisce un nuovo record con lo stato DRAFT
     public function saveHistory($values=NULL, $forceNew=false, $comment='')
     {
-        if (__Config::get('glizy.dataAccess.validate')) {
-            $this->validate($values);
+        if ($this->getStatus() == self::STATUS_PUBLISHED && __Config::get('glizy.dataAccess.validate')) {
+            $this->validate($values, $forceNew);
         }
 
         if (!is_null($values)) {
@@ -911,7 +942,7 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
     public function publish($values = null, $comment='', $forceNew=false)
     {
         if (__Config::get('glizy.dataAccess.validate')) {
-            $this->validate($values);
+            $this->validate($values, $forceNew || $this->isNew());
         }
 
         // se il record non è stato salvato, si salva prima di fare publish
@@ -927,6 +958,29 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
         return $this->getId();
     }
 
+    // salva sovrascrivendo il record preesistente senza generare storico
+    public function saveCurrentPublished($comment = '')
+    {
+        if ($this->isNew() || $this->getStatus() == 'PUBLISHED') {
+            $this->save(null, false, 'PUBLISHED', $comment);
+        } else {
+            $this->save(null, false, 'DRAFT', $comment);
+        }
+        return $this->getId();
+    }
+
+    protected function deleteDetailsIndex($documentDetailIds, $indexTypes)
+    {
+        foreach ($documentDetailIds as $documentDetailId => $data)  {
+            foreach ($indexTypes as $indexType) {
+                $tableName = $this->getDocumentIndexTablePrefix() . $indexType . '_tbl';
+                $fieldPrefix = self::DOCUMENT_INDEX_FIELD_PREFIX . $indexType;
+                $indexIdentifier = array($fieldPrefix.'_FK_document_detail_id' => $documentDetailId);
+                $this->connection->delete($tableName, $indexIdentifier);
+            }
+        }
+    }
+
     public function delete($id=NULL)
     {
         if (is_null($id)) {
@@ -938,16 +992,11 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
         $indexTypes = array_unique(array_values(self::$typeMap));
         $indexTypes[] = 'fulltext';
 
-        $documentDetailIds = $this->findDetailRecords($id);
+        list($documentDetailIds, $languages)  = $this->findDetailRecords($id);
+        $this->deleteDetailsIndex($documentDetailIds, $indexTypes);
 
-        foreach ($documentDetailIds as $documentDetailId => $data)  {
-            foreach ($indexTypes as $indexType) {
-                $tableName = $this->getDocumentIndexTablePrefix() . $indexType . '_tbl';
-                $fieldPrefix = self::DOCUMENT_INDEX_FIELD_PREFIX . $indexType;
-                $indexIdentifier = array($fieldPrefix.'_FK_document_detail_id' => $documentDetailId);
-                $this->connection->delete($tableName, $indexIdentifier);
-            }
-        }
+        list($documentDetailIds, $languages)  = $this->findDetailRecords($id, 'OLD');
+        $this->deleteDetailsIndex($documentDetailIds, $indexTypes);
 
         // cancella i record nella tabella dettaglio collegati alla tabella principale
         $detailId = array(self::DOCUMENT_DETAIL_FK_DOCUMENT => $id);
@@ -962,6 +1011,22 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
         $this->emptyRecord();
         return $r;
     }
+
+    public function deleteStatus($status)
+    {
+        $id = $this->getId();
+        if (is_null($id)) {
+            throw org_glizy_dataAccessDoctrine_ActiveRecordException::primaryKeyNotDefined($this->tableName);
+        }
+        $detailId = array(self::DOCUMENT_DETAIL_FK_DOCUMENT => $id);
+        $this->connection->delete(
+                $this->getDocumentDetailTableName(),
+                array(
+                    self::DOCUMENT_DETAIL_FK_DOCUMENT => $id,
+                    self::DOCUMENT_DETAIL_STATUS => $status
+                    ));
+    }
+
 
     public function createRecordIterator() {
         return new org_glizy_dataAccessDoctrine_RecordIteratorDocument($this);
@@ -984,29 +1049,34 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
     {
         $qb = $this->connection->createQueryBuilder();
 
-        if ($options['type'] == 'PUBLISHED') {
+        if (isset($options['type']) && $options['type'] == 'PUBLISHED_DRAFT') {
+            $languageId = isset($options['language']) ? $options['language'] : $this->getLanguageId();
+            $tableAlias = $options['tableAlias'];
+            $tableDetailPublishedAlias = $options['tableDetailPublishedAlias'];
+            $tableDetailDraftAlias = $options['tableDetailDraftAlias'];
+
+            $this->queryBuilderJoinDetail($qb, $tableAlias, $tableDetailPublishedAlias, self::STATUS_PUBLISHED, ':languageId');
+            $this->queryBuilderJoinDetail($qb, $tableAlias, $tableDetailDraftAlias, self::STATUS_DRAFT, ':languageId');
+            $qb->setParameter(':languageId', $languageId);
+
+            $languageProxy = __ObjectFactory::createObject('org.glizycms.languages.models.proxy.LanguagesProxy');
+            $defaultLanguageId = $languageProxy->getDefaultLanguageId();
+
+            if ($defaultLanguageId != $this->getLanguageId() && $options['multiLanguage'] !== false) {
+                $this->queryBuilderJoinDetail($qb, $tableAlias, $tableDetailPublishedAlias.'_defaultLanguage', self::STATUS_PUBLISHED, ':defaultLanguage');
+                $this->queryBuilderJoinDetail($qb, $tableAlias, $tableDetailDraftAlias.'_defaultLanguage', self::STATUS_DRAFT, ':defaultLanguage');
+                $qb->setParameter(':defaultLanguage', $defaultLanguageId);
+            }
+        } else {
             $tableAlias = self::DOCUMENT_TABLE_ALIAS;
             $tableDetailAlias = self::DOCUMENT_DETAIL_TABLE_ALIAS;
 
             $qb->from($this->getDocumentTableName(), $tableAlias)
                ->join($tableAlias, $this->getDocumentDetailTableName(), $tableDetailAlias,
                       $qb->expr()->eq($tableAlias.'.'.self::DOCUMENT_ID, $tableDetailAlias.'.'.self::DOCUMENT_DETAIL_FK_DOCUMENT));
-        } else if ($options['type'] == 'PUBLISHED_DRAFT') {
-            $tableAlias = $options['tableAlias'];
-            $tableDetailPublishedAlias = $options['tableDetailPublishedAlias'];
-            $tableDetailDraftAlias = $options['tableDetailDraftAlias'];
 
-            $this->queryBuilderJoinDetail($qb, $tableAlias, $tableDetailPublishedAlias, self::STATUS_PUBLISHED, ':language');
-            $this->queryBuilderJoinDetail($qb, $tableAlias, $tableDetailDraftAlias, self::STATUS_DRAFT, ':language');
-            $qb->setParameter(':language', $this->getLanguageId());
-
-            $languageProxy = __ObjectFactory::createObject('org.glizycms.languages.models.proxy.LanguagesProxy');
-            $defaultLanguageId = $languageProxy->getDefaultLanguageId();
-
-            if ($defaultLanguageId != $this->getLanguageId()) {
-                $this->queryBuilderJoinDetail($qb, $tableAlias, $tableDetailPublishedAlias.'_defaultLanguage', self::STATUS_PUBLISHED, ':defaultLanguage');
-                $this->queryBuilderJoinDetail($qb, $tableAlias, $tableDetailDraftAlias.'_defaultLanguage', self::STATUS_DRAFT, ':defaultLanguage');
-                $qb->setParameter(':defaultLanguage', $defaultLanguageId);
+            if (isset($options['type'])) {
+                $qb->where($qb->expr()->eq($tableDetailAlias.'.'.self::DOCUMENT_DETAIL_STATUS, "'".$options['type']."'"));
             }
         }
 
@@ -1024,15 +1094,81 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
     }
 
 
+
+
     private function loadSequenceName()
     {
+        static $sequenceName;
+        static $detailSequenceName;
+        static $sequenceNameLoaded = false;
+        if (!$sequenceNameLoaded) {
+            $sequenceNameLoaded = true;
+            $sm = new org_glizy_dataAccessDoctrine_SchemaManager($this->connection);
+            $sequenceName = $sm->getSequenceName($this->getDocumentTableName());
+            $detailSequenceName = $sm->getSequenceName($this->getDocumentDetailTableName());
+        }
         $this->sequenceNameLoaded = true;
-        $sm = new org_glizy_dataAccessDoctrine_SchemaManager($this->connection);
-        $sequenceName = $sm->getSequenceName($this->getDocumentTableName());
         $this->setSequenceName($sequenceName);
-
-        $sm = new org_glizy_dataAccessDoctrine_SchemaManager($this->connection);
-        $detailSequenceName = $sm->getSequenceName($this->getDocumentDetailTableName());
         $this->setDetailSequenceName($detailSequenceName);
+    }
+
+
+    /**
+     * @param  array  $values
+     * @param  boolean $isNew
+     * @return boolean
+     */
+    protected function collectValidateFields($values=null, $isNew=false)
+    {
+        if (is_null($values)) {
+            $values = array();
+            foreach ($this->fields as $fieldName => $field) {
+                if ($field->isSystemField || $fieldName==$this->siteField) continue;
+                $values[$fieldName] = $this->$fieldName;
+            }
+
+            if (!$isNew) {
+                $values = array_intersect_key(get_object_vars($this->data), $this->modifiedFields);
+            }
+        }
+
+        return $values;
+    }
+
+    /**
+     * Dato l'id di un document, setta tutti i suoi details allo status OLD
+     * @param $id
+     * @param $languageId
+     */
+    protected function refreshDetailsOnOLD($id, $languageId)
+    {
+        //Prendo l'id di tutti i detail del document che non hanno ancora lo status settato ad OLD
+        $paramsForFetch = array(
+            "fkDocId" => $id,
+            "fkLangId" => $languageId,
+            "status_" => self::STATUS_OLD
+        );
+        $c = $this->connection;
+        $sql =
+            "SELECT " . $c->quoteIdentifier(self::DOCUMENT_DETAIL_ID) . " " .
+            "FROM {$c->quoteIdentifier($this->getDocumentDetailTableName())} " .
+            "WHERE " . $c->quoteIdentifier(self::DOCUMENT_DETAIL_FK_DOCUMENT) . "=:fkDocId " .
+            "AND " . $c->quoteIdentifier(self::DOCUMENT_DETAIL_FK_LANGUAGE) . "=:fkLangId " .
+            "AND NOT (" . $c->quoteIdentifier(self::DOCUMENT_DETAIL_STATUS) . "=:status_)";
+        $arrays = $c->fetchAll($sql, $paramsForFetch);
+
+        //Per ogni ID del detail, ne modifico lo status ad OLD con una UPDATE
+        foreach ($arrays as $record) {
+            $updateSqlParams = array(
+                "status_" => self::STATUS_OLD,
+                "detailId" => $record[self::DOCUMENT_DETAIL_ID]
+            );
+            $updateSql =
+                "UPDATE {$c->quoteIdentifier($this->getDocumentDetailTableName())} " .
+                "SET " . $c->quoteIdentifier(self::DOCUMENT_DETAIL_STATUS) . "=:status_ " .
+                "WHERE " . $c->quoteIdentifier(self::DOCUMENT_DETAIL_ID) . "=:detailId";
+
+            $c->executeUpdate($updateSql, $updateSqlParams);
+        }
     }
 }

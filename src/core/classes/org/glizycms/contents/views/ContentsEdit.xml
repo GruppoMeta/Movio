@@ -33,7 +33,7 @@
 
             <glz:Input id="title" label="{i18n:GLZ_PAGE_TITLE}" size="90" required="true" />
             <cms:SelectPage id="pageParent" label="{i18n:GLZ_PAGE_SELECT_PARENT}" required="true" />
-            <cms:SelectPageTypeNew id="pageType" label="{i18n:GLZ_PAGE_SELECT_TYPE}" required="true" linked="pageParent" />
+            <cms:SelectPageTypeNew id="pageType" label="{i18n:GLZ_PAGE_SELECT_TYPE}" required="true" linked="pageParent" hideBlock="true" />
 
             <cms:FormButtonsPanel>
                 <glz:HtmlButton label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=add" />
@@ -60,13 +60,11 @@
         <m:PageEdit id="pageEdit" mode="edit" controllerName="org.glizycms.contents.controllers.pageEdit.*">
             <cms:pageTitleModifier action="edit" label="{i18n:Edit page}" field="__title" />
             <cms:FormButtonsPanel>
-                <glz:HtmlButton label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
-                <glz:HtmlButton id="saveAndClose" label="{i18n:GLZ_SAVE_CLOSE}" type="button" cssClass="btn js-glizycms-save" data="action=saveClose" />
+                <glz:Input id="__comment" placeholder="{i18n:Inserisci il commento}" cssClass="js-glizycms-savecomment" size="10" visible="{config:glizycms.content.history.comment}"/>
+                <glz:HtmlButton id="save" label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
+                <glz:HtmlButton id="saveDraft" label="{i18n:GLZ_SAVE_DRAFT}" type="button" cssClass="btn js-glizycms-save" data="action=saveDraft" />
+                <glz:HtmlButton id="savePublish" label="{i18n:GLZ_PUBLISH}" type="button" cssClass="btn js-glizycms-save" data="action=savePublish" />
                 <glz:Link id="preview" label="{i18n:GLZ_PREVIEW}" cssClass="btn" visible="false" target="_blank" />
-                <!--
-                <glz:HtmlButton label="{i18n:GLZ_SAVE_DRAFT}" type="button" cssClass="btn js-glizycms-save" data="action=saveDraft" />
-                <glz:HtmlButton label="{i18n:GLZ_PREVIEW}" type="button" cssClass="btn js-glizycms-preview pull-right" data="action=preview" />
-            -->
             </cms:FormButtonsPanel>
         </m:PageEdit>
     </mvc:State>
@@ -75,6 +73,8 @@
         <cms:FormEdit id="myForm" controllerName="org.glizycms.contents.controllers.pageEdit.*">
             <cms:pageTitleModifier action="properties" label="{i18n:Edit properties}" field="menudetail_title" />
             <glz:Hidden id="menu_id" />
+            <glz:Hidden id="menu_hasComment" />
+            <glz:Hidden id="menu_printPdf" />
             <glz:Input id="menudetail_title" label="{i18n:GLZ_PAGE_TITLE}" size="90" required="true" />
             <glz:Input id="menudetail_titleLink" label="{i18n:GLZ_PAGE_TITLE_LINK}" size="90"  />
             <glz:Input id="menudetail_linkDescription" label="{i18n:GLZ_PAGE_TITLE_ALT}" size="90"  />
@@ -82,24 +82,45 @@
             <glz:Input id="menu_url" label="{i18n:GLZ_LINKED_URL}" size="90" />
             <glz:Date id="menu_creationDate" label="{i18n:GLZ_CREATION_DATE}" />
             <glz:Checkbox id="menu_isLocked" label="{i18n:GLZ_PROTECTED_PAGE}" data="type=checkbox" />
+            <glz:Checkbox id="menudetail_hideInNavigation" label="{i18n:GLZ_PAGE_HIDE_IN_NAVIGATION}" data="type=checkbox" />
             <!--
             <glz:Checkbox id="menu_hasComment" label="{i18n:GLZ_ENABLE_PAGE_COMMENTS}" data="type=checkbox" />
             <glz:Checkbox id="menu_printPdf" label="{i18n:GLZ_PRINT_PDF}" data="type=checkbox" />
             -->
-            <cms:SelectPageTypeNew id="menu_pageType" label="{i18n:GLZ_PAGE_SELECT_TYPE}" showAllPageTypes="true" required="true" />
-            <glz:Fieldset cssClass="dublinCoreBox" label="{i18n:MW_DUBLIN_CORE}">
-                <glz:Input id="menudetail_keywords" label="{i18n:MW_DC_KEYWORDS}" size="90" />
-                <glz:Input id="menudetail_description" label="{i18n:MW_DC_SHORTDESCRIPTION}" size="90" />
-                <glz:Input id="menudetail_subject" label="{i18n:MW_DC_SUBJECT}" size="90" />
-                <glz:Input id="menudetail_creator" label="{i18n:MW_DC_CREATOR}" size="90" />
-                <glz:Input id="menudetail_publisher" label="{i18n:MW_DC_PUBLISHER}" size="90" />
-                <glz:Input id="menudetail_contributor" label="{i18n:MW_DC_CONTRIBUTOR}" size="90" />
-                <glz:Input id="menudetail_type" label="{i18n:MW_DC_TYPE}" size="90" />
-                <glz:Input id="menudetail_identifier" label="{i18n:MW_DC_IDENTIFIER}" size="90" />
-                <glz:Input id="menudetail_source" label="{i18n:MW_DC_SOURCE}" size="90" />
-                <glz:Input id="menudetail_relation" label="{i18n:MW_DC_RELATION}" size="90" />
-                <glz:Input id="menudetail_coverage" label="{i18n:MW_DC_COVERAGE}" size="90" />
-            </glz:Fieldset>
+            <glz:Hidden id="menu_parentPageType" />
+            <cms:SelectPageTypeNew id="menu_pageType" label="{i18n:GLZ_PAGE_SELECT_TYPE}" showAllPageTypes="true" hideBlock="true" linked="menu_parentPageType" required="true" />
+
+            <glz:if condition="__Config::get('glizycms.dublincore.enabled')">
+                <glz:Fieldset cssClass="dublinCoreBox" label="{i18n:MW_DUBLIN_CORE}">
+                    <glz:Input id="menudetail_keywords" label="{i18n:MW_DC_KEYWORDS}" size="90" />
+                    <glz:Input id="menudetail_description" label="{i18n:MW_DC_SHORTDESCRIPTION}" size="90" />
+                    <glz:Input id="menudetail_subject" label="{i18n:MW_DC_SUBJECT}" size="90" />
+                    <glz:Input id="menudetail_creator" label="{i18n:MW_DC_CREATOR}" size="90" />
+                    <glz:Input id="menudetail_publisher" label="{i18n:MW_DC_PUBLISHER}" size="90" />
+                    <glz:Input id="menudetail_contributor" label="{i18n:MW_DC_CONTRIBUTOR}" size="90" />
+                    <glz:Input id="menudetail_type" label="{i18n:MW_DC_TYPE}" size="90" />
+                    <glz:Input id="menudetail_identifier" label="{i18n:MW_DC_IDENTIFIER}" size="90" />
+                    <glz:Input id="menudetail_source" label="{i18n:MW_DC_SOURCE}" size="90" />
+                    <glz:Input id="menudetail_relation" label="{i18n:MW_DC_RELATION}" size="90" />
+                    <glz:Input id="menudetail_coverage" label="{i18n:MW_DC_COVERAGE}" size="90" />
+                </glz:Fieldset>
+            </glz:if>
+            <glz:if condition="!__Config::get('glizycms.dublincore.enabled')">
+                <glz:Fieldset cssClass="dublinCoreBox" label="{i18n:Metadati}">
+                    <glz:Input id="menudetail_keywords" label="{i18n:MW_DC_KEYWORDS}" size="90" />
+                    <glz:Input id="menudetail_description" label="{i18n:MW_DC_SHORTDESCRIPTION}" size="90" />
+                    <glz:Hidden id="menudetail_subject" />
+                    <glz:Hidden id="menudetail_creator" />
+                    <glz:Hidden id="menudetail_publisher" />
+                    <glz:Hidden id="menudetail_contributor" />
+                    <glz:Hidden id="menudetail_type" />
+                    <glz:Hidden id="menudetail_identifier" />
+                    <glz:Hidden id="menudetail_source" />
+                    <glz:Hidden id="menudetail_relation" />
+                    <glz:Hidden id="menudetail_coverage" />
+                </glz:Fieldset>
+            </glz:if>
+
             <cms:FormButtonsPanel>
                 <glz:HtmlButton label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=saveProperties" />
             </cms:FormButtonsPanel>

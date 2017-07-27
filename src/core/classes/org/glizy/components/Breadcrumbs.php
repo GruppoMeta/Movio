@@ -10,7 +10,7 @@
 
 class org_glizy_components_Breadcrumbs extends org_glizy_components_Component
 {
-	private $extraItem = null;
+	protected $extraItem = null;
 
 	/**
 	 * Init

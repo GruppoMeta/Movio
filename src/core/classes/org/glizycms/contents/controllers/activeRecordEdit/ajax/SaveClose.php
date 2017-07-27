@@ -3,6 +3,7 @@ class org_glizycms_contents_controllers_activeRecordEdit_ajax_SaveClose extends 
 {
     function execute($data)
     {
+        $this->checkPermissionForBackend();
         $result = parent::execute($data);
         
         if ($result['errors']) {

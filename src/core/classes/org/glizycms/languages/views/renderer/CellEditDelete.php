@@ -20,7 +20,7 @@ class org_glizycms_languages_views_renderer_CellEditDelete extends org_glizy_com
                                                                 'title' => __T('GLZ_RECORD_DELETE'),
                                                                 'id' => $key,
                                                                 'action' => 'delete'),
-                                                            __T( 'conferma cancellazione record'));
+                                                            __T( 'Sei sicuro di voler cancellare il record?'));
         }
 
 		return $output;

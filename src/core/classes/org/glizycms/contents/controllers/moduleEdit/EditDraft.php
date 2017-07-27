@@ -3,6 +3,7 @@ class org_glizycms_contents_controllers_moduleEdit_EditDraft extends org_glizy_m
 {
     public function execute($id)
     {
+        $this->checkPermissionForBackend();
 // TODO controllo ACL
         if ($id) {
             // read the module content

@@ -3,15 +3,18 @@ Glizy.oop.declare("glizy.FormEdit.mediapicker", {
     $mediaPicker: null,
     populateDataEnabled: false,
     eventPos: null,
+    imageResizer: null,
 
     initialize: function (element, glizyOpt) {
         element.data('instance', this);
         this.$element = element;
         this.populateDataEnabled = element.attr('data-populate_data') == 'true';
+        this.imageResizer = glizyOpt.imageResizer;
 
         var that = this;
         var $input = element.hide(),
             pickerType = $input.attr('data-mediatype'),
+            externalFiltersOR = $input.attr('data-externalfiltersor'),
             hasPreview = $input.attr('data-preview') == 'true';
 
         that.$mediaPicker =
@@ -24,9 +27,12 @@ Glizy.oop.declare("glizy.FormEdit.mediapicker", {
                     if (pickerType) {
                         url += '&mediaType=' + pickerType;
                     }
+                    else if(externalFiltersOR){
+                        url += '&externalFiltersOR=' + externalFiltersOR;
+                    }
                     Glizy.openIFrameDialog( hasPreview ? GlizyLocale.MediaPicker.imageTitle : GlizyLocale.MediaPicker.mediaTitle,
                                             url,
-                                            900,
+                                            1400,
                                             50,
                                             50,
                                             null,
@@ -113,8 +119,9 @@ Glizy.oop.declare("glizy.FormEdit.mediapicker", {
                     })
                     .hide();
 
-                $img.attr({title: props.title, src: props.src})
-                    .data(props);
+                var src = this.imageResizer.replace('#id#', props.id);
+                $img.attr({title: props.title, src: src})
+                    .data({id: props.id, fileName: props.fileName});
 
                 if ($img[0].complete && $img[0].naturalWidth !== 0) {
                     $img.trigger('load');

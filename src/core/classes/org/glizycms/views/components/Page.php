@@ -39,6 +39,10 @@ class org_glizycms_views_components_Page extends org_glizy_components_Page
 	 */
 	function process()
 	{
+		if (!$this->_application->canViewPage() || !$this->checkAcl()) {
+			org_glizy_helpers_Navigation::accessDenied($this->_user->isLogged());
+		}
+
 		$this->selfId = $this->getId();
 		$this->_content = array();
 		$this->loadContentFromDB();
@@ -50,7 +54,12 @@ class org_glizycms_views_components_Page extends org_glizy_components_Page
 
 	function render()
 	{
-		$this->loadSiteProperties();
+		$menu = $this->_application->getCurrentMenu();
+		$siteProp = $this->_application->getSiteProperty();
+
+		$this->renderPageProperties($menu, $siteProp['title']);
+		$this->renderSiteProperties($siteProp);
+
 
 		if (is_object($this->customTemplate)) {
 			$this->customTemplate->render($this->_application, $this, $this->templateData);
@@ -77,13 +86,6 @@ class org_glizycms_views_components_Page extends org_glizy_components_Page
 
 	protected function loadContentFromDB()
 	{
-		if ( !$this->_application->canViewPage() )
-		{
-			//$this->setAttribute('templateFileName', 'accessDenaied' );
-			org_glizy_Session::set('glizy.loginUrl', org_glizy_helpers_Link::scriptUrl());
-			org_glizy_helpers_Navigation::gotoUrl( org_glizy_helpers_Link::makeUrl( 'accessDenied' ) );
-		}
-
 		// if ($this->_user->backEndAccess && org_glizy_Request::get( 'draft', '' ) == '1')
 		// {
 		// 	$versionStatus = 'DRAFT';
@@ -129,29 +131,38 @@ class org_glizycms_views_components_Page extends org_glizy_components_Page
 
 	protected function loadSiteProperties()
 	{
-		$menu = $this->_application->getCurrentMenu();
+		// $menu = $this->_application->getCurrentMenu();
 		$siteProp = $this->_application->getSiteProperty();
 
+	}
+
+	protected function renderPageProperties($menu, $siteName)
+	{
 		$title = org_glizy_ObjectValues::get('org.glizy.og', 'title', $menu->title );
 		$description = org_glizy_ObjectValues::get('org.glizy.og', 'description', $menu->description );
         $keywords = org_glizy_ObjectValues::get('org.glizy.og', 'keywords', $menu->keywords );
 
-
-		$this->addOutputCode($title.' - '.$siteProp['title'], 'docTitle');
-		$this->addOutputCode($title.' - '.$siteProp['title'], 'doctitle'); // NOTE: per compatibilità
+        $pageTitle = $title.' - '.$siteName;
+		$this->addOutputCode($pageTitle, 'docTitle');
+		$this->addOutputCode($pageTitle, 'doctitle'); // NOTE: per compatibilità
         $this->addOutputCode($title, 'metadata_title');
         $this->addOutputCode($description, 'metadata_description');
         $this->addOutputCode($keywords, 'metadata_keywords');
-        $this->addOutputCode($siteProp['copyright'], 'copyright');
-		$this->addOutputCode($siteProp['address'], 'address');
-
-		$slideShowSpeed = ((int)$siteProp['slideShow'] ? :5)*1000;
-		$this->addOutputCode( org_glizy_helpers_JS::JScode( 'if (typeof(Glizy)!=\'object\') Glizy = {}; Glizy.slideShowSpeed = '.$slideShowSpeed.';' ), 'head' );
 
 		$reg = __T( strlen( $menu->creationDate ) <= 10 || preg_match('/00:00:00|12:00:00 AM/', $menu->creationDate) ? 'GLZ_DATE_FORMAT' : 'GLZ_DATETIME_FORMAT' );
 		$updateText= org_glizy_locale_Locale::get('MW_FOOTER',
 													glz_defaultDate2locale($reg, $menu->creationDate),
 													glz_defaultDate2locale($reg, $menu->modificationDate));
 		$this->addOutputCode($updateText, 'docUpdate');
+	}
+
+
+	protected function renderSiteProperties($siteProp)
+	{
+        $this->addOutputCode($siteProp['copyright'], 'copyright');
+		$this->addOutputCode(org_glizy_helpers_Link::parseInternalLinks($siteProp['address']), 'address');
+
+		$slideShowSpeed = ((int)$siteProp['slideShow'] ? :5)*1000;
+		$this->addOutputCode( org_glizy_helpers_JS::JScode( 'if (typeof(Glizy)!=\'object\') Glizy = {}; Glizy.slideShowSpeed = '.$slideShowSpeed.';' ), 'head' );
 	}
 }

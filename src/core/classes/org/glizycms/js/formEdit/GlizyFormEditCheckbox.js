@@ -10,7 +10,7 @@ jQuery.GlizyRegisterType('checkbox', {
             format = [0, 1];
         }
 
-        if (group) {
+        if (group && $(this).attr('name').match(/\[\w*\]/)) {
             group += $(this).attr('name').replace(/\[\w*\]/, '');
         }
 

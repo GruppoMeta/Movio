@@ -3,6 +3,7 @@ class org_glizycms_contents_controllers_pageEdit_ajax_Add extends org_glizy_mvc_
 {
     public function execute($data)
     {
+        $this->checkPermissionForBackend();
         $this->directOutput = true;
         $data = json_decode($data);
         if ($data) {

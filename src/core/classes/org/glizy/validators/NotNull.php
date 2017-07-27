@@ -2,20 +2,25 @@
 /**
  * This file is part of the GLIZY framework.
  * Copyright (c) 2005-2012 Daniele Ugoletti <daniele.ugoletti@glizy.com>
- * 
+ *
  * For the full copyright and license information, please view the COPYRIGHT.txt
  * file that was distributed with this source code.
  */
 
-class org_glizy_validators_NotNull extends org_glizy_validators_AbstractValidator
+class org_glizy_validators_NotNull implements org_glizy_validators_ValidatorInterface
 {
-    public function validate($description, $value)
+    /**
+     * @param string $description
+     * @param string $value
+     *
+     * @return bool|string
+     */
+    public function validate($description, $value, $defaultValue)
     {
-        if ($value !== null) {
+        if ($value !== null || $defaultValue) {
             return true;
         }
-        else {
-            return $description . " non può essere vuoto";
-        }
+
+        return $description . " non può essere null";
     }
 }

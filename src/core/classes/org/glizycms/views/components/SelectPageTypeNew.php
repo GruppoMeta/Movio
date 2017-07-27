@@ -28,6 +28,7 @@ class org_glizycms_views_components_SelectPageTypeNew extends org_glizy_componen
         $this->defineAttribute('linked', false,     '',    COMPONENT_TYPE_STRING);
         $this->defineAttribute('onlyWithParent', false,     '',    COMPONENT_TYPE_STRING);
         $this->defineAttribute('hide', false, false,    COMPONENT_TYPE_BOOLEAN);
+        $this->defineAttribute('hideBlock', false, false,    COMPONENT_TYPE_BOOLEAN);
 
         // call the superclass for validate the attributes
         parent::init();
@@ -71,9 +72,9 @@ class org_glizycms_views_components_SelectPageTypeNew extends org_glizy_componen
             $attributes['id']        = $this->getId();
             $attributes['name']      = $this->getOriginalId();
             $attributes['disabled']  = $this->getAttribute('disabled') ? 'disabled' : '';
-            $attributes['data-type'] = $this->getAttribute('data-type') ? $this->getAttribute('data-type') : 'selectpagetype';
-            $attributes['data-linked'] = $this->getAttribute('linked') ? $this->getAttribute('linked') : '';
-            $attributes['data-onlywithparent'] = $this->getAttribute('onlyWithParent') ? $this->getAttribute('onlyWithParent') : '';
+            $attributes['data-type'] = 'selectpagetype';
+            $attributes['data-linked'] = $this->getAttribute('linked');
+            $attributes['data-onlywithparent'] = $this->getAttribute('onlyWithParent');
             $attributes['class']     = $this->getAttribute('required') ? 'required' : '';
             $attributes['class']    .= $this->getAttribute( 'cssClass' ) != '' ? ( $attributes['class'] != '' ? ' ' : '' ).$this->getAttribute( 'cssClass' ) : '';
             $attributes['class']    .= ' hidden';
@@ -81,7 +82,10 @@ class org_glizycms_views_components_SelectPageTypeNew extends org_glizy_componen
             $output = '<input '.$this->_renderAttributes($attributes).'/>';
             $output .= '<ul class="pageTypeSelect">';
 
+            $hideBlock = $this->getAttribute('hideBlock');
+
             foreach ($this->items as $v) {
+                if ($hideBlock && $v['isBlock']) continue;
                 $output .= '<li>';
                 $output .= '<a class="'.$v['cssClass'].'" data-type="'.$v['type'].'" data-acceptparent="'.@$v['acceptParent'].'">'.$v['label'].'</a>';
                 $output .= '</li>';
@@ -103,9 +107,9 @@ class org_glizycms_views_components_SelectPageTypeNew extends org_glizy_componen
     }
 
 
-    protected function readFromXml()
+    protected function readFromXml($fileName = 'pageTypes.xml')
     {
-        $pageTypeService = org_glizy_ObjectFactory::createObject('org.glizycms.contents.services.PageTypeService');
+        $pageTypeService = org_glizy_ObjectFactory::createObject('org.glizycms.contents.services.PageTypeService', $fileName);
         $pageTypes = $pageTypeService->getAllPageTypes();
 
         foreach ($pageTypes as $pageTypeName => $pageType) {
@@ -120,10 +124,16 @@ class org_glizycms_views_components_SelectPageTypeNew extends org_glizy_componen
                     }
                 }
 
+                if (preg_match("/\{i18n\:.*\}/i", $pageType['label'])) {
+                    $code = preg_replace("/\{i18n\:(.*)\}/i", "$1", $pageType['label']);
+                    $pageType['label'] = org_glizy_locale_Locale::getPlain($code);
+                }
+
                 $this->items[$pageTypeName] = array('label' => $pageType['label'],
                                                         'type' => $pageTypeName,
                                                         'cssClass' =>  $pageType['class'],
                                                         'acceptParent' =>  $pageType['acceptParent'],
+                                                        'isBlock' =>  $pageType['isBlock'],
                                                         );
             }
         }
@@ -133,12 +143,13 @@ class org_glizycms_views_components_SelectPageTypeNew extends org_glizy_componen
     {
         if ($this->getAttribute('showAllPageTypes')) {
             glz_loadLocale(org_glizy_Paths::get('APPLICATION_TO_ADMIN_PAGETYPE'));
-            foreach (glob(org_glizy_Paths::get('APPLICATION_TO_ADMIN_PAGETYPE').'*.{xml}', GLOB_BRACE) as $file) {
+            foreach (glob(org_glizy_Paths::get('APPLICATION_TO_ADMIN_PAGETYPE').'*.xml') as $file) {
                 $pathInfo = pathinfo($file);
                 if ($pathInfo['basename']=='Common.xml' || isset($this->items[$pathInfo['filename']])) continue;
                 $this->items[$pathInfo['filename']] = array('label' => __T($pathInfo['filename']),
                                                         'type' => $pathInfo['filename'],
-                                                        'cssClass' =>  'button-generic');
+                                                        'cssClass' =>  'button-generic',
+                                                        'isBlock' => false);
             }
         }
     }

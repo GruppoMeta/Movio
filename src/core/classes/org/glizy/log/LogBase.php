@@ -32,7 +32,7 @@ class org_glizy_log_LogBase extends GlizyObject
 {
 	/*private*/ var $_formatFunc 	= NULL;
 	/*private*/ var $_logFormat 	= '[%l] %g %T%t %T%m';
-	/*private*/ var $_timeFormat 	= 'Y-m-d H:I:S';
+	/*private*/ var $_timeFormat 	= 'Y-m-d H:M:S';
 	/*private*/ var $_level 		= GLZ_LOG_ALL;
 	/*private*/ var $_levelsName 	= array(GLZ_LOG_DEBUG 	=> 'DEBUG',
 											GLZ_LOG_SYSTEM 	=> 'SYSTEM',
@@ -51,6 +51,7 @@ class org_glizy_log_LogBase extends GlizyObject
      */
     var $_eol = "\r\n";
 
+	protected $forceMessageToString = true;
 
 	function __construct($options=array(), $level=GLZ_LOG_DEBUG, $group='')
 	{
@@ -116,7 +117,7 @@ class org_glizy_log_LogBase extends GlizyObject
 		if (isset($evt->data['message']))
 		{
 			$message = $evt->data['message'];
-			if ( is_array( $message ))
+			if ( is_array( $message ) && $this->forceMessageToString)
 			{
 				$message = var_export($message, true);
 			}

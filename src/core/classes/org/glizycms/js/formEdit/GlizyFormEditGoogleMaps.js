@@ -267,6 +267,6 @@ jQuery.GlizyRegisterType('googlemaps', {
 
     focus: function()
     {
-        this.element.focus();
+         this.focus();
     }
 });

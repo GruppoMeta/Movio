@@ -8,36 +8,38 @@
 
 if ( Glizy.tinyMCE_btn3 != "" && Glizy.tinyMCE_pluginsNames != "" )
 {
-	Glizy.tinyMCE_btn3 = Glizy.tinyMCE_btn3 != "" ? Glizy.tinyMCE_btn3 + "," + Glizy.tinyMCE_pluginsNames : Glizy.tinyMCE_pluginsNames;
+  Glizy.tinyMCE_btn3 = Glizy.tinyMCE_btn3 != "" ? Glizy.tinyMCE_btn3 + "," + Glizy.tinyMCE_pluginsNames : Glizy.tinyMCE_pluginsNames;
 }
 
 Glizy.tinyMCE_options = {
-	theme : "advanced",
-	mode : "exact",
-	elements : "",
-	language: GlizyLocale.LANGUAGE,
-	dialog_type: "modal",
-	paste_remove_spans: true,
-	paste_remove_styles: true,
-	paste_strip_class_attributes: "all",
-	remove_linebreaks: true,
-	remove_script_host: false,
-	tab_focus : ':prev,:next',
+  theme : "advanced",
+  mode : "exact",
+  elements : "",
+  language: GlizyLocale.LANGUAGE,
+  dialog_type: "modal",
+  paste_remove_spans: true,
+  paste_remove_styles: true,
+  paste_strip_class_attributes: "all",
+  remove_linebreaks: true,
+  remove_script_host: false,
+  tab_focus : ':prev,:next',
   content_css : Glizy.tinyCSS,
-	plugins : Glizy.tinyMCE_plugins,
-	theme_advanced_buttons1 : Glizy.tinyMCE_btn1,
-	theme_advanced_buttons2 : Glizy.tinyMCE_btn2,
-	theme_advanced_buttons3 : Glizy.tinyMCE_btn3,
-	theme_advanced_resize_horizontal : false,
-	theme_advanced_resizing : true,
-	theme_advanced_toolbar_location : "top",
-	theme_advanced_toolbar_align : "left",
-	theme_advanced_path_location : "bottom",
-
-    inline_styles : true,
-	verify_html : true,
-	extended_valid_elements : "a[name|href|title|style|class|rel|rev|tabindex|accesskey]",
-	valid_elements : ""
+  plugins : Glizy.tinyMCE_plugins,
+  template_templates : Glizy.tinyMCE_templates,
+  theme_advanced_buttons1 : Glizy.tinyMCE_btn1,
+  theme_advanced_buttons2 : Glizy.tinyMCE_btn2,
+  theme_advanced_buttons3 : Glizy.tinyMCE_btn3,
+  theme_advanced_resize_horizontal : false,
+  theme_advanced_resizing : true,
+  theme_advanced_toolbar_location : "top",
+  theme_advanced_toolbar_align : "left",
+  theme_advanced_path_location : "bottom",
+  style_formats: Glizy.tinyMCE_styles,
+  style_formats_merge: false,
+  inline_styles : true,
+  verify_html : true,
+  extended_valid_elements : "a[name|href|title|style|class|rel|rev|tabindex|accesskey"+(Glizy.tinyMCE_allowLinkTarget ? "|target":"")+"]",
+  valid_elements : ""
 +"a[accesskey|charset|class|coords|dir<ltr?rtl|href|hreflang|id|lang|name"
   +"|onblur|onclick|ondblclick|onfocus|onkeydown|onkeypress|onkeyup"
   +"|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|rel|rev"
@@ -279,5 +281,7 @@ Glizy.tinyMCE_options = {
   +"|onmouseup|style|title|type],"
 +"var[class|dir<ltr?rtl|id|lang|onclick|ondblclick|onkeydown|onkeypress"
   +"|onkeyup|onmousedown|onmousemove|onmouseout|onmouseover|onmouseup|style"
-  +"|title]"
-	};
+  +"|title]"+
+  Glizy.tinyMCE_validElements,
+  table_styles : Glizy.tinyMCE_tableClassList
+};

@@ -76,7 +76,7 @@ EOD;
         foreach($this->criteria as $v) {
             $callback[] = array('label' => $v->label, 'id' => $v->id);
 
-            if ('facet'==$v->type) {
+            if ('facet'==$v->type || 'facetSingle'==$v->type) {
 
                 $it = org_glizy_objectFactory::createModelIterator($this->getAttribute('model'));
                 $it->where($v->id, '', '<>')

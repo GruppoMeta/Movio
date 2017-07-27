@@ -54,6 +54,7 @@ class org_glizy_application_SiteMapSimple extends org_glizy_application_SiteMap
 			$menu['pageType'] 	= $fileName;
 			$menu['title'] 		= $title;
 			$menu['type'] 		= substr($fileName, 0, 1)=='_' ? 'SYSTEM' : 'PAGE';
+            $menu['hideInNavigation'] = false;
 			$this->_siteMapArray[$menu['id']] = $menu;
 		}
 

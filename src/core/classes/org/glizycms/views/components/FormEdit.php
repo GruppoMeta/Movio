@@ -9,6 +9,7 @@ class org_glizycms_views_components_FormEdit extends org_glizy_components_Form
         // define the custom attributes
         $this->defineAttribute( 'customValidation', false, NULL, COMPONENT_TYPE_STRING);
         $this->defineAttribute( 'newCode', false, false, COMPONENT_TYPE_BOOLEAN);
+        $this->defineAttribute( 'initJS', false, true, COMPONENT_TYPE_BOOLEAN);
 
         // call the superclass for validate the attributes
         parent::init();
@@ -21,6 +22,12 @@ class org_glizycms_views_components_FormEdit extends org_glizy_components_Form
     {
         $this->data = is_array($data) || is_object($data) ? json_encode($data) : $data;
         $this->_content = is_object($data) ? get_object_vars($data) : $data;
+    }
+
+
+    public function resetPageTitleModifier()
+    {
+        $this->pageTitleModifiers = array();
     }
 
     public function addPageTitleModifier(org_glizycms_views_components_FormEditPageTitleModifierVO $modifier)
@@ -51,60 +58,73 @@ class org_glizycms_views_components_FormEdit extends org_glizy_components_Form
 
         $languageCode = $this->_application->getLanguage();
         $language = $languageCode.'-'.strtoupper($languageCode);
+        $imageResizer = org_glizycms_Glizycms::getMediaArchiveBridge()->imageResizeTemplateUrl(
+                                        __Config::get('THUMB_WIDTH'),
+                                        __Config::get('THUMB_HEIGHT'),
+                                        __Config::get('ADM_THUMBNAIL_CROP'),
+                                        __Config::get('ADM_THUMBNAIL_CROPPOS'));
+        $googleApiKey = __Config::get('glizy.maps.google.apiKey');
 
         if ($this->getAttribute('newCode')) {
             $formEditPath = $corePath.'classes/org/glizycms/js/formEdit2/';
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $corePath.'classes/org/glizycms/js/underscore/underscore-min.js' ));
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEdit.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditStandard.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditCheckbox.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditRepeat.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $corePath.'classes/org/glizycms/js/underscore/underscore-min.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEdit.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditStandard.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditCheckbox.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditRepeat.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditDate.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditDateTime.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.it.js' ) );
-            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'bootstrap-datetimepicker-master/css/datetimepicker.css' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditDate.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditDateTime.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.it.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'bootstrap-datetimepicker-master/css/datetimepicker.css' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditColorPicker.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'bootstrap-colorpicker/js/bootstrap-colorpicker.min.js' ) );
-            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'bootstrap-colorpicker/css/bootstrap-colorpicker.min.css' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditColorPicker.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'bootstrap-colorpicker/js/bootstrap-colorpicker.min.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'bootstrap-colorpicker/css/bootstrap-colorpicker.min.css' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditGUID.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditGUID.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditSelectFrom.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'select2/select2.min.js' ) );
-            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'select2/select2.css' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditSelectFrom.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'select2/select2.min.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'select2/select2.css' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditTINYMCE.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditTINYMCE.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditMediaPicker.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditMediaPicker.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditFile.js' ) );
-            //$this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'fineuploader.jquery/jquery.fineuploader.js' ) );
-            //$this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'fineuploader.jquery/fineuploader.css' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'jquery.validVal-packed.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditFile.js' ), 'head');
+            //$this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'fineuploader.jquery/jquery.fineuploader.js' ), 'head');
+            //$this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'fineuploader.jquery/fineuploader.css' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'jquery.validVal-packed.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditPermission.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditPermission.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditPhotoGalleryCategory.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditPhotoGalleryCategory.js' ), 'head');
 
-            // $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditGoogleMaps.js' ) );
-            // $this->addOutputCode(org_glizy_helpers_JS::linkJSfile( 'http://maps.google.com/maps/api/js?sensor=false' ));
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditCmsPagePicker.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditCmsPagePicker.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditSelectPageType.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditSelectPageType.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditUrl.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditUrl.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditModalPage.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditModalPage.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $corePath.'classes/org/glizycms/js/glizy-locale/'.$language.'.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $corePath.'classes/org/glizycms/js/glizy-locale/'.$language.'.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'jquery.pnotify/jquery.pnotify.min.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'jquery.pnotify/jquery.pnotify.default.css' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'jquery.pnotify/jquery.pnotify.min.js' ) );
-            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'jquery.pnotify/jquery.pnotify.default.css' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditSelectTarget.js' ), 'head');
+
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditSelectConditional.js' ), 'head');
+
+            if ($googleApiKey) {
+                $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditGoogleMaps.js' ), 'head');
+                $this->addOutputCode(org_glizy_helpers_JS::linkJSfile( 'http://maps.google.com/maps/api/js?key='.$googleApiKey), 'head');
+            }
+
 
             $id = $this->getId();
 
@@ -128,6 +148,7 @@ jQuery(function(){
     var myFormEdit = Glizy.oop.create("glizy.FormEdit", '$id', {
         AJAXAction: "$AJAXAtion",
         mediaPicker: $mediaPicker,
+        imageResizer: "$imageResizer",
         formData: $this->data,
         $customValidation
         lang: GlizyLocale.FormEdit
@@ -137,59 +158,62 @@ EOD;
         } else {
             $formEditPath = $corePath.'classes/org/glizycms/js/formEdit/';
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $corePath.'classes/org/glizycms/js/underscore/underscore-min.js' ));
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEdit.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditTINYMCE.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditFile.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditMediaPicker.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditGoogleMaps.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditGUID.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditColorPicker.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditValuesPreset.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $corePath.'classes/org/glizycms/js/underscore/underscore-min.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEdit.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditTINYMCE.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditFile.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditMediaPicker.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditGUID.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditColorPicker.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditValuesPreset.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditRecordPicker.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditDate.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditDatetime.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.it.js' ) );
-            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'bootstrap-datetimepicker-master/css/datetimepicker.css' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'bootstrap-colorpicker/js/bootstrap-colorpicker.min.js' ) );
-            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'bootstrap-colorpicker/css/bootstrap-colorpicker.min.css' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditDate.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditDatetime.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.it.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'bootstrap-datetimepicker-master/css/datetimepicker.css' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'bootstrap-colorpicker/js/bootstrap-colorpicker.min.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'bootstrap-colorpicker/css/bootstrap-colorpicker.min.css' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $corePath.'classes/org/glizycms/js/glizy-locale/'.$language.'.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'dropzone/dropzone.min.js' ) );
-            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'dropzone/css/basic2.css' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'jquery.validVal-packed.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $corePath.'classes/org/glizycms/js/glizy-locale/'.$language.'.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'dropzone/dropzone.min.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'dropzone/css/basic2.css' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'jquery.validVal-packed.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditCmsPagePicker.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditSelectFrom.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'select2/select2.min.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'jquery.pnotify/jquery.pnotify.min.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditCmsPagePicker.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditSelectFrom.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'select2/select2.min.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'jquery.pnotify/jquery.pnotify.min.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditPermission.js' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditPermission.js' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'select2/select2.css' ) );
-            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'jquery.pnotify/jquery.pnotify.default.css' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditCheckbox.js' ) );
-            $this->addOutputCode(org_glizy_helpers_JS::linkJSfile( 'http://maps.google.com/maps/api/js?sensor=false' ));
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditSelectPageType.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditPhotoGalleryCategory.js' ) );
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditImageHotspot.js' ) );
+            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'select2/select2.css' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'jquery.pnotify/jquery.pnotify.default.css' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditCheckbox.js' ), 'head');
 
-            // $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditTreeSelect.js' ) );
-            // $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'fancytree/jquery.fancytree-all.min.js' ) );
-            // $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'fancytree/skin-win7/ui.fancytree.min.css' ) );
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditSelectPageType.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditPhotoGalleryCategory.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditImageHotspot.js' ), 'head');
+
+            if ($googleApiKey) {
+                $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditGoogleMaps.js' ), 'head');
+                $this->addOutputCode(org_glizy_helpers_JS::linkJSfile( 'http://maps.google.com/maps/api/js?key='.$googleApiKey), 'head');
+            }
 
             $id = $this->getId();
 
             $mediaPicker = $this->getMediaPickerUrl();
             $AJAXAtion = $this->getAttribute('controllerName') ? $this->getAjaxUrl() : '';
 
+            $initJS = $this->getAttribute('initJS') ? 'true' : 'false';
             $customValidation = $this->getAttribute('customValidation');
             if ( $customValidation ) {
                 $customValidation = 'customValidation: "'.$customValidation.'",';
             }
 
             $tinyMceUrls = json_encode($this->getTinyMceUrls());
+
 
             $jsCode = <<< EOD
 jQuery(function(){
@@ -199,36 +223,42 @@ jQuery(function(){
     }
 
     var ajaxUrl = "$AJAXAtion";
-    jQuery( "#$id" ).GlizyFormEdit({
-        AJAXAction: ajaxUrl ? ajaxUrl : Glizy.ajaxUrl,
-        mediaPicker: $mediaPicker,
-        formData: $this->data,
-        $customValidation
-        lang: GlizyLocale.FormEdit
-    });
+    if (initJs = $initJS) {
+        jQuery( "#$id" ).GlizyFormEdit({
+            AJAXAction: ajaxUrl ? ajaxUrl : Glizy.ajaxUrl,
+            mediaPicker: $mediaPicker,
+            imageResizer: "$imageResizer",
+            formData: $this->data,
+            $customValidation
+            lang: GlizyLocale.FormEdit
+        });
+    } else {
+        jQuery( "#$id" ).hide();
+    }
 });
 EOD;
         }
 
-        $this->addOutputCode(org_glizy_helpers_JS::JScode( $jsCode ));
+        $this->addOutputCode(org_glizy_helpers_JS::JScode( $jsCode ), 'head');
     }
 
     protected function getMediaPickerUrl()
     {
-        return '"'.org_glizycms_Glizycms::getMediaArchiveBridge()->getMediaPickerUrl().'"';
+        return '"'.org_glizycms_Glizycms::getMediaArchiveBridge()->mediaPickerUrl().'"';
     }
 
     protected function getTinyMceUrls()
     {
         return array(
                         'ajaxUrl' => GLZ_HOST.'/'.$this->getAjaxUrl(),
-                        'mediaPicker' => GLZ_HOST.'/'.org_glizycms_Glizycms::getMediaArchiveBridge()->getMediaPickerUrl(),
-                        'mediaPickerTiny' => GLZ_HOST.'/'.org_glizycms_Glizycms::getMediaArchiveBridge()->getMediaPickerUrl(true),
-                        'imagePickerTiny' => GLZ_HOST.'/'.org_glizycms_Glizycms::getMediaArchiveBridge()->getMediaPickerUrl(true, 'IMAGE'),
-                        'imageResizer' => org_glizycms_Glizycms::getMediaArchiveBridge()->getImageResizeTemplate(),
+                        'mediaPicker' => org_glizycms_Glizycms::getMediaArchiveBridge()->mediaPickerUrl(),
+                        'mediaPickerTiny' => org_glizycms_Glizycms::getMediaArchiveBridge()->mediaPickerUrl(true),
+                        'imagePickerTiny' => org_glizycms_Glizycms::getMediaArchiveBridge()->mediaPickerUrl(true, 'IMAGE'),
+                        'imageResizer' => org_glizycms_Glizycms::getMediaArchiveBridge()->imageResizeTemplateUrl(),
                         'root' => GLZ_HOST.'/',
             );
     }
+
 
     protected function changePageTitle()
     {
@@ -267,7 +297,7 @@ EOD;
 			$bindToField = $name;
 		}
 
-		return org_glizy_Request::get($bindToField, $this->_content[$bindToField]);
+		return org_glizy_Request::get($bindToField, isset($this->_content[$bindToField]) ? $this->_content[$bindToField] : null);
 	}
 
 

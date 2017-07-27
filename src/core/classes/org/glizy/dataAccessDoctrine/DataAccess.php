@@ -48,7 +48,8 @@ class org_glizy_dataAccessDoctrine_DataAccess
      * driver connection.
      *
      * @param  integer $n connection number
-     * @return Doctrine\DBAL\Connection
+     * @return \Doctrine\DBAL\Connection
+     * @throws Exception
      */
     public static function getConnection($n = 0)
     {
@@ -170,6 +171,7 @@ class org_glizy_dataAccessDoctrine_DataAccess
             } else {
                 $platform = self::$connections['__' . $n]->getDatabasePlatform();
                 $platform->registerDoctrineTypeMapping('enum', 'string');
+                $platform->registerDoctrineTypeMapping('bit', 'boolean');
             }
 
         }
@@ -266,12 +268,14 @@ class org_glizy_dataAccessDoctrine_DataAccess
      * @param array $options
      * @throws \Doctrine\DBAL\DBALException
      */
-    function importSqlFile($n, $fileName, $dbName, $options = null)
+    function importSqlFile($n, $fileName, $dbName = null, $options = null)
     {
 
         $conn = self::getConnection();
-        $sm   = $conn->getSchemaManager();
-        $sm->createDatabase($dbName);
+        if ($dbName) {
+            $sm = $conn->getSchemaManager();
+            $sm->createDatabase($dbName);
+        }
         unset( $options );
 
         $conn = self::getConnection($n);

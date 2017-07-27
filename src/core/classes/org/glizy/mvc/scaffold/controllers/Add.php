@@ -16,12 +16,11 @@ class org_glizy_mvc_scaffold_controllers_Add extends org_glizy_mvc_scaffold_cont
 	{
 		if ( $this->submit )
 		{
-			if ($this->controller->validate())
+			if ($this->view->validate())
 			{
 				$isNewRecord = $this->id == 0;
 				$ar = org_glizy_ObjectFactory::createModel( $this->modelName );
-				$ar->loadFromArray( __Request::getAllAsArray() );
-				$this->id = $ar->save();
+				$this->id = $ar->save(__Request::getAllAsArray(), $isNewRecord);
 
 				$this->redirect( $isNewRecord );
 			}

@@ -46,7 +46,7 @@ class org_glizy_components_HtmlFormElement extends org_glizy_components_Componen
 	}
 
 	protected function applyItemTemplate($label, $element) {
-		if ($this->_outputMode != 'jsediting' && is_null( $this->getAttribute( 'skin' ) ) && $editableRegion != 'head' && $this->getAttribute( 'applyFormItemTemplate' ) )
+		if ($this->_outputMode != 'jsediting' && is_null( $this->getAttribute( 'skin' ) ) && $this->getAttribute( 'applyFormItemTemplate' ) )
 		{
 			return org_glizy_helpers_Html::applyItemTemplate($label, $element, $this->_hiddenItem, $this->_rightLabel );
 		} else {

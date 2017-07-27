@@ -61,7 +61,7 @@ class org_glizy_components_DataDictionary extends org_glizy_components_Component
 	function getItems()
 	{
         $oldCacheValue = __Config::get('QUERY_CACHING');
-        __Config::set('QUERY_CACHING', $this->getAttribute('cache'));
+        __Config::set('QUERY_CACHING', $this->getAttribute('useCache'));
 
 		if ( is_null( $this->iterator ) )
 		{

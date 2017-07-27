@@ -11,6 +11,7 @@
 class org_glizy_components_State extends org_glizy_components_ComponentContainer
 {
 	var $_state;
+	private $addChildMethodName;
 
 	/**
 	 * Init
@@ -31,8 +32,8 @@ class org_glizy_components_State extends org_glizy_components_ComponentContainer
 	function deferredChildCreation()
 	{
 		// aggiunge i figli
-		$function = 'addChild_'.$this->getId();
-		$function ( $this->_application, $this );
+		$methodName = $this->addChildMethodName;
+		$methodName ( $this->_application, $this );
 		$this->initChilds();
 		$this->execDoLater();
 	}
@@ -87,6 +88,11 @@ class org_glizy_components_State extends org_glizy_components_ComponentContainer
 		return $this->_state[0];
 	}
 
+	public function setAddChildMethodName($methodName)
+	{
+		$this->addChildMethodName = $methodName;
+	}
+
 
 	public static function compile($compiler, &$node, &$registredNameSpaces, &$counter, $parent='NULL', $idPrefix, $componentClassInfo, $componentId)
 	{
@@ -116,12 +122,14 @@ class org_glizy_components_State extends org_glizy_components_ComponentContainer
 			$compiler->_classSource .= '$n'.$counter.'->setAttributes( $attributes )'.GLZ_COMPILER_NEWLINE;
 		}
 
-		$compiler->_classSource .= 'if ($skipImport || $forceChildCreation) {addChild_'.$componentId.'($application, $n'.$counter.', $skipImport, $idPrefix, $mode);}'.GLZ_COMPILER_NEWLINE;
+		$methodName = 'addChild_'.md5($componentId.microtime(true));
+		$compiler->_classSource .= '$n'.$counter.'->setAddChildMethodName( \''.$methodName.'\' )'.GLZ_COMPILER_NEWLINE;
+		$compiler->_classSource .= 'if ($skipImport || $forceChildCreation) {'.$methodName.'($application, $n'.$counter.', $skipImport, $idPrefix, $mode);}'.GLZ_COMPILER_NEWLINE;
 
 		$previusClassSource = $compiler->_classSource;
 		$compiler->_classSource = '';
 		$compiler->_classSource .= '// STATE function '.GLZ_COMPILER_NEWLINE2;
-		$compiler->_classSource .= 'function addChild_'.$componentId.'( &$application, &$n'.$counter.', $skipImport=false, $idPrefix=\'\', $mode=\'\') {'.GLZ_COMPILER_NEWLINE2;
+		$compiler->_classSource .= 'function '.$methodName.'( &$application, &$n'.$counter.', $skipImport=false, $idPrefix=\'\', $mode=\'\') {'.GLZ_COMPILER_NEWLINE2;
 
 		$oldcounter = $counter;
 		foreach( $node->childNodes as $nc )

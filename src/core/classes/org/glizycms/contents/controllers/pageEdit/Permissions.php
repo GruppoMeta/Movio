@@ -3,6 +3,7 @@ class org_glizycms_contents_controllers_pageEdit_Permissions extends org_glizy_m
 {
     public function execute($menuId)
     {
+        $this->checkPermissionForBackend();
         if ($menuId) {
             $menu = org_glizy_ObjectFactory::createModel('org.glizycms.contents.models.Menu');
             $menu->load($menuId);

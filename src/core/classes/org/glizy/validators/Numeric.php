@@ -7,15 +7,20 @@
  * file that was distributed with this source code.
  */
 
-class org_glizy_validators_Numeric extends org_glizy_validators_AbstractValidator
+class org_glizy_validators_Numeric implements org_glizy_validators_ValidatorInterface
 {
-    public function validate($description, $value)
+    /**
+     * @param string $description
+     * @param string $value
+     *
+     * @return bool|string
+     */
+    public function validate($description, $value, $defaultValue)
     {
         if (is_numeric($value) || empty($value)) {
             return true;
         }
-        else {
+
             return $description . " deve essere un numero intero";
-        }
     }
 }

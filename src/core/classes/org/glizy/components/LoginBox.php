@@ -47,16 +47,25 @@ class org_glizy_components_LoginBox extends org_glizy_components_Component
 
 	function process()
 	{
+		$this->_content = array();
+		$this->_content['errorLabel'] = '';
+
 		// check if the user is already logged
+		$backend = $this->getAttribute('backend');
+		$allowGroups = $this->getAttribute('allowGroups')!='' ? explode(',', $this->getAttribute('allowGroups')) : array();
 		if ($this->_user->isLogged()) {
+			if (($backend && !$this->_user->backEndAccess) ||
+				(count($allowGroups) && !in_array($this->_user->groupId, $allowGroups))) {
+				$this->_content['errorLabel'] = org_glizy_locale_Locale::get('LOGGER_INSUFFICIENT_GROUP_LEVEL');
+			} else {
 			$this->setAttribute('visible', false);
 			$this->redirectAfterLogin();
+		}
 		}
 
 		$submitId = 'submit_'.$this->getId();
 		$this->_content['id'] 					= $this->getId();
 		$this->_content['submitName'] 			= $submitId;
-		$this->_content['errorLabel']			= '';
 		$this->_content['cssClass'] 			= $this->getAttribute('cssClass');
 		$this->_content['userLabel'] 			= $this->getAttribute('userLabel');
 		$this->_content['userField'] 			= $this->getAttribute('userField');
@@ -75,9 +84,8 @@ class org_glizy_components_LoginBox extends org_glizy_components_Component
 			$authClass = org_glizy_ObjectFactory::createObject(__Config::get('glizy.authentication'));
 			if ($authClass) {
 				try {
-					$allowGroups = $this->getAttribute('allowGroups')!='' ? explode(',', $this->getAttribute('allowGroups')) : array();
 					$authClass->setAllowGroups($allowGroups);
-					$authClass->setOnlyBackendUser($this->getAttribute('backend'));
+					$authClass->setOnlyBackendUser($backend);
 					$authClass->setUserLanguage(__Request::get($this->getAttribute('languageField')));
 					$authClass->loginFromRequest($this->getAttribute('userField'), $this->getAttribute('passwordField'), $this->getAttribute('rememberField'), true);
 					$this->redirectAfterLogin();
@@ -89,8 +97,10 @@ class org_glizy_components_LoginBox extends org_glizy_components_Component
 							$this->_content['errorLabel'] = $this->getAttribute('errorLabel');
 							break;
 						case org_glizy_authentication_AuthenticationException::USER_NOT_ACTIVE:
-						case org_glizy_authentication_AuthenticationException::ACCESS_NOT_ALLOWED:
 							$this->_content['errorLabel'] = org_glizy_locale_Locale::get('GLZ_LOGIN_DISABLED');
+							break;
+						case org_glizy_authentication_AuthenticationException::ACCESS_NOT_ALLOWED:
+							$this->_content['errorLabel'] = org_glizy_locale_Locale::get('LOGGER_INSUFFICIENT_GROUP_LEVEL');
 							break;
 					}
 				}
@@ -99,8 +109,10 @@ class org_glizy_components_LoginBox extends org_glizy_components_Component
 				$this->_content['errorLabel'] = __Config::get('glizy.authentication');
 			}
 		} else {
+			if (!$this->_content['errorLabel']) {
 			$this->_content['errorLabel'] = org_glizy_Session::get('glizy.loginError', '');
 			org_glizy_Session::remove('glizy.loginError');
+			}
 		}
 	}
 

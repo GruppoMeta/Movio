@@ -532,8 +532,10 @@ class org_glizy_components_Component extends GlizyObject
 	}
 
     /**
-     * @param null $outputMode
-     * @param bool $skipChilds
+	 * @param string $outputMode
+	 * @param bool|false $skipChilds
+	 * @return string|void
+	 * @throws Exception
      */
 	function render($outputMode=NULL, $skipChilds=false)
 	{
@@ -652,7 +654,14 @@ class org_glizy_components_Component extends GlizyObject
 					$evt = array('type' => GLZ_EVT_CALL_CONTROLLER, 'data' => $controllerName);
                 	$this->dispatchEvent($evt);
 					$this->controller = &org_glizy_ObjectFactory::createObject( $controllerName, $this );
-				} catch (Exception $e) {}
+				} catch (Exception $e) {
+                    if (strpos($e->getMessage(), 'does not exist')===false) {
+                        throw $e;
+                    }
+                    if (class_exists('__DebugBar')) {
+						__DebugBar::warning($e->getMessage());
+                    }
+				}
 			}
 		}
 
@@ -670,10 +679,12 @@ class org_glizy_components_Component extends GlizyObject
      */
 	function addOutputCode($output, $editableRegion='', $atEnd=null)
 	{
-		$atEnd = empty( $atEnd ) ? $this->getAttribute( 'editableRegionAtEnd' ) : $atEnd;
-		// applica i filtri di post rendering
-		$this->applyOutputFilters('post', $output);
-		$this->_parent->addOutputCode($output, empty($editableRegion) ? $this->getEditableRegion() : $editableRegion, $atEnd );
+		if ($output) {
+			$atEnd = empty( $atEnd ) ? $this->getAttribute( 'editableRegionAtEnd' ) : $atEnd;
+			// applica i filtri di post rendering
+			$this->applyOutputFilters('post', $output);
+			$this->_parent->addOutputCode($output, empty($editableRegion) ? $this->getEditableRegion() : $editableRegion, $atEnd );
+		}
 	}
 
     /**

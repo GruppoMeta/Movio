@@ -29,7 +29,7 @@ class org_glizy_components_Import extends org_glizy_components_NullComponent
 	            $fileName = glz_findClassPath( $src );
 	            if ( is_null( $fileName ) )
 	            {
-	                // TODO: file non trovato visualizzare errore
+	                throw new Exception( 'File non esiste '.$fileName );
 	            }
 	        }
 

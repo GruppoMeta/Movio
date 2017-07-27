@@ -69,7 +69,8 @@ class org_glizy_application_SiteMapXML extends org_glizy_application_SiteMap
             $modules = org_glizy_Modules::getModules();
             foreach( $modules as $m )
             {
-                if ( $m->enabled && $m->siteMapAdmin )
+                $moduleDisabled = __Config::get($m->id) === false;
+                if ( $m->enabled && $m->siteMapAdmin && !$moduleDisabled)
                 {
                     $modulesSiteMap .= $m->siteMapAdmin;
                 }
@@ -102,18 +103,19 @@ class org_glizy_application_SiteMapXML extends org_glizy_application_SiteMap
             $menu['cssClass']       = $currNode->getAttribute('cssClass');
             $menu['icon']           = $currNode->getAttribute('icon');
             $menu['sortChild']      = $currNode->hasAttribute('sortChild') && $currNode->getAttribute('sortChild')=='true';
+            $menu['hideInNavigation'] = $currNode->getAttribute('hide');
 
             if (!$currNode->hasAttribute('visible')) {
                 if ( $currNode->hasAttribute('adm:acl') || in_array($menu['id'], $pagesAcl) )
                 {
-                    $menu['isVisible'] = '{php:$user.acl("'.$menu['id'].'", "visible")}';
+                    $menu['isVisible'] = '{php:$user.acl("'.$menu['id'].'", "visible", true)}';
                 }
                 else if ( !$currNode->hasAttribute('adm:acl') && $currNode->hasAttribute('adm:aclPageTypes') )
                 {
                     $temp = array();
                     $aclPages = explode(',', strtolower($currNode->getAttribute('adm:aclPageTypes')));
                     foreach($aclPages as $v) {
-                        $temp[] = '$user.acl("'.$v.'", "visible")';
+                        $temp[] = '$user.acl("'.$v.'", "visible", true)';
                     }
                     $menu['isVisible'] = '{php:('.implode(' OR ', $temp).')}';
                 }

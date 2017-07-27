@@ -53,5 +53,7 @@ tinyMCE.addI18n('it.GLZ_image',{
 	"tab_appearance":"Aspetto",
 	"tab_general":"Generale",
 	width:"Larghezza",
-	height:"Altezza"
+    height:"Altezza",
+    zoom:"Ingrandimento immagine",
+	caption:"Mostra didascalia"
 });

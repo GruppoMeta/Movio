@@ -56,7 +56,7 @@ class org_glizycms_contents_models_proxy_MenuProxy extends GlizyObject
     {
         // org_glizy_dataAccessDoctrine_DataAccess::enableLogging();
         $menus = org_glizy_ObjectFactory::createModelIterator('org.glizycms.core.models.Menu')
-            ->load($skipBlock ? 'getChildMenusNoBlock' : 'getChildMenus', array(':menuId' => $menuId, ':languageId' => $languageId));
+            ->load('getChildMenus', array('menuId' => $menuId, 'languageId' => $languageId, 'skipBlock' => $skipBlock));
 
 // TODO: lanciare un'eccezione se il menù non è trovato
         return $menus;
@@ -71,6 +71,8 @@ class org_glizycms_contents_models_proxy_MenuProxy extends GlizyObject
         // load the menu from DB
         $menu = org_glizy_ObjectFactory::createModel('org.glizycms.core.models.Menu');
         $menu->load($menuId);
+        $isBlock = $menu->menu_type == 'BLOCK';
+
         // set the parent and the order
 // TODO: lanciare un'eccezione se il menù non è trovato
         $menu->menu_parentId = $parentId;
@@ -79,7 +81,7 @@ class org_glizycms_contents_models_proxy_MenuProxy extends GlizyObject
 
         // reorder the children menus
         $menus = org_glizy_ObjectFactory::createModelIterator('org.glizycms.core.models.Menu');
-        $menus->load('getChildrenMenuInOrder', array('menuId' => $parentId));
+        $menus->load('getChildrenMenuInOrder', array('menuId' => $parentId, 'isBlock' => $isBlock));
 // TODO: lanciare un'eccezione se il parent trovato
         $pos = 0;
         foreach ($menus as $menu) {
@@ -129,7 +131,7 @@ class org_glizycms_contents_models_proxy_MenuProxy extends GlizyObject
         $userId = org_glizy_ObjectValues::get('org.glizy', 'userId');
 
         $menus = org_glizy_ObjectFactory::createModelIterator('org.glizycms.core.models.Menu');
-        $menus->load('getChildrenMenuInOrder', array('params' => array('menuId' => $parent)));
+        $menus->load('getChildrenMenuInOrder', array('params' => array('menuId' => $parent, 'isBlock' => $type!='PAGE')));
         $order = $menus->count()+1;
 
         $application = org_glizy_ObjectValues::get('org.glizy', 'application');
@@ -145,70 +147,28 @@ class org_glizycms_contents_models_proxy_MenuProxy extends GlizyObject
         $ar->menu_url       = '';
         $ar->menu_creationDate = new org_glizy_types_DateTime();
         $ar->menu_modificationDate = new org_glizy_types_DateTime();
+        if (!__Config::get('MULTISITE_ENABLED')) {
+            $ar->menu_FK_site_id = 0;
+        }
 
         $ar->menudetail_title = $title;
         $ar->menudetail_isVisible = $user->acl(__Config::get('SITEMAP_ID'), 'publish') === true ? 1 : 0;
+        $ar->menudetail_description = '';
+        $ar->menudetail_subject = '';
+        $ar->menudetail_keywords = '';
+        $ar->menudetail_creator = '';
+        $ar->menudetail_publisher = '';
+        $ar->menudetail_contributor = '';
+        $ar->menudetail_type = '';
+        $ar->menudetail_identifier = '';
+        $ar->menudetail_source = '';
+        $ar->menudetail_relation = '';
+        $ar->menudetail_coverage = '';
 
         $pageId = $ar->save();
 
         // reorder all brothers menus
         $this->moveMenu($pageId, $order, $parent);
-
-        /*
-        // add the details for each languages
-        $languages = org_glizy_ObjectFactory::createModelIterator('org.glizycms.core.models.Language');
-        $languages->select('*')->orderBy('language_order');
-        foreach ($languages as $ar) {
-            $ar2 = org_glizy_ObjectFactory::createModel('org.glizycms.core.models.MenuDetail');
-            $ar2->menudetail_FK_menu_id = $pageId;
-            $ar2->menudetail_FK_language_id = $ar->language_id;
-            $ar2->menudetail_title = $title;
-
-// TODO dublin core
-            // if ( !empty( $values['pageParent'] ) )
-            // {
-            //     $arParent = org_glizy_ObjectFactory::createModel('org.glizy.models.MenuDetail');
-            //     $arParent->modifyField('menudetail_FK_language_id', 'defaultSelectValue', NULL);
-            //     $result = $arParent->find(array('menudetail_FK_menu_id' => $values['pageParent'], 'menudetail_FK_language_id' => $this->_application->getEditingLanguageId()));
-
-            //     $ar2->menudetail_keywords = $arParent->menudetail_keywords;
-            //     $ar2->menudetail_description = $arParent->menudetail_description;
-            //     $ar2->menudetail_subject = $arParent->menudetail_subject;
-            //     $ar2->menudetail_creator = $arParent->menudetail_creator;
-            //     $ar2->menudetail_publisher = $arParent->menudetail_publisher;
-            //     $ar2->menudetail_contributor = $arParent->menudetail_contributor;
-            //     $ar2->menudetail_type = $arParent->menudetail_type;
-            //     $ar2->menudetail_identifier = $arParent->menudetail_identifier;
-            //     $ar2->menudetail_source = $arParent->menudetail_source;
-            //     $ar2->menudetail_relation = $arParent->menudetail_relation;
-            //     $ar2->menudetail_coverage = $arParent->menudetail_coverage;
-            // }
-            // else
-            // {
-            //     $ar2->menudetail_keywords = '';
-            //     $ar2->menudetail_description = '';
-            //     $ar2->menudetail_subject = '';
-            //     $ar2->menudetail_creator = '';
-            //     $ar2->menudetail_publisher = '';
-            //     $ar2->menudetail_contributor = '';
-            //     $ar2->menudetail_type = '';
-            //     $ar2->menudetail_identifier = '';
-            //     $ar2->menudetail_source = '';
-            //     $ar2->menudetail_relation = '';
-            //     $ar2->menudetail_coverage = '';
-            // }
-
-// TODO acl associare a publish su sitemap
-            $ar2->menudetail_isVisible = 1; //$user->acl('SiteMap','visible')===true ? '1' : '0';
-            $ar2->save();
-        }
-        */
-
-        // if ( __Config::get( 'ACL_ENABLED' ) )
-        // {
-        //     __Session::remove( 'glizy.aclBack' );
-        //     __Session::remove( 'glizy.aclFront' );
-        // }
 
         $this->invalidateSitemapCache();
         $evt = array('type' => org_glizycms_contents_events_Menu::ADD, 'data' => $pageId);

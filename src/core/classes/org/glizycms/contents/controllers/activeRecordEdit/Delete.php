@@ -3,6 +3,7 @@ class org_glizycms_contents_controllers_activeRecordEdit_Delete extends org_gliz
 {
     public function execute($id, $model)
     {
+        $this->checkPermissionForBackend();
 // TODO controllo ACL
         if ($id) {
             $proxy = org_glizy_objectFactory::createObject('org.glizycms.contents.models.proxy.ActiveRecordProxy');

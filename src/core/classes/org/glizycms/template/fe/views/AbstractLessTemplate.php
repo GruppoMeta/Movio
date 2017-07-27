@@ -55,7 +55,7 @@ abstract class org_glizycms_template_fe_views_AbstractLessTemplate extends Glizy
         $css = $this->addLogoCss($templateData, $css);
         $css = $this->addCustomCss($templateData, $css);
         file_put_contents($cssFileName, $css);
-        $templateData->css = '<link rel="stylesheet" href="'.$cssFileName.'" type="text/css" media="screen" />';
+        $templateData->css = '<link rel="stylesheet" href="'.$cssFileName.'" type="text/css" />';
     }
 
     protected function fixUrl($css)

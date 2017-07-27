@@ -160,12 +160,7 @@ class org_glizy_validators_Validator extends GlizyObject
 
 	function email_validation($email)
 	{
-		$result = TRUE;
-		if(preg_match("/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/i", $email))
-		{
-			$result = FALSE;
-		}
-		return $result;
+		return filter_var($email, FILTER_VALIDATE_EMAIL)!==false;
 	}
 
 	function decimal_validation($value)

@@ -12,7 +12,7 @@ class org_glizycms_speakingUrl_Manager extends GlizyObject
     }
 
 
-    public function registerResolver($resolver)
+    public static function registerResolver($resolver)
     {
         self::$modules[$resolver->getType()] = $resolver;
     }
@@ -58,6 +58,7 @@ class org_glizycms_speakingUrl_Manager extends GlizyObject
         return $result;
     }
 
+    // TODO sostituire i due metodo con resolve
     public function makeUrl($id)
     {
         foreach (self::$modules as $module) {
@@ -78,6 +79,20 @@ class org_glizycms_speakingUrl_Manager extends GlizyObject
 
             if ($url!==false) {
                 return $url;
+            }
+        }
+
+        return false;
+    }
+
+    public function resolve($id)
+    {
+        foreach (self::$modules as $module) {
+            if (method_exists($module, 'resolve')) {
+                $resolveVO = $module->resolve($id);
+                if ($resolveVO!==false) {
+                    return $resolveVO;
+                }
             }
         }
 
