@@ -33,8 +33,14 @@ class movio_views_components_GoogleMapCmp extends org_glizy_components_Groupbox
         $content['style'] = 'width: '.($content['width'] ? $content['width'].'px' : '100%').'; height: '.($content['height'] ? $content['height'].'px' : '600px');
 
         $siteProp = $this->_application->getSiteProperty();
-        $content['jsSrc'] = 'https://maps.googleapis.com/maps/api/js'.
-                            (isset($siteProp['googleMapsApiKey']) ? '?key='.$siteProp['googleMapsApiKey'] : '');
+        $apiKey = @$siteProp['googleMapsApiKey'] ?: __Config::get('glizy.maps.google.apiKey');
+
+        if (!$apiKey) {
+            //TODO: far presente all'utente che manca l'APIKey, in qualche modo
+            $this->logAndMessage("È necessario che ci sia impostata una APIKey per la libreria GoogleMaps, o nel config del sistema (.xml) o nelle proprietà del sito in questione!", '', GLZ_LOG_WARNING);
+        }
+
+        $content['jsSrc'] = 'https://maps.googleapis.com/maps/api/js?key='.$apiKey;
 
         return $content;
     }
