@@ -148,11 +148,11 @@ class movio_modules_storyteller_views_skins_StorytellerSkinIterator extends Gliz
     private function preparePhotogallery($value)
     {
         $filter = $value->gallery;
-
         if (is_array($filter) && count($filter)) {
             $value->gallery = org_glizy_ObjectFactory::createModelIterator('org.glizycms.models.Media')
                         ->load('all')
-                        ->where('media_type', 'IMAGE');
+                        ->where('media_type', 'IMAGE')
+                        ->orderBy('media_title');
 
             foreach($filter as $v) {
                 $value->gallery->where('media_category', '%"'.$v.'"%', 'LIKE');
@@ -219,4 +219,3 @@ class movio_modules_storyteller_views_skins_StorytellerSkinIterator extends Gliz
         }
     }
 }
-
