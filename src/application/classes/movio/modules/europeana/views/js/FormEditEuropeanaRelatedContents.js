@@ -182,6 +182,8 @@ jQuery.GlizyRegisterType('europeanaRelatedContents', {
                 self.setSearchMode()
             });
 
+            $('#searchMode').trigger('change');
+
             $(document).on('click', '.js-imageRemove', function() {
                 imgId = $(this).find('i').attr('id');
                 self.removeImageFromSavedList(imgId);
@@ -360,7 +362,7 @@ jQuery.GlizyRegisterType('europeanaRelatedContents', {
 
             $frame.on("load", function () {
                 var $frameDocument = $($frame.contents().get(0));
-                totalImage = $("img", $frameDocument).length
+                totalImage = $("img", $frameDocument).length;
                 if( searchMode =='checkBoxEnable')
                 {
                     $(".js-controlCheckEnable", $frameDocument).removeClass('hidden');
