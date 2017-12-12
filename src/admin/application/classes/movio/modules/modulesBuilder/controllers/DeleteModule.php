@@ -3,6 +3,8 @@ class movio_modules_modulesBuilder_controllers_DeleteModule extends org_glizy_mv
 {
 	function execute()
 	{
+		$this->checkPermissionForBackend();
+		
  		if (__Request::exists('next')) {
 			$pageType = $this->application->getPageType();
 			list( $moduleName ) = explode( '.', $pageType );

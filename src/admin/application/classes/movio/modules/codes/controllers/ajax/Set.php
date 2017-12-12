@@ -3,6 +3,7 @@ class movio_modules_codes_controllers_ajax_Set extends org_glizy_mvc_core_Comman
 {
     function execute($pk, $name, $value)
     {
+        $this->checkPermissionForBackend();
         $ar = org_glizy_objectFactory::createModel('movio.modules.codes.models.Model');
         
         if ($ar->load($pk)) {

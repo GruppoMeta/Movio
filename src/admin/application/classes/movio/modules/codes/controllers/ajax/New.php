@@ -3,6 +3,7 @@ class movio_modules_codes_controllers_ajax_New extends org_glizy_mvc_core_Comman
 {
     function execute($custom_code_mapping_description, $custom_code_mapping_code, $custom_code_mapping_link)
     {
+        $this->checkPermissionForBackend();
         $ar = org_glizy_objectFactory::createModel('movio.modules.codes.models.Model');
         $ar->custom_code_mapping_description = $custom_code_mapping_description;
         $ar->custom_code_mapping_code = $custom_code_mapping_code;

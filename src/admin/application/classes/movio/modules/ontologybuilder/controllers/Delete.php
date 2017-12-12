@@ -3,6 +3,8 @@ class movio_modules_ontologybuilder_controllers_Delete extends org_glizy_mvc_cor
 {
     public function execute($id)
     {
+        $this->checkPermissionForBackend();
+        
         // cancella tutti i contenuti collegati al tipo di entità da cancellare
         $it = org_glizy_objectFactory::createModelIterator('movio.modules.ontologybuilder.models.EntityDocument');
         $it->load('allFromTypeAllStatusAllLanguages', array('entityTypeId' => $id));

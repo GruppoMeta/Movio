@@ -3,6 +3,8 @@ class movio_modules_ontologybuilder_controllers_entityFormEdit_ajax_Save extends
 {
     function execute($data)
     {
+        $this->checkPermissionForBackend();
+        
         $entityProxy = org_glizy_objectFactory::createObject('movio.modules.ontologybuilder.models.proxy.EntityProxy');
         $id = $entityProxy->saveContent(json_decode($data));
 

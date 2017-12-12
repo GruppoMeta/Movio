@@ -3,6 +3,8 @@ class movio_modules_ontologybuilder_controllers_entityFormEdit_ajax_FindEntities
 {
     function execute($entityTypeId, $term)
     {
+        $this->checkPermissionForBackend();
+        
         $entityProxy = org_glizy_objectFactory::createObject('movio.modules.ontologybuilder.models.proxy.EntityProxy');
         $entities = $entityProxy->findEntities($entityTypeId, $term);
         return $entities; 

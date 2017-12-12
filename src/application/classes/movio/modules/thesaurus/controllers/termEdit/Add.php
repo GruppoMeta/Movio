@@ -3,6 +3,8 @@ class movio_modules_thesaurus_controllers_termEdit_Add extends org_glizy_mvc_cor
 {
     public function execute()
     {
+        $this->checkPermissionForBackend();
+        
         $dictionaryId = __Request::get('dictionaryId');
         $this->setComponentsAttribute('dictionaryId', 'value', $dictionaryId);
         $thesaurusProxy = org_glizy_ObjectFactory::createObject('movio.modules.thesaurus.models.proxy.ThesaurusProxy');

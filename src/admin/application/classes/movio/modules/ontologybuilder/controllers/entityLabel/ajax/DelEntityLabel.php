@@ -3,6 +3,8 @@ class movio_modules_ontologybuilder_controllers_entityLabel_ajax_DelEntityLabel 
 {
     function execute($id)
     {
+        $this->checkPermissionForBackend();
+        
         $label = org_glizy_objectFactory::createModel('movio.modules.ontologybuilder.models.EntityLabelsDocument');
         $label->delete($id);
 

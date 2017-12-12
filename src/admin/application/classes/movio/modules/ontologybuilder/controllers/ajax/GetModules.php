@@ -3,6 +3,7 @@ class movio_modules_ontologybuilder_controllers_ajax_GetModules extends org_gliz
 {
     function execute()
     {
+        $this->checkPermissionForBackend();
         $modules = org_glizy_Modules::getModules();
         
         $result = array();

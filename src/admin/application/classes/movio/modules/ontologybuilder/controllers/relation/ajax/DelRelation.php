@@ -3,7 +3,8 @@ class movio_modules_ontologybuilder_controllers_relation_ajax_DelRelation extend
 {
     function execute($id)
     {
-// TODO verificare permessi
+        $this->checkPermissionForBackend();
+        
         $relation = org_glizy_objectFactory::createModel('movio.modules.ontologybuilder.models.RelationTypesDocument');
         $relation->delete($id);
 

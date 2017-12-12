@@ -3,6 +3,7 @@ class movio_modules_ontologybuilder_controllers_ajax_LoadEntity extends org_gliz
 {
     function execute($entityId)
     {
+        $this->checkPermissionForBackend();
         $entityModel = org_glizy_objectFactory::createModel('movio.modules.ontologybuilder.models.Entity');
         $entityModel->load($entityId);
         

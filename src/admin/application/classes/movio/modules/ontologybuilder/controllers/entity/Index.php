@@ -6,7 +6,6 @@ class movio_modules_ontologybuilder_controllers_entity_Index extends org_glizy_m
         $entityTypeId = $this->view->_content->entitySelect;
         $visualization = $this->view->loadContent('visualization');
 
-        // TODO: migliorare
         __Request::set('entityTypeId', $entityTypeId);
         $this->setComponentsAttribute('list', 'entityTypeId', $entityTypeId);
         $this->setComponentsAttribute('list', 'visualization', $visualization);

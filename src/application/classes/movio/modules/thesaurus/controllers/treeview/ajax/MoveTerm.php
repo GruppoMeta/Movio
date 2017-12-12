@@ -3,6 +3,8 @@ class movio_modules_thesaurus_controllers_treeview_ajax_MoveTerm extends org_gli
 {
     function execute($termId, $parentId)
     {
+        $this->checkPermissionForBackend();
+        
         $thesaurusProxy = org_glizy_ObjectFactory::createObject('movio.modules.thesaurus.models.proxy.ThesaurusProxy');
         $thesaurusProxy->moveTerm($termId, $parentId);
 

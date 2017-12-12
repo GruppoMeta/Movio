@@ -6,6 +6,8 @@ class movio_modules_thesaurus_controllers_treeview_ajax_GetChildren extends org_
 
     public function execute($termId)
     {
+        $this->checkPermissionForBackend();
+        
         $this->directOutput = true;
         $this->thesaurusProxy =org_glizy_ObjectFactory::createObject('movio.modules.thesaurus.models.proxy.ThesaurusProxy');
         $this->dictionaryId =  __Request::get('dictionaryId');

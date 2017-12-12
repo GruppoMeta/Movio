@@ -3,7 +3,8 @@ class movio_modules_ontologybuilder_controllers_relation_ajax_LoadRelations exte
 {
     function execute()
     {
-// TODO controllo dei permessi
+        $this->checkPermissionForBackend();
+        
         $it = org_glizy_objectFactory::createModelIterator('movio.modules.ontologybuilder.models.RelationTypesDocument', 'all')
             ->groupBy('simple_document_id')
             ->orderBy('translation');

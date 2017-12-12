@@ -3,6 +3,8 @@ class movio_modules_ontologybuilder_controllers_entityFormEdit_EditDraft extends
 {
     public function execute()
     {
+        $this->checkPermissionForBackend();
+        
         $entityId = __Request::get('entityId');
         // TODO controllare se $entityId == 0
         // se non è 0 e il contenuto non esiste bisogna visualizzare un errore

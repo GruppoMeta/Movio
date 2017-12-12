@@ -3,6 +3,7 @@ class movio_modules_ontologybuilder_controllers_ajax_FindEntityLabels extends or
 {
     function execute($term)
     {
+        $this->checkPermissionForBackend();
         $application = org_glizy_ObjectValues::get('org.glizy', 'application');
         $language = $application->getEditingLanguage();
 

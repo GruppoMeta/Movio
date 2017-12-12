@@ -3,6 +3,8 @@ class movio_modules_ontologybuilder_controllers_relation_ajax_SetRelation extend
 {
     function execute()
     {
+        $this->checkPermissionForBackend();
+        
         $relation = org_glizy_objectFactory::createModel('movio.modules.ontologybuilder.models.RelationTypesDocument');
         $relation->load(__Request::get('pk'));
         $field = __Request::get('name');

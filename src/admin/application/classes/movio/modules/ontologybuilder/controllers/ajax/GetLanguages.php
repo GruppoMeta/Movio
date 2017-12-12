@@ -3,6 +3,7 @@ class movio_modules_ontologybuilder_controllers_ajax_GetLanguages extends org_gl
 {
     function execute()
     {
+        $this->checkPermissionForBackend();
         $it = org_glizy_objectFactory::createModelIterator('movio.modules.ontologybuilder.models.Languages', 'all');
 
         $languages = array();

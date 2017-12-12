@@ -3,6 +3,7 @@ class movio_modules_ontologybuilder_controllers_ajax_AddEntityLabel extends org_
 {
     function execute($text, $key)
     {
+        $this->checkPermissionForBackend();
         $application = org_glizy_ObjectValues::get('org.glizy', 'application');
         $language = $application->getEditingLanguage();
 

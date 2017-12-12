@@ -3,6 +3,8 @@ class movio_modules_ontologybuilder_controllers_entityLabel_ajax_NewEntityLabel 
 {
     function execute()
     {
+        $this->checkPermissionForBackend();
+        
         $it = org_glizy_objectFactory::createModelIterator('movio.modules.ontologybuilder.models.Languages', 'all');
 
         $translation = array();

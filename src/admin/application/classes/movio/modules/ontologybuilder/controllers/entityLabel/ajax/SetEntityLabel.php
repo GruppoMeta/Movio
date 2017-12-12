@@ -3,6 +3,8 @@ class movio_modules_ontologybuilder_controllers_entityLabel_ajax_SetEntityLabel 
 {
     function execute()
     {
+        $this->checkPermissionForBackend();
+        
         $label = org_glizy_objectFactory::createModel('movio.modules.ontologybuilder.models.EntityLabelsDocument');
         $label->load(__Request::get('pk'));
         $field = __Request::get('name');

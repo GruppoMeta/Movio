@@ -3,6 +3,8 @@ class movio_modules_ontologybuilder_controllers_entityFormEdit_ajax_FindTerm ext
 {
     function execute($fieldName, $model, $query, $term)
     {
+        $this->checkPermissionForBackend();
+        
         $it = org_glizy_objectFactory::createModelIterator($model, $query);
         $it->where($fieldName, '%'.$term.'%', 'LIKE');
 

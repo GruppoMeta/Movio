@@ -3,7 +3,7 @@ class movio_modules_codes_controllers_ajax_Load extends org_glizy_mvc_core_Comma
 {
     function execute()
     {
-// TODO controllo dei permessi
+        $this->checkPermissionForBackend();
         $it = org_glizy_objectFactory::createModelIterator('movio.modules.codes.models.Model');
             
         $result = array(

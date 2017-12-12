@@ -7,6 +7,8 @@ class movio_modules_storyteller_controllers_ajax_PagePicker extends org_glizy_mv
 {
     function execute($term, $id, $protocol, $filterType)
     {
+        $this->checkPermissionForBackend();
+        
         $this->directOutput = true;
 
         $speakingUrlManager = $this->application->retrieveProxy('org.glizycms.speakingUrl.Manager');

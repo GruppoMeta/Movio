@@ -5,6 +5,7 @@ class movio_modules_ontologybuilder_controllers_ajax_SaveEntity extends org_gliz
 
     function execute($entity)
     {
+        $this->checkPermissionForBackend();
         $resultEntity = array();
         $resultEntity['newProperties'] = array();
 

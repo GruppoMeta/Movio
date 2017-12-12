@@ -3,6 +3,7 @@ class movio_modules_thesaurus_controllers_dictionaryEdit_ajax_Save extends org_g
 {
     public function execute($data)
     {
+        $this->checkPermissionForBackend();
         $this->directOutput = true;
 
         try {

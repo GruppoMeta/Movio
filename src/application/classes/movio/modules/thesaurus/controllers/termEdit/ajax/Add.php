@@ -3,6 +3,8 @@ class movio_modules_thesaurus_controllers_termEdit_ajax_Add extends org_glizy_mv
 {
     public function execute($data)
     {
+        $this->checkPermissionForBackend();
+        
         $this->directOutput = true;
         try {
             $data = json_decode($data);

@@ -3,6 +3,8 @@ class movio_modules_codes_controllers_MakeQRCode extends org_glizy_mvc_core_Comm
 {
     function execute($id)
     {
+        $this->checkPermissionForBackend();
+        
         if ($id) {
             require_once(__Paths::get('APPLICATION_LIBS').'phpqrcode/qrlib.php');
             

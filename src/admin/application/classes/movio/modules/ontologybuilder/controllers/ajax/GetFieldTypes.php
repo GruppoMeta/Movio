@@ -3,6 +3,7 @@ class movio_modules_ontologybuilder_controllers_ajax_GetFieldTypes extends org_g
 {
     function execute()
     {
+        $this->checkPermissionForBackend();
         $application = org_glizy_ObjectValues::get('org.glizy', 'application');
         $language = $application->getLanguage();
 

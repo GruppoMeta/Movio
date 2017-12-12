@@ -3,7 +3,7 @@ class movio_modules_ontologybuilder_controllers_contentsEditor_Delete extends or
 {
     public function execute($entityId)
     {
-// TODO controllo ACL
+        $this->checkPermissionForBackend();
         if ($entityId) {
             $document = org_glizy_objectFactory::createModel('movio.modules.ontologybuilder.models.EntityDocument');
             $document->delete($entityId);

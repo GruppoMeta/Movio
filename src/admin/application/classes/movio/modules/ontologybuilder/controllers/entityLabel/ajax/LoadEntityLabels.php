@@ -3,6 +3,8 @@ class movio_modules_ontologybuilder_controllers_entityLabel_ajax_LoadEntityLabel
 {
     function execute()
     {
+        $this->checkPermissionForBackend();
+        
         $it = org_glizy_objectFactory::createModelIterator('movio.modules.ontologybuilder.models.EntityLabelsDocument', 'all')
             ->groupBy('simple_document_id')
             ->orderBy('translation');

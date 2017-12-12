@@ -4,6 +4,8 @@ class movio_modules_sharingButtons_controllers_ajax_Save extends org_glizycms_co
 
     public function execute($data)
     {
+        $this->checkPermissionForBackend();  
+
         $data = json_decode($data);
         $shareButtons['enable'] = $data ->sharingButtonCheck;
         $shareButtons['dim'] = $data ->shareButtonDim;

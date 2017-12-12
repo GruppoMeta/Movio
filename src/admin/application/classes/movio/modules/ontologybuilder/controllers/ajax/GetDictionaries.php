@@ -3,6 +3,7 @@ class movio_modules_ontologybuilder_controllers_ajax_GetDictionaries extends org
 {
     function execute()
     {
+        $this->checkPermissionForBackend();
         $thesaurusProxy = org_glizy_ObjectFactory::createObject('movio.modules.thesaurus.models.proxy.ThesaurusProxy');
         $dictionaries = $thesaurusProxy->getAllDictionaries();
         

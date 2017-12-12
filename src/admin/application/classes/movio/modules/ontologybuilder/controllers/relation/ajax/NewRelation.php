@@ -3,6 +3,8 @@ class movio_modules_ontologybuilder_controllers_relation_ajax_NewRelation extend
 {
     function execute()
     {
+        $this->checkPermissionForBackend();
+        
         $it = org_glizy_objectFactory::createModelIterator('movio.modules.ontologybuilder.models.Languages', 'all');
 
         $translation = array();

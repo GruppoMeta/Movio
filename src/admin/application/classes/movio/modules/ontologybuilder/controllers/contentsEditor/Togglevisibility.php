@@ -3,7 +3,7 @@ class movio_modules_ontologybuilder_controllers_contentsEditor_Togglevisibility 
 {
     public function execute($entityId)
     {
-// TODO controllo ACL
+        $this->checkPermissionForBackend();
         if ($entityId) {
             $document = org_glizy_objectFactory::createModel('movio.modules.ontologybuilder.models.EntityDocument');
             $document->load($entityId);

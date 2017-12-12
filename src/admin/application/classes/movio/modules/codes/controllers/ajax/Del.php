@@ -3,7 +3,7 @@ class movio_modules_codes_controllers_ajax_Del extends org_glizy_mvc_core_Comman
 {
     function execute($id)
     {
-// TODO verificare permessi
+        $this->checkPermissionForBackend();
         $ar = org_glizy_objectFactory::createModel('movio.modules.codes.models.Model');
         $ar->delete($id);
 
