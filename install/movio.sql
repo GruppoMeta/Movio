@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 12, 2017 at 02:26 PM
+-- Generation Time: Dec 12, 2017 at 02:33 PM
 -- Server version: 5.6.35
 -- PHP Version: 5.6.30
 
@@ -891,7 +891,6 @@ CREATE TABLE `users_tbl` (
   `user_isInMailinglist` tinyint(1) UNSIGNED DEFAULT '0',
   `user_position` varchar(255) DEFAULT NULL,
   `user_department` varchar(255) DEFAULT NULL,
-  `user_extid` int(10) UNSIGNED NOT NULL,
   `user_fiscalCode` varchar(32) NOT NULL DEFAULT '',
   `user_vat` varchar(32) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -900,8 +899,8 @@ CREATE TABLE `users_tbl` (
 -- Dumping data for table `users_tbl`
 --
 
-INSERT INTO `users_tbl` (`user_id`, `user_FK_usergroup_id`, `user_FK_site_id`, `user_dateCreation`, `user_isActive`, `user_loginId`, `user_password`, `user_firstName`, `user_lastName`, `user_title`, `user_companyName`, `user_address`, `user_city`, `user_zip`, `user_state`, `user_country`, `user_FK_country_id`, `user_phone`, `user_phone2`, `user_mobile`, `user_fax`, `user_email`, `user_www`, `user_birthday`, `user_sex`, `user_confirmCode`, `user_wantNewsletter`, `user_isInMailinglist`, `user_position`, `user_department`, `user_extid`, `user_fiscalCode`, `user_vat`) VALUES
-(1, 1, NULL, '2015-01-01 12:00:00', 1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Admin', 'Admin', '', '', '', '', '', '', NULL, 0, '', '', '', '', 'admin', '', '2015-01-01', 'M', '', 1, 1, '', '', 0, '', '');
+INSERT INTO `users_tbl` (`user_id`, `user_FK_usergroup_id`, `user_FK_site_id`, `user_dateCreation`, `user_isActive`, `user_loginId`, `user_password`, `user_firstName`, `user_lastName`, `user_title`, `user_companyName`, `user_address`, `user_city`, `user_zip`, `user_state`, `user_country`, `user_FK_country_id`, `user_phone`, `user_phone2`, `user_mobile`, `user_fax`, `user_email`, `user_www`, `user_birthday`, `user_sex`, `user_confirmCode`, `user_wantNewsletter`, `user_isInMailinglist`, `user_position`, `user_department`, `user_fiscalCode`, `user_vat`) VALUES
+(1, 1, NULL, '2015-01-01 12:00:00', 1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Admin', 'Admin', '', '', '', '', '', '', NULL, 0, '', '', '', '', 'admin', '', '2015-01-01', 'M', '', 1, 1, '', '', '', '');
 
 --
 -- Indexes for dumped tables
@@ -1188,8 +1187,7 @@ ALTER TABLE `userlogs_tbl`
 ALTER TABLE `users_tbl`
   ADD PRIMARY KEY (`user_id`),
   ADD KEY `user_FK_usergroup_id` (`user_FK_usergroup_id`),
-  ADD KEY `user_FK_site_id` (`user_FK_site_id`),
-  ADD KEY `user_extid` (`user_extid`);
+  ADD KEY `user_FK_site_id` (`user_FK_site_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
