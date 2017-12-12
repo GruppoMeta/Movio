@@ -46,11 +46,6 @@
                     <span class="wrapper-text">close</span>
                 </a>
 
-<!--
-TODO menù dell'utente
-userMenu
-
--->
                 <?php print $search; ?>
 
                 <!-- nax sx -->
@@ -104,16 +99,10 @@ userMenu
             </div>
             <!-- info-page -->
 
-            <p>&copy; 2014 MOVIO - Lorem .... </p>
-                    <?php print $sharing; ?>
+                <p><?php print $copyright;?></p>
+                <?php print $sharing; ?>
 
             </div>
-
-<!--
-TODO;
-copyright
-print $linkFooter;
--->
 
             <div class="pull-right">
 
