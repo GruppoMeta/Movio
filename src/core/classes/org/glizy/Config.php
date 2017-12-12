@@ -279,6 +279,8 @@ class org_glizy_Config
 		$configArray['glizy.dataAccess.validate'] = true;
         $configArray['glizy.multisite.sitename'] = '';
 		$configArray['glizy.multisite.id'] = 0;
+		$configArray['glizy.helpers.FileServe.forceDownload'] = false;
+        $configArray['glizy.acl.defaultIfNoDefined'] = false;
 
         if (!$serverName) {
             $configFileName = org_glizy_Paths::get('APPLICATION').'config/config.xml';

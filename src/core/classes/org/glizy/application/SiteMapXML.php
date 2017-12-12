@@ -12,11 +12,13 @@ class org_glizy_application_SiteMapXML extends org_glizy_application_SiteMap
 {
     var $_type = 'xml';
     var $_source = NULL;
+    private $aclDefaultIfNoDefined;
 
     function __construct($source=NULL)
     {
         parent::__construct();
         $this->_source = is_null($source) ? org_glizy_Paths::getRealPath('APPLICATION', org_glizy_Config::get('SITEMAP')) : $source;
+        $this->aclDefaultIfNoDefined = __Config::get('glizy.acl.defaultIfNoDefined')===true ? 'true' : 'false';
     }
 
     function loadTree($forceReload=false)
@@ -33,7 +35,7 @@ class org_glizy_application_SiteMapXML extends org_glizy_application_SiteMap
             'fileExtension' => '.php'
         );
         $cacheObj = &org_glizy_ObjectFactory::createObject('org.glizy.cache.CacheFile', $options );
-        $cacheFileName = $cacheObj->verify( $this->_source, get_class( $this ).'_'.$application->getLanguage() );
+        $cacheFileName = $cacheObj->verify( $this->_source, get_class( $this ).'_'.$lang );
 
         if ( $cacheFileName === false )
         {
@@ -44,7 +46,7 @@ class org_glizy_application_SiteMapXML extends org_glizy_application_SiteMap
                 $this->_processSiteMapXML( $customSource );
             }
 
-            $cacheObj->save( serialize( $this->_siteMapArray ), NULL, get_class( $this ).'_'.$application->getLanguage() );
+            $cacheObj->save( serialize( $this->_siteMapArray ), NULL, get_class( $this ).'_'.$lang );
             $cacheObj->getFileName();
         }
         else
@@ -99,27 +101,33 @@ class org_glizy_application_SiteMapXML extends org_glizy_application_SiteMap
                                             ( $currNode->parentNode->hasAttribute('id') ? strtolower($currNode->parentNode->getAttribute('id')) : '' );
             $menu['pageType']       = $currNode->hasAttribute('pageType') ? $currNode->getAttribute('pageType') : $currNode->getAttribute('id');
             $menu['isPublished']    = 1;
-            $menu['isVisible']      = $currNode->getAttribute('visible');
+            $menu['isVisible']      = $currNode->hasAttribute('visible') ?
+                                            $this->updateVisibilityCode('', $currNode->getAttribute('visible')) : '';
             $menu['cssClass']       = $currNode->getAttribute('cssClass');
             $menu['icon']           = $currNode->getAttribute('icon');
             $menu['sortChild']      = $currNode->hasAttribute('sortChild') && $currNode->getAttribute('sortChild')=='true';
             $menu['hideInNavigation'] = $currNode->getAttribute('hide');
 
-            if (!$currNode->hasAttribute('visible')) {
-                if ( $currNode->hasAttribute('adm:acl') || in_array($menu['id'], $pagesAcl) )
+
+            if (!in_array($menu['isVisible'], array('true', 'false'))) {
+                $newVisibility = '';
+                if (($currNode->hasAttribute('adm:acl') && !$currNode->hasAttribute('adm:aclPageTypes')) || in_array($menu['id'], $pagesAcl) )
                 {
-                    $menu['isVisible'] = '{php:$user.acl("'.$menu['id'].'", "visible", true)}';
+                    $newVisibility = '{php:$user.acl("'.$menu['id'].'", "visible", '.$this->aclDefaultIfNoDefined.')}';
                 }
-                else if ( !$currNode->hasAttribute('adm:acl') && $currNode->hasAttribute('adm:aclPageTypes') )
+                else if ( $currNode->hasAttribute('adm:aclPageTypes') )
                 {
                     $temp = array();
                     $aclPages = explode(',', strtolower($currNode->getAttribute('adm:aclPageTypes')));
                     foreach($aclPages as $v) {
-                        $temp[] = '$user.acl("'.$v.'", "visible", true)';
+                        $temp[] = '$user.acl("'.$v.'", "visible", '.$this->aclDefaultIfNoDefined.')';
                     }
-                    $menu['isVisible'] = '{php:('.implode(' OR ', $temp).')}';
+                    $newVisibility = '{php:('.implode(' OR ', $temp).')}';
                 }
+
+                $menu['isVisible'] = $this->updateVisibilityCode($menu['isVisible'], $newVisibility);
             }
+
 
             $menu['title']             = $nodeTitle;
             $menu['depth']             = 1;
@@ -171,5 +179,42 @@ class org_glizy_application_SiteMapXML extends org_glizy_application_SiteMap
                 break;
             }
         }
+    }
+
+    /**
+     * @param  string  $currentValue
+     * @param  string  $valueToAdd
+     * @return string
+     */
+    private function updateVisibilityCode($currentValue, $valueToAdd)
+    {
+        if (in_array($valueToAdd, array('true', 'false'))) {
+            return $valueToAdd;
+        }
+
+        $valueToAdd = $this->convertToPhp($valueToAdd);
+        if ($valueToAdd && preg_match("/\{php\:.*\}/i", $currentValue)) {
+            return substr($currentValue, 0, -1).' && '.substr($valueToAdd, 5);
+        }
+
+        return $currentValue ? $currentValue : $valueToAdd;
+    }
+
+    /**
+     * @param  string $value
+     * @return string
+     */
+    private function convertToPhp($value)
+    {
+        if (preg_match("/\{php\:.*\}/i", $value)) {
+            return $value;
+        }
+        else if (preg_match("/\{config\:.*\}/i", $value))
+        {
+            $code = preg_replace("/\{config\:(.*)\}/i", "$1", $value);
+            return '{php:__Config::get(\''.$code.'\')}';
+        }
+
+        return $valueToAdd;
     }
 }

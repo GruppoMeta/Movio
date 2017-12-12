@@ -234,7 +234,12 @@ class org_glizy_compilers_Routing extends org_glizy_compilers_Compiler
 					case 'pageTitle':
 						$urlPartValue = '([^\/]*)';
 						break;
+					case 'i18n':
+						$urlPartValue = '('.str_replace('/', '\/', strtolower(__T($command[1]))).')';
+						break;
 					case 'value':
+					case 'valueRaw':
+					case 'valuePlain':
 						$urlPartValue = '([^\/?]*)';
 						break;
 					case 'integer':

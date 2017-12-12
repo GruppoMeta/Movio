@@ -37,7 +37,7 @@ class org_glizy_log_Syslog extends org_glizy_log_LogBase
 		parent::__construct($options, $level, $group);
         $this->forceMessageToString = false;
 
-        $this->name = $name.' ';
+        $this->name = strtolower($name).' ';
         $this->logOpts = isset($options['logOption']) ? $options['logOption'] : LOG_PID | LOG_ODELAY;
         $this->logFacility = isset($options['logFacility']) ? $options['logFacility'] : LOG_USER;
         $this->useJson = isset($options['useJson']) ? $options['useJson']==true : false;
@@ -79,7 +79,7 @@ class org_glizy_log_Syslog extends org_glizy_log_LogBase
         if (!$this->_isOpen && !$this->open()) {
             return false;
         }
-     
+
         if ($this->useJson && is_string($msg)) {
             $msg = ['message' => $msg];
         }

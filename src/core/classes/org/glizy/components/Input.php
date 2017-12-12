@@ -39,8 +39,7 @@ class org_glizy_components_Input extends org_glizy_components_HtmlFormElement
 		$this->defineAttribute('required',			false, 	false,	COMPONENT_TYPE_BOOLEAN);
 		$this->defineAttribute('title',				false, 	'',	COMPONENT_TYPE_STRING);
 		$this->defineAttribute('placeholder',		false, 	'',	COMPONENT_TYPE_STRING);
-
-
+		$this->defineAttribute('autocomplete',		false, 	'',	COMPONENT_TYPE_STRING);
 
 		// call the superclass for validate the attributes
 		parent::init();
@@ -96,6 +95,7 @@ class org_glizy_components_Input extends org_glizy_components_HtmlFormElement
 		$attributes['readonly'] 	= $this->getAttribute('readOnly') ? 'readonly' : '';
 		$attributes['title'] 		= $this->getAttributeString('title');
 		$attributes['placeholder'] 		= $this->getAttributeString('placeholder');
+		
 		if ( empty( $attributes['title'] ) )
 		{
 			$attributes['title'] 		= $this->getAttributeString('label');
@@ -120,8 +120,8 @@ class org_glizy_components_Input extends org_glizy_components_HtmlFormElement
 			$attributes['type'] 		= $this->getAttribute('type');
 			$attributes['maxLength'] 	= $this->getAttribute('maxLength');
 			$attributes['size'] 		= $this->getAttribute('size');
+			$attributes['autocomplete'] = $this->getAttributeString('autocomplete');
 			$attributes['value'] 		= $this->encodeOuput(is_string($this->_content) ? $this->_content : json_encode($this->_content));
-
 			$output  = '<input '.$this->_renderAttributes($attributes).'/>';
 		}
 

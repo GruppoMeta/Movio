@@ -43,6 +43,7 @@ Glizy.oop.declare("glizy.FormEdit", {
         this.$form = $('#'+this.formId);
         this.$form.data('instance', this);
         this.lang = glizyOpt.lang;
+        this.readOnly = glizyOpt.readOnly;
 
         $('#'+this.formId+' input[name]:not( [type="button"], [type="submit"], [type="reset"] ), '+
           '#'+this.formId+' textarea[name], '+
@@ -55,6 +56,8 @@ Glizy.oop.declare("glizy.FormEdit", {
         $('#'+this.formId+' fieldset[data-type]').each(function () {
             self.createField(this);
         });
+
+        self.verifySelectWithTarget(this.$form);
 
         $('.js-glizycms-save').click(function (e) {
             self.setFormButtonStates(false);
@@ -107,6 +110,48 @@ Glizy.oop.declare("glizy.FormEdit", {
             },
             2000
         );
+
+        Glizy.events.broadcast("glizycms.formEdit.onReady");
+    },
+
+    verifySelectWithTarget: function($container) {
+        var self = this;
+        $container.find('select').each(function () {
+            if (self.isSubComponent($(this))) {
+                return;
+            }
+            var target = $(this).data('target');
+            if ( target ) {
+                $(this).change(function(e){
+                    var sel = this.selectedIndex,
+                        states = $(this).data("val_"+sel),
+                        stateMap = {};
+                    var t = target.split(",");
+                    states = states.split(",");
+
+                    $(t).each(function(index, val) {
+                        stateMap[val] = states[index]==="1";
+
+                        if (stateMap[val]) {
+                            $container.find("#"+val).show().find("[name]").data('skip-validation', false).closest("div.form-group,div.control-group").show();
+                        } else {
+                            $container.find("#"+val).hide().find("[name]").data('skip-validation', true).closest("div.form-group,div.control-group").hide();
+                        }
+                    });
+
+                    $container.find("[name]").each(function(){
+                        var $el = $(this);
+                        var state = stateMap[$el.attr("name")];
+                        if (state===true) {
+                            $el.data('skip-validation', false).closest("div.form-group,div.control-group").show();
+                        } else if (state===false) {
+                            $el.data('skip-validation', true).closest("div.form-group,div.control-group").hide();
+                        }
+                    });
+                });
+                $(this).trigger("change");
+            }
+        });
     },
 
     setFormButtonStates: function(state) {

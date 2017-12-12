@@ -3,6 +3,7 @@ class org_glizycms_template_controllers_Template extends org_glizy_mvc_core_Comm
 {
     public function execute($menuId)
     {
+        $this->checkPermissionForBackend();
         if ($menuId) {
             // read
 

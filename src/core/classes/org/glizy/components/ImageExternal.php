@@ -91,7 +91,7 @@ class org_glizy_components_ImageExternal extends org_glizy_components_Component
 			$attributes = $this->_content;
 
 			if (is_string($this->mediaUrl) && (!is_null($this->getAttribute('width')) || !is_null($this->getAttribute('height')))) {
-			    if (strpos( $this->mediaUrl, 'http://') === 0 ) {
+			    if (strpos( $this->mediaUrl, 'http://') === 0 or strpos( $this->mediaUrl, 'https://') === 0) {
     			    $extension = pathinfo(parse_url($this->mediaUrl, PHP_URL_PATH), PATHINFO_EXTENSION);
     			    $cacheFileName = 'external_'.md5($this->mediaUrl).'.'.$extension;
     			    $cacheFilePath = __Paths::get('CACHE').$cacheFileName;

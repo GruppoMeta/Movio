@@ -82,7 +82,7 @@ class org_glizycms_mediaArchive_MediaManager extends GlizyObject
 	function getMediaTypeInfo()
 	{
 		$fileTypes = array(	'IMAGE' => 		array('extension' => array('jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'), 'class' => 'Image'),
-							'OFFICE' => 	array('extension' => array('doc', 'xls', 'mdb', 'ppt', 'pps', 'html', 'htm', 'odb', 'odc', 'odf', 'odg', 'odi', 'odm', 'odp', 'ods', 'odt', 'otc', 'otf', 'otg', 'oth', 'oti', 'otp', 'ots', 'ott'), 'class' => 'Office'),
+							'OFFICE' => 	array('extension' => array('doc', 'xls', 'mdb', 'ppt', 'pps', 'html', 'htm', 'odb', 'odc', 'odf', 'odg', 'odi', 'odm', 'odp', 'ods', 'odt', 'otc', 'otf', 'otg', 'oth', 'oti', 'otp', 'ots', 'ott', 'docx', 'dotx', 'xlsx', 'xltx', 'pptx', 'potx'), 'class' => 'Office'),
 							'ARCHIVE' => 	array('extension' => array('zip', 'rar', '7z', 'tar', 'gz', 'tgz'), 'class' => 'Archive'),
 							'AUDIO' => 		array('extension' => array('wav', 'mp3', 'aif'), 'class' => 'Audio'),
 							'PDF' => 		array('extension' => array('pdf'), 'class' => 'Pdf'),

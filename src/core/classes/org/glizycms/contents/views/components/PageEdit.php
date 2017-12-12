@@ -149,7 +149,8 @@ class org_glizycms_contents_views_components_PageEdit  extends org_glizycms_view
 		$rootComponent->init();
 		$this->_application->_rootComponent = &$originalRootComponent;
         $editComponents = $rootComponent->getAttribute('adm:editComponents');
-		$this->allowBlocks = $rootComponent->getAttribute('allowBlocks');
+        $this->allowBlocks = $rootComponent->getAttribute('allowBlocks');
+		$this->setAttribute('newCode', $rootComponent->getAttribute('adm:formEditNewCode')==='true');
 		if (count($editComponents))
 		{
 			foreach($editComponents as $id)

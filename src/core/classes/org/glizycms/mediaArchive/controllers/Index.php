@@ -3,6 +3,8 @@ class org_glizycms_mediaArchive_controllers_Index extends org_glizy_mvc_core_Com
 {
     public function execute()
     {
+        $this->checkPermissionForBackend();
+        
         $c = $this->view->getComponentById('dp');
 
         if (stripos($this->application->getPageId(), 'picker') !== false) {

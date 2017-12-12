@@ -4,6 +4,8 @@ class org_glizycms_siteProperties_controllers_ajax_Save extends org_glizy_mvc_co
     // TODO creare un proxy per gestire le proprietà del sito
     public function execute($data)
     {
+        $this->checkPermissionForBackend();
+        
         $data = json_decode($data);
         $newData = array();
         $newData['title'] = $data->title;

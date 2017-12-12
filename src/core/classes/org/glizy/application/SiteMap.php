@@ -64,6 +64,7 @@ class org_glizy_application_SiteMap extends GlizyObject
 				{
 					$phpcode = org_glizy_helpers_PhpScript::parse( $menuNode['isVisible'] );
 					$menuNode['isVisible'] = eval($phpcode)==1 ? true : false;
+					$menuNode['hideByAcl'] = !$menuNode['isVisible'];
 				}
 				else
 				{
@@ -223,6 +224,7 @@ class org_glizy_application_SiteMap extends GlizyObject
 		$this->_siteMapArray[$menuRecord['id']] = $menuRecord;
 		$this->_pageTypeMap[strtolower($menuRecord['pageType'])] = &$this->_siteMapArray[$menuRecord["id"]];
 		$this->_siteMapArray[$menu->id]['childNodes'][] = $menuRecord['id'];
+		unset($this->_siteMapArray[$menu->id]['nodeObj']);
 	}
 
 	function getEmptyMenu()
@@ -232,6 +234,7 @@ class org_glizy_application_SiteMap extends GlizyObject
 		$menu['parentId'] 			= 0;
 		$menu['pageType'] 			= '';
 		$menu['isVisible'] 			= 1;
+		$menu['hideByAcl'] 	= false;
 		$menu['title'] 				= '';
 		$menu['titleLink'] 			= '';
 		$menu['linkDescription'] 	= '';

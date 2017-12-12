@@ -14,9 +14,11 @@ class org_glizycms_views_components_Metadata extends org_glizy_components_Compon
 	{
 		$menu = $this->_application->getCurrentmenu();
 		$language = $this->_application->getLanguage();
+		$description = org_glizy_ObjectValues::get('org.glizy.og', 'description', $menu->description );
+        $keywords = org_glizy_ObjectValues::get('org.glizy.og', 'keywords', $menu->keywords );
 
 		$this->addOutputCode(
-			$this->renderMetadata($menu, $language)
+			$this->renderMetadata(glz_htmlentities($description), glz_htmlentities($keywords), $language)
 		);
 
 		if (__Config::get('glizycms.dublincore.enabled')) {
@@ -29,16 +31,27 @@ class org_glizycms_views_components_Metadata extends org_glizy_components_Compon
 		}
 	}
 
-	private function renderMetadata($menu, $language)
+	/**
+	 * @param  string $description
+	 * @param  strin $keywords
+	 * @param  string $language
+	 * @return string
+	 */
+	private function renderMetadata($description, $keywords, $language)
 	{
 		$metadata = <<<EOD
 <meta http-equiv="content-language" content="{$language}" />
-<meta name="keywords" content="{$menu->keywords}" />
-<meta name="description" content="{$menu->description}" />
+<meta name="keywords" content="{$keywords}" />
+<meta name="description" content="{$description}" />
 EOD;
 		return $metadata;
 	}
 
+	/**
+	 * @param  org_glizy_dataAccessDoctrine_AbstractActiveRecord $menu
+	 * @param  string $language
+	 * @return string
+	 */
 	private function renderDublinCore($menu, $language)
 	{
 		$metadata = <<<EOD

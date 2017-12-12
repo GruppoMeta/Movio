@@ -210,17 +210,13 @@ class org_glizy_ObjectFactory
             }
         }
 
-        if ( !file_exists( $fileName ) )
-        {
-            $fileName = glz_findClassPath( $pageType );
-            if ( is_null( $fileName ) )
-            {
-                // TODO: file non trovato visualizzare errore
+        if ( !file_exists( $fileName ) ) {
+            $fileName = glz_findClassPath( $pageType, true, true);
+            if ( !$fileName ) {
+                throw new Exception( 'PageType not found '.$pageType );
             }
         }
 
-        // TODO
-        // controllare l'esistenza del file
         $compiler = org_glizy_ObjectFactory::createObject('org.glizy.compilers.PageType');
         $compiledFileName = $compiler->verify($fileName, $options);
 

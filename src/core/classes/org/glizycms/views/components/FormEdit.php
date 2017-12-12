@@ -73,6 +73,7 @@ class org_glizycms_views_components_FormEdit extends org_glizy_components_Form
             $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditStandard.js' ), 'head');
             $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditCheckbox.js' ), 'head');
             $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditRepeat.js' ), 'head');
+            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditRecordPicker.js' ), 'head');
 
             $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditDate.js' ), 'head');
             $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditDateTime.js' ), 'head');
@@ -138,6 +139,8 @@ class org_glizycms_views_components_FormEdit extends org_glizy_components_Form
 
             $tinyMceUrls = json_encode($this->getTinyMceUrls());
 
+            $readOnly = $this->getAttribute('readOnly');
+
             $jsCode = <<< EOD
 jQuery(function(){
     if ( Glizy.tinyMCE_options )
@@ -151,7 +154,8 @@ jQuery(function(){
         imageResizer: "$imageResizer",
         formData: $this->data,
         $customValidation
-        lang: GlizyLocale.FormEdit
+        lang: GlizyLocale.FormEdit,
+        readOnly: "$readOnly"
     });
 });
 EOD;

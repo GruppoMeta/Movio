@@ -100,8 +100,9 @@ class org_glizy_dataAccessDoctrine_Query_QueryBuilder extends \Doctrine\DBAL\Que
     {
         $connection = $this->getConnection();
         $table = $this->sqlParts['from']['table'] . ($this->sqlParts['from']['alias'] ? ' ' . $this->sqlParts['from']['alias'] : '');
+
         $query = 'UPDATE ' . $connection->quoteIdentifier($table)
-               . ' SET ' . implode(", ", $connection->quoteIdentifiers($this->sqlParts['set']))
+               . ' SET ' . implode(", ", $this->sqlParts['set'])
                . ($this->sqlParts['where'] !== null ? ' WHERE ' . ((string) $this->sqlParts['where']) : '');
 
         return $query;

@@ -257,8 +257,11 @@ class org_glizy_components_Component extends GlizyObject
 				}
 				else if (preg_match("/\{config\:.*\}/i", $value))
 				{
-					$code = preg_replace("/\{config\:(.*)\}/i", "$1", $value);
-					$value = __Config::get($code);
+		      		preg_match_all( "/\{config:([^\{]*)\}/U", $value, $resmatch );
+		            foreach( $resmatch[1] as $varname) {
+						$newValue = __Config::get($varname);
+		            	$value = str_replace('{config:'.$varname.'}', $newValue, $value);
+		            }
 				}
 			}
 		}
@@ -408,15 +411,19 @@ class org_glizy_components_Component extends GlizyObject
      */
 	function _validateAttributeValue($name, $value)
 	{
-		if (array_key_exists($name, $this->_attributesDefinition) && !is_object($value) && !preg_match("/\{(.*)\}/i", $value))
-		{
-			$attributeDefinition = $this->_attributesDefinition[$name];
+		if (!array_key_exists($name, $this->_attributesDefinition)) {
+			return $value;
+		}
 
+		$attributeDefinition = $this->_attributesDefinition[$name];
+		$typeToCheck = array(COMPONENT_TYPE_BOOLEAN, COMPONENT_TYPE_INTEGER, COMPONENT_TYPE_ENUM);
+
+		if (in_array($attributeDefinition['type'], $typeToCheck) && !is_object($value) && !preg_match("/\{(.*)\}/i", $value)) {
 			// l'attributo esiste esegue il casting del valore
 			switch ($attributeDefinition['type'])
 			{
 				case COMPONENT_TYPE_BOOLEAN:
-					if (is_string($value)) $value = $value=="true" ? true : false;
+					if (is_string($value)) $value = $value=="true" || $value=="1" ? true : false;
 					break;
 				case COMPONENT_TYPE_INTEGER:
 					$value = intval($value);

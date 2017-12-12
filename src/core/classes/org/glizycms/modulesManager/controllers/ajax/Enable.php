@@ -11,6 +11,8 @@ class org_glizycms_modulesManager_controllers_ajax_Enable extends org_glizy_mvc_
 {
 	function execute()
 	{
+		$this->checkPermissionForBackend();
+		
 		$id = __Request::get( 'id' );
 		$modulesState = org_glizy_Modules::getModulesState();
 		$modulesState[ $id ] = __Request::get( 'action' ) == 'enable';

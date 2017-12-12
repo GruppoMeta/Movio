@@ -43,7 +43,8 @@ Glizy.oop.declare("glizy.FormEdit.standard", {
     },
 
     isValid: function() {
-        if (this.$element.hasClass('required')) {
+        
+        if (this.$element.hasClass('required') && this.$element.data('skip-validation')!==true) {
             return this.getValue() != '';
         } else {
             return true;

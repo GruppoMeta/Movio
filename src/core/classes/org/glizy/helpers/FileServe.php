@@ -9,9 +9,9 @@
 
 class org_glizy_helpers_FileServe
 {
-	static public function serve($fileName, $originalFileName=null, $expires=null, $forceDownload=false)
+	static public function serve($fileName, $originalFileName=null, $expires=null)
 	{
-		$mime = !$forceDownload ? org_glizy_helpers_FileServe::mimeType($fileName) : 'application/force-download';
+		$mime = !__Config::get('glizy.helpers.FileServe.forceDownload') ? org_glizy_helpers_FileServe::mimeType($fileName) : 'application/force-download';
 		$fileSize = filesize($fileName);
 		$gmdate_mod = gmdate('D, d M Y H:i:s', filemtime($fileName) );
 		if(! strstr($gmdate_mod, 'GMT')) {

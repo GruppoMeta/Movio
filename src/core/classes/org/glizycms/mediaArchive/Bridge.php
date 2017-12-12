@@ -43,10 +43,14 @@ class org_glizycms_mediaArchive_Bridge implements org_glizycms_mediaArchive_Brid
 
     public function mediaPickerUrl($tinyVersion=false, $mediaType='ALL')
     {
+        $mediaTypeParam = '';
+        if ($mediaType && $mediaType!=='ALL') {
+            $mediaTypeParam = '&mediaType='.$mediaType.'&';
+        }
         if (!$tinyVersion) {
-            return GLZ_HOST.'/index.php?pageId=mediaarchive_picker&mediaType='.$mediaType.'&';
+            return GLZ_HOST.'/index.php?pageId=mediaarchive_picker'.$mediaTypeParam;
         } else {
-            return GLZ_HOST.'/index.php?pageId=MediaArchive_pickerTiny&mediaType='.$mediaType.'&';
+            return GLZ_HOST.'/index.php?pageId=MediaArchive_pickerTiny'.$mediaTypeParam;
         }
     }
 

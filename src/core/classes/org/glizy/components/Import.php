@@ -26,10 +26,10 @@ class org_glizy_components_Import extends org_glizy_components_NullComponent
 
 	        if ( !file_exists( $fileName ) )
 	        {
-	            $fileName = glz_findClassPath( $src );
+	            $fileName = glz_findClassPath( $src, true, true );
 	            if ( is_null( $fileName ) )
 	            {
-	                throw new Exception( 'File non esiste '.$fileName );
+	                throw new Exception( 'File non esiste '.$src.'.xml' );
 	            }
 	        }
 

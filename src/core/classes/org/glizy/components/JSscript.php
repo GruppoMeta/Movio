@@ -53,14 +53,9 @@ class org_glizy_components_JSscript extends org_glizy_components_Component
 				org_glizy_ObjectValues::set('org.glizy.JS', 'run', true);
 				$pageType = $this->_application->getPageType();
 				$state = __Request::get( 'action', '' );
-				$params = __Request::getAllAsArray();
-				unset($params['__params__']);
-				unset($params['__routingName__']);
-				unset($params['__routingPattern__']);
-				unset($params['__url__']);
-				unset($params['__back__url__']);
-				unset($params['PHP_AUTH_USER']);
-				unset($params['PHP_AUTH_PW']);
+				$params = @$_GET;
+				$params['id'] = __Request::get('id', '');
+
 				$params = json_encode($params);
 				$jsCode = <<<EOD
 var GlizyApp = {};

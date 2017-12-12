@@ -376,7 +376,7 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
     public function whereStatusIs($value)
     {
         $valueParam = ':status'.$this->conditionNumber++;
-        $this->qb->andWhere($this->expr->eq(self::DOCUMENT_DETAIL_STATUS, $valueParam))
+        $this->qb->andWhere($this->expr->eq(self::DOCUMENT_DETAIL_TABLE_ALIAS.'.'.self::DOCUMENT_DETAIL_STATUS, $valueParam))
                  ->setParameter($valueParam, $value);
         $this->statusSet = true;
         return $this;
@@ -540,7 +540,7 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
             if (__Config::get('ACL_ROLES')) {
                 $application = org_glizy_ObjectValues::get('org.glizy', 'application');
                 $user = $application->getCurrentUser();
-                if ($user->id && $application->getPageId() && !$user->acl($application->getPageId(), 'all')) {
+                if ($application->getPageId() && !$user->acl($application->getPageId(), 'all')) {
                     $this->addAcl();
                 }
             }

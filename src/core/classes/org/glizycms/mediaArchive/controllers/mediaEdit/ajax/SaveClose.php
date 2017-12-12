@@ -3,6 +3,8 @@ class org_glizycms_mediaArchive_controllers_mediaEdit_ajax_SaveClose extends org
 {
     public function execute($data)
     {
+        $this->checkPermissionForBackend();
+        
         $result = parent::execute($data);
         
         if ($result['errors']) {

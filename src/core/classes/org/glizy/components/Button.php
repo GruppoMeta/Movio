@@ -50,7 +50,7 @@ class org_glizy_components_Button extends org_glizy_components_HtmlComponent
 				switch ($this->getAttribute('actionType'))
 				{
 					case 'location':
-						$this->_action = 'location.href='.$this->_targetForm->getJSAction($this->_action);
+						$this->_action = 'document.location.href='.$this->_targetForm->getJSAction($this->_action);
 						break;
 					case 'action':
 						$this->_action = 'this.form.action='.$this->_targetForm->getJSAction($this->_action);
@@ -59,7 +59,7 @@ class org_glizy_components_Button extends org_glizy_components_HtmlComponent
 						$this->_action = $this->_targetForm->getJSAction($this->_action);
 						break;
 					case 'url':
-						$this->_action = 'location.href='.$this->_targetForm->getJSAction($this->_action, true);
+						$this->_action = 'document.location.href='.$this->_targetForm->getJSAction($this->_action, true);
 						break;
 					//case 'submit':
 					//	$this->_name = $this->_targetForm->getId().'_command';
@@ -68,7 +68,7 @@ class org_glizy_components_Button extends org_glizy_components_HtmlComponent
 		}
 		else if (!empty($url))
 		{
-			$this->_action = 'location.href=\''.$this->getAttribute('url').'\'';
+			$this->_action = 'document.location.href=\''.$this->getAttribute('url').'\'';
 		}
 
 		if (!is_null($this->getAttribute('confirmMessage')))

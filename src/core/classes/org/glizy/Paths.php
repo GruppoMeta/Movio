@@ -34,7 +34,7 @@ class org_glizy_Paths
         }
 
 		$pathApplicationDepth 						= count(explode('/', $pathApplication))-1;
-		$pathsArray['BASE'] 						= $pathCore; //str_repeat('../', $pathApplicationDepth-1);
+		$pathsArray['BASE'] 						= $pathCore;
 		$pathsArray['CORE'] 						= $pathCore.'core/';
 		$pathsArray['CORE_CLASSES'] 				= $pathCore.'core/classes/';
 		$pathsArray['CORE_LIBS'] 					= $pathCore.'core/libs/';
@@ -64,10 +64,8 @@ class org_glizy_Paths
 		$pathsArray['PAGE_FOLDER'] 					= implode('/', array_splice($dirname, count($dirname)-$pathApplicationDepth, $pathApplicationDepth+1));
 		$pathsArray['PAGE_INDEX'] 					= $page['basename'];
 
-		$pathsArray['PAGE_AJAX'] 					= $page["basename_noext"].'_ajax.php';
-		$pathsArray['PAGE_IMAGEPREVIEW'] 			= $page["basename_noext"].'_imagePreview.php';
-		$pathsArray['PAGE_IMAGETHUMBNAIL']			= $page["basename_noext"].'_getImage.php';
 		$pathsArray['SEARCH_PATH'] 					= array($pathsArray['APPLICATION_CLASSES'] , $pathsArray['CORE_CLASSES']);
+		$pathsArray['UPLOAD']                       = rtrim(sys_get_temp_dir(), '/').'/'.md5(realpath($pathsArray['CORE'])).'/';		
 	}
 
 

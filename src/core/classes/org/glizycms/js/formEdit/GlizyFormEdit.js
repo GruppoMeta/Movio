@@ -719,6 +719,10 @@ jQuery( (function( $ ){
             enableValidation();
             setIndexFields();
             e.preventDefault();
+			if($(this).data('action') == 'saveClose')
+			{
+				window.onbeforeunload = null;
+			}
 
             if ($form.triggerHandler('submitForm') === false && invalidFields || customValidationInvalid) {
                 customValidationInvalid = false;

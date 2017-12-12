@@ -159,7 +159,6 @@ function setLinkType(type) {
         document.getElementById("pickerPanel").style.display = "none";
     }
 
-
 	resizeMe( wSize );
 }
 
@@ -266,7 +265,9 @@ function init() {
     var href = linkType==1 ? href:""
     var callback = function() {
         setFormValue('internalLink', linkType==1 ? href:"");
-        setLinkType(String(linkType));
+        setTimeout(function(){
+            setLinkType(String(linkType));
+        }, 100);
     }
 
     renderInternalLinks(callback);

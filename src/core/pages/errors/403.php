@@ -43,7 +43,7 @@ h2 {
 <body>
 	<div id="content">
 		<h1><?php echo $e['title'];?></h1>
-		<h2><?php echo $e['code'].' : '.$e['description'];?></h2>
+		<h2>403 Forbidden</h2>
 	</div>
 </body>
 </html>

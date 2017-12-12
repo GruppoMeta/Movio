@@ -27,7 +27,7 @@ class org_glizy_log_ElasticSearch extends org_glizy_log_LogBase
         parent::__construct($options, $level, $group);
         if (isset($options['index']))
         {
-            $this->_index = $options['index'];
+            $this->_index = strtolower($options['index']);
         }
         if (isset($options['type']))
         {

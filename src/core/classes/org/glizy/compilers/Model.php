@@ -276,7 +276,7 @@ EOD;
         $sql = str_replace(array("\n", "\r", "'"), array(" ", " ", "\'"), $sql);
         $sql = str_replace('##TABLE_NAME##', "'.\$this->getTableName().'", $sql);
         $sql = str_replace('##TABLE_PREFIX##',"'.\$this->tablePrefix.'", $sql);
-        $sql = str_replace('##SELECT_ALL##', "'.\$this->query_all().'", $sql);
+        $sql = str_replace('##SELECT_ALL##', "SELECT * FROM '.\$this->getTableName().'", $sql);
         $sql = str_replace('##SITE_ID##',"'.__Config::get('glizy.multisite.id').'", $sql);
         $sql = str_replace('##USER_ID##', "'.org_glizy_ObjectValues::get('org.glizy', 'user')->id.'", $sql);
         $sql = str_replace('##USER_GROUP_ID##', "'.org_glizy_ObjectValues::get('org.glizy', 'user')->group.'", $sql);

@@ -3,7 +3,7 @@ class org_glizycms_modulesManager_controllers_Duplicate extends org_glizy_mvc_co
 {
     public function execute($id, $moduleId)
     {
-// TODO tradurre le label
+        $this->checkPermissionForBackend();
 
         if (!$moduleId) {
             $this->setComponentsAttribute('moduleId', 'value', $id);

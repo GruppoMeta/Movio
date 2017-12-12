@@ -287,7 +287,7 @@ class org_glizy_compilers_PageType extends org_glizy_compilers_Compiler
 		}
 		else
 		{
-			$src = glz_findClassPath( $origSrc );
+			$src = glz_findClassPath( $origSrc, true, true );
 		}
 		if ( is_null( $src ) )
 		{

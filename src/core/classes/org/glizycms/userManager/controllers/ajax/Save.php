@@ -3,6 +3,8 @@ class org_glizycms_userManager_controllers_ajax_Save extends org_glizy_mvc_core_
 {
     public function execute($data)
     {
+        $this->checkPermissionForBackend();
+        
 		$this->directOutput = true;
 
     	$data = json_decode($data);
@@ -23,7 +25,13 @@ class org_glizycms_userManager_controllers_ajax_Save extends org_glizy_mvc_core_
             }
         }
 
-		$password = $data->user_password;
+        if ($id && $id != $ar->user_id ) {
+            if (!$ar->load($id)) {
+                return array('errors' => array(__T( 'User not found' )));
+            }        
+        }
+
+        $password = $data->user_password;
 		$password = $password ? glz_password( $password ) : $ar->user_password;
 		$data->user_password = $password;
 		if ( $id == 0 ) {

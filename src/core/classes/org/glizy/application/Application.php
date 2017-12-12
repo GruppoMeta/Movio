@@ -63,6 +63,7 @@ class org_glizy_application_Application extends GlizyObject
         }
 
         glz_defineBaseHost();
+        $this->login();
         $this->_initSiteMap();
         $this->_initRequest();
 
@@ -99,6 +100,7 @@ class org_glizy_application_Application extends GlizyObject
         }
 
         glz_defineBaseHost();
+        $this->login();
         $this->_initSiteMap();
         $this->_initRequest();
 
@@ -126,7 +128,7 @@ class org_glizy_application_Application extends GlizyObject
 
         // legge i parametri di configurazione
         org_glizy_Config::init( $this->_configHost );
-
+        $this->setExceptionParams();
 
         $sessionPrefix = org_glizy_Config::get('SESSION_PREFIX');
         if (empty($sessionPrefix))
@@ -155,7 +157,6 @@ class org_glizy_application_Application extends GlizyObject
 			org_glizy_log_LogFactory::create('ElasticSearch', array(), 0); // Questo serve per poter istanziare la classe in Exception.php (gruppo 0 non logga nulla)
 		}
 
-        $this->login();
         $this->_initLanguage();
     }
 
@@ -188,7 +189,7 @@ class org_glizy_application_Application extends GlizyObject
 
         $this->_language = $currentLanguage;
         // NOTA non viene supportato l'id numerico della lingua
-        $this->_languageId     = org_glizy_Config::get('DEFAULT_LANGUAGE_ID');
+        $this->_languageId = __Session::get('glizy.languageId',  __Config::get('DEFAULT_LANGUAGE_ID'));
         org_glizy_ObjectValues::set('org.glizy', 'language', $this->_language);
         org_glizy_ObjectValues::set('org.glizy', 'languageId', $this->_languageId);
         org_glizy_Session::set('glizy.language', $this->_language);
@@ -229,12 +230,14 @@ class org_glizy_application_Application extends GlizyObject
             $this->siteMapMenu    = &$this->siteMap->getNodeById($this->_pageId);
         }
 
+        if ($this->siteMapMenu->hideByAcl) {
+            org_glizy_helpers_Navigation::accessDenied($this->getCurrentUser()->isLogged());
+        }
+
         if (!is_object($this->siteMapMenu) || !$this->siteMapMenu->isVisible)
         {
-			$report = array();
-            $report['Request'] = var_export(__Request::getAllAsArray(), true);
-            $report['_SERVER'] = var_export($_SERVER, true);
-            $this->log( $report, GLZ_LOG_SYSTEM, 'glizy.404' );
+            $evt = array('type' => GLZ_EVT_DUMP_404);
+            $this->dispatchEvent($evt);
 
             if ($this->siteMapMenu && !$this->getCurrentUser()->acl($this->siteMapMenu->id, "visible", true)) {
                 org_glizy_helpers_Navigation::gotoUrl( __Link::makeUrl( 'link', array( 'pageId' => __Config::get('START_PAGE'))));
@@ -820,5 +823,30 @@ class org_glizy_application_Application extends GlizyObject
         } else {
             $this->createSiteMap($forceReload);
         }
+    }
+
+    /**
+     * Set Exception application name and debug mode
+     */
+    protected function setExceptionParams()
+    {
+        org_glizy_Exception::$applicationName = __Config::get('APP_NAME');
+        org_glizy_Exception::$debugMode = __Config::get('DEBUG')==true;
+    }
+
+    /**
+     * @param string $command
+     *
+     * @return mixed
+     */
+    function executeCommand( $command )
+    {
+        $actionClass = &org_glizy_ObjectFactory::createObject( $command, null, $this );
+        if ( is_object( $actionClass ) && method_exists( $actionClass, "execute" ) ) {
+            $params = func_get_args();
+            array_shift($params);
+            return call_user_func_array( array( $actionClass, "execute" ), $params );
+        }
+        return null;
     }
 }

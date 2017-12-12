@@ -47,7 +47,7 @@ class org_glizycms_contents_controllers_siteTree_ajax_GetSiteTree extends org_gl
         }
 
         if ( $menu->menu_isLocked == 1 ) {
-
+            $icon .= ' lock';
         }
 
         $node = array(

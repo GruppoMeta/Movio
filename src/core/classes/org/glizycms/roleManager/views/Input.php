@@ -64,7 +64,7 @@ EOD;
                 $result[] = array('id' => $ar->user_id, 'text' => $ar->user_loginId);
 			}
 		} else if ($mode == 'groups') {
-			$it = org_glizy_ObjectFactory::createModelIterator('org.glizycms.userManager.models.UserGroup', 'all',
+			$it = org_glizy_ObjectFactory::createModelIterator('org.glizycms.groupManager.models.UserGroup', 'all',
 					array('filters' => array('usergroup_name' => $q) )
 				);
 			foreach ($it as $ar) {

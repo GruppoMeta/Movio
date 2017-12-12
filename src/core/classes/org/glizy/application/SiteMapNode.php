@@ -15,6 +15,7 @@ class org_glizy_application_SiteMapNode extends GlizyObject
 	var $pageType;
 	var $isPublished;
 	var $isVisible;
+	var $hideByAcl;
 	var $hideInNavigation;
 	var $title;
 	var $titleLink;
@@ -50,6 +51,7 @@ class org_glizy_application_SiteMapNode extends GlizyObject
 		$this->titleLink 			= javascript_to_html($this->attributes['titleLink']);
 		$this->order 				= $this->attributes['order'];
 		$this->isVisible 			= $this->attributes['isVisible'];
+		$this->hideByAcl 			= $this->attributes['hideByAcl'];
 		$this->hideInNavigation     = $this->attributes['hideInNavigation'];
 		$this->depth 				= $this->attributes['depth'];
 		$this->type 				= $this->attributes['type'];

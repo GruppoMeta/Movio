@@ -119,7 +119,10 @@ class org_glizy_components_RecordDetailVO
         }
         return $value;
     }
-}
+
+	public function __isset($name)
+	{ $filedType = $this->content->getFieldType($name); return !empty($filedType); }
+	}
 
 
 if (!class_exists("org_glizy_components_RecordDetail_render"))

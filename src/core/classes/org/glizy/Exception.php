@@ -18,6 +18,8 @@ define('GLZ_E_500', 500);
  */
 class org_glizy_Exception
 {
+    static public $applicationName = 'GLIZY framework';
+    static public $debugMode = false;
 
     /**
      * @param string $message
@@ -67,11 +69,8 @@ class org_glizy_Exception
      * @param string $message
      * @param int    $headerCode
      */
-    static public function show($errno, $errstr, $errfile, $errline, $message = '', $headerCode = 500)
+    static public function show($errno, $errstr, $errfile, $errline, $message = '', $headerCode = 500, $trace=null)
     {
-        // $eventInfo = array('type' => 'dumpException', 'data' => array('message' => $message, 'errono' => $errno, 'file' => $errfile, 'errline' => $errline));
-
-        @header('HTTP/1.0 500 Internal Server Error');
         $errors = array(
             1 => 'E_ERROR',
             2 => 'E_WARNING',
@@ -90,18 +89,13 @@ class org_glizy_Exception
 
         $e                = array();
         $e['code']        = isset($errors[$errno]) ? $errors[$errno] : $errors[1];
+        $e['file']        = $errfile;
+        $e['line']        = $errline;
         $e['description'] = $errstr;
         $e['message']     = $message;
+        $e['trace']       = $trace;
 
-        if (class_exists('org_glizy_Config') && org_glizy_Config::get('DEBUG') === true) {
-            $e['file']       = $errfile;
-            $e['line']       = $errline;
-            $e['stacktrace'] = array_slice(debug_backtrace(), 2);
-            include_once(dirname(__FILE__) . '/../../../pages/errors/debug.php');
-        } else {
-            self::loadErrorPage(500, 'Internal Server Error', $e['code'].': '.$e['description'].'<br>'.$e['message']);
-        }
-        exit;
+        self::loadErrorPage(500, 'Internal Server Error', $e);
     }
 
     /**
@@ -109,24 +103,95 @@ class org_glizy_Exception
      * Check if the developer have defined a custome page
      * @param  int $code            Error code
      * @param  string $codeDescription Error code description
-     * @param  string $message         Error message
+     * @param  string|array $message         Error message
      */
     private static function loadErrorPage($code, $codeDescription, $message)
     {
-        $e                = array();
-        $e['title']       = class_exists('org_glizy_Config') ? org_glizy_Config::get('APP_NAME') : 'GLIZY framework';
-        $e['code']        = $code;
-        $e['description'] = $message;
-        $e['message']     = '';
-        header('HTTP/1.0 '.$code.' '.$codeDescription);
+        @header('HTTP/1.0 '.$code.' '.$codeDescription);
+        $html = true;
+        foreach (headers_list() as $header) {
+            if ((stripos($header, 'content-type:') === 0) && (stripos($header, 'html') === false)) {
+                $html = false;
+            }
+        }
 
-        if (file_exists('error-'.$code.'.html')) {
+        if (!is_array($message)) {
+            $e                = array();
+            $e['code']        = $code;
+            $e['description'] = $message;
+            $e['message']     = '';
+        } else {
+            $e = $message;
+        }
+        $e['title'] = $e['title'] ? $e['title'] : self::$applicationName;
+
+        if (self::$debugMode && isset($e['line'])) {
+            $e['trace'] = self::formatTrace( $e['line'], $e['trace'] ? $e['trace'] : debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
+        } else {
+            unset($e['trace']);
+            unset($e['file']);
+        }
+
+        if (!$html) {
+            echo json_encode($e);
+        } else if (self::$debugMode) {
+            include_once(dirname(__FILE__) . '/../../../pages/errors/debug.php');
+        } else if (file_exists('error-'.$code.'.html')) {
             include_once('error-'.$code.'.html');
         } else if (file_exists('error-'.$code.'.php')) {
             include_once('error-'.$code.'.php');
-        } else {
+        } else if (file_exists(dirname(__FILE__) . '/../../../pages/errors/'.$code.'.php')) {
             include_once(dirname(__FILE__) . '/../../../pages/errors/'.$code.'.php');
+        } else {
+            include_once(dirname(__FILE__) . '/../../../pages/errors/general.php');
         }
         exit;
+    }
+
+    /**
+     * @param  string $firstErrorLine
+     * @param  array  $trace
+     * @return array
+     */
+    private static function formatTrace($firstErrorLine, $trace)
+    {
+        $formattedTrace = array();
+        $errors = $e['trace'];
+        for ( $i = 0; $i < count($trace); $i++ )
+        {
+            $formattedTrace[] = sprintf('%s:%s(%s) #%d',
+                    $trace[$i]['class'],
+                    $trace[$i]['function'],
+                    self::formatTraceArgs($trace[$i]['args']),
+                    ($i ? $trace[$i-1]['line'] : $firstErrorLine)
+                );
+        }
+
+        return $formattedTrace;
+    }
+
+    /**
+     * @param  mixed $args
+     * @return string
+     */
+    private static function formatTraceArgs($args)
+    {
+        if (!$args) return '';
+
+        $output = array();
+        if ($args) {
+            foreach ($args as $value) {
+                if (is_array($value)) {
+                    $output[] = sprintf('Array(%d)', count($value));
+                } else if (is_object($value)) {
+                    $output[] = get_class($value);
+                } else if (is_null($value)) {
+                    $output[] = 'null';
+                } else {
+                    $output[] = $value;
+                }
+            }
+        }
+        return $output ? implode(', ', $output) : '';
     }
 }

@@ -3,6 +3,8 @@ class org_glizycms_mediaArchive_controllers_Add extends org_glizy_mvc_core_Comma
 {
     public function execute()
     {
+        $this->checkPermissionForBackend();
+        
         $c = $this->view->getComponentById('fileuploader');
         $c->setAttribute('data', ';maxlabel='.ini_get('upload_max_filesize').'B', true);
 

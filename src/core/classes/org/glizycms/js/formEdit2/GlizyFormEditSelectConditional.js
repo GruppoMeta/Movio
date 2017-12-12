@@ -2,8 +2,11 @@ Glizy.oop.declare("glizy.FormEdit.selectConditional", {
     $extends: Glizy.oop.get('glizy.FormEdit.standard'),
     target: null,
 
+    element: null,
+
     initialize: function (element) {
         this.$super(element);
+        this.element = element;
         var that = this;
         var lastSelected = null;
         this.target = element.data('target');
@@ -28,8 +31,6 @@ Glizy.oop.declare("glizy.FormEdit.selectConditional", {
 
             lastSelected = i;
         });
-
-        element.trigger('change');
     },
 
     hideTarget: function (i) {
@@ -55,5 +56,10 @@ Glizy.oop.declare("glizy.FormEdit.selectConditional", {
         console.log('show '+componentId);
         $('#'+componentId).show();
         $('#'+componentId).parents('div.form-group').show();
+    },
+
+    setValue: function (value) {
+        this.$super(value);
+        this.element.trigger('change');
     }
 });

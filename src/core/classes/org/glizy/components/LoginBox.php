@@ -58,9 +58,10 @@ class org_glizy_components_LoginBox extends org_glizy_components_Component
 				(count($allowGroups) && !in_array($this->_user->groupId, $allowGroups))) {
 				$this->_content['errorLabel'] = org_glizy_locale_Locale::get('LOGGER_INSUFFICIENT_GROUP_LEVEL');
 			} else {
-			$this->setAttribute('visible', false);
-			$this->redirectAfterLogin();
-		}
+				$this->setAttribute('visible', false);
+				$this->redirectAfterLogin();
+				return;
+			}
 		}
 
 		$submitId = 'submit_'.$this->getId();

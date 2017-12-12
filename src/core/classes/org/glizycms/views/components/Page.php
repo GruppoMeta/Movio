@@ -14,6 +14,8 @@ class org_glizycms_views_components_Page extends org_glizy_components_Page
 	private $customTemplate;
 	private $selfId;
 
+	protected $menu;
+	protected $siteProp;
 
 
 	/**
@@ -45,6 +47,9 @@ class org_glizycms_views_components_Page extends org_glizy_components_Page
 
 		$this->selfId = $this->getId();
 		$this->_content = array();
+
+		$this->loadMenuAndSiteProps();
+		$this->checkRedirectUrl($this->menu->url);
 		$this->loadContentFromDB();
 		$this->loadTemplate();
 
@@ -54,11 +59,8 @@ class org_glizycms_views_components_Page extends org_glizy_components_Page
 
 	function render()
 	{
-		$menu = $this->_application->getCurrentMenu();
-		$siteProp = $this->_application->getSiteProperty();
-
-		$this->renderPageProperties($menu, $siteProp['title']);
-		$this->renderSiteProperties($siteProp);
+		$this->renderPageProperties($this->menu, $this->siteProp['title']);
+		$this->renderSiteProperties($this->siteProp);
 
 
 		if (is_object($this->customTemplate)) {
@@ -143,8 +145,8 @@ class org_glizycms_views_components_Page extends org_glizy_components_Page
         $keywords = org_glizy_ObjectValues::get('org.glizy.og', 'keywords', $menu->keywords );
 
         $pageTitle = $title.' - '.$siteName;
-		$this->addOutputCode($pageTitle, 'docTitle');
-		$this->addOutputCode($pageTitle, 'doctitle'); // NOTE: per compatibilità
+		$this->addOutputCode(glz_encodeOutput($pageTitle), 'docTitle');
+		$this->addOutputCode(glz_encodeOutput($pageTitle), 'doctitle'); // NOTE: per compatibilità
         $this->addOutputCode($title, 'metadata_title');
         $this->addOutputCode($description, 'metadata_description');
         $this->addOutputCode($keywords, 'metadata_keywords');
@@ -164,5 +166,24 @@ class org_glizycms_views_components_Page extends org_glizy_components_Page
 
 		$slideShowSpeed = ((int)$siteProp['slideShow'] ? :5)*1000;
 		$this->addOutputCode( org_glizy_helpers_JS::JScode( 'if (typeof(Glizy)!=\'object\') Glizy = {}; Glizy.slideShowSpeed = '.$slideShowSpeed.';' ), 'head' );
+	}
+
+	/**
+	 * @return null
+	 */
+	protected function loadMenuAndSiteProps()
+	{
+		$this->menu = $this->_application->getCurrentMenu();
+		$this->siteProp = $this->_application->getSiteProperty();
+	}
+
+	/**
+	 * @param  string $url
+	 */
+	protected function checkRedirectUrl($url)
+	{
+		if (strpos($url, 'http')===0) {
+            org_glizy_helpers_Navigation::gotoUrl($url);
+        }
 	}
 }

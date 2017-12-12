@@ -6,9 +6,7 @@
  * For the full copyright and license information, please view the COPYRIGHT.txt
  * file that was distributed with this source code.
  */
-
 ?>
-<?php @header("HTTP/1.1 500 Internal Server Error"); ?>
 <html>
 <head>
 <title>Internal Server Error</title>

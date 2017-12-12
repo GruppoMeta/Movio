@@ -49,12 +49,13 @@ class org_glizy_components_Repeater extends org_glizy_components_ComponentContai
 		$this->newDataFormat = is_array($this->_content);
 
 		if ($this->newDataFormat) {
+            $this->_content = $this->filterVisibleItems($this->_content);
 			$this->numRecords = count($this->_content);
 		} else {
 			$child = $this->childComponents[0];
 	        $childId = $child->getOriginalId();
 	        $this->numRecords = count($this->_content->$childId);
-		}
+        }
     }
 
 
@@ -87,6 +88,17 @@ class org_glizy_components_Repeater extends org_glizy_components_ComponentContai
     {
         $id = substr($id, $this->repeaterIdLen + 1);
         return $this->newDataFormat ? $this->_content[$this->contentCount]->{$id} : $this->_content->{$id}[$this->contentCount];
+    }
+
+    private function filterVisibleItems($content)
+    {
+        return array_reduce($content, function($carry, $item){
+            if (property_exists($item, 'isVisible') && !$item->isVisible) {
+                return $carry;
+            }
+            $carry[] = $item;
+            return $carry;
+        }, array());
     }
 
     public static function compileAddPrefix($compiler, &$node, $componentId, $idPrefix)

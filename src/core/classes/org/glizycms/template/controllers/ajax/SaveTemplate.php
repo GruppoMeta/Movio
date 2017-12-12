@@ -3,7 +3,7 @@ class org_glizycms_template_controllers_ajax_SaveTemplate extends org_glizy_mvc_
 {
     public function execute($data)
     {
-// TODO: controllo acl
+        $this->checkPermissionForBackend();
         $data = json_decode($data);
         if ($data && property_exists($data, 'template')) {
             $templateProxy = org_glizy_ObjectFactory::createObject('org.glizycms.template.models.proxy.TemplateProxy');

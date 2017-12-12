@@ -80,7 +80,7 @@ class org_glizycms_mediaArchive_models_proxy_MediaProxy extends GlizyObject
 
         // verifica che la cartella di destinazione sia scrivibile
         if (!is_writeable($destinationFolder)) {
-            return array('status' => false, 'errors' => array('Rendere scrivibile la cartella '.$destinationFolder));
+            return array('status' => false, 'errors' => array('Cartella Archivio Media non scrivibile'));
         }
 
         if ($action == self::MOVE_TO_CMS) {
@@ -101,7 +101,7 @@ class org_glizycms_mediaArchive_models_proxy_MediaProxy extends GlizyObject
             if ($createRecordIfFileNotExists) {
                 return $this->createMediaRecord($data);
             } else {
-                return array('errors' => array('Il file '.$filePath.' non esiste'));
+                return array('errors' => array('Il file '.pathinfo($filePath, PATHINFO_FILENAME).' non esiste'));
             }
         }
 

@@ -78,7 +78,7 @@ class org_glizy_components_HtmlButton extends org_glizy_components_Component
 		$routeUrl = $this->getAttribute( 'routeUrl' );
 		if ( $routeUrl != '' )
 		{
-			$attributes['onclick'] = 'location.href=\''.__Link::makeUrl( $routeUrl ).'\'';
+			$attributes['onclick'] = 'document.location.href=\''.__Link::makeUrl( $routeUrl ).'\'';
 
 			if (!is_null($this->getAttribute('confirmMessage')))
 			{
@@ -88,7 +88,7 @@ class org_glizy_components_HtmlButton extends org_glizy_components_Component
 		$url = $this->getAttribute( 'url' );
 		if ( $url != '' )
 		{
-			$attributes['onclick'] = 'location.href=\''.$url.'\'';
+			$attributes['onclick'] = 'document.location.href=\''.$url.'\'';
 		}
 
 		$targetForm = $this->getAttribute('target');

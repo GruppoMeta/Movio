@@ -67,20 +67,20 @@ jQuery.GlizyRegisterType('recordpicker', {
         };
 
         self.disposeEvent = function() {
-            if (self.eventPos) {
+            if (self.eventPos !== null) {
                 Glizy.events.unbind("recordsPicker.set", self.eventPos);
-                self.eventPos = null;
             }
+            self.eventPos = null;
         };
 
         self.onPickerSetValue = function(event) {
-            Glizy.closeIFrameDialog(true);
             self.disposeEvent();
+            Glizy.closeIFrameDialog(true);
             _.each(event.message, function(item){
                 if (_.findWhere(self.data, {id: item.id})===undefined) {
                     self.data.push(item);
                 }
-            })
+            });
             self.render();
         };
 
@@ -89,7 +89,7 @@ jQuery.GlizyRegisterType('recordpicker', {
             var newData = [];
             self.container.find('.js-delete').each(function(i, el) {
                 newData.push(self.data[$(el).data('pos')]);
-            })
+            });
 
             self.data = newData;
             self.render();
@@ -143,10 +143,14 @@ jQuery.GlizyRegisterType('recordpicker', {
     },
 
     destroy: function () {
-        this.disposeEvent();
+        if (this.disposeEvent) {
+            this.disposeEvent();
+        }
     },
 
     focus: function() {
-        this.focus();
+        if (this.focus) {
+            this.focus();
+        }
     }
 });

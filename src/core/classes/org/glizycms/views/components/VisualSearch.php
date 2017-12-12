@@ -136,6 +136,7 @@ EOD;
 
         $output = <<<EOD
 <input name="{$id}_filters" id="{$id}_filters" type="hidden" value="">
+<input name="paginate_pageNum" id="paginate_pageNum" type="hidden" value="1">
 <div id="{$id}_visualsearch"></div>
 <script type="text/javascript" charset="utf-8">
 

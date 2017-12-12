@@ -378,12 +378,17 @@ class org_glizy_Routing
 						break;
 					case 'value':
 					case 'valuePlain':
+					case 'valueRaw':
 					case 'integer':
 						$value =  isset($queryVars[$command[1]]) ? $queryVars[$command[1]] : __Request::get( $command[1], '' );
-						$sanitize = $command[0]!=='valuePlain';
-						if (!$sanitize) {
+						$sanitize = $command[0]!=='valuePlain' && $command[0]!=='valueRaw';
+						if (!$sanitize && $command[0]!=='valueRaw') {
 							$value = urlencode($value);
 						}
+						break;
+					case 'i18n':
+						$value =  strtolower(__T($command[1]));
+			                        $sanitize = false;
 						break;
 					case 'static':
 						$value =  '';

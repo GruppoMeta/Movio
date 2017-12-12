@@ -5,6 +5,8 @@ class org_glizycms_mediaArchive_controllers_mediaEdit_ajax_Save extends org_gliz
 
     public function execute($data)
     {
+        $this->checkPermissionForBackend();
+        
         $data = json_decode($data);
 
         if (__Config::get('glizycms.mediaArchive.mediaMappingEnabled') && $data->mediaFileServer) {
@@ -59,6 +61,7 @@ class org_glizycms_mediaArchive_controllers_mediaEdit_ajax_Save extends org_gliz
 
     public function saveMedias($data)
     {
+        $uploadFolder = __Paths::get('UPLOAD');
         $mediaProxy = org_glizy_ObjectFactory::createObject('org.glizycms.mediaArchive.models.proxy.MediaProxy');
         $medias = $data->medias;
 
@@ -79,7 +82,7 @@ class org_glizycms_mediaArchive_controllers_mediaEdit_ajax_Save extends org_gliz
                     $media->$k = $v[$i];
                 }
             }
-            $media->__filePath = realpath($medias->__uploadFilename[$i]);
+            $media->__filePath = realpath($uploadFolder.$medias->__uploadFilename[$i]);
             try {
                 $result = $mediaProxy->saveMedia($media);
             } catch (Exception $e) {
@@ -133,13 +136,15 @@ class org_glizycms_mediaArchive_controllers_mediaEdit_ajax_Save extends org_gliz
 
     private function checkDuplicates($medias)
     {
+        $uploadFolder = __Paths::get('UPLOAD');
+
         // controlla se il file esiste già nell'archivio
         $ar = org_glizy_ObjectFactory::createModel('org.glizycms.models.Media');
         if ($ar->getField('media_md5')) {
             for ($i = 0; $i < count($medias->__uploadFilename); $i++) {
                 if (!$medias->__uploadFilename[$i]) continue;
 
-                $md5 = md5_file(realpath($medias->__uploadFilename[$i]));
+                $md5 = md5_file(realpath($uploadFolder.$medias->__uploadFilename[$i]));
 
                 $ar->emptyRecord();
                 $result = $ar->find(array('media_md5' => $md5));

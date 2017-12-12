@@ -33,6 +33,7 @@ class org_glizy_rest_core_Application extends org_glizy_mvc_core_Application
 		}
 
 		glz_defineBaseHost();
+        $this->login();
         if ($this->initSiteMap) {
             $this->_initSiteMap();
         }
@@ -135,10 +136,8 @@ class org_glizy_rest_core_Application extends org_glizy_mvc_core_Application
         }
 
 		if ($status === 404) {
-			$report = array();
-            $report['Request'] = __Request::getAllAsArray();
-            $report['_SERVER'] = $_SERVER;
-            $this->log( $report, GLZ_LOG_SYSTEM, 'glizy.404' );
+            $evt = array('type' => GLZ_EVT_DUMP_404);
+            $this->dispatchEvent($evt);
 		}
 		$httpAccept = (strpos(@$_SERVER['HTTP_ACCEPT'], 'xml')!==false) ? 'xml' : 'json';
 
@@ -252,4 +251,5 @@ class org_glizy_rest_core_Application extends org_glizy_mvc_core_Application
 			}
 		}
 	}
+
 }

@@ -118,7 +118,14 @@ class org_glizy_components_render_Render extends GlizyObject
 				{
 					$skin = explode('/', $skin[0]);
 					$skin[0] = str_replace( '.', '/', $skin[0] );
-					$skinFileName = org_glizy_Paths::get( 'APPLICATION_CLASSES' ).( implode( '/', $skin ) );
+					$tempFileName = implode( '/', $skin );
+	            	// NOTA questa parte può essere eliminata
+	            	// per ora è mantenuta per verificare la compatibilità
+					$skinFileName = org_glizy_Paths::get( 'APPLICATION_CLASSES' ).$tempFileName;
+
+					if (!file_exists($skinFileName)) {
+	            		$skinFileName = glz_findClassPath($tempFileName, false, true);
+					}
 				}
 			}
 		}

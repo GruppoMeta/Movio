@@ -1,4 +1,5 @@
 Glizy.oop.declare("glizy.FormEdit.CmsPagePicker", {
+    $extends: Glizy.oop.get('glizy.FormEdit.standard'),
     $element: null,
     controllerName: null,
     multiple: null,
@@ -55,12 +56,13 @@ Glizy.oop.declare("glizy.FormEdit.CmsPagePicker", {
 
     setValue: function (value) {
         if (value) {
+            var self = this;
             $.ajax({
                 url: Glizy.ajaxUrl + "&controllerName="+this.controllerName,
                 dataType: 'json',
                 data: {id: value},
                 success: function(data) {
-                    this.$element.select2('data', this.multiple ? data : data[0]);
+                    self.$element.select2('data', self.multiple ? data : data[0]);
                 }
             });
         }

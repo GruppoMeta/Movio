@@ -147,4 +147,14 @@ class org_glizycms_core_application_AdminApplication extends org_glizy_mvc_core_
         $siteMap = org_glizy_ObjectFactory::createObject('org.glizy.compilers.Routing', __Paths::getRealPath('APPLICATION_TO_ADMIN_CACHE'));
         $siteMap->invalidate();
     }
+
+    function login()
+    {
+        parent::login();
+        $currentLanguage = __Session::get('glizy.language', __Config::get('DEFAULT_LANGUAGE'));
+        if ($this->_user->language && $currentLanguage!==$this->_user->language) {
+            __Session::set('glizy.language', $this->_user->language);
+            org_glizy_helpers_Navigation::goHere();
+        }
+    }
 }

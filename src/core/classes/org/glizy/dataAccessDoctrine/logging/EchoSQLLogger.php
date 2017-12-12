@@ -17,6 +17,7 @@ class org_glizy_dataAccessDoctrine_logging_EchoSQLLogger extends \Doctrine\DBAL\
 
         $replacedSql = $sql;
         if ($params) {
+            $params = array_reverse($params);
             foreach ($params as $param => $value) {
                 $value = is_string($value) ? "'".$value."'" : $value;
                 $replacedSql = str_replace($param, $value, $replacedSql);

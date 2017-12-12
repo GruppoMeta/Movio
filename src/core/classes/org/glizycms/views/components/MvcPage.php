@@ -54,6 +54,8 @@ class org_glizycms_views_components_MvcPage extends org_glizycms_views_component
 			org_glizy_helpers_Navigation::accessDenied();
 		}
 
+		$this->loadMenuAndSiteProps();
+		$this->checkRedirectUrl($this->menu->url);
 		$this->loadContentFromDB();
 		$this->loadTemplate();
 		$this->sessionEx = org_glizy_ObjectFactory::createObject('org.glizy.SessionEx', $this->getId());

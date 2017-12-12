@@ -392,7 +392,7 @@ class org_glizy_helpers_Link extends GlizyObject
 		{
 			for ($i=0; $i<count($internalLinks[0]); $i++)
 			{
-				$link = $serverUrl.'getFile.php?id='.$internalLinks[2][$i];
+				$link = org_glizycms_Glizycms::getMediaArchiveBridge()->mediaByIdUrl($internalLinks[2][$i]);
 				$originaLink = $internalLinks[0][$i];
 				$newLink = str_replace('media:'.$internalLinks[2][$i].":".$internalLinks[4][$i], $link, $originaLink);
 				$text = str_replace($originaLink, $newLink, $text);

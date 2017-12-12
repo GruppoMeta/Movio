@@ -3,6 +3,7 @@ class org_glizycms_mediaArchive_controllers_mediaEdit_ajax_Cancel extends org_gl
 {
     public function execute($data)
     {
+        $this->checkPermissionForBackend();
         $this->directOutput = true;
         return array('url' => $this->changeAction(''));
     }

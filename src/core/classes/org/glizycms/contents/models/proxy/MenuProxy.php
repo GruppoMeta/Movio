@@ -135,7 +135,11 @@ class org_glizycms_contents_models_proxy_MenuProxy extends GlizyObject
         $order = $menus->count()+1;
 
         $application = org_glizy_ObjectValues::get('org.glizy', 'application');
-		$user = $application->getCurrentUser();
+		$menudetail_isVisible = 1;
+        $user = $application->getCurrentUser();
+        if ($user) {
+            $menudetail_isVisible = $user->acl(__Config::get('SITEMAP_ID'), 'publish') === true ? 1 : 0;
+        }
 
         // add the menu
         $ar = org_glizy_ObjectFactory::createModel('org.glizycms.core.models.Menu');
@@ -152,7 +156,7 @@ class org_glizycms_contents_models_proxy_MenuProxy extends GlizyObject
         }
 
         $ar->menudetail_title = $title;
-        $ar->menudetail_isVisible = $user->acl(__Config::get('SITEMAP_ID'), 'publish') === true ? 1 : 0;
+        $ar->menudetail_isVisible = $menudetail_isVisible;
         $ar->menudetail_description = '';
         $ar->menudetail_subject = '';
         $ar->menudetail_keywords = '';

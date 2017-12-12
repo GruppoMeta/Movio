@@ -61,7 +61,12 @@ class org_glizy_components_EmptyComponent extends org_glizy_components_Component
 	public function render($outputMode=NULL, $skipChilds=false)
 	{
 		if ($this->acceptOutput) {
-			$this->_content = new StdClass;
+			if ($this->_content && is_array($this->_content)) {
+				$this->_content = (object)$this->_content;
+			} else if (!is_object($this->_content)) {
+				$this->_content = new StdClass;
+			}
+
 			$numChild = count($this->childComponents);
 			for ($i=0; $i<$numChild;$i++) {
 				if ($this->childComponents[$i]->getAttribute('visible') && $this->childComponents[$i]->getAttribute('enabled')) {

@@ -22,7 +22,7 @@
 
 class org_glizy_helpers_Files extends GlizyObject
 {
-    public static function deleteDirectory($dir, $expireTime=null)
+    public static function deleteDirectory($dir, $expireTime=null, $onlyContent=false)
     {
       	if (!file_exists($dir)) return false;
 
@@ -46,7 +46,7 @@ class org_glizy_helpers_Files extends GlizyObject
             }
         }
 
-        return @rmdir($dir);
+        return !$onlyContent ? @rmdir($dir) : true;
     }
 
 
@@ -76,22 +76,4 @@ class org_glizy_helpers_Files extends GlizyObject
         }
         return $fileList;
     }
-
-
-    // // http://stackoverflow.com/questions/22316808/php-delete-all-files-older-than-x-days-in-2-folders
-    // public static function deleteFrom($src, $dst)
-    // {
-    //     $dir = opendir($src);
-    //     @mkdir($dst, 0777, true);
-    //     while(false !== ( $file = readdir($dir)) ) {
-    //         if (( $file != '.' ) && ( $file != '..' )) {
-    //             if ( is_dir($src . '/' . $file) ) {
-    //                 org_glizy_helpers_Files::copyDirectory($src . '/' . $file,$dst . '/' . $file);
-    //             } else {
-    //                 copy($src . '/' . $file, $dst . '/' . $file);
-    //             }
-    //         }
-    //     }
-    //     closedir($dir);
-    // }
 }

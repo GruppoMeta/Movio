@@ -91,20 +91,4 @@ class org_glizy_mvc_core_Application extends org_glizy_application_Application
 			parent::createSiteMap($forceReload);
 		}
 	}
-
-    /**
-     * @param string $command
-     *
-     * @return mixed
-     */
-	function executeCommand( $command )
-	{
-		$actionClass = &org_glizy_ObjectFactory::createObject( $command, null, $this );
-		if ( is_object( $actionClass ) && method_exists( $actionClass, "execute" ) ) {
-			$params = func_get_args();
-			array_shift($params);
-			return call_user_func_array( array( $actionClass, "execute" ), $params );
-		}
-        return null;
-	}
 }
