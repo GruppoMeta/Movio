@@ -2,7 +2,7 @@
 <glz:Config xmlns:glz="http://www.glizy.org/dtd/1.0/">
     <glz:Param name="CHARSET" value="UTF-8" />
     <glz:Param name="APP_NAME" value="MOVIO" />
-    <glz:Param name="APP_VERSION" value="2.0" />
+    <glz:Param name="APP_VERSION" value="2.0.1" />
     <glz:Param name="APP_AUTHOR">
         <![CDATA[Gruppo Meta <http://www.gruppometa.it>]]>
     </glz:Param>
@@ -33,8 +33,9 @@
     <glz:Param name="glizy.dataAccess.documentVisibility" value="true" />
     <glz:Param name="glizycms.content.history" value="false" />
     <glz:Param name="glizy.routing.newParser" value="false" />
+    <glz:Param name="glizy.acl.defaultIfNoDefined" value="true" />
 
-    <glz:Param name="BASE_REGISTRY_PATH" value="movio" />
+        <glz:Param name="BASE_REGISTRY_PATH" value="movio" />
     <glz:Param name="STATIC_FOLDER" value="static/movio/" />
 
     <glz:Param name="movio.noImage.src" value="{{path:STATIC_DIR}}movio/templates/Movio/img/various/img-not-disponible.jpg" />
