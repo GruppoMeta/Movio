@@ -157,6 +157,23 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
         foreach((array)$entityTypeProperties as $entityTypeProperty) {
             $attribute = $entityTypeService->getAttributeIdByProperties($entityTypeProperty);
 
+            if ($entityTypeProperty['entity_properties_type']=='attribute.thesaurus') {
+                $indexName = $entityTypeProperty['entity_properties_type'].'.'.$entityTypeProperty['entity_properties_params'];
+                $document->addField(new org_glizy_dataAccessDoctrine_DbField(
+                            $indexName,
+                            org_glizy_dataAccessDoctrine_types_Types::ARRAY_ID,
+                            255,
+                            false,
+                            $entityTypeProperty['entity_properties_required'] ? new org_glizy_validators_NotNull() : null,
+                            '',
+                            false,
+                            false,
+                            '',
+                            org_glizy_dataAccessDoctrine_DbField::ONLY_INDEX));
+
+               $document->{$indexName} = $data->{$attribute};
+            }
+
             // se l'attributo non è una relazione
             if (is_null($entityTypeProperty['entity_properties_target_FK_entity_id'])) {
                 $type = $fieldTypeService->getTypeMapping($entityTypeProperty['entity_properties_type']);
@@ -196,7 +213,7 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
                 $document->$attribute = $value;
             }
 
-            if ($fieldTypeService->isTypeIndexed($entityTypeProperty['entity_properties_type'])) {
+            if ($fieldTypeService->isTypeIndexed($entityTypeProperty['entity_properties_type']) && !is_array($value) && !is_object($value)) {
                 $stripped = trim(strip_tags($value));
                 if (!is_numeric($value) && strlen($stripped) > org_glizycms_Glizycms::FULLTEXT_MIN_CHAR ) {
                     $fulltext .= $stripped.org_glizycms_Glizycms::FULLTEXT_DELIMITER;
@@ -222,6 +239,7 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
 
             if ($speakingUrlProxy) {
                 $languageId = org_glizy_ObjectValues::get('org.glizy', 'editingLanguageId');
+
                 //valida l'url
                 if (!$speakingUrlProxy->validate($document->url, $languageId, $id, 'movio.modules.ontologybuilder.content')) {
                     throw new org_glizy_validators_ValidationException(array('Url non valido perché già utilizzato'));

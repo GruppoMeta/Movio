@@ -87,7 +87,7 @@ class movio_modules_ontologybuilder_views_components_Relation extends org_glizy_
             foreach ($it as $ar) {
                 $attribute = $entityTypeService->getAttributeIdByAr($ar);
 
-                if (is_null($ar->entity_properties_target_FK_entity_id) && preg_match('/text$/', $ar->entity_properties_type) && $this->_content[$attribute]) {
+                if (is_null($ar->entity_properties_target_FK_entity_id) && preg_match('/text$/', $ar->entity_properties_type) && $this->_content[$attribute] && !is_array($this->_content[$attribute]) && !is_object($this->_content[$attribute])) {
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.LongText', $this->_application, $this, 'glz:LongText', '__description', '__description');
                     $c->setAttribute('adm:htmlEditor', true);
                     $this->addChild($c);

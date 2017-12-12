@@ -184,66 +184,76 @@ class movio_modules_thesaurus_models_proxy_ThesaurusProxy extends GlizyObject
         $ar->save();
     }
 
-    // restituisce i documenti che hanno taggato il termine con id uguale a termId
-    public function getDocumentsWithTerm($termId)
+    /**
+     * @param int $dictionaryId
+     * @return array
+     */
+    public function getDocumentsWithDictionaryOrTerm($dictionaryId, $termId=null)
     {
         $application = org_glizy_ObjectValues::get('org.glizy', 'application');
         $entityTypeService = $application->retrieveProxy('movio.modules.ontologybuilder.service.EntityTypeService');
         $entityResolver = org_glizy_objectFactory::createObject('movio.modules.ontologybuilder.EntityResolver');
         $menuMap = array();
 
-        // TODO: non va bene l'implementazione perché scorre tutti i documenti
-        // eseguire un filtro sui documenti del tipo di entità che ha una campo di tipo dizionario
         $it = org_glizy_ObjectFactory::createModelIterator('movio.modules.ontologybuilder.models.EntityDocument')
-            ->load('All');
+            ->load('documentWithDictionaryOrTerm', array('dictionaryId' => $dictionaryId, 'termId' => $termId));
 
         $result = array();
         foreach ($it as $ar) {
             $entityTypeId = $entityTypeService->getEntityTypeId($ar->getType());
-            if (!isset($menuMap[$entityTypeId])) {
-                $arMenu = $entityResolver->getMenuVisibleEntity($entityTypeId);
-                $menuMap[$entityTypeId] = $arMenu;
-            } else {
-                $arMenu = $menuMap[$entityTypeId];
+            $arMenu = $this->menuFromEnityId($entityTypeId, $menuMap, $entityResolver);
+            if (!$arMenu) {
+                continue;
             }
 
-            $thesaurusAttribute = $entityTypeService->getAttributeByType($entityTypeId, 'attribute.thesaurus');
             $descriptionAttribute = $entityTypeService->getDescriptionAttribute($entityTypeId);
-            // se l'entità di questo documento ha un campo di tipo thesaurus
-            if ($arMenu && $thesaurusAttribute)
-            {
-                $thesaurusAttribute = $this->prepareThesaurusAttribute($thesaurusAttribute);
-                foreach ($thesaurusAttribute as $attribute) {
-                    if ($ar->keyInDataExists($attribute)) {
-                        if (!is_array($ar->$attribute)) continue;
-                        // si cerca nei tag il termine con id uguale a termId
-                        foreach ($ar->$attribute as $term) {
-                            if ($term->id == $termId) {
-                                $document_id = $ar->getId();
-                                $result[] = array(
-                                    'id' => $document_id,
-                                    'title' => $ar->title,
-                                    'description' => glz_strtrim(($descriptionAttribute && $ar->keyInDataExists($descriptionAttribute)) ? $ar->$descriptionAttribute : '', 300),
-                                    'url' => __Routing::makeUrl('showEntityDetail', array('pageId' => $arMenu->id, 'entityTypeId' => $entityTypeId,'document_id' => $document_id))
-                                );
-                                break;
-                            }
-                        }
-                    }
-                }
+            $document_id = $ar->getId();
+            $item = array(
+                'id' => $document_id,
+                'title' => $ar->title,
+                'description' => glz_strtrim(($descriptionAttribute && $ar->keyInDataExists($descriptionAttribute)) ? $ar->$descriptionAttribute : '', 300),
+                'url' => __Routing::makeUrl('showEntityDetail', array('pageId' => $arMenu->id, 'entityTypeId' => $entityTypeId,'document_id' => $document_id))
+            );
+
+            if (!isset($result[$ar->termId])) {
+                $termJson = json_decode($ar->term);
+                $term = movio_modules_thesaurus_models_TermFactory::createTermFromType($termJson->type);
+                $term->setFromObject($termJson);
+                $result[$ar->termId] = array(   'term' => $term,
+                                                'taggedDocuments' => array());
             }
+            
+            $result[$ar->termId]['taggedDocuments'][] = $item;
         }
+
         return $result;
     }
 
-  private function prepareThesaurusAttribute($thesaurusAttribute)
-  {
-        if (!is_array($thesaurusAttribute)) {
-            $result[] = $thesaurusAttribute;
-            return $result;
-        } else {
-            return $thesaurusAttribute;
+     /**
+     * @param int $termId
+     * @return array
+     */
+    public function getDocumentsWithTerm($termId)
+    {
+        $term = $this->loadTerm($termId);
+        $result = $this->getDocumentsWithDictionaryOrTerm($term->dictionaryId, $termId);
+        return isset($result[$termId]) ? $result[$termId]['taggedDocuments'] : array();
+    }
+    
+    /**
+     * @param int $entityTypeId
+     * @param array $menuMap
+     * @param movio_modules_ontologybuilder_EntityResolver $entityResolver
+     * @return object
+     */
+    private function menuFromEnityId($entityTypeId, &$menuMap, $entityResolver)
+    {
+        if (!isset($menuMap[$entityTypeId])) {
+            $arMenu = $entityResolver->getMenuVisibleEntity($entityTypeId);
+            $menuMap[$entityTypeId] = $arMenu;
         }
+
+        return $menuMap[$entityTypeId];;
     }
 
 }

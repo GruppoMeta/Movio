@@ -55,16 +55,7 @@ class movio_modules_thesaurus_views_components_DictionaryListCmp extends org_gli
     {
         if ($dictionaryId) {
             $thesaurusProxy = org_glizy_ObjectFactory::createObject('movio.modules.thesaurus.models.proxy.ThesaurusProxy');
-            $terms = $thesaurusProxy->getAllTerms($dictionaryId);
-            foreach ($terms as $term) {
-                $taggedDocuments = $thesaurusProxy->getDocumentsWithTerm($term->getId());
-                if ($taggedDocuments) {
-                    $this->_content['records'][] = array (
-                        'term' => $term,
-                        'taggedDocuments' => $taggedDocuments
-                    );
-                }
-            }
+            $this->_content['records'] = $thesaurusProxy->getDocumentsWithDictionaryOrTerm($dictionaryId);
         }
 
         if ($this->type == 'geographical') {
