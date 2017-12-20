@@ -15,7 +15,7 @@
 
     <mvc:State name="index">
         <glz:Panel id="visualizationBox" visible="false">
-            <glz:DataDictionary id="usergroupsDP" recordClassName="org.glizycms.userManager.models.UserGroup" field="usergroup_id,usergroup_name" query="userGroupsAdmin" />
+            <glz:DataDictionary id="usergroupsDP" recordClassName="org.glizycms.groupManager.models.UserGroup" field="usergroup_id,usergroup_name" query="external" />
             <glz:List id="groupId" label="{i18n:User group}" dataProvider="{usergroupsDP}" emptyValue="{i18n:User Profile}" required="false" />
         </glz:Panel>
 
