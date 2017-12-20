@@ -170,7 +170,7 @@ class org_glizy_components_DataProvider extends org_glizy_components_Component
             $r = !is_null($this->_activeRecord);
         } else {
             $r = $this->_activeRecord->load($id);
-
+        }
 
         if (!$r) {
             org_glizy_helpers_Navigation::notFound();
