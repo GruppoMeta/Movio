@@ -19,9 +19,9 @@
     	<glz:LoginBox id="formLoginPage" title="{i18n:MW_LOGIN_TITLE}" cssClass="sidebox_first"
     					userField="fldUsr" passwordField="fldPsw"
     					userLabel="{i18n:MW_LOGIN_USER}" passwordLabel="{i18n:MW_LOGIN_PSW}"
-                        registrationLabel="{i18n:MW_LOGIN_REGISTER}" registrationUrl="Registration"
+                        registrationLabel="{i18n:MW_LOGIN_REGISTER}" registrationUrl="LinkRegistration"
     					confirmLabel="{i18n:MW_LOGIN_CONFIRM}" errorLabel="{i18n:MW_LOGIN_ERROR}"
-                        rememberLabel="{i18n:MW_LOGIN_REMEMBER}" askPasswordLabel="{i18n:MW_LOGIN_ASK_PASSWORD}" askPasswordUrl="lostpassword"
+                        rememberLabel="{i18n:MW_LOGIN_REMEMBER}" askPasswordLabel="{i18n:MW_LOGIN_ASK_PASSWORD}" askPasswordUrl="linkLostpassword"
     					skin="Login.html" />
     </mvc:State>
 </mvc:Page>
