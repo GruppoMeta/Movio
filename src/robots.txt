@@ -1,0 +1,17 @@
+User-agent: * 
+Disallow: /admin/
+Disallow: /core/
+Disallow: /static/
+Disallow: /application/mediaArchive/
+Disallow: ajax.php
+Disallow: checkUpdate.php
+Disallow: getFile.php
+Disallow: getImage.php
+Disallow: zoom.php
+Disallow: url.php
+
+
+
+
+
+ 
