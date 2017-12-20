@@ -10,9 +10,8 @@
 
 	<glz:Import src="Common.xml" />
 
-    <glz:DataProvider id="ModuleDP" recordClassName="movio.modules.news.models.Model" query="newsHome"/>
-
 	<mvc:State name="index">
+        <glz:DataProvider id="ModuleDP" recordClassName="movio.modules.news.models.Model" query="newsHome"/>
         <glz:LongText id="text" label="{i18n:Text}" adm:rows="20" adm:cols="75" adm:htmlEditor="true" forceP="true" />
         <cms:SearchFilters id="filters" cssClass="search my-form clearfix" label="{i18n:Show search form}">
             <glz:DataDictionary id="filterYearDP" recordClassName="movio.modules.news.models.Model" field="year" query="filterYear" />
@@ -37,7 +36,8 @@
     </mvc:State>
 
     <mvc:State name="show">
-        <glz:RecordDetail id="entry" dataProvider="{ModuleDP}" idName="document_id" skin="News_entry.html">
+        <glz:DataProvider id="ModuleDP" recordClassName="movio.modules.news.models.Model" />
+        <glz:RecordDetail id="entry" dataProvider="{ModuleDP}" idName="document_id" skin="News_entry.html" ogTitle="title">
             <glz:Repeater id="images">
                 <glz:Script extendParent="true"><![CDATA[
 function loadContent($id, $bindTo="") {
