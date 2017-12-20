@@ -19,9 +19,9 @@ class org_glizycms_userManager_fe_controllers_user_LostPassword extends org_gliz
                 return false;
             }
 
-            // utente trovato
-            // genera una nuova password e la invia per email
-            glz_import('org.glizy.helpers.Mail');
+
+            $ar->user_password = glz_password(glz_makeConfirmCode());
+            
             // invia la notifica all'utente
             $subject    = org_glizy_locale_Locale::get('MW_LOSTPASSWORD_EMAIL_SUBJECT');
             $body       = org_glizy_locale_Locale::get('MW_LOSTPASSWORD_EMAIL_BODY');

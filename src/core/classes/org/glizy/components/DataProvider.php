@@ -63,16 +63,6 @@ class org_glizy_components_DataProvider extends org_glizy_components_Component
             if ($this->getAttribute('showAll') && method_exists($it, 'showAll')) {
                 $this->_recordIterator->showAll();
             }
-            /*
-            $this->_activeRecord = &org_glizy_ObjectFactory::createModel($this->_classPath);
-            if ($this->_activeRecord===false)
-            {
-                // TODO
-                // visualizzare FATAL ERROR
-                $this->RaiseError("DataProvider: record class don't found",__FUNCTION__,__FILE__,__LINE__,'verbosedie');
-            }
-            $this->_activeRecord->setDefaultQuery( $this->getAttribute('query') );
-            */
         }
 
         $this->processChilds();
@@ -172,13 +162,20 @@ class org_glizy_components_DataProvider extends org_glizy_components_Component
     function &load($id)
     {
         $queryName = strtolower($this->getAttribute('query'));
+
         if ($queryName && $queryName!=='all') {
             $it = &org_glizy_ObjectFactory::createModelIterator($this->getAttribute('recordClassName'));
             $it->load($queryName, array('id' => $id));
             $this->_activeRecord = $it->first();
+            $r = !is_null($this->_activeRecord);
         } else {
-            $this->_activeRecord->load($id);
+            $r = $this->_activeRecord->load($id);
+
+
+        if (!$r) {
+            org_glizy_helpers_Navigation::notFound();
         }
+
         return $this->getObject();
     }
 

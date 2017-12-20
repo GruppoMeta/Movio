@@ -35,33 +35,31 @@ class org_glizy_components_RecordDetail extends org_glizy_components_ComponentCo
 
     function process()
     {
-        $this->recordId = org_glizy_Request::get($this->getAttribute('idName'), NULL);
-        if (is_null($this->recordId)) return;
-
         $dataProvider = &$this->getAttribute('dataProvider');
-        if ($dataProvider) {
-            $this->ar = $dataProvider->load($this->recordId);
-            $processCell = org_glizy_ObjectFactory::createObject($this->getAttribute('processCell'), $this->_application);
-            if ($processCell) {
-                $ar = &$this->ar;
-                call_user_func_array(array($processCell, 'renderCell'), array($ar, $this->getAttribute('processCellParams')));
-            }
-            $this->_content = org_glizy_ObjectFactory::createObject('org.glizy.components.RecordDetailVO', $this->ar);
+        if (!$dataProvider) {
+            throw org_glizy_exceptions_GlobalException::missingAttributeInComponent($this->_tagname, $this->getId(), 'dataProvider');
+        }
 
-            $ogTitle = $this->getAttribute('ogTitle');
-            if ($ogTitle) {
-                org_glizy_ObjectValues::set('org.glizy.og', 'title', $this->ar->{$ogTitle});
-                if ($this->getAttribute('modifyBreadcrumbs')) {
-                    $evt = array('type' => GLZ_EVT_BREADCRUMBS_UPDATE, 'data' => $this->ar->{$ogTitle});
-                    $this->dispatchEvent($evt);
+        $this->recordId = org_glizy_Request::get($this->getAttribute('idName'), NULL);
+        $this->ar = $dataProvider->load($this->recordId);
+  
+        $processCell = org_glizy_ObjectFactory::createObject($this->getAttribute('processCell'), $this->_application);
+        if ($processCell) {
+            $ar = &$this->ar;
+            call_user_func_array(array($processCell, 'renderCell'), array($ar, $this->getAttribute('processCellParams')));
+        }
+        $this->_content = org_glizy_ObjectFactory::createObject('org.glizy.components.RecordDetailVO', $this->ar);
 
-                    $evt = array('type' => GLZ_EVT_PAGETITLE_UPDATE, 'data' => $this->ar->{$ogTitle});
-                    $this->dispatchEvent($evt);
-                }
+        $ogTitle = $this->getAttribute('ogTitle');
+        if ($ogTitle) {
+            org_glizy_ObjectValues::set('org.glizy.og', 'title', $this->ar->{$ogTitle});
+            if ($this->getAttribute('modifyBreadcrumbs')) {
+                $evt = array('type' => GLZ_EVT_BREADCRUMBS_UPDATE, 'data' => $this->ar->{$ogTitle});
+                $this->dispatchEvent($evt);
+
+                $evt = array('type' => GLZ_EVT_PAGETITLE_UPDATE, 'data' => $this->ar->{$ogTitle});
+                $this->dispatchEvent($evt);
             }
-// TODO controllare che i dati siano stati caricati correttamento
-        } else {
-// TODO generare errore, dataprovider non valid
         }
 
         $this->_content->__url__ = !is_null( $this->getAttribute( 'routeUrl' ) ) ? org_glizy_helpers_Link::makeURL( $this->getAttribute( 'routeUrl' ), $this->_content) : '';

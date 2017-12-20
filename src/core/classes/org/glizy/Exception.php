@@ -115,22 +115,26 @@ class org_glizy_Exception
             }
         }
 
-        if (!is_array($message)) {
+        if (self::$debugMode) {
+            if (!is_array($message)) {
+                $e                = array();
+                $e['code']        = $code;
+                $e['description'] = $message;
+                $e['message']     = '';
+            } else {
+                $e = $message;
+            }
+
+            if (isset($e['line'])) {
+                $e['trace'] = self::formatTrace( $e['line'], $e['trace'] ? $e['trace'] : debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));                
+            }
+        } else {
             $e                = array();
             $e['code']        = $code;
-            $e['description'] = $message;
-            $e['message']     = '';
-        } else {
-            $e = $message;
+            $e['description'] = $codeDescription;
         }
-        $e['title'] = $e['title'] ? $e['title'] : self::$applicationName;
 
-        if (self::$debugMode && isset($e['line'])) {
-            $e['trace'] = self::formatTrace( $e['line'], $e['trace'] ? $e['trace'] : debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
-        } else {
-            unset($e['trace']);
-            unset($e['file']);
-        }
+        $e['title'] = $e['title'] ? $e['title'] : self::$applicationName;
 
         if (!$html) {
             echo json_encode($e);
@@ -140,8 +144,6 @@ class org_glizy_Exception
             include_once('error-'.$code.'.html');
         } else if (file_exists('error-'.$code.'.php')) {
             include_once('error-'.$code.'.php');
-        } else if (file_exists(dirname(__FILE__) . '/../../../pages/errors/'.$code.'.php')) {
-            include_once(dirname(__FILE__) . '/../../../pages/errors/'.$code.'.php');
         } else {
             include_once(dirname(__FILE__) . '/../../../pages/errors/general.php');
         }

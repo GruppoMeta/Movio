@@ -121,7 +121,7 @@ class org_glizy_mvc_core_Command extends GlizyObject
     protected function checkPermissionForBackend($service=null, $action=null)
     {
         if (!$this->user->backEndAccess) {
-            org_glizy_helpers_Navigation::accessDenied();
+            org_glizy_helpers_Navigation::accessDenied($this->user->isLogged());
         }
 
         $this->checkPermission($service, $action);

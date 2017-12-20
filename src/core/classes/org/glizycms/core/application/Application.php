@@ -253,8 +253,11 @@ class org_glizycms_core_application_Application extends org_glizy_mvc_core_Appli
             }
         }
 
-        org_glizy_Paths::set('APPLICATION_TEMPLATE', org_glizy_Paths::get('APPLICATION_STATIC').'templates/'.$this->_templateName.'/');
-        org_glizy_Paths::set('APPLICATION_TEMPLATE_DEFAULT', org_glizy_Paths::get('APPLICATION_STATIC').'templates/Default/');
+        $pathBaseTemplate = org_glizy_Paths::get('APPLICATION_STATIC').'templates/';
+        org_glizy_Paths::set('APPLICATION_TEMPLATE', $pathBaseTemplate.$this->_templateName.'/');
+        org_glizy_Paths::set('APPLICATION_TEMPLATE_DEFAULT', $pathBaseTemplate.'Default/');
+        org_glizy_Paths::addClassSearchPath($pathBaseTemplate.$this->_templateName.'/classes/');
+        glz_loadLocaleReal( $pathBaseTemplate.$this->_templateName.'/classes', $this->getLanguage() );
     }
 
     private function readSiteProperties()

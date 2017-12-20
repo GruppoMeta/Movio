@@ -51,6 +51,7 @@ class org_glizy_helpers_Navigation extends GlizyObject
 
     public static function notFound($message='')
     {
+        $message = $message ? : __T('GLZ_ERR_404');
         org_glizy_Exception::show404($message);
     }
 

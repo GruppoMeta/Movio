@@ -62,6 +62,7 @@ class org_glizycms_template_views_components_TemplateEdit extends org_glizycms_v
 
         $templateRealPath = $templateProxy->getTemplateRealpath();
         if ($templateRealPath) {
+            glz_loadLocaleReal( $templateRealPath.'/classes', $this->_application->getLanguage() );
             org_glizy_ObjectFactory::attachPageToComponent(
                     $this,
                     $this->_application,

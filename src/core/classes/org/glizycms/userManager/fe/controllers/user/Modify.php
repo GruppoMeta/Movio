@@ -30,19 +30,18 @@ class org_glizycms_userManager_fe_controllers_user_Modify extends org_glizy_mvc_
             if ($email != $ar->user_loginId) {
                 $ar2 = org_glizy_ObjectFactory::createModel('org.glizy.models.User');
                 if ($ar2->find(array('user_loginId' => $email)) && $ar2->user_id!=$ar->user_id) {
-                    $this->view->validateAddError('L\'email è già presente nel database, usare un\'altra email');
+                    $this->view->validateAddError(__T('MW_REGISTRATION_EMAIL_ALREADY_EXISTS'));
                     return;
                 }
             }
 
-            // TODO migliorare così siamo esposti a problemi di sicurezza
             $fields = $ar->getFields();
+            $skipFields = array('user_password', 'user_id', 'user_FK_usergroup_id', 'user_FK_site_id', 'user_dateCreation', 'user_isActive', 'user_loginId', 'user_confirmCode');
             foreach($fields as $k=>$v) {
-                if ($k=='user_password') continue;
-                if (__Request::exists($k)) {
-                    $ar->$k = __Request::get($k);
-                }
+                if (in_array($k, $skipFields) || !__Request::exists($k)) continue;
+                $ar->$k = __Request::get($k);
             }
+
             $password = __Request::get('user_password');
             if ($password) {
                 $ar->user_password = glz_password($password);

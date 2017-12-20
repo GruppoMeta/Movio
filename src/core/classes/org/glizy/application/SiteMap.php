@@ -63,7 +63,7 @@ class org_glizy_application_SiteMap extends GlizyObject
 				if (preg_match("/\{php\:.*\}/i", $menuNode['isVisible'] ) )
 				{
 					$phpcode = org_glizy_helpers_PhpScript::parse( $menuNode['isVisible'] );
-					$menuNode['isVisible'] = eval($phpcode)==1 ? true : false;
+					$menuNode['isVisible'] = eval($phpcode)==1 ? true : false;					
 					$menuNode['hideByAcl'] = !$menuNode['isVisible'];
 				}
 				else
@@ -74,6 +74,7 @@ class org_glizy_application_SiteMap extends GlizyObject
 
 			if ( !$this->isAdmin && $menuNode['isLocked'] && !$this->_user->isLogged() && $this->hidePrivatePage ) {
 				$menuNode['isVisible'] = false;
+				$menuNode['hideByAcl'] = true;
 			}
 
 			$this->_pageTypeMap[strtolower($menuNode['pageType'])] = &$menuNode;

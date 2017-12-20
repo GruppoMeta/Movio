@@ -7,44 +7,39 @@
  * file that was distributed with this source code.
  */
 ?>
+<!DOCTYPE HTML>
 <html>
 <head>
-<title>Internal Server Error</title>
-<style type="text/css">
-
-body {
-	background-color:	#fff;
-	margin:				40px;
-	font-family:		Lucida Grande, Verdana, Sans-serif;
-	font-size:			12px;
-	color:				#000;
+<meta charset="utf-8">
+<title><?php echo $e['code'];?> - <?php echo $e['description'];?></title>
+<style>
+body{
+	background: #333;
+	color: #fff;
+	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+	font-weight: normal;
 }
-
-#content  {
-	min-height: 400px;
-	width: 500px;
-	margin: auto;
-	background: #fff;
-}
-
-h1 {
-	font-size:			3em;
-	color:				#990000;
-	margin: 			0 0 4px 0;
+#content{
+	margin: 0 auto;
+	width: 960px;
 	text-align: center;
 }
-h2 {
-	text-align: center;
-	font-size:			2em;
-	color:				#0;
-	margin: 			0 0 4px 0;
+.font-size-10{
+	font-size: 10em;
+	margin: 0.5em 0;
+	color: #990;
+}
+.font-size-2{
+	font-size: 2em;
+	line-height: 1.2em;
 }
 </style>
 </head>
 <body>
-	<div id="content">
-		<h1><?php echo $e['title'];?></h1>
-		<h2>Internal Server Error</h2>
+    <div id="content">
+		<p class="font-size-10"><?php echo $e['title'];?></p>
+		<p class="font-size-2"><?php echo $e['code'];?> - <?php echo $e['description'];?></p>
 	</div>
 </body>
 </html>
+

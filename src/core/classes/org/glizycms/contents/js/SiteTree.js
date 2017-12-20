@@ -81,8 +81,6 @@ var GlizycmsSiteTree = dejavu.Class.declare({
      */
     onNodeSelect: function (event, data) {
         if (data.rslt.e) {
-            if (!data.rslt.obj.data('edit')) return;
-
             Glizy.events.broadcast("glizycms.pageEdit", {"menuId": data.rslt.obj.attr("id")});
             if (data.rslt.obj.data('add')) {
                 $(this.addPageId).show();
@@ -103,8 +101,6 @@ var GlizycmsSiteTree = dejavu.Class.declare({
     onNodeRemove: function (event, data) {
         var self = this;
         data.rslt.obj.each(function () {
-            if (!data.rslt.obj.data('delete')) return;
-
             $.ajax({
                 async : false,
                 type: 'POST',
@@ -134,11 +130,6 @@ var GlizycmsSiteTree = dejavu.Class.declare({
     onNodeMove: function (event, data) {
         var self = this;
         data.rslt.o.each(function (i) {
-            if (!$(this).data('edit') || !data.rslt.np.data('edit')) {
-                $.jstree.rollback(data.rlbk);
-                return;
-            }
-
             $.ajax({
                 async : false,
                 type: 'POST',

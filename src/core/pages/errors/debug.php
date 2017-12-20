@@ -7,110 +7,63 @@
  * file that was distributed with this source code.
  */
 ?>
+<!DOCTYPE HTML>
 <html>
 <head>
-<title>Internal Server Error</title>
-<style type="text/css">
-
-body {
-	background-color:	#fff;
-	margin:				40px;
-	font-family:		Lucida Grande, Verdana, Sans-serif;
-	font-size:			12px;
-	color:				#000;
+<meta charset="utf-8">
+<title><?php echo $e['code'];?> - <?php echo $e['description'];?></title>
+<style>
+body{
+	background: #333;
+	color: #fff;
+	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+	font-weight: normal;
 }
-
-#content  {
-	margin: auto;
-	padding-bottom: 200px;
-	background: #fff;
+#content{
+	margin: 0 auto;
+	width: 960px;
 }
-
-h1 {
-	font-size:			3em;
-	color:				#990000;
-	margin: 			0 0 4px 0;
-	text-align: center;
+.font-size-10{
+	font-size: 10em;
+	margin: 0;
+	color: #990;
 }
-h2 {
-	text-align: center;
-	font-size:			2em;
-	color:				#0;
-	margin: 			0 0 4px 0;
+.font-size-2{
+	font-size: 2em;
+	margin: 0;
 }
-.code {
-	margin: 1em;
-	background: #eee;
-	border: 1px solid #ccc;
-}
-.currentLine {
-	background: #ff6600;
+.with-line {
+	border-bottom: 1px solid #ccc;
 }
 </style>
 </head>
 <body>
-	<div id="content">
-		<h1>GLIZY framework</h1>
-		<h2><?php echo $e['code'].' : '.$e['description'];?></h2>
-		<h3>Stacktrace</h3>
+    <div id="content">
+		<p class="font-size-10"><?php echo $e['title'];?></p>
+		<p class="font-size-2"><?php echo $e['code'].' : '.$e['description'];?></p>
+		<?php if (isset($e['trace'])) { ?>
+			<p class="with-line">Stacktrace</p>
+			<ol>
+			<?php
+				$errors = $e['trace'];
+				for ( $i = 0; $i < count($errors); $i++ ) {
+					echo '<li>'.$errors[$i].'</li>';
+				}
+			?>
+			</ol>
+		<?php } ?>
+		<p class="with-line">Request variables</p>
 		<ul>
-<?php
-$realPathCore = realPath( dirname( __FILE__ ).'/../../../' );
-echo '<li>';
-echo '1# '.str_replace( $realPathCore, '', $e['file'] ).':'.$e['line'].'<div class="code">';
-$fileSrc = highlight_file( $e['file'], true );
-$fileSrc =  explode("<br />", $fileSrc);
-$start = $e['line'] < 5 ? 0 : $e['line'] - 5;
-$end = $start + 10;
-$out = '';
-foreach ( $fileSrc as $k => $line )
-{
-	$k++;
-    if ( $k > $end ) break;
-    $line = trim( strip_tags( $line ) );
-	if ( $k >= $start )
-	{
-		if ( $k != $e['line'] )
-		{
-			echo '<code>'.trim(strip_tags($line)).'</code><br />';
-		}
-		else
-		{
-			echo '<div class="currentLine"><code>'.trim(strip_tags($line)).'</code></div>';
- 		}
-	}
-}
-echo '</div></li>';
-
-ob_start();
-debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-$string .= ob_get_clean();
-$errors = explode("\n", $string );
-for ( $i = 3; $i < count( $errors); $i++ )
-{
-	if ( !empty( $errors[ $i ] ) )
-	{
-		$err = str_replace( $realPathCore, '', $errors[ $i ] );
-		$err = str_replace( '#'.$i, '#'.($i-1), $err );
-		echo '<li>'.$err.'</li>';
-	}
-}
-
-?>
-	</ul>
-	<h3>Request variables</h3>
-	<ul>
-<?php
-$params = __Request::getAllAsArray();
-foreach ( $params as $k => $v )
-{
-	if ( !empty( $v ) )
-	{
-		echo '<li><strong>'.$k.'</strong> '.$v.'</li>';
-	}
-}
-?>
-	</ul>
+		<?php
+			$params = __Request::getAllAsArray();
+			foreach ( $params as $k => $v ) {
+				if ( !empty( $v ) ) {
+					echo '<li><strong>'.$k.'</strong> '.$v.'</li>';
+				}
+			}
+		?>
+		</ul>
 	</div>
 </body>
 </html>
+

@@ -242,33 +242,51 @@ function glz_import($classPath, $classToReadFirst=array(), $path='')
  */
 function glz_loadLocale( $classPath )
 {
+	static $loadedLocale = array();
+
 	if (class_exists('org_glizy_ObjectValues'))
 	{
+		if (in_array($classPath, $loadedLocale)) return true;
+
+		$loadedLocale[] = $classPath;
 		$classPath = str_replace('.', '/', $classPath);
 		$classPath = rtrim($classPath, '*');
         /** @var org_glizy_application_Application $application */
 		$application = &org_glizy_ObjectValues::get('org.glizy', 'application');
 		if (is_object($application) )
 		{
+			$language = $application->getLanguage();
 			$searchPath = org_glizy_Paths::getClassSearchPath();
 			foreach($searchPath as $p)
 			{
-				$path = $p.$classPath.'/locale/'.$application->getLanguage().'.php';
-				$pathEn = $p.$classPath.'/locale/en.php';
-				if ( file_exists($path) )
-				{
-					require( $path );
-					break;
-				}
-				else if ( file_exists($pathEn) )
-				{
-					require( $pathEn );
+				if (glz_loadLocaleReal($p.$classPath, $language)) {
 					break;
 				}
 			}
 		}
 	}
 }
+
+/**
+ * @param  string $path
+ * @param  string $language
+ * @return void
+ */
+function glz_loadLocaleReal( $path, $language )
+{
+	$pathLang = $path.'/locale/'.$language.'.php';
+	$pathEn = $path.'/locale/en.php';
+	if ( file_exists($pathLang) ) {
+		require( $pathLang );
+		return true;
+	} else if ( file_exists($pathEn) ) {
+		require( $pathEn );
+		return true;
+	}
+
+	return false;
+}
+
 
 /**
  * @param string $classPath

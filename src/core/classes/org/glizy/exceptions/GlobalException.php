@@ -13,4 +13,10 @@ class org_glizy_exceptions_GlobalException extends Exception
     {
         return new self('Class '.$className.' does not exists');
     }
+
+
+    public static function missingAttributeInComponent($tagName, $componentId, $attributeName)
+    {
+        return new self(sprintf('Attribute "%s" in component %s#%s is required', $attributeName, $tagName, $componentId));
+    }
 }

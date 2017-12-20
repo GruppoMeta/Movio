@@ -15,7 +15,6 @@ class org_glizycms_userManager_fe_controllers_user_Registration extends org_gliz
             $email = org_glizy_Request::get('user_email', '');
             $ar = org_glizy_ObjectFactory::createModel('org.glizy.models.User');
             if ($ar->find(array('user_loginId' => $email))) {
-// TODO tradurre
                 $this->view->validateAddError(__T('MW_REGISTRATION_EMAIL_ALREADY_EXISTS'));
                 return;
             }
