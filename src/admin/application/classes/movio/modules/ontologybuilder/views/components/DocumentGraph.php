@@ -13,9 +13,10 @@ class movio_modules_ontologybuilder_views_components_DocumentGraph extends org_g
 
     protected function escape($s, $trim=false)
     {
-        $s = htmlentities($s, null, "UTF-8");
         // si taglia la stringa dopo i 60 caratteri
         $s = glz_strtrim($s, 60);
+        $s = htmlentities($s, null, "UTF-8");
+        $s = str_replace('"', "&quot;", $s);
         return $s;
     }
 
