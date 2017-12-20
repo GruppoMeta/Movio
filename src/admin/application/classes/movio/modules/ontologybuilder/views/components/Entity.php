@@ -4,7 +4,7 @@ class movio_modules_ontologybuilder_views_components_Entity extends org_glizy_co
     function process()
     {
         $entityProxy = org_glizy_objectFactory::createObject('movio.modules.ontologybuilder.models.proxy.EntityProxy');
-        $this->_content = $entityProxy->loadContentFrontend($this->getId());
+        $this->_content = $entityProxy->loadContentFrontend((int)$this->getId());
 
         $this->createChildComponents();
         $this->initChilds();

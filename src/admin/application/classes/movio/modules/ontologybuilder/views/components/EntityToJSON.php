@@ -23,7 +23,7 @@ class movio_modules_ontologybuilder_views_components_EntityToJSON extends org_gl
         $this->medias = array();
 
         $entityProxy = org_glizy_objectFactory::createObject('movio.modules.ontologybuilder.models.proxy.EntityProxy');
-        $this->_content = $entityProxy->loadContentFrontend($this->getId());
+        $this->_content = $entityProxy->loadContentFrontend((int)$this->getId());
 
         $this->createChildComponents();
         $this->initChilds();

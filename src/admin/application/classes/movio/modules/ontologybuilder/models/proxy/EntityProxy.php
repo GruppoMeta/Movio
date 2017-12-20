@@ -261,7 +261,7 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
     public function loadContentFrontend($entityId)
     {
         if ($entityId == 0) {
-            return (object) null;
+            org_glizy_helpers_Navigation::notFound();
         }
 
         $data = array();
@@ -269,7 +269,12 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
         $document = org_glizy_objectFactory::createObject('org.glizy.dataAccessDoctrine.ActiveRecordDocument');
 
         $languageProxy = __ObjectFactory::createObject('org.glizycms.languages.models.proxy.LanguagesProxy');
-        $document->load($entityId);
+        $r = $document->load($entityId);
+
+
+        if (!$r) {
+            org_glizy_helpers_Navigation::notFound();
+        }
 
         $document->addField(new org_glizy_dataAccessDoctrine_DbField('title', Doctrine\DBAL\Types\Type::STRING, 255, false, null, '', false));
         $data['title'] = $document->title;
