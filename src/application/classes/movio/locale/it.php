@@ -254,6 +254,7 @@ $strings = array (
   'MW_REGISTRATION_PRIVACY' => 'Acconsento al trattamento dei dati secondo la normativa sopra enunciata',
   'MW_REGISTRATION_CONFIRM' => 'Testo di conferma',
   'MW_REGISTRATION_PRIVACY_TEXT' => 'Testo legge privacy',
+  'MW_REGISTRATION_EMAIL_ALREADY_EXISTS' => 'L\'email è già presente nel database, usare un\'altra email',
   'MW_LOSTPASSWORD_SEND' => 'Invia password',
   'MW_LOSTPASSWORD_TEXT' => 'Testo introduttivo',
   'MW_LOSTPASSWORD_CONFIRM' => 'Testo di conferma',
