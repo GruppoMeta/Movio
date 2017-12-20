@@ -1,34 +1,46 @@
-
 /* BEGIN GlizyFormEdit */
-fieldset.GFEFieldset {
-    margin-left:0!important;
-    padding:0!important;
-    overflow-x:hidden;
-    border: 0;
-    margin-bottom: 40px;
-    border-bottom: 1px solid #E5E5E5;
+form.formEdit {
+  fieldset {
+      padding: 0;
+      border: 0;
+      border-top: 1px solid @grey21;
 
-    legend {
-        width:100%;
-        font-size:17px;
-        padding-left:6px;
-        background:@white;
-        color:@grey14;
-    }
+      legend {
+        margin: 0;
+        padding: 0 10px 0 0;
 
-    .btn-icon {
-        cursor:pointer;
+        &+ .control-group {
+          margin-top: 0;
         }
+      }
+
+      fieldset {
+        border: 2px solid @grey21;
+        margin: 0 0 20px 30px;
+
+        legend {
+          padding: 0 10px;
+        }
+
+        fieldset {
+          border: 4px solid @grey21;
+        }
+      }
+      .btn-icon {
+          cursor:pointer;
+      }
+  }
 }
 
 fieldset.GFEFieldset fieldset.GFEFieldset {
-    margin-left: 20px !important;
+    margin: 0 10px 20px 30px;
 }
+
 .GFEFooter {
     width:auto;
-    .box-sizing();
     padding:8px;
-    margin:0 0 0 10px;
+    margin:15px 0 0 0;
+    border-top: 1px solid #e5e5e5;
 }
 .GFEButtonContainer {
 	float: left;
@@ -45,23 +57,37 @@ input.GFEAddRow {
 
 .GFERowContainer {
 	position: relative;
-	padding: 4px;
-	background-color: #F0F0F0;
-	margin-bottom: 2px;
+	padding: 5px 0;
 	-moz-user-select: -moz-none;
 	-khtml-user-select: none;
 	-webkit-user-select: none;
 	user-select: none;
-    width:auto;
-    .box-sizing();
-    margin:0 0 0 10px;
+  width:auto;
+  margin: 0;
+  border: 1px solid #e5e5e5;
+  background: @white;
 }
+.GFERowContainer + .GFERowContainer {
+    border-top: 0 none;
+}
+.GFERowContainer .form-group {
+    margin: 0;
+}
+
+.GFERowContainer .control-group {
+    margin-bottom: 10px;
+}
+
+.GFERowContainer .form-group label {
+    font-size: 95%;
+    padding-right: 0;
+}
+
 .GFERowContainer.GFERowContainerOdd {
-	background-color: #E0E0E0;
 }
 .GFERowContainer.GFEEditingRow {
 	position: relative;
-	z-index: 101;
+	z-index: 102;
 }
 .GFERowCollapsed {
 }
@@ -73,10 +99,16 @@ input.GFEAddRow {
 .GFERowHandler {
 	float: left;
 	cursor: move;
-	height: 95%;
+	height: 100%;
+  min-height: 40px;
+  background: #eee;
+  width: 15px;
+}
+.GFERowHandler:before  {
+  content: " ";
 }
 .GFERowHandler img {
-	height: auto;
+	display: none;
 }
 
 .GFERowPreview div.GFEPreviewItem{
@@ -91,7 +123,7 @@ input.GFEAddRow {
 
 .GFERowHandler.GFERowHandlerExpanded {
     position: absolute;
-    top: 3px;
+    top: 0;
 }
 .GFERecordTitle {
 	display: inline-block;
@@ -153,7 +185,6 @@ input.GFEAddRow {
 .GFEValidationError > label {
   color: #ff0000;
 }
-
 .GFEcomments {
     width: 100%;
     height: 150px;
@@ -206,7 +237,7 @@ input.GFEAddRow {
 .dropzone-previews .dz-preview {
   background: rgba(255,255,255,0.8);
   position: relative;
-  display: inline-block;
+		display: inline-block;
   margin: 17px;
   vertical-align: top;
   border: 1px solid #acacac;
@@ -220,7 +251,7 @@ input.GFEAddRow {
 .dropzone-previews .dz-preview .dz-details {
   width: 100px;
   height: 100px;
-  position: relative;
+	position: relative;
   background: #ebebeb;
   padding: 5px;
   margin-bottom: 22px;
@@ -232,7 +263,7 @@ input.GFEAddRow {
 }
 .glizy-dropzone .dz-preview .dz-details img,
 .dropzone-previews .dz-preview .dz-details img {
-  position: absolute;
+    position: absolute;
   top: 0;
   left: 0;
   width: 100px;
@@ -344,6 +375,7 @@ input.GFEAddRow {
 
 .form-horizontal #medias .control-label {
     width: 120px;
+    padding-left: 10px;
 }
 
 .form-horizontal #medias .controls {
@@ -408,15 +440,23 @@ input.GFEAddRow {
     vertical-align: top;
 }
 
-
-
 li.glizycmsSiteTree-nodeSystem > a {
 	font-style:  italic;
 }
 
-li.glizycmsSiteTree-nodeHide > a {
+li.glizycmsSiteTree-nodeHide a {
 	color: #909090;
 }
+
+li.glizycmsSiteTree-pageHideInNav a {
+  font-style: italic;
+}
+
+li.glizycmsSiteTree-no-edit a {
+    text-decoration:line-through;
+  }
+
+  
 #openclose {
 	display: none;
 }
@@ -760,24 +800,6 @@ div.addMedia input.mediaFilePicker {
 }
 
 
-.glizyVisualSearch {
-    margin-left: 0 !important;
-
-    .VS-search-box {
-        box-shadow:none!important;
-        .border-radius(0)!important;
-        border:1px solid #ccc!important;
-    }
-
-    .VS-search input {
-        border: 0;
-        background-color: transparent;
-        box-shadow: 0 0 0 0;
-    }
-}
-
-
-
 /* jstree */
 .jstree-default a ins.jstree-icon.home {
 	background: transparent url(../images/treeIcons.png) no-repeat 0 0;
@@ -797,6 +819,10 @@ div.addMedia input.mediaFilePicker {
 
 .jstree-default a ins.jstree-icon.system {
 	background: transparent url(../images/treeIcons.png) no-repeat -73px 0;
+}
+
+.jstree-default a ins.jstree-icon.pageHideInNav {
+  background: transparent url(../images/treeIcons.png) no-repeat -89px 0;
 }
 
 .jstree-default a ins.jstree-icon.home.lock {
@@ -819,6 +845,11 @@ div.addMedia input.mediaFilePicker {
     background: transparent url(../images/treeIcons.png) no-repeat -73px -18px;
 }
 
+.jstree-default a ins.jstree-icon.pageHideInNav.lock {
+  background: transparent url(../images/treeIcons.png) no-repeat -89px -18px;
+}
+
+
 .jstree-default a ins.jstree-icon.hide {
 	opacity: 0.5;
 }
@@ -828,13 +859,15 @@ div.addMedia input.mediaFilePicker {
   color: #505050;
 }
 
+
 div.addMedia input.mediaFilePicker {
 	margin-left: 10px;
 }
 
 /* add page */
 .pageTypeSelect {
-
+    margin: 0;
+    
 		li {
 			border: 1px solid #D5D5D5;
 			box-shadow: 0 1px 0 0 @white inset, 0 1px 0 rgba(255, 255, 255, 0.4);
@@ -1266,4 +1299,40 @@ ul.mediaArchive.nav-pills {
 input.delete-media {
   float: left;
   margin: 5px;
+}
+
+.glzFormEdit.status-swicth  {
+    list-style-type: none;
+    margin: 0 0 50px 0;
+    font-size: 120%;
+    padding-bottom: 6px;
+
+    &.PUBLISHED  {
+        border-bottom: 10px solid #409040;
+    }
+
+    &.DRAFT  {
+        border-bottom: 10px solid #cc4040;
+    }
+
+    li {
+        display: inline-block;
+        padding: 0 3px;
+        a {
+            padding: 6px 10px;
+        }
+
+    }
+
+    &.PUBLISHED li a.active {
+        font-weight: bold;
+        color: #fff;
+        background: #409040;
+    }
+
+    &.DRAFT li a.active {
+        font-weight: bold;
+        color: #fff;
+        background: #cc4040;
+    }
 }

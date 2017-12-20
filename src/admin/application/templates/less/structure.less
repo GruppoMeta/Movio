@@ -958,16 +958,16 @@ form.stickyForm .formButtons {
 	text-align: center;
 	height:20px;
 	border: 0;
-	border-bottom:10px solid @themeColor;
+	border-bottom:10px solid @commonBackground;
 
 	.content {
 		min-width:430px;
-		background:@themeColor;
+		background:@commonBackground;
 		position:absolute;
 		top:0px;
 		left:50%;
 		margin-left:-215px;
-		padding:10px 0;
+		padding:10px 5px;
 
 			input {
 				margin: 0 3px;
@@ -1020,9 +1020,20 @@ label, input, button, select, textarea {
 form {
 
 	fieldset {
-		border:1px solid @grey21;
-		width: 97%;
-		margin: 0 auto 20px 20px;
+		padding:0;
+		margin: 0 0 40px 0;
+		border: 1px solid @grey21;
+		padding: 10px;
+
+		fieldset {
+			margin: 0 15px;
+			border: 2px solid @grey21;
+
+			fieldset {
+				border: 3px solid @grey21;
+			}
+
+		}
 
 		.content {
 			padding:10px;
@@ -1042,21 +1053,49 @@ form {
 			}
 
 		legend {
-			padding:0;
-			margin:0 0 10px 0;
-			line-height:1em;
-			width:99%;
-			font-weight:bold;
-			font-size:14px;
-			padding:4px;
-			padding-top:6px;
-			background-color:@grey21;
-
-			}
+	        border: 0 none;
+	        color: @themeColor;
+	        display: inline-block;
+	        font-size: 18px;
+	        margin: 10px 0 0;
+	        padding: 0;
+	        width: auto;
 
 		}
 
+		&.collapsible {
+			border: 0;
+
+			&.open {
+				border:1px solid @grey21;
+			}
+		}
+
+		&.collapsible > legend {
+			cursor: pointer;
+			-webkit-touch-callout: none;
+		    -webkit-user-select: none;
+		    -khtml-user-select: none;
+		    -moz-user-select: none;
+		    -ms-user-select: none;
+		    user-select: none;
+
+			&:before {
+				content:"▶ ";
+				color: #909090;
+			}
+
+			&.open:before {
+				content:"▼ ";
+				color: #909090;
+			}
+		}
+
+		&.collapsible > div {
+			display: none;
+		}
 	}
+}
 
 .box-relations {
 	min-width: 910px;
@@ -1466,7 +1505,7 @@ td.actions {
 			select, input {
 				height:30px;
 				font-size: 14px;
-				}
+			}
 
 
 			.dataTables_length {
@@ -1641,7 +1680,6 @@ td.actions {
 	}
 
 }
-
 
 input[type="text"], input[type="password"] {
 	color: @black2 !important;
