@@ -40,8 +40,12 @@ jQuery.GlizyRegisterType('tinymce', {
 		},
 
 		setValue: function (value) {
-
-			tinyMCE.get(this.id).setContent(value || '');
+			value = value || '';
+			try {
+				tinyMCE.get(this.id).setContent(value);
+			} catch (e) {
+				$(this).val(value);
+			}
 		},
 
 		destroy: function () {

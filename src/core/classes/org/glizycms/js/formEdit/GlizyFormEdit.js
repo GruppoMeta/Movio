@@ -210,7 +210,8 @@ jQuery( (function( $ ){
 
             getFieldPreview = function (val) {
                 var preview = overloadCaller.call(this, 'getPreview', val) || val;
-                return preview && preview != ' ' ? '<div class="GFEPreviewItem">' + this.parent().prevAll('label').first().text() + ' : ' + cutText(htmlStripTags(preview), 30) + '</div>' : '';
+                var label = this.parent().prevAll('label').first().text();
+                return preview && preview != ' ' && label ? '<div class="GFEPreviewItem">' + this.parent().prevAll('label').first().text() + ': ' + cutText(htmlStripTags(preview), 30) + '</div>' : '';
             },
 
             getFileExtension = function(filename) {
@@ -475,7 +476,7 @@ jQuery( (function( $ ){
             var $button = jQuery(this),
                 hasConfirmed = $button.hasClass('GFERowDoConfirm'),
                 $rowCont = $button.closest('.GFERowContainer'),
-                $inputFields = jQuery('input:not([type=button]), textarea', $rowCont),
+                $inputFields = jQuery('input:not([type=button]), textarea, select', $rowCont),
                 fieldPrev = '';
 
             if (hasConfirmed && ($form.triggerHandler('submitForm') === false && invalidFields || customValidationInvalid)) {
@@ -489,7 +490,6 @@ jQuery( (function( $ ){
                 $inputFields.each(function () {
                     var $this = jQuery(this),
                         val = overloadCaller.call(this, 'getValue') || $this.val();
-
                     if (val) {
                         $this.data('oldVal', val);
                         fieldPrev += getFieldPreview.call($this, val);
