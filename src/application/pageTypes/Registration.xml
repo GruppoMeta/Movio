@@ -21,7 +21,7 @@ TODO localizzare
 			<glz:Input id="surname" label="{i18n:MW_USER_SURNAME}" size="50" required="true" validationType="not_empty" bindTo="user_lastName" />
 			<glz:Input id="email" label="{i18n:MW_USER_EMAIL}" size="50" required="true" validationType="email" bindTo="user_email" />
 			<glz:Input id="psw" label="{i18n:MW_USER_PSW}" size="50" type="password" required="true" validationType="not_empty" bindTo="user_password" />
-            <glz:DataDictionary id="usergroupsDP" recordClassName="org.glizycms.userManager.models.UserGroup" query="userGroups" />
+            <glz:DataDictionary id="usergroupsDP" recordClassName="org.glizycms.groupManager.models.UserGroup" query="external" />
             <glz:List id="profile" bindTo="user_FK_usergroup_id" label="{i18n:Profilo}" dataProvider="{usergroupsDP}" emptyValue="-" required="true" />
 			<glz:LongText id="privacy" label="{i18n:MW_REGISTRATION_PRIVACY_TEXT}" forceP="true" adm:rows="10" adm:cols="75" adm:htmlEditor="true" skin="{privacySKIN}" />
 			<glz:Checkbox id="agree" label="{i18n:MW_REGISTRATION_PRIVACY}" skin="{checkBoxSKIN}" required="true" validationType="checkbox"/>
