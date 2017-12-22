@@ -113,6 +113,11 @@
                     </div>
                 </div>
                 <?php } ?>
+                <?php if ($address) { ?>
+                <div class="box col-md-3 pull-right">
+                    <?php print $address;?>
+                </div>
+                <?php } ?>
             </div>
             <div id="info-page" class="visible-desktop">
                 <div class="contentWrapper container-fluid">

@@ -81,6 +81,8 @@
             <!-- content-box -->
         </div>
         <!-- content -->
+
+
     </div>
     <!-- outer -->
 
@@ -97,6 +99,11 @@
 
         <div class="clearfix">
             <div class="logo-footer">
+                <?php if ($sharing) { ?>
+                <div class="sharing">
+                    <?php print $sharing; ?>
+                </div>
+                <?php } ?>
                 <?php print $logoFooter; ?>
                 <a href="http://www.movio.beniculturali.it" title="Movio - Online Virtual Exhibition">
                     <img src="img/logo_movio.png" alt="Movio - Online Virtual Exhibition" title="Movio - Online Virtual Exhibition" width="80" >
@@ -104,8 +111,10 @@
             </div>
 
             <div class="box">
-                <?php print $sharing; ?>
-                <?php print $copyright; ?>
+                <?php print $address; ?>
+            </div>
+            <div class="box">
+                <p><?php print $copyright; ?></p>
             </div>
         </div>
     </footer>

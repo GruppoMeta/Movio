@@ -82,26 +82,29 @@
             <!-- content-box -->
         </div>
         <!-- content -->
+
+        <?php if ($sharing) { ?>
+        <div class="sharing">
+            <?php print $sharing; ?>
+        </div>
+        <?php } ?>
     </div>
     <!-- outer -->
 
     <!-- footer -->
     <footer>
         <div class="clearfix">
-
           	 <div class="pull-left">
-
-            <!-- info-page -->
-            <div id="info-page" class="visible-desktop">
-                <div class="container-fluid">
-                    <p><?php print $docUpdate;?></p>
+                <div id="info-page" class="visible-desktop">
+                    <div class="container-fluid">
+                        <p><?php print $docUpdate;?></p>
+                    </div>
                 </div>
-            </div>
-            <!-- info-page -->
 
-                <p><?php print $copyright;?></p>
-                <?php print $sharing; ?>
-
+                <div>
+                    <?php print $address;?>                        
+                    <p><?php print $copyright;?></p>
+                </div>
             </div>
 
             <div class="pull-right">
