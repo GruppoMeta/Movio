@@ -9,6 +9,7 @@ jQuery.GlizyRegisterType('CmsPagePicker', {
         var protocol = $(this).data('protocol') || '';
         var multiple = $(this).data('multiple');
 
+        
         el.select2({
             placeholder: '',
             allowClear: true,
@@ -42,8 +43,13 @@ jQuery.GlizyRegisterType('CmsPagePicker', {
 	        });
 		}
 
-        var value = el.data('origValue');
-        if (value) {
+        this._setValue = function(value) {
+            value = value || el.data('origValue');
+
+            if( Object.prototype.toString.call(value)==='[object Array]') {
+                value = JSON.stringify(value);
+            }
+
             $.ajax({
                 url: Glizy.ajaxUrl + "&controllerName="+controllerName,
                 dataType: 'json',
@@ -53,20 +59,22 @@ jQuery.GlizyRegisterType('CmsPagePicker', {
                 }
             });
         }
+
+        this._setValue();
 	},
 
 	getValue: function () {
-        return $(this).select2('val');
-	},
-
+        var data = $(this).select2('val');
+        $(this).data('origValue', JSON.stringify(data));
+        
+        return data;
+    },
+    
 	setValue: function (value) {
-        if (value && value.length && value[0].id) {
-            $(this).select2('data', value);
-        }
+        this._setValue(value);
 	},
 
 	destroy: function () {
-        $(this).data('origValue', $(this).val());
         $(this).select2('destroy');
 	}
 });
