@@ -46,5 +46,11 @@
         </div>
 
     </div>
+    <?php print(@$tail); ?>
+<script>
+if (window.self !== window.top) {
+    window.top.location.href = location.href;
+}
+</script>
  </body>
 </html>
