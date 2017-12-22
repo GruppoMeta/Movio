@@ -14,7 +14,8 @@
     <glz:Param name="ADM_THUMBNAIL_CROP" value="true" />
     <glz:Param name="MULTILANGUAGE_ENABLED" value="false" />
     <glz:Param name="BASE_REGISTRY_PATH" value="movio" />
-
+    <glz:Param name="SITEMAP_ID" value="glizycms_ContentsEdit" />
+    
     <glz:Param name="GLIZY_JQUERY" value="jquery-1.8.3.min.js" />
 
     <glz:Param name="GLIZY_ADD_JQUERY_JS" value="true" />
@@ -31,6 +32,7 @@
     <glz:Param name="glizy.formElement.cssClassLabel" value="control-label" />
     <glz:Param name="glizy.formElement.admCssClass" value="span11" />
     <glz:Param name="glizy.formElement.cssClass" value="span11" />
+    <glz:Param name="glizy.acl.defaultIfNoDefined" value="true" />
 
     <glz:Param name="movio.modules.publishApp.mobileCodesTable" value="mobilecodes_tbl" />
     <glz:Param name="movio.modules.publishApp.mobileContentsTable" value="mobilecontents_tbl" />
