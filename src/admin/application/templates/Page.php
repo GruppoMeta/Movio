@@ -12,7 +12,7 @@
         <div id="topbar">
             <div class="pull-left">
                 <div id="dummy-logo"><img src="img/logo/logo-top.png" alt="<?php print( __Config::get( 'APP_NAME' ) ) ?>"></div>
-                <div id="dummy-text"><?php print( __Config::get( 'APP_NAME' ) ) ?></div>
+                <div id="dummy-text"><?php print( __Config::get( 'APP_NAME' ) ) ?> <small><?php echo __Config::get('APP_VERSION') ?></small></div>
             </div>
 
             <div class="pull-right">

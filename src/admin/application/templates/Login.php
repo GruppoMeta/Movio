@@ -46,9 +46,5 @@
         </div>
 
     </div>
-    <footer>
-        <p><?php echo __Config::get('APP_NAME').' v'.__Config::get('APP_VERSION') ?></p>
-    </footer>
-    <?php print(@$tail); ?>
  </body>
 </html>
