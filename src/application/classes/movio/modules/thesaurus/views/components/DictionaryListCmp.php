@@ -1,4 +1,5 @@
 <?php
+
 class movio_modules_thesaurus_views_components_DictionaryListCmp extends org_glizy_components_ComponentContainer
 {
 
@@ -11,7 +12,11 @@ class movio_modules_thesaurus_views_components_DictionaryListCmp extends org_gli
             $thesaurusProxy = org_glizy_ObjectFactory::createObject('movio.modules.thesaurus.models.proxy.ThesaurusProxy');
             $this->type = $thesaurusProxy->getTypeByDictionaryId($dictionaryId);
             $this->_content = array('type' => $this->type, 'records' => array());
-            $this->readTermsList($dictionaryId, $this->type);
+            
+			$siteProps = $this->_application->getSiteProperty();            
+            $this->_content['googleMapsURL'] = 'http://maps.google.com/maps/api/js?key=' . $siteProps['googleMapsApiKey'];
+            
+            $this->readTermsList($dictionaryId);
         }
     }
 
@@ -20,26 +25,34 @@ class movio_modules_thesaurus_views_components_DictionaryListCmp extends org_gli
         $c = $this->getRootComponent();
         $c->process();
         $content = $this->stripIdFromContent(parent::getContent());
-        $timeline = array(  'date' => array(),
+        $timeline = array(  'events' => array(),
                             'type' => 'default',
+                            'startDate' => movio_utils_TimelineDates::formatDate($content['startDate'])
                             );
         $num = count($content['records']);
         if ($this->type == 'chronologic') {
-            for ($i=0; $i < $num; $i++) {
-                $term = $content['records'][$i]['term'];
-                $temp = array('headline' => '', 'text' => '', 'asset' => array('media' => '', 'caption' => '', 'credit' => ''));
-                $temp['headline'] = $term->term;
-                if ($term->dateFrom) $temp['startDate'] = $this->formatDate($term->dateFrom);
-                if ($term->dateTo) $temp['endDate'] = $this->formatDate($term->dateTo);
-                $temp['text'] = '';
-                foreach($content['records'][$i]['taggedDocuments'] as $doc) {
-                    $temp['text'] = __Link::makeSimpleLink($doc['title'], $doc['url']).'<br/>';
+        	foreach ($content['records'] as $record) {
+        		$term = $record['term'];
+                $temp = array('text' => array());
+                $temp['text']['headline'] = $term->term;
+                
+                $docs = array();
+                foreach ($record['taggedDocuments'] as $doc) {
+                    $docs[] = __Link::makeSimpleLink($doc['title'], $doc['url']);
                 }
-            $timeline['date'][] = $temp;
-            }
+                $temp['text']['text'] = implode(' - ', $docs);
+                
+                if ($term->dateFrom)
+                	$temp['start_date'] = movio_utils_TimelineDates::formatDate($term->dateFrom);
+                	
+                if ($term->dateTo)
+                	$temp['end_date'] = movio_utils_TimelineDates::formatDate($term->dateTo);
+                
+	            $timeline['events'][] = $temp;
+        	}
         }
 
-        return array('timeline' => $timeline);
+        return $timeline;
     }
 
 
@@ -66,15 +79,5 @@ class movio_modules_thesaurus_views_components_DictionaryListCmp extends org_gli
             $this->_content['font'] = 'PT';
             $this->_content['lang'] = $this->_application->getLanguage();
         }
-    }
-
-    // NOTE: codice uguale al componente timeline
-    private function formatDate($date)
-    {
-        $date = preg_replace('/^(\d{1,2})\/(\d{1,2})\/(-?\d{2,4})$/', '$3/$2/$1', $date);
-        $date = preg_replace('/^(\d{1,2})\/(-?\d{2,4})$/', '$2', $date);
-        $date = preg_replace('/^(-?\d{2,4})$/', '$1', $date);
-        $date = str_replace('-', ',', $date);
-        return str_replace('/', ',', $date);
     }
 }

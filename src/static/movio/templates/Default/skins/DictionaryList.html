@@ -15,7 +15,7 @@
 
     <span tal:omit-tag="" tal:condition="php: Component['type'] == 'geographical'">
         <div id="googlemap" class="google-maps" style="width: 100%; height: 600px"></div>
-        <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+        <script src="" tal:attributes="src Component/googleMapsURL"></script>
         <script>
         jQuery( function(){
             var geo = {lat: "41.872389", long: '12.4801', zoom: 5};
@@ -64,23 +64,24 @@
     </span>
 
     <span tal:omit-tag="" tal:condition="php: Component['type'] == 'chronologic'">
-        <div id="timeline-embed"></div>
-        <script>
-        var embed_path = 'static/timelinejs/';
-        var timeline_config = {
-            width:              '100%',
-            height:             '600',
-            source:             '<span tal:omit-tag="" tal:content="structure Component/source" />',
-            embed_id:           'timeline-embed',
-            font:               '<span tal:omit-tag="" tal:content="structure Component/font" />',
-            hash_bookmark:      false,
-            debug:              false,
-            lang:               '<span tal:omit-tag="" tal:content="structure Component/lang" />',
-            css:                'static/timelinejs/css/timeline.css',
-            js:                 'static/timelinejs/js/timeline-min.js'
-        }
+		<div id="timeline-embed"></div>
+        <script type="text/javascript">
+			var embed_path = 'static/timelinejs/';
+			var timeline_config = {
+				width:              '100%',
+				height:             '600',
+				source:             '<span tal:omit-tag="" tal:content="structure Component/source" />',
+				embed_id:           'timeline-embed',
+				font:               '<span tal:omit-tag="" tal:content="structure Component/font" />',
+				hash_bookmark:      false,
+			    debug:              false,
+				lang:               '<span tal:omit-tag="" tal:content="structure Component/lang" />',
+				css:                'static/timelinejs/css/timeline.css',
+				js:                 'static/timelinejs/js/timeline.js',
+				script_path:		'static/timelinejs/js/'
+			}
         </script>
-        <script src="static/timelinejs/js/storyjs-embed.js"></script>
+        <script src="static/timelinejs/js/timeline-embed.js"></script>
     </span>
 
 </div>

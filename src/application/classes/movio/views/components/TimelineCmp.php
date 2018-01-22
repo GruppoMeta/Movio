@@ -37,38 +37,43 @@ class movio_views_components_TimelineCmp extends org_glizy_components_Groupbox
         $c->process();
         $content = $this->stripIdFromContent(parent::getContent());
 
-        $timeline = array(  'date' => array(),
+        $timeline = array(  'events' => array(),
                             'type' => 'default',
                             'headline' => $content['title'],
                             'text' => $content['subtitle'],
-                            'startDate' => $this->formatDate($content['startDate'])
+                            'startDate' => movio_utils_TimelineDates::formatDate($content['startDate'])
                             );
 
         $num = count($content['timelineDef']);
         for ($i=0; $i < $num; $i++) {
-            $temp = array('headline' => '', 'text' => '', 'asset' => array('media' => '', 'caption' => '', 'credit' => ''));
-            if ($content['timelineDef'][$i]->startDate) $temp['startDate'] = $this->formatDate($content['timelineDef'][$i]->startDate);
-            if ($content['timelineDef'][$i]->endDate) $temp['endDate'] = $this->formatDate($content['timelineDef'][$i]->endDate);
-            if ($content['timelineDef'][$i]->headline) $temp['headline'] = $content['timelineDef'][$i]->headline;
-            if ($content['timelineDef'][$i]->text) $temp['text'] = $content['timelineDef'][$i]->text;
-            if ($content['timelineDef'][$i]->mediaExternal) {
-                $temp['asset']['media'] = $content['timelineDef'][$i]->mediaExternal;
-            } else if ($content['timelineDef'][$i]->media['mediaId'] > 0) {
-                $temp['asset']['media'] = GLZ_HOST.'/'.org_glizy_helpers_Media::getResizedImageUrlById($content['timelineDef'][$i]->media['mediaId'], false, __Config::get('IMAGE_WIDTH'), __Config::get('IMAGE_HEIGHT') );
-                $temp['asset']['thumbnail'] = GLZ_HOST.'/'.org_glizy_helpers_Media::getResizedImageUrlById($content['timelineDef'][$i]->media['mediaId'], false, __Config::get('THUMB_WIDTH'), __Config::get('THUMB_HEIGHT') );
+            $temp = array('text' => array('headline' => '', 'text' => ''), 'media' => array('url' => '', 'caption' => '', 'thumbnail' => ''));
+
+            if ($content['timelineDef'][$i]->startDate) $temp['start_date'] = movio_utils_TimelineDates::formatDate($content['timelineDef'][$i]->startDate);
+
+            if ($content['timelineDef'][$i]->endDate) $temp['end_date'] = movio_utils_TimelineDates::formatDate($content['timelineDef'][$i]->endDate);
+            
+            if ($content['timelineDef'][$i]->headline or $content['timelineDef'][$i]->text) {
+            	$temp['text'] = array(
+            		'headline' => $content['timelineDef'][$i]->headline,
+            		'text' => $content['timelineDef'][$i]->text
+            	);
             }
-            if ($content['timelineDef'][$i]->mediaCaption) $temp['asset']['caption'] = $content['timelineDef'][$i]->mediaCaption;
-            $timeline['date'][] = $temp;
+            
+            if ($content['timelineDef'][$i]->mediaExternal) {
+                $temp['media'] = array(
+                	'url' => $content['timelineDef'][$i]->mediaExternal,
+                	'caption' => $content['timelineDef'][$i]->mediaCaption
+                );
+            } else if ($content['timelineDef'][$i]->media['mediaId'] > 0) {
+            	$temp['media'] = array(
+            		'url' => GLZ_HOST.'/'.org_glizy_helpers_Media::getResizedImageUrlById($content['timelineDef'][$i]->media['mediaId'], false, __Config::get('IMAGE_WIDTH'), __Config::get('IMAGE_HEIGHT') ),
+            		'thumbnail' => GLZ_HOST.'/'.org_glizy_helpers_Media::getResizedImageUrlById($content['timelineDef'][$i]->media['mediaId'], false, __Config::get('THUMB_WIDTH'), __Config::get('THUMB_HEIGHT') ),
+                	'caption' => $content['timelineDef'][$i]->mediaCaption
+            	);
+            }
+            
+            $timeline['events'][] = $temp;
         }
-        return array('timeline' => $timeline);
-    }
-
-    private function formatDate($date)
-    {
-        $date = preg_replace('/^(\d{1,2})\/(\d{1,2})\/(-?\d{2,4})$/', '$3/$2/$1', $date);
-        $date = preg_replace('/^(\d{1,2})\/(-?\d{2,4})$/', '$2', $date);
-        $date = preg_replace('/^(-?\d{2,4})$/', '$1', $date);
-
-        return str_replace('/', ',', $date);
+        return $timeline;
     }
 }

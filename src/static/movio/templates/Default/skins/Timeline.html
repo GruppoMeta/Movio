@@ -1,18 +1,18 @@
 <div id="timeline-embed"></div>
-<script>
-var embed_path = 'static/timelinejs/';
-var timeline_config = {
-    width:              '<span tal:omit-tag="" tal:content="structure Component/width" />',
-    height:             '<span tal:omit-tag="" tal:content="structure Component/height" />',
-    source:             '<span tal:omit-tag="" tal:content="structure Component/source" />',
-    embed_id:           'timeline-embed',
-    hash_bookmark:      true,
-    font:               '<span tal:omit-tag="" tal:content="structure Component/font" />',
-    debug:              false,
-    lang:               '<span tal:omit-tag="" tal:content="structure Component/lang" />',
-    maptype:            '<span tal:omit-tag="" tal:content="structure Component/maptype" />',
-    css:                'static/timelinejs/css/timeline.css',
-    js:                 'static/timelinejs/js/timeline-min.js'
-}
+<script type="text/javascript">
+	var embed_path = 'static/timelinejs/';
+	var timeline_config = {
+		width:              '100%',
+		height:             '600',
+		source:             '<span tal:omit-tag="" tal:content="structure Component/source" />',
+		embed_id:           'timeline-embed',
+		font:               '<span tal:omit-tag="" tal:content="structure Component/font" />',
+		hash_bookmark:      false,
+		debug:              false,
+		lang:               '<span tal:omit-tag="" tal:content="structure Component/lang" />',
+		css:                'static/timelinejs/css/timeline.css',
+		js:                 'static/timelinejs/js/timeline.js',
+		script_path:		'static/timelinejs/js/'
+	}
 </script>
-<script src="static/timelinejs/js/storyjs-embed.js"></script>
+<script src="static/timelinejs/js/timeline-embed.js"></script>
