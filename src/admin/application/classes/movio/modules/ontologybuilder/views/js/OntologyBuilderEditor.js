@@ -280,7 +280,8 @@ OntologyBuilderEditor = {
             formatSelection: function(data) {
                 if (data.id == '__newTerm') {
                     OntologyBuilderEditor.addTerm(null, data.text, data.key);
-                    $(item).select2('data').id = data.key != '__newTerm' ? data.key : data.text;
+                    $(item).select2('data', {id: data.text, text: data.text}).select2('close');
+                    return;
                 }
                 return data.text;
             },
