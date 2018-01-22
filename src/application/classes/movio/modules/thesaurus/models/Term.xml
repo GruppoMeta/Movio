@@ -12,7 +12,7 @@
         <model:Field name="url" type="string" length="255" index="true" />
         <model:Field name="note" type="text" index="true" />
         <model:Field name="geo" type="string" length="255" index="true" />
-        <model:Field name="dateFrom" type="date" index="true" />
-        <model:Field name="dateTo" type="date" index="true" />
+        <model:Field name="dateFrom" type="string" index="true" />
+        <model:Field name="dateTo" type="string" index="true" />
     </model:Define>
 </model:Model>

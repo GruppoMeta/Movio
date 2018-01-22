@@ -10,6 +10,11 @@
     controllerName="movio.modules.thesaurus.controllers.*">
     <glz:Import src="_common.xml" />
     <glz:JSscript folder="movio.modules.thesaurus.js" />
+    
+	<mvc:State name="empty">
+        <glz:Modifier target="tabs" attribute="visible" value="false" />
+        <glz:LongText><![CDATA[]]></glz:LongText>
+    </mvc:State>
 
     <mvc:State name="index">
         <glz:Modifier target="Page" attribute="templateFileName" value="Page.php" />
@@ -72,8 +77,8 @@
                 <glz:Input id="geo" label="{i18n:Address}" size="90" data="type=googlemaps"/>
             </glz:Panel>
             <glz:Panel id="chronologicPanel">
-                <glz:Input id="dateFrom" label="{i18n:Data da}" size="90" />
-                <glz:Input id="dateTo" label="{i18n:Data a}" size="90" />
+                <glz:Input id="dateFrom" label="{i18n:From date (yyyy, mm/yyyy, dd/mm/yyyy)}" size="90" />
+                <glz:Input id="dateTo" label="{i18n:To date (yyyy, mm/yyyy, dd/mm/yyyy)}" size="90" />
             </glz:Panel>
 
             <cms:FormButtonsPanel>
@@ -104,8 +109,8 @@
                 <glz:Input id="geo" label="{i18n:Address}" size="90" data="type=googlemaps"/>
             </glz:Panel>
             <glz:Panel id="chronologicPanel">
-                <glz:Input id="dateFrom" label="{i18n:Data da}" size="90" />
-                <glz:Input id="dateTo" label="{i18n:Data a}" size="90" />
+                <glz:Input id="dateFrom" label="{i18n:From date (yyyy, mm/yyyy, dd/mm/yyyy)}" size="90" />
+                <glz:Input id="dateTo" label="{i18n:To date (yyyy, mm/yyyy, dd/mm/yyyy)}" size="90" />
             </glz:Panel>
 
             <cms:FormButtonsPanel>
