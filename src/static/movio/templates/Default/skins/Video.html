@@ -4,6 +4,12 @@ $(function(){
     jQuery('video,audio').mediaelementplayer();
 });
     </script>
-
-    <video tal:attributes="src Component/video/src; width Component/width; height Component/height" />
+	
+	<span tal:condition="php: Component['sizeMode'] == 'fixed'" omit-tag="">
+    	<video tal:attributes="src Component/video/src; width Component/width; height Component/height" />
+    </span>
+    
+	<span tal:condition="php: Component['sizeMode'] == 'auto'" omit-tag="">
+    	<video tal:attributes="src Component/video/src;" style="width:100%;height:100%" />
+    </span>
 </div>

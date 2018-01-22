@@ -79,9 +79,9 @@ $(function(){
     jQuery('video,audio').mediaelementplayer();
     galleriaio_loadNext();
 
-    if (location.hash.indexOf('form') || location.hash.indexOf('comments')) {
-        $('a[name='+location.hash.substr(1)+']').parent().slideDown(300);
-    }
+	if (location.hash.indexOf('form') || location.hash.indexOf('comments')) {
+		$('a[name='+location.hash.substr(1)+']').parent().slideDown(300);
+	}
 });
     </script>
 
@@ -97,18 +97,17 @@ $(function(){
                             <figure class="main-img align-right" tal:condition="item/image" tal:content="structure php:org_glizy_helpers_Media::getResizedImageById(item.image, false, 320, 320)">
                             </figure>
 
-                            <div tal:condition="item/audio" style="float:right; margin: 30px 0 0 15px;">
-                                <audio controls="" tal:attributes="src php:org_glizy_helpers_Media::getFileUrlById(item.audio, true)" />
-                            </div>
-                            <div tal:condition="item/video" style="float:right; margin: 0 15px 0 0;">
-                                <video width="300"  height="200" controls="" tal:attributes="src php:org_glizy_helpers_Media::getFileUrlById(item.video, true)" />
-                            </div>
-
                             <h1 class="title" tal:condition="item/title" tal:content="item/title"></h1>
                             <h2 class="tipe-box" tal:condition="item/subtitle" tal:content="item/subtitle"></h2>
                             <span tal:omit-tag="" tal:content="structure item/text" />
                         </div>
                         <span tal:omit-tag="" tal:content="structure item/textAfter" />
+						<div tal:condition="item/audio" style="margin-top: 15px; margin-bottom: 15px">
+							<audio controls="" tal:attributes="src php:org_glizy_helpers_Media::getFileUrlById(item.audio, true)" />
+						</div>
+						<div tal:condition="item/video" style="margin-top: 15px; margin-bottom: 15px">
+							<video width="300"  height="200" controls="" tal:attributes="src php:org_glizy_helpers_Media::getFileUrlById(item.video, true)" />
+						</div>
                         <span tal:omit-tag="" metal:use-macro="functions" tal:define="item item; from ''" />
                     </article>
                 </div>
@@ -163,7 +162,9 @@ $(function(){
                         <div class="clearfix">
                             <h1 class="title" tal:condition="item/title" tal:content="item/title"></h1>
                             <span tal:omit-tag="" tal:content="structure item/text" />
-                            <audio controls="" width="100%" tal:attributes="src php:org_glizy_helpers_Media::getFileUrlById(item.audio, true)" />
+                            <div style="margin-top:15px;margin-bottom:15px">
+                            	<audio controls="" width="100%" tal:attributes="src php:org_glizy_helpers_Media::getFileUrlById(item.audio, true)" />
+                            </div>
                         </div>
                         <span tal:omit-tag="" tal:content="structure item/textAfter" />
                         <span tal:omit-tag="" metal:use-macro="functions" tal:define="item item; from ''" />
@@ -178,7 +179,9 @@ $(function(){
                         <div class="clearfix">
                             <h1 class="title" tal:condition="item/title" tal:content="item/title"></h1>
                             <span tal:omit-tag="" tal:content="structure item/text" />
-                            <video controls="" width="100%" style="max-width: 100%" tal:attributes="src php:org_glizy_helpers_Media::getFileUrlById(item.video, true)" />
+                            <div style="margin-top:15px;margin-bottom:15px">
+	                            <video controls="" style="width:100%;height:100%" tal:attributes="src php:org_glizy_helpers_Media::getFileUrlById(item.video, true)" />
+	                        </div>
                         </div>
                         <span tal:omit-tag="" tal:content="structure item/textAfter" />
                         <span tal:omit-tag="" metal:use-macro="functions" tal:define="item item; from ''" />
