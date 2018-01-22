@@ -74,8 +74,6 @@ $errorlevel=error_reporting();
 error_reporting( $errorlevel & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT );
 
 if (!defined('GLZ_TESTS')) {
-	// set_error_handler('glz_exception_handler', E_ALL);
-	// register_shutdown_function('shutdownFunction');
 	GlizyErrorHandler::register();
 
 }

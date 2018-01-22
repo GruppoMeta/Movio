@@ -117,10 +117,6 @@ class org_glizycms_views_components_FormEdit extends org_glizy_components_Form
             $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $jQueryPath.'jquery.pnotify/jquery.pnotify.min.js' ), 'head');
             $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( $jQueryPath.'jquery.pnotify/jquery.pnotify.default.css' ), 'head');
 
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditSelectTarget.js' ), 'head');
-
-            $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditSelectConditional.js' ), 'head');
-
             if ($googleApiKey) {
                 $this->addOutputCode( org_glizy_helpers_JS::linkJSfile( $formEditPath.'GlizyFormEditGoogleMaps.js' ), 'head');
                 $this->addOutputCode(org_glizy_helpers_JS::linkJSfile( 'http://maps.google.com/maps/api/js?key='.$googleApiKey), 'head');

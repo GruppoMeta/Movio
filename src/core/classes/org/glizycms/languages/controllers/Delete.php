@@ -3,7 +3,7 @@ class org_glizycms_languages_controllers_Delete extends org_glizy_mvc_core_Comma
 {
     public function executeLater($id)
     {
-// TODO controllo ACL
+        $this->checkPermissionForBackend();
         if ($id) {
             $proxy = org_glizy_objectFactory::createObject('org.glizycms.languages.models.proxy.LanguagesProxy');
             $proxy->delete($id);

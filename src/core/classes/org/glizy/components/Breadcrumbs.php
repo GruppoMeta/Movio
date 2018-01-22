@@ -24,6 +24,7 @@ class org_glizy_components_Breadcrumbs extends org_glizy_components_Component
 		$this->defineAttribute('label',	false, 	'',	COMPONENT_TYPE_STRING);
 		$this->defineAttribute('separator',	false, 	' &gt; ',	COMPONENT_TYPE_STRING);
 		$this->defineAttribute('cssClass',	false, 	'',	COMPONENT_TYPE_STRING);
+		$this->defineAttribute('cssClassLink', false, '', COMPONENT_TYPE_STRING);
 		$this->defineAttribute('cssCurrent',	false, 	'current', 	COMPONENT_TYPE_STRING);
 		$this->defineAttribute('menuId',		false, 	NULL,	COMPONENT_TYPE_STRING);
 		$this->defineAttribute('drawIconLevel',		false, 	0,	COMPONENT_TYPE_INTEGER);
@@ -45,6 +46,7 @@ class org_glizy_components_Breadcrumbs extends org_glizy_components_Component
 		$drawIconLevel  = $this->getAttribute('drawIconLevel');
 		$menuId 		= $this->getAttribute('menuId');
 		$siteMap 		= &$this->_application->getSiteMap();
+		$cssClassLink	= $this->getAttribute('cssClassLink');
 		$currentMenu 	= is_null($menuId) ? $this->_application->getCurrentMenu() : $siteMap->getNodeById($menuId);
 
 		if ($this->extraItem) {
@@ -66,9 +68,10 @@ class org_glizy_components_Breadcrumbs extends org_glizy_components_Component
 										'pageId' => $currentMenu->id,
 										'title' => $nodeDescription,
 										'label' => $nodeTitle,
-										'icon' => $icon)));
+										'icon' => $icon,
+										'cssClass' => $cssClassLink)));
 						} else {
-							array_unshift($this->_content->records, org_glizy_helpers_Link::makeSimpleLink($nodeTitle, $currentMenu->url, $nodeDescription, '', '', array('icon' => $icon)));
+							array_unshift($this->_content->records, org_glizy_helpers_Link::makeSimpleLink($nodeTitle, $currentMenu->url, $nodeDescription, $cssClassLink, '', array('icon' => $icon)));
 						}
 					}
 				} else {

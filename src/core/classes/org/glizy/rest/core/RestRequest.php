@@ -185,7 +185,7 @@ class org_glizy_rest_core_RestRequest extends GlizyObject
 
 		$this->requestLength = strlen($this->requestBody);
 
-		$fh = fopen('php://memory', 'rw');
+		$fh = fopen('php://temp', 'rw');
 		fwrite($fh, $this->requestBody);
 		rewind($fh);
 

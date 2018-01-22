@@ -89,7 +89,11 @@ class org_glizy_components_EmptyComponent extends org_glizy_components_Component
 	public function addOutputCode($output, $editableRegion='', $atEnd=false)
 	{
 		if ($this->acceptOutput) {
-			$this->_content->{$this->currentRenderChildId} = $output;
+            if (!property_exists($this->_content, $this->currentRenderChildId)) {
+                $this->_content->{$this->currentRenderChildId} = '';
+            }
+
+            $this->_content->{$this->currentRenderChildId} .= $output;
 		} else {
 			$this->addParentOutputCode($output, $editableRegion, $atEnd);
 		}

@@ -131,6 +131,8 @@ class org_glizycms_contents_views_components_PageEdit  extends org_glizycms_view
 	protected function addComponentsToEdit($menu)
 	{
 		$templatePath = org_glizycms_Glizycms::getSiteTemplatePath();
+        glz_loadLocaleReal( $templatePath.'/classes', $this->_application->getLanguage() );
+
 		$originalRootComponent 	= &$this->_application->getRootComponent();
 		$originalChildren = $this->childComponents;
 		$this->childComponents = array();

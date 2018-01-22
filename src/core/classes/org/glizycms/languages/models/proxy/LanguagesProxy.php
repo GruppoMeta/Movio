@@ -125,13 +125,14 @@ class org_glizycms_languages_models_proxy_LanguagesProxy extends org_glizycms_co
         return self::$defaultLanguageId;
     }
 
-    public function findLanguageByCountry($languageCountryId)
+    public function findLanguageByCountry($languageCountryId, $id)
     {
         $ar = org_glizy_ObjectFactory::createModel('org.glizycms.core.models.Language');
         if (!__Config::get('MULTILANGUAGE_ENABLED')) {
             $ar->resetSiteField();
         }
 
-        return $ar->find(array('language_FK_country_id' => $languageCountryId));
+        $r = $ar->find(array('language_FK_country_id' => $languageCountryId));
+        return $r && $ar->language_id!=$id;
     }
 }
