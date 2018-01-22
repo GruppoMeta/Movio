@@ -1,6 +1,7 @@
 User-agent: * 
 Disallow: /admin/
 Disallow: /core/
+Disallow: /cache/
 Disallow: /static/
 Disallow: /application/mediaArchive/
 Disallow: ajax.php
