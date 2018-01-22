@@ -42,7 +42,7 @@
 
     private function createAddictionalIndex()
     {
-        $startDate = $this->getFieldValueByRegexp('_startDate', true);
+        $startDate = $this->getFieldValueByRegexp('startDate', true);
         if ($startDate) {
             $this->year = substr($startDate, 0, strpos($startDate, '-'));
         }
