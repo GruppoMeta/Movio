@@ -10,7 +10,6 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
         }
 
         $document = org_glizy_objectFactory::createObject('org.glizy.dataAccessDoctrine.ActiveRecordDocument');
-
         $result = $document->load($entityId, $status);
 
         if (!$result) {
@@ -82,6 +81,7 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
 
                 if ($document->$attribute != '') {
                     foreach ($document->$attribute as $toEntityId) {
+                        if (is_object($toEntityId)) continue;
                         $title = $this->getEntityTitle($toEntityId);
                         if ($title) {
                             $relations[] = array(
@@ -267,7 +267,6 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
         $data = array();
 
         $document = org_glizy_objectFactory::createObject('org.glizy.dataAccessDoctrine.ActiveRecordDocument');
-
         $languageProxy = __ObjectFactory::createObject('org.glizycms.languages.models.proxy.LanguagesProxy');
         $r = $document->load($entityId);
 
@@ -298,6 +297,7 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
         $entityTypeProperties = $entityTypeService->getEntityTypeProperties($documentEntityTypeId);
 
 		$localeService = $application->retrieveProxy('movio.modules.ontologybuilder.service.LocaleService');
+        $speakingUrlManager = $application->retrieveProxy('org.glizycms.speakingUrl.Manager');
         $language = $application->getLanguage();
 
         $relationId = 0;
@@ -317,7 +317,7 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
                 }
 
                 if ($entityTypeProperty['entity_properties_type'] == 'attribute.internallink') {
-                    $speakingUrlManager = $application->retrieveProxy('org.glizycms.speakingUrl.Manager');
+                    if (is_object($document->$attribute)) continue;
                     $value = $speakingUrlManager->makeUrl($document->$attribute);
                 } else {
                     $value = $document->$attribute;
@@ -337,6 +337,7 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
 
                 if ($document->$attribute != '') {
                     foreach ($document->$attribute as $toEntityId) {
+                        if (is_object($toEntityId)) continue;
                         $content = $this->loadContent($toEntityId);
                         $content['document_id'] = $toEntityId;
                         $relations[] = $content;
@@ -415,6 +416,7 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
 
                 if ($document->$attribute != '') {
                     foreach ($document->$attribute as $toEntityId) {
+                        if (is_object($toEntityId)) continue;
                         $relatedDocument = org_glizy_objectFactory::createObject('org.glizy.dataAccessDoctrine.ActiveRecordDocument');
                         $result = $relatedDocument->load($toEntityId);
 
