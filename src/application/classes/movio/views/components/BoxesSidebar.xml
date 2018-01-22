@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <m:BoxesCmp
 	xmlns:glz="http://www.glizy.org/dtd/1.0/"
     xmlns:cms="org.glizycms.views.components.*"
     xmlns:m="movio.views.components.*">
 
-    <m:BoxesRepeater id="boxes" label="{php:$this-&gt;_parent-&gt;getAttribute('label')}" adm:collapsable="true" skin="BoxSidebar.html">
+    <m:BoxesRepeater id="boxes" label="{php:$this-&amp;gt;_parent-&amp;gt;getAttribute('label')}" adm:collapsable="true" skin="BoxSidebar.html">
         <glz:List id="type" label="{i18n:Box type}" data="target=title,text,image,linkTitle,pageId;val_0=1,1,1,0,1;val_1=1,0,1,1,1;val_2=1,1,0,0,0;">
             <glz:ListItem value="{i18n:Image with text}" key="imageText" />
             <glz:ListItem value="{i18n:Image with link}" key="imageLink" />

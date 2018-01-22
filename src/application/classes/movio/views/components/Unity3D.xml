@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <m:Unity3DCmp
     label="{i18n:Unity3D}"
     xmlns:glz="http://www.glizy.org/dtd/1.0/"
@@ -13,7 +13,7 @@
     <glz:Input id="textColor" label="{i18n:ErrorTextColor}" data="type=colorPicker" />
     <glz:Image id="logoimage" label="{i18n:LoadingLogoImage}" />
     <glz:List id="disableContextMenu" label="{i18n:disableContextMenu}">
-		<glz:ListItem key="false" value="{i18n:No}" />    
+		<glz:ListItem key="false" value="{i18n:No}" />
 		<glz:ListItem key="true" value="{i18n:Yes}" />
 	</glz:List>
     <glz:List id="disableFullscreen" label="{i18n:disableFullscreen}">

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <glz:EmptyComponent
 	xmlns:glz="http://www.glizy.org/dtd/1.0/"
 	xmlns:cms="org.glizycms.views.components.*"
@@ -8,7 +8,7 @@
 
 	<cms:LanguageNavigation id="languages" cssClass="langs" editableRegion="languages" />
 	<glz:NavigationMenu id="navigation" startFrom="1" showOnlyChilds="true" depth="+5" forceLink="true" selectParent="false" attributeToSelect="class" showPath="true" selectLink="true" cssClass="navigationMenu" editableRegion="leftSidebar" cssCurrent="active" />
-    <glz:NavigationMenu id="metanavigation" startFrom="2" showOnlyChilds="true" depth="+1" forceLink="true" selectParent="false" attributeToSelect="class" showPath="true" selectLink="true" cssClass="navigationMenu" editableRegion="metanavigation" flat="true" cssCurrent="active" />
+  <glz:NavigationMenu id="metanavigation" startFrom="2" showOnlyChilds="true" depth="+1" forceLink="true" selectParent="false" attributeToSelect="class" showPath="true" selectLink="true" cssClass="navigationMenu" editableRegion="metanavigation" flat="true" cssCurrent="active" />
 	<glz:NavigationMenu id="metanavigation" startFrom="3" showOnlyChilds="true" depth="+1" forceLink="true" selectParent="false" attributeToSelect="class" showPath="true" selectLink="true" cssClass="navigationMenu" editableRegion="linkFooter" flat="true" cssCurrent="active" />
 
 	<glz:PageTitle id="pageTitle" tag="h1" editableRegion="pageTitle" />

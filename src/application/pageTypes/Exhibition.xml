@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <glz:Page id="Page"
     xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:cms="org.glizycms.views.components.*"
     defaultEditableRegion="content"
     templateType="php"
     templateFileName="2cols.php"
@@ -27,7 +28,7 @@
         <glz:Input id="targetUser" label="{i18n:Users}" required="true" />
         <glz:Input id="category" label="{i18n:Subject}" required="true" />
         <glz:Input id="urlExternal" label="{i18n:Exhibition url}" size="90" data="type=url"/>
-        <glz:Input id="linkedDigitalExhibition" label="{i18n:Digital alternative}" size="90" required="false" />
+        <cms:PagePicker id="linkedDigitalExhibition" label="{i18n:Digital alternative}" size="90" required="false" />
         <glz:LongText id="abstract" label="{i18n:Abstract}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" />
         <glz:Input id="openingTime" label="{i18n:Timetable}" size="90" />
         <glz:Input id="ticket" label="{i18n:Access}" size="90" />

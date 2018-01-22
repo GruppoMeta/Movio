@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <glz:Routing>
 	<glz:Route name="movio_touristoperators" value="{pageId=movio.modules.touristoperators.views.FrontEnd}/{static=action=show}/{integer=document_id}/{value=title}" />
 </glz:Routing>

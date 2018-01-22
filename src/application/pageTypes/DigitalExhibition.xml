@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <glz:Page id="Page"
     xmlns:glz="http://www.glizy.org/dtd/1.0/"
+    xmlns:cms="org.glizycms.views.components.*"
     defaultEditableRegion="content"
     templateType="php"
     templateFileName="2cols.php"
@@ -21,7 +22,7 @@
         <glz:Input id="identifier" label="{i18n:Identifier}" size="90" />
         <glz:Input id="category" label="{i18n:Subject}" size="90" required="true"/>
         <glz:Input id="urlExternal" label="{i18n:Exhibition url}" size="90" data="type=url"/>
-        <glz:Input id="linkedExhibition" label="{i18n:Physycal alternative}" size="90" />
+	    <cms:PagePicker id="linkedExhibition" label="{i18n:Physycal alternative}" required="true" />
         <glz:LongText id="description" label="{i18n:Abstract}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" required="true"/>
         <glz:LongText id="credits" label="{i18n:Credits}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" />
         <glz:LongText id="sponsor1" label="{i18n:Patronages}" size="90" type="multiline" rows="10" cols="70" adm:htmlEditor="true" />
