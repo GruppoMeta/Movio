@@ -10,9 +10,8 @@
     controllerName="org.glizycms.userManager.fe.controllers.login.*"
     defaultAction="login"
     >
-
+   	<glz:Import src="Common.xml" />
     <mvc:State name="login">
-    	<glz:Import src="Common.xml" />
     	<glz:LongText id="text" label="{i18n:Text}" forceP="true" adm:rows="20" adm:cols="75" adm:htmlEditor="true" />
     	<cms:PagePicker id="loginPage" label="{i18n:MW_LOGIN_DESTINATION_PAGE}" visible="false" required="true" />
 
