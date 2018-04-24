@@ -1,7 +1,7 @@
 <?php
 class movio_modules_ontologybuilder_views_renderer_EntityVisualization extends org_glizy_components_render_RenderCellRecordSetList
 {
-    function renderCell( &$ar )
+    function renderCell( &$ar, $params )
     {
         $ar->__image = '';
 

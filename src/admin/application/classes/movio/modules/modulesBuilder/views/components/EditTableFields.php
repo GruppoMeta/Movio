@@ -1,7 +1,7 @@
 <?php
 class movio_modules_modulesBuilder_views_components_EditTableFields extends org_glizy_components_Component
 {
-	function render()
+	function render($outputMode = NULL, $skipChilds = false)
 	{
 		$tableName = __Request::get( 'mbTableDB' );
 		$tableNameMB = __Request::get( 'mbTable' );

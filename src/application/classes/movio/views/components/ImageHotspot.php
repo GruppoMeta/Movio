@@ -8,7 +8,7 @@ class movio_views_components_ImageHotspot extends org_glizy_components_Component
 
 
 
-    public function render()
+    public function render($outputMode = NULL, $skipChilds = false)
     {
         if (is_object($this->_content) && $this->_content->image && $this->_content->hotspots) {
             $media = org_glizycms_mediaArchive_MediaManager::getMediaById($this->_content->image);

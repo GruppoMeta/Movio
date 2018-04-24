@@ -103,7 +103,7 @@ class movio_modules_ontologybuilder_views_components_Relation extends org_glizy_
         return $r;
     }
 
-    function loadContent($id)
+    function loadContent($id, $bindTo = '')
     {
         return $this->_content[$id];
     }

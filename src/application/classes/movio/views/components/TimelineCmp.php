@@ -23,12 +23,12 @@ class movio_views_components_TimelineCmp extends org_glizy_components_Groupbox
         return $result;
     }
 
-    function render($mode)
+    function render($outputMode = NULL, $skipChilds = false)
     {
         if (!$this->_application->isAdmin()) {
              $this->setAttribute('skin', 'Timeline.html');
         }
-        parent::render($mode);
+        parent::render($outputMode, $skipChilds);
     }
 
     function process_ajax()

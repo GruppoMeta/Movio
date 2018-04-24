@@ -3,7 +3,7 @@
 
 class movio_modules_modulesBuilder_views_components_NewTableFields extends org_glizy_components_Component
 {
-	function render()
+	function render($outputMode = NULL, $skipChilds = false)
 	{
 		$moduleType = __Request::get('mbModuleType');
 

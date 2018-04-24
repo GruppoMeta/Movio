@@ -22,7 +22,7 @@ class movio_modules_ontologybuilder_views_components_Thesaurus extends org_glizy
         }
     }
 
-    function loadContent($id)
+    function loadContent($id, $bindTo = '')
     {
         return $this->_content[$id];
     }

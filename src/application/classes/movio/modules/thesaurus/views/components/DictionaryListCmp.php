@@ -56,11 +56,11 @@ class movio_modules_thesaurus_views_components_DictionaryListCmp extends org_gli
     }
 
 
-    function render($mode) {
+    function render($outputMode = NULL, $skipChilds = false) {
         if (!$this->_application->isAdmin()) {
             $this->setAttribute('skin', 'DictionaryList.html');
         }
-        parent::render($mode);
+        parent::render($outputMode, $skipChilds);
     }
 
 

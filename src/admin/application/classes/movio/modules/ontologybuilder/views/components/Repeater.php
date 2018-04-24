@@ -42,7 +42,7 @@ class movio_modules_ontologybuilder_views_components_Repeater extends org_glizy_
         return $this->_content;
     }
 
-    function loadContent($id)
+    function loadContent($id, $bindTo = '')
     {
         return $this->_content['content'][$id];
     }

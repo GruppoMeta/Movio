@@ -1,7 +1,7 @@
 <?php
 class movio_modules_publishApp_views_components_GraphContainer extends org_glizy_components_Panel
 {
-    function render()
+    function render($outputMode = NULL, $skipChilds = false)
     {
         parent::render();
         $this->addOutputCode( org_glizy_helpers_JS::linkJSfile(__Paths::get('STATIC_DIR').'dagre-d3/d3.v3.min.js'));

@@ -1,7 +1,7 @@
 <?php
 class movio_modules_publishApp_views_components_ProgressBarDialog extends org_glizy_components_Component
 {
-	function render()
+	function render($outputMode = NULL, $skipChilds = false)
 	{
 	    $this->addOutputCode( org_glizy_helpers_CSS::linkCSSfile( __Paths::get('APPLICATION_CLASSES').'movio/modules/publishApp/static/progressBar.css' ), 'head' );
 

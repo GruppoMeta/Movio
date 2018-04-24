@@ -43,7 +43,7 @@ class movio_modules_sharingButtons_views_components_GetSharingButtons extends or
         }
     }
 
-    function render()
+    function render($outputMode = NULL, $skipChilds = false)
     {
         $minHeight = count($this->buttonListBase)*29 +2;
         $output .= '

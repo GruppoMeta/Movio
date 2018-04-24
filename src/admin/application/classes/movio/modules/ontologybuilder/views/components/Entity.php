@@ -213,7 +213,7 @@ class movio_modules_ontologybuilder_views_components_Entity extends org_glizy_co
         }
     }
 
-    function loadContent($id)
+    function loadContent($id, $bindTo = '')
     {
         // se $id è l'id di una reference relation
         if (preg_match('/^__entity\d+$/', $id, $m)) {

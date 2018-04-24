@@ -12,7 +12,7 @@ class movio_modules_ontologybuilder_views_components_FilterEntityType extends or
         parent::init();
     }
 
-    function render()
+    function render($outputMode = NULL, $skipChilds = false)
     {
         $id = $this->getAttribute('id');
         $output  = '<div id="'.$id.'_cont" style="display: inline">';

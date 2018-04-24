@@ -300,7 +300,7 @@ class movio_modules_ontologybuilder_views_components_EntityToJSON extends org_gl
         }
     }
 
-    function loadContent($id)
+    function loadContent($id, $bindTo = '')
     {
         // se $id è l'id di una reference relation
         if (preg_match('/^__entity\d+$/', $id, $m)) {

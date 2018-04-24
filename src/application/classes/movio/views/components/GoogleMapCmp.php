@@ -45,12 +45,12 @@ class movio_views_components_GoogleMapCmp extends org_glizy_components_Groupbox
         return $content;
     }
 
-    function render($mode)
+    function render($outputMode = NULL, $skipChilds = false)
     {
         if (!$this->_application->isAdmin()) {
             $this->setAttribute('skin', 'GoogleMap.html');
         }
-        parent::render($mode);
+        parent::render($outputMode, $skipChilds);
     }
 
     private function limitURL($url, $limit, $external)

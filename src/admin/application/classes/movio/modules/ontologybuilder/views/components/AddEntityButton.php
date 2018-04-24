@@ -10,7 +10,7 @@ class movio_modules_ontologybuilder_views_components_AddEntityButton extends org
         parent::init();
     }
 
-    function render()
+    function render($outputMode = NULL, $skipChilds = false)
     {
         // $this->addOutputCode( org_glizy_helpers_JS::linkJSfile(__Paths::get('APPLICATION').'templates/js/bootstrap.min.js' ) );
 

@@ -41,10 +41,10 @@ class movio_views_components_PhotogalleryCmp extends org_glizy_components_Groupb
                     );
     }
 
-    function render($mode) {
+    function render($outputMode = NULL, $skipChilds = false) {
         if (!$this->_application->isAdmin()) {
             $this->setAttribute('skin', 'Photogallery.html');
         }
-        parent::render($mode);
+        parent::render($outputMode, $skipChilds);
     }
 }

@@ -2,7 +2,7 @@
 class movio_modules_thesaurus_views_renderer_CellEditDelete extends org_glizycms_contents_views_renderer_AbstractCellEdit
 {
 
-    function renderCell($key, $value, $row)
+    function renderCell($key, $value, $row, $columnName)
     {
         $this->loadAcl($value);
         $output = $this->renderEditButton($value, $row).
@@ -11,7 +11,7 @@ class movio_modules_thesaurus_views_renderer_CellEditDelete extends org_glizycms
     }
 
 
-    protected function renderEditButton($key, $row)
+    protected function renderEditButton($key, $row, $enabled = true)
     {
         $output = '';
 

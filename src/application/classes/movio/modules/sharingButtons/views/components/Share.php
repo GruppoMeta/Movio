@@ -78,12 +78,12 @@ class movio_modules_sharingButtons_views_components_Share extends org_glizy_comp
 
     }
 
-    function render($mode)
+    function render($outputMode = NULL, $skipChilds = false)
     {
         if (!$this->_application->isAdmin()) {
              $this->setAttribute('skin', 'Share.html');
         }
-        parent::render($mode);
+        parent::render($outputMode, $skipChilds);
     }
 
     private function setUrl($link)

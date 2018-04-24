@@ -24,12 +24,12 @@ class movio_views_components_Unity3DCmp extends org_glizy_components_Groupbox
 		return array();
 	}
 
-	function render($mode)
+	function render($outputMode = NULL, $skipChilds = false)
 	{
 		if (!$this->_application->isAdmin()) {
 			ini_set('display_errors', 'On');
 			$this->setAttribute('skin', 'Unity3D.html');
 		}
-		parent::render($mode);
+		parent::render($outputMode, $skipChilds);
 	}
 }
