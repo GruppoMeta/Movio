@@ -9,15 +9,15 @@ $(function() {
 data.push({ "title": "<span tal:omit-tag="" tal:content="structure php:glz_stringToJs(item.image['title'])" />",
             "description": "<span tal:omit-tag="" tal:content="structure php:glz_stringToJs(item.image['description'], true)" />",
             "thumb": "<span tal:omit-tag="" tal:content="structure php:org_glizy_helpers_Media::getResizedImageUrlById(item.image['mediaId'], false, __Config::get('THUMB_WIDTH'), __Config::get('THUMB_HEIGHT'), true)" />",
-            "image": "<span tal:omit-tag="" tal:content="structure php:(Component['imageResize'] ? org_glizy_helpers_Media::getResizedImageUrlById(item.image['mediaId'], false, __Config::get('movio.photogallery.resize.width'), __Config::get('movio.photogallery.resize.height'), true) : org_glizy_helpers_Media::getUrlById(item.image['mediaId']))" />"
+            "image": "<span tal:omit-tag="" tal:content="structure php:(Component['imageResize']=='true' ? org_glizy_helpers_Media::getResizedImageUrlById(item.image['mediaId'], false, __Config::get('movio.photogallery.resize.width'), __Config::get('movio.photogallery.resize.height'), true) : org_glizy_helpers_Media::getUrlById(item.image['mediaId']))" />"
         });
 </span>
 
 	Galleria.loadTheme('static/galleria/themes/movio/galleria.<span tal:omit-tag="" tal:content="Component/type" />.js');
 	Galleria.run('#<span tal:omit-tag="" tal:content="Component/key" />', {
-		dataSource: data, 
-		imageCrop: <span tal:omit-tag="" tal:content="Component/imageCrop" />, 
-		imagePan: <span tal:omit-tag="" tal:content="Component/imagePan" />, 
+		dataSource: data,
+		imageCrop: <span tal:omit-tag="" tal:content="Component/imageCrop" />,
+		imagePan: <span tal:omit-tag="" tal:content="Component/imagePan" />,
 		imagePosition: '<span tal:omit-tag="" tal:content="Component/imagePosition" />',
 		theme: '<span tal:omit-tag="" tal:content="Component/type" />'
 	});
