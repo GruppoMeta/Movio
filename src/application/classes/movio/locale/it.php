@@ -402,6 +402,10 @@ $strings = array (
   'Content for you' => 'Contenuti scelti per te',
   'User Profile' => 'Profilo utente',
   'Address description' => 'Descrizione indirizzo',
+  /*video*/
+  'Dimensions' => 'Dimensioni',
+  'Fixed dimensions' => 'Fisse',
+  'Automatic dimensions' => 'Automatiche',
   /*modules builder*/
   'Creating a new module from file' => 'Creazione di un nuovo modulo da un file',
   'Creating a new module from database' => 'Creazione di un nuovo modulo da una tabella già presente nel database',

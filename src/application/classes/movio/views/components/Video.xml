@@ -7,9 +7,9 @@
     <glz:LongText id="textAlternative" label="{i18n:Testo alternativo}" adm:rows="10" adm:cols="75" adm:htmlEditor="true" forceP="true" />
     <glz:Media id="video" label="{i18n:Video}" required="true"  adm:mediaType="VIDEO" directUrl="true" />
 
-	<glz:List id="sizeMode" label="{i18n:Dimensioni}" data="target=video-width,video-height;val_0=1,1;val_1=0,0">
-		<glz:ListItem key="fixed" value="{i18n:Fisse}" />
-		<glz:ListItem key="auto" value="{i18n:Automatiche}" />
+	<glz:List id="sizeMode" label="{i18n:Dimensions}" data="target=video-width,video-height;val_0=1,1;val_1=0,0">
+		<glz:ListItem key="fixed" value="{i18n:Fixed dimensions}" />
+		<glz:ListItem key="auto" value="{i18n:Automatic dimensions}" />
 	</glz:List>
 
 	<glz:Input id="width" label="{i18n:Width}" size="50" required="true" />
