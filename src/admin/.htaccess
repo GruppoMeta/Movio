@@ -3,6 +3,7 @@
     RewriteRule ^(ajax\.php|static/|cache/|favicon\.ico) - [L]
 
     RewriteRule ^application/.*\.js - [L]
+    RewriteRule ^application/.*\.css - [L]
     RewriteRule ^application/templates - [L]
     RewriteRule ^application(/|$) - [F,NC]
 

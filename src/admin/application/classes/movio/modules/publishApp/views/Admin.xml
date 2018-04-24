@@ -26,9 +26,9 @@
             <glz:Input id="subtitle" label="{i18n:Subtitle}" size="90" />
             <cms:PagePicker id="creditPageId" label="{i18n:Linked credit page}" protocol="internal:"/>
             <glz:Checkbox id="isExhibitionActive" label="{i18n:Exhibition active}" data="type=checkbox"/>
-		    <glz:Panel cssClass="formButtons">
+            <cms:FormButtonsPanel>
                 <glz:HtmlButton label="{i18n:Export}" type="button" cssClass="btn btn-primary js-publish-app"/>
-            </glz:Panel>
+			</cms:FormButtonsPanel>
             <cmp:GraphContainer id="graph" />
         </cms:FormEdit>
     </mvc:State>
