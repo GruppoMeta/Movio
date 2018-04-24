@@ -7,98 +7,171 @@
 // <![CDATA[
 jQuery(function () {
     var canvas = $('#googlemap'),
-            geo = canvas.data('geo'),
-            poi = canvas.data('poi'),
-            path = canvas.data('path'),
-            infowindow = new google.maps.InfoWindow();
-    latlng = new google.maps.LatLng(geo.lat, geo.long),
+        map;
+
+    function findAddress(address, callback) {
+        var geocode = new google.maps.Geocoder()
+        geocode.geocode( {'address': address.replace(/\'/g, '\\\'')}, function(results, status) {
+                if (status != google.maps.GeocoderStatus.OK) {
+                    console.log("wrong location! "+address)
+                }
+                callback(results[0].geometry);
+            });
+    }
+
+    function checkPosition(lat, long) {
+        return String(lat).match(/^\d*\.\d*$/)===null || String(long).match(/^\d*\.\d*$/)===null ? false : true;
+    }
+
+    function drawMap() {
+        var geo = canvas.data('geo');
+        if (!checkPosition(geo.lat, geo.long)) {
+            findAddress(geo.lat, function(geometry) {
+                canvas.data('geo', {zoom: 15,
+                                    lat: geometry.location.lat(),
+                                    long: geometry.location.lng()});
+                drawMap();
+            });
+            return;
+        }
+
+        var latlng = new google.maps.LatLng(geo.lat, geo.long),
             mapOptions = {
                 zoom: geo.zoom,
                 center: latlng,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
-            },
-            polyCoordinates = [],
-            poiNumbers = poi.length,
-            map = new google.maps.Map(canvas[0], mapOptions),
-            latLngBounds = new google.maps.LatLngBounds(),
+            };
 
-            jQuery(poi).each(function (i, item) {
-                var m,
-                        title = item.title,
-                        content = (item.title ? '<h4>' + item.title + '</h4>' : '')
-                                + item.text + '<p>' + item.image + '</p>' + '<p>' + item.link + '</p>';
-
-
-                m = new google.maps.Marker({
-                    map: map,
-                    position: new google.maps.LatLng(item.lat, item.long),
-                    title: title
-                });
-
-                if (content) {
-                    makeInfoWindowEvent(map, infowindow, content, m);
-                    $('a.js-toggleMapMarker[data-item="' + i + '"]').click(function (e) {
-                        e.preventDefault();
-                        infowindow.setContent(content);
-                        infowindow.open(map, m);
-                    });
-                }
-                polyCoordinates.push(m.position);
-                latLngBounds.extend(m.position);
-            });
-
-    if (poiNumbers) {
-        map.fitBounds(latLngBounds);
+        map = new google.maps.Map(canvas[0], mapOptions);
+        drawPoi();
     }
 
-    if (path == 1 && poiNumbers > 1) {
-        var path = new google.maps.Polyline({
-            path: polyCoordinates,
-            strokeColor: "#FF0000",
-            strokeOpacity: 0.5,
-            strokeWeight: 4
-        });
-        path.setMap(map);
-    } else if (path > 1 && poiNumbers > 1) {
-        var directionsService = new google.maps.DirectionsService(),
-                travelMode = [google.maps.TravelMode.BICYCLING, google.maps.TravelMode.DRIVING, google.maps.TravelMode.TRANSIT, google.maps.TravelMode.WALKING];
+    function checkPoiPosition(poi) {
+        var isValid = true;
+        var pending = 0;
 
-        //Reqs: array delle richieste + indice del POI di partenza
-        var reqs = poi.slice(0, -1).map(function (item, i) {
-            return {
-                request: {
-                    origin: new google.maps.LatLng(poi[i].lat, poi[i].long),
-                    destination: new google.maps.LatLng(poi[i + 1].lat, poi[i + 1].long),
-                    optimizeWaypoints: false,
-                    travelMode: travelMode[path - 2]
-                },
-                index: i
-            };
-        });
+        jQuery(poi).each(function (i, item) {
+            if (checkPosition(item.lat, item.long)) {
+                return true;
+            }
+            isValid = false;
+            pending++;
+            findAddress(item.lat, function(geometry){
+                pending--;
+                poi[i].zoom = 15;
+                poi[i].lat = geometry.location.lat();
+                poi[i].long =geometry.location.lng();
 
-        //exec, funzione di esecuzione del caricamento del percorso del POI
-        function exec(element) {
-            directionsService.route(element.request, function (response, status) {
-                if (response) {
-                    var path = new google.maps.Polyline({
-                        path: response.routes[0].overview_path,
-                        strokeColor: "#000088",
-                        strokeOpacity: 0.5,
-                        strokeWeight: 4
-                    });
-                    path.setMap(map);
-                } else {
-                    console.log("POI " + element.index + ", loading failed: " + status);
+                if (!pending) {
+                    drawPoi();
                 }
             });
+        });
+
+        return isValid;
+    }
+
+    function drawPoi() {
+        var poi = canvas.data('poi'),
+            polyCoordinates = [],
+            latLngBounds = new google.maps.LatLngBounds(),
+            infowindow = new google.maps.InfoWindow(),
+            path = canvas.data('path');
+
+        if (!checkPoiPosition(poi)) {
+            return;
         }
 
-        //Invio sequenziale a tratti delle richieste di percorso
-        const size = 1; //Dimensione del tratto (n° richieste per tratto)
-        const timePerReq = 1000; //Tempo per singola richiesta
-        var volte = Math.ceil(reqs.length/size);
-        for (var i = 0; i < volte; i++){
-            setTimeout(function(arr){arr.map(exec);}.bind(this,reqs.slice(i*size,(i+1)*size)), (i+1)*size*timePerReq);
+        jQuery(poi).each(function (i, item) {
+            var m,
+                title = item.title,
+                content = (item.title ? '<h4>' + item.title + '</h4>' : '')+
+                        (item.text ? item.text : '')+
+                        (item.image ? '<p>' + item.image + '</p>' : '' )+
+                        (item.link ? '<p>' + item.link + '</p>' : '' );
+
+            m = new google.maps.Marker({
+                map: map,
+                position: new google.maps.LatLng(item.lat, item.long),
+                title: title
+            });
+
+            if (content) {
+                makeInfoWindowEvent(map, infowindow, content, m);
+                $('a.js-toggleMapMarker[data-item="' + i + '"]').click(function (e) {
+                    e.preventDefault();
+                    infowindow.setContent(content);
+                    infowindow.open(map, m);
+                });
+            }
+            polyCoordinates.push(m.position);
+            latLngBounds.extend(m.position);
+        });
+
+        if (poi.length) {
+            map.fitBounds(latLngBounds);
+        }
+
+        drawPath(path, poi, polyCoordinates);
+    }
+
+    function drawPath(path, poi, polyCoordinates) {
+        var poiNumbers = poi.length;
+        if (path == 1 && poiNumbers > 1) {
+            var path = new google.maps.Polyline({
+                path: polyCoordinates,
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.5,
+                strokeWeight: 4
+            });
+            path.setMap(map);
+        } else if (path > 1 && poiNumbers > 1) {
+            /*
+            * ICCUASS-15, fix disgustoso: spezzo il percorso in pezzi e li carico sequenzialmente a intervalli regolari
+            * - Motivo problema: L'API di MAPS ha un limite di frequenza nell'invio di richieste. Vedi OVER_QUERY_LIMIT.
+            * - Possibile soluzione migliore: caching dei JSON dei path, a parte i primi caricamenti, poi non è più necessario chiedere a
+            *   Google il percorso.
+            */
+            var directionsService = new google.maps.DirectionsService(),
+                    travelMode = [google.maps.TravelMode.BICYCLING, google.maps.TravelMode.DRIVING, google.maps.TravelMode.TRANSIT, google.maps.TravelMode.WALKING];
+
+            //Reqs: array delle richieste + indice del POI di partenza
+            var reqs = poi.slice(0, -1).map(function (item, i) {
+                return {
+                    request: {
+                        origin: new google.maps.LatLng(poi[i].lat, poi[i].long),
+                        destination: new google.maps.LatLng(poi[i + 1].lat, poi[i + 1].long),
+                        optimizeWaypoints: false,
+                        travelMode: travelMode[path - 2]
+                    },
+                    index: i
+                };
+            });
+
+            //exec, funzione di esecuzione del caricamento del percorso del POI
+            function exec(element) {
+                directionsService.route(element.request, function (response, status) {
+                    if (response) {
+                        var path = new google.maps.Polyline({
+                            path: response.routes[0].overview_path,
+                            strokeColor: "#000088",
+                            strokeOpacity: 0.5,
+                            strokeWeight: 4
+                        });
+                        path.setMap(map);
+                    } else {
+                        console.log("POI " + element.index + ", loading failed: " + status);
+                    }
+                });
+            }
+
+            //Invio sequenziale a tratti delle richieste di percorso
+            const size = 1; //Dimensione del tratto (n° richieste per tratto)
+            const timePerReq = 1000; //Tempo per singola richiesta
+            var volte = Math.ceil(reqs.length/size);
+            for (var i = 0; i < volte; i++){
+                setTimeout(function(arr){arr.map(exec);}.bind(this,reqs.slice(i*size,(i+1)*size)), (i+1)*size*timePerReq);
+            }
         }
     }
 
@@ -113,6 +186,8 @@ jQuery(function () {
             });
         });
     }
+
+    drawMap();
 })
 // ]]>
 </script>
