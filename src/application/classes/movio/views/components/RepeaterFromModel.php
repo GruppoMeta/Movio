@@ -96,13 +96,6 @@ class movio_views_components_RepeaterFromModel extends org_glizy_components_Comp
         return $result;
     }
 
-    function render($mode) {
-        if (!$this->_application->isAdmin()) {
-            $this->setAttribute('skin', 'ImageList.html');
-        }
-        parent::render($mode);
-    }
-
     function loadContent($id, $bindTo='')
     {
         $id = $this->it->current()->media_id;

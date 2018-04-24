@@ -14,7 +14,7 @@
     <glz:Input id="url" label="{i18n:Google Spreadsheet or other data source URL}" size="50" />
     <glz:Input id="start" label="{i18n:Start at specific slide number}" size="50" />
 
-     <glz:Repeater id="timelineDef" label="{i18n:Timeline definition}" adm:collapsable="true" skin="ImageList.html">
+     <glz:Repeater id="timelineDef" label="{i18n:Timeline definition}" adm:collapsable="true">
         <glz:Input id="startDate" label="{i18n:Start date (yyyy, yyyy/mm, yyyy/mm/dd)}" size="50"/>
         <glz:Input id="endDate" label="{i18n:End date (yyyy, yyyy/mm, yyyy/mm/dd)}" size="50"/>
         <glz:Input id="headline" label="{i18n:Headline}" size="50" />
