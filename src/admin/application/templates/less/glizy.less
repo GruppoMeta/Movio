@@ -456,7 +456,7 @@ li.glizycmsSiteTree-no-edit a {
     text-decoration:line-through;
   }
 
-  
+
 #openclose {
 	display: none;
 }
@@ -699,6 +699,17 @@ caption {
 .mapPicker img {
 	max-width: none;
 }
+.mapPicker .close-button {
+  z-index: 1 !important;
+  height: 15px;
+  background: #fff;
+  padding: 8px;
+  margin: 14px 14px 0 0;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+
 /* override jquery UI per compatibilità con Glizy  */
 .ui-front {
 	position:  fixed !important;
@@ -867,7 +878,7 @@ div.addMedia input.mediaFilePicker {
 /* add page */
 .pageTypeSelect {
     margin: 0;
-    
+
 		li {
 			border: 1px solid #D5D5D5;
 			box-shadow: 0 1px 0 0 @white inset, 0 1px 0 rgba(255, 255, 255, 0.4);

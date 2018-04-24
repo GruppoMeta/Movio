@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <?php print($head); ?>
-        <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/styles.css?v=2" />
     </head>
     <body class="with-sidebar">
     <div id="outer">
