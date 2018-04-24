@@ -79,9 +79,27 @@ $(function(){
     jQuery('video,audio').mediaelementplayer();
     galleriaio_loadNext();
 
-	if (location.hash.indexOf('form') || location.hash.indexOf('comments')) {
+	if (location.hash.indexOf('form') > -1 || location.hash.indexOf('comments') > -1) {
 		$('a[name='+location.hash.substr(1)+']').parent().slideDown(300);
 	}
+	
+	$('.fa-comment').parent().children('a').on('click', function(e) {
+		var commentCode = $(this).prop('href').split('#')[1];		
+		
+		if ($('a[name="' + commentCode + '"]').parent().css('display') == 'none') {
+			if (location.href.indexOf('#') > -1) {
+				history.pushState(null, null, location.href.substr(0, location.href.indexOf('#')) + '#' + commentCode);
+			} else {
+				history.pushState(null, null, location.href + '#' + commentCode);
+			}
+		} else if (location.href.indexOf('#') > -1) {
+			history.pushState(null, null, location.href.substr(0, location.href.indexOf('#')));
+		}
+		
+		$('a[name="' + commentCode + '"]').parent().toggle(300);
+		
+		return false;
+	});
 });
     </script>
 
