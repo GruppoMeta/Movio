@@ -8,7 +8,7 @@
 	<glz:Import src="Common.xml" />
     <glz:LongText id="text" label="{i18n:Text}" adm:rows="20" adm:cols="75" adm:htmlEditor="true" forceP="true" adm:required="false" />
 
-     <glz:Repeater id="images" label="{i18n:Images list}" adm:collapsable="true" skin="ImagesList.html">
+    <glz:Repeater id="images" label="{i18n:Images list}" adm:collapsable="false" skin="ImagesList.html">
         <glz:Image id="image" label="{i18n:Image}" width="{config:THUMB_WIDTH}" height="{config:THUMB_HEIGHT}" zoom="true" group="slideshow" superZoom="true" />
     </glz:Repeater>
 
