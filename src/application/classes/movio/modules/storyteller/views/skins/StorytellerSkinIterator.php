@@ -209,9 +209,10 @@ class movio_modules_storyteller_views_skins_StorytellerSkinIterator extends Gliz
                 if (is_object($v)) {
                     $v = 'movioContent:'.$v->id;
                 }
+
                 $url = $speakingUrlManager->makeLink($v);
                 if ($url) {
-                    $results[] = $speakingUrlManager->makeLink($v);
+                    $results[] = $url;
                 }
             }
 

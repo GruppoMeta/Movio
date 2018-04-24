@@ -136,7 +136,8 @@ class movio_modules_ontologybuilder_EntityResolver extends org_glizycms_speaking
         // document not found, isn't visible or isn't traslated
         // go to entity page or home
         $speakingUrlManager = $this->application->retrieveProxy('org.glizycms.speakingUrl.Manager');
-        return $speakingUrlManager->makeUrl('internal:'.( $menu ? $menu->id : __Config::get('START_PAGE')));
+        $url = $speakingUrlManager->makeUrl('internal:'.( $menu ? $menu->id : __Config::get('START_PAGE')));
+        return $fullLink ? false : $url;
     }
 
     protected function getPage($entityTypeId)

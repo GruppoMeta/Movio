@@ -281,7 +281,7 @@
         <h4 tal:content="php: __T('Insights')"></h4>
         <ul class="insights clearfix" tal:condition="item/documents" >
             <span tal:omit-tag="" tal:repeat="subItem item/documents">
-                <li tal:condition="subItem/documentUrl"><a tal:attributes="href subItem/documentUrl" tal:content="subItem/text"></a></li>
+                <li tal:condition="subItem" tal:content="structure subItem"></li>
             </span>
         </ul>
     </span>
