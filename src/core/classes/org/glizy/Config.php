@@ -52,7 +52,7 @@ class org_glizy_Config
 		if( strpos($value, "{{") !== false )
         {
             preg_match_all( "/\{\{env:([^\{]*)\}\}/U", $value, $resmatch );
-			if (count($resmatch)) {
+			if (count($resmatch[0])) {
 				foreach( $resmatch[1] as $varname)
 				{
 					list($envName, $envDefaultValue) = explode(',', $varname);
@@ -65,7 +65,7 @@ class org_glizy_Config
 			}
 
       		preg_match_all( "/\{\{path:([^\{]*)\}\}/U", $value, $resmatch );
-			if (count($resmatch)) {
+			if (count($resmatch[0])) {
 				foreach( $resmatch[1] as $varname)
 				{
 					$value = str_replace('{{path:'.$varname.'}}', org_glizy_Paths::get( $varname ), $value);
@@ -73,7 +73,7 @@ class org_glizy_Config
             }
 
             preg_match_all( "/\{\{([^\{]*)\}\}/U", $value, $resmatch );
-			if (count($resmatch)) {
+			if (count($resmatch[0])) {
 				foreach( $resmatch[1] as $varname)
 				{
 					$value = str_replace('{{'.$varname.'}}', org_glizy_Config::get( $varname ), $value);
@@ -281,6 +281,28 @@ class org_glizy_Config
 		$configArray['glizy.multisite.id'] = 0;
 		$configArray['glizy.helpers.FileServe.forceDownload'] = false;
         $configArray['glizy.acl.defaultIfNoDefined'] = false;
+
+        $configArray['glizy.jstab'] = 'nav nav-tabs';
+        $configArray['glizy.jstab.pane'] = 'tab-content';
+        $configArray['glizy.jstab.tab'] = 'tab-pane';
+        $configArray['glizy.jstab.content'] = '';
+        $configArray['glizy.jstab.dropdown.tab'] = 'dropdown';
+        $configArray['glizy.jstab.dropdown.menu'] = 'dropdown-menu';
+        $configArray['glizy.jstab.dropdown.caret'] = 'caret';
+        $configArray['glizy.jstab.dropdown.link'] = 'tab-dropdown dropdown-toggle';
+        $configArray['glizy.jstab.navigation'] = 'tab-navigation';
+        $configArray['glizy.jstab.navigation.link'] = 'btn';
+        $configArray['glizy.jstab.navigation.next'] = 'fa fa-angle-double-right';
+        $configArray['glizy.jstab.navigation.prev'] = 'fa fa-angle-double-left';
+        $configArray['glizy.jstab.enableTabListener'] = 'true';
+        $configArray['glizy.jstab.enableScrollOnChange'] = 'true';
+
+        $configArray['glizy.accordion'] = 'panel panel-default';
+        $configArray['glizy.accordion.heading'] = 'panel-heading';
+        $configArray['glizy.accordion.title'] = 'panel-title';
+        $configArray['glizy.accordion.bodyDiv'] = 'panel-collapse collapse';
+        $configArray['glizy.accordion.body'] = 'panel-body';
+        $configArray['glizy.accordion.open'] = 'in';
 
         if (!$serverName) {
             $configFileName = org_glizy_Paths::get('APPLICATION').'config/config.xml';

@@ -12,7 +12,7 @@ class org_glizycms_views_components_GoogleAnalytics extends org_glizy_components
 	function render_html()
 	{
 		$siteProp = $this->_application->getSiteProperty();
-		if ( isset( $siteProp[ 'analytics' ] ) && !empty( $siteProp[ 'analytics' ] ) )
+		if ( isset( $siteProp[ 'analytics' ] ) && !empty( $siteProp[ 'analytics' ] ) && !__Config::get('DEBUG'))
 		{
 			$code = $siteProp[ 'analytics' ];
 			$host = $_SERVER['SERVER_NAME'];

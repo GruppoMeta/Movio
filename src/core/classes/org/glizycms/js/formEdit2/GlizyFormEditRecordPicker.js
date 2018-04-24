@@ -84,7 +84,7 @@ Glizy.oop.declare("glizy.FormEdit.recordpicker", {
 
     onPreview: function(e) {
         var url = this.previewUrl.replace('##ID##', $(e.currentTarget).data('id'));
-        this.open(url, '_blank');
+        window.open(url, '_blank');
     },
 
     disposeEvent: function() {

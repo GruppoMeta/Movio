@@ -22,7 +22,7 @@ class org_glizy_components_Resources extends org_glizy_components_Component
      * @param boolean $minify
      * @param string $media
      */
-    public function addResource($type, $src, $region, $minify=false, $media=null)
+    public function addResource($type, $src, $region, $minify=false, $media=null, $replaceValues=true)
     {
         $key = $this->keyFromTypeAndRegion($type, $region);
 
@@ -30,7 +30,7 @@ class org_glizy_components_Resources extends org_glizy_components_Component
             $this->resources[$key] = array();
             $this->resourcesSignature[$key] = array();
         }
-        $this->resources[$key][] =  array('src' => $src, 'minify' => $minify, 'media' => $media);
+        $this->resources[$key][] =  array('src' => $src, 'minify' => $minify, 'media' => $media, 'replaceValues' => $replaceValues);
         $this->resourcesSignature[$key][] = $src.$minify;
     }
 
@@ -100,14 +100,18 @@ class org_glizy_components_Resources extends org_glizy_components_Component
                 $file = $this->resolveConfig($file);
                 $file = $this->resolvePaths($file);
 
+                if (!$debugMode && !$this->fileExists($file)) {
+                    throw org_glizy_exceptions_GlobalException::resourceNotFound($item['src']);
+                }
+
                 try {
                     if (is_dir($file)) {
-                        $fileSource .= PHP_EOL.$this->readFolder($file, $type, $debugMode ? false : $item['minify'], $item['media']);
+                        $fileSource .= PHP_EOL.$this->readFolder($file, $type, $debugMode ? false : $item['minify'], $item['media'], $item['replaceValues']);
                     } else {
-                        $fileSource .= PHP_EOL.$this->readFile($file, $type, $debugMode ? false : $item['minify'], $item['media']);
+                        $fileSource .= PHP_EOL.$this->readFile($file, $type, $debugMode ? false : $item['minify'], $item['media'], $item['replaceValues']);
                     }
                 } catch (Exception $e) {
-                    throw org_glizy_exceptions_GlobalException::resourceNotFound($file);
+                    throw org_glizy_exceptions_GlobalException::resourceNotFound($item['src']);
                 }
             }
             $cacheObj->save($fileSource, NULL, $cacheSignature);
@@ -121,13 +125,14 @@ class org_glizy_components_Resources extends org_glizy_components_Component
      * @param  string $type
      * @param  boolean $minify
      * @param  string $media
+     * @param  boolean $replaceValues
      * @return array
      */
-    private function readFolder($dir, $type, $minify, $media)
+    private function readFolder($dir, $type, $minify, $media, $replaceValues)
     {
         $fileSource = '';
         foreach(glob($dir.'/*.'.$type) as $file) {
-            $fileSource .= $this->readFile($file, $type, $minify, $media);
+            $fileSource .= $this->readFile($file, $type, $minify, $media, $replaceValues);
         }
         return $fileSource;
     }
@@ -137,34 +142,65 @@ class org_glizy_components_Resources extends org_glizy_components_Component
      * @param  string $type
      * @param  boolean $minify
      * @param  string $media
+     * @param  boolean $replaceValues
      * @return string
      */
-    private function readFile($src, $type, $minify, $media)
+    private function readFile($src, $type, $minify, $media, $replaceValues)
     {
-        $fileContent = file_get_contents($src);
-        if (!$minify) {
-            $fileContent = '// '.$src.';'.PHP_EOL.$fileContent;
-        }
+        $isRemote = preg_match('/http:|https:/', $src);
+        $fileContent = $this->getFileContentWithCache($src, $isRemote).PHP_EOL;
+
+        // if (!$minify) {
+        //    $fileContent = '/* '.$src.' */'.PHP_EOL.$fileContent;
+        // }
 
         if ($type==='css') {
             $pathinfo = pathinfo($src);
-            $pathDir = preg_match('/http:|https:/', $pathinfo['dirname']) ? $pathinfo['dirname'].'/' : GLZ_HOST.'/'.$pathinfo['dirname'].'/';
-            return $this->postProcessingCSS($fileContent, $minify, $media, $pathDir);
+            $pathDir = $isRemote ? $pathinfo['dirname'].'/' : GLZ_HOST.'/'.$pathinfo['dirname'].'/';
+            return $this->postProcessingCSS($fileContent, $minify, $media, $pathDir, $replaceValues);
         } else {
-            return $this->postProcessingJS($fileContent, $minify);
+            return !$isRemote ? $this->postProcessingJS($fileContent, $minify, $replaceValues) : $fileContent;
         }
+    }
+
+    /**
+     * @param strin $src
+     * @return string
+     */
+    private function getFileContentWithCache($src, $isRemote)
+    {
+        $cacheEnabled = __Config::get('DEBUG');
+        $fileContent = null;
+        $writeCache = $isRemote;
+        $cacheFile = __Paths::get('CACHE').md5($src);
+
+        if ($isRemote && $cacheEnabled && file_exists($cacheFile)) {
+            $fileContent = file_get_contents($cacheFile);
+            $writeCache = false;
+        }
+
+        $fileContent = $fileContent ? : file_get_contents($src);
+
+        if ($cacheEnabled && $writeCache) {
+            file_put_contents($cacheFile, $fileContent);
+        }
+
+        return $fileContent;
     }
 
     /**
      * @param  string $content
      * @param  string $minify
+     * @param  boolean $replaceValues
      * @return string
      */
-    private function postProcessingJS($content, $minify)
+    private function postProcessingJS($content, $minify, $replaceValues)
     {
         require_once (org_glizy_Paths::get('CORE_LIBS').'/jsmin/jsmin.php');
-        $content = $this->replaceConfig($content);
-        $content = $this->replaceLocale($content);
+        if ($replaceValues) {
+            $content = $this->replaceConfig($content);
+            $content = $this->replaceLocale($content);
+        }
         return $minify ? JSMin::minify($content) : $content;
     }
 
@@ -173,10 +209,14 @@ class org_glizy_components_Resources extends org_glizy_components_Component
      * @param  string $minify
      * @param  string $media
      * @param  string $pathDir
+     * @param  boolean $replaceValues
      * @return string
      */
-    private function postProcessingCSS($content, $minify, $media, $pathDir)
+    private function postProcessingCSS($content, $minify, $media, $pathDir, $replaceValues)
     {
+        if ($replaceValues) {
+            $content = $this->replaceConfig($content);
+        }
         $content = $this->fixUrlInCss($content, $pathDir);
 
         if ($media) {
@@ -232,6 +272,10 @@ class org_glizy_components_Resources extends org_glizy_components_Component
      */
     private function resolvePaths($src)
     {
+        if (preg_match('/^{([^:]*)}$/', $src)) {
+            $src = substr($src, 1, -1);
+            return glz_findClassPath($src, false, false);
+        }
         return $this->resolveFromRegExp('/{path:(.*)}/Ui', __Paths, $src);
     }
 
@@ -324,6 +368,16 @@ class org_glizy_components_Resources extends org_glizy_components_Component
         return $content;
     }
 
+    private function fileExists($file)
+    {
+        if (!preg_match('/(http:|https)/', $file)) {
+            return file_exists($file);
+        }
+
+        $headers = @get_headers($file);
+        return preg_match('|200|', $headers[0]);
+    }
+
     /**
      * @param  Class $compiler
      * @param  DomNode &$node
@@ -347,9 +401,10 @@ class org_glizy_components_Resources extends org_glizy_components_Component
                 $region = $n->getAttribute('editableRegion');
                 $minify = $n->hasAttribute('minify') ? $n->getAttribute('minify') : 'false';
                 $media = $n->hasAttribute('media') ? $n->getAttribute('media') : '';
+                $replace = $n->hasAttribute('replace') ? $n->getAttribute('replace') : 'true';
 
                 if ( $src && $region ) {
-                    $compiler->_classSource .= sprintf('$n%s->addResource("%s", "%s", "%s", %s, "%s");', $counter, $type, $src, $region, $minify, $media);
+                    $compiler->_classSource .= sprintf('$n%s->addResource("%s", "%s", "%s", %s, "%s", %s);', $counter, $type, $src, $region, $minify, $media, $replace);
                 }
             }
 

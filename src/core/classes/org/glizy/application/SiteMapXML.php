@@ -109,18 +109,27 @@ class org_glizy_application_SiteMapXML extends org_glizy_application_SiteMap
             $menu['hideInNavigation'] = $currNode->getAttribute('hide');
 
 
+
             if (!in_array($menu['isVisible'], array('true', 'false'))) {
                 $newVisibility = '';
+                $service = $menu['id'];
+                $action = 'visible';
                 if (($currNode->hasAttribute('adm:acl') && !$currNode->hasAttribute('adm:aclPageTypes')) || in_array($menu['id'], $pagesAcl) )
                 {
-                    $newVisibility = '{php:$user.acl("'.$menu['id'].'", "visible", '.$this->aclDefaultIfNoDefined.')}';
+                    $acl = $currNode->getAttribute('adm:acl');
+                    $aclParts = explode( ',', $acl);
+                    if (count($aclParts)==2 && strlen($aclParts[0])!=1 && strlen($aclParts[1])!=1 ) {
+                        $service = $aclParts[0];
+                        $action = $aclParts[1];
+                    }
+                    $newVisibility = '{php:$user.acl("'.$service.'", "'.$action.'", '.$this->aclDefaultIfNoDefined.')}';
                 }
                 else if ( $currNode->hasAttribute('adm:aclPageTypes') )
                 {
                     $temp = array();
                     $aclPages = explode(',', strtolower($currNode->getAttribute('adm:aclPageTypes')));
-                    foreach($aclPages as $v) {
-                        $temp[] = '$user.acl("'.$v.'", "visible", '.$this->aclDefaultIfNoDefined.')';
+                    foreach($aclPages as $service) {
+                        $temp[] = '$user.acl("'.$service.'", "'.$action.'", '.$this->aclDefaultIfNoDefined.')';
                     }
                     $newVisibility = '{php:('.implode(' OR ', $temp).')}';
                 }

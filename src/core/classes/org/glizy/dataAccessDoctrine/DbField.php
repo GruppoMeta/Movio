@@ -43,13 +43,13 @@ class org_glizy_dataAccessDoctrine_DbField
         $this->index = $index;
         $this->option = glz_maybeJsonDecode($option, true);
 
-        // TODO c'è un problema con il valore di option
-        // nelle schede ICCD è un stringa che punta d un altro model
+        // TODO c'Ã¨ un problema con il valore di option
+        // nelle schede ICCD Ã¨ un stringa che punta d un altro model
         // il compilatore di Model usa una stringa
         // ma qui per ARRAY_ID vuole un oggetto, credo che sia usato anche in Content.xml come oggetto
 
-        if (    $this->type == org_glizy_dataAccessDoctrine_types_Types::ARRAY_ID &&
-                (is_null($this->option) || !isset($this->option[org_glizy_dataAccessDoctrine_types_Types::ARRAY_ID])) ) {
+        if ($this->type == org_glizy_dataAccessDoctrine_types_Types::ARRAY_ID &&
+            (is_null($this->option) || !isset($this->option[org_glizy_dataAccessDoctrine_types_Types::ARRAY_ID])) ) {
             // backward compatibility if the ARRAY_ID field don't have options
             // set the default values
             $this->option = array( org_glizy_dataAccessDoctrine_types_Types::ARRAY_ID => array(
@@ -57,6 +57,39 @@ class org_glizy_dataAccessDoctrine_DbField
                                         'field' => 'id'
                                     ));
         }
+    }
+
+    static public function create($options)
+    {
+        if ($options['index'] == true) {
+            $options['index'] = self::INDEXED;
+        } else if ($options['index'] == false) {
+            $options['index'] = self::NOT_INDEXED;
+        } else if ($options['index'] == 'fulltext') {
+            $options['index'] = self::FULLTEXT;
+        }
+
+        if ($options['onlyIndex']) {
+            $options['index'] |= self::ONLY_INDEX;
+        }
+
+        if ($options['type'] == \Doctrine\DBAL\Types\Type::OBJECT && is_null($options['readFormat'])) {
+            $options['readFormat'] = false;
+        }
+
+        return new org_glizy_dataAccessDoctrine_DbField(
+            $options['name'],
+            $options['type'],
+            isset($options['size']) ? $options['size'] : 255,
+            isset($options['key']) ? $options['key'] : false,
+            $options['validator'],
+            isset($options['defaultValue']) ? $options['defaultValue'] : '',
+            isset($options['readFormat']) ? $options['readFormat'] : true,
+            isset($options['virtual']) ? $options['virtual'] : false,
+            isset($options['description']) ? $options['description'] : '',
+            isset($options['index']) ? $options['index'] : self::NOT_INDEXED,
+            $options['option']
+        );
     }
 
     public function format($value, $connection)

@@ -132,4 +132,9 @@ class org_glizycms_mediaArchive_Bridge implements org_glizycms_mediaArchive_Brid
 
         org_glizy_helpers_FileServe::serve($mediaInfo['fileName'], null, 60 * 60 * 24 * 3);
     }
+
+    public function mediaInfoAll($id)
+    {
+        return $this->mediaInfo($id);
+    }
 }

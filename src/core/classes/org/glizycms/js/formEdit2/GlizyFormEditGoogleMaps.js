@@ -4,34 +4,36 @@ Glizy.oop.declare("glizy.FormEdit.googlemaps", {
     marker: null,
     geocoder: null,
     elementMap: null,
-    
+
     initialize: function (element) {
         element.data('instance', this);
         this.$element = element;
         this.render();
     },
-    
+
     getValue: function () {
         return this.$element.val();
     },
-    
+
     setValue: function (value) {
         this.$element.val(value);
     },
-    
+
     getName: function () {
         return this.$element.attr('name');
     },
-    
+
     focus: function()
     {
         this.$element.focus();
     },
-    
+
     render: function() {
+        var self = this;
+
         if (this.$element.data('isInit')!==true) {
             var name = this.$element.attr('name'),
-            html = '<input id="'+name+'-search" class="btn" type="button" value="Cerca"/>';
+            html = '<input id="'+name+'-search" class="btn" type="button" value="'+GlizyLocale.GoogleMap.search+'"/>';
             this.$element.after(jQuery(html));
             this.$element.addClass("span10");
             this.$element.data('isInit', true);
@@ -62,9 +64,18 @@ Glizy.oop.declare("glizy.FormEdit.googlemaps", {
                                 title: "Trascinami",
                                 draggable: true
                             });
+
+            function myButton(){
+                var btn = $('<div class="close-button">'+GlizyLocale.GoogleMap.close+'</div>');
+                btn.bind('click', function(){
+                    self.setPositionValues();
+                    self.closeMap();
+                });
+                return btn[0];
+            }
+            window.GlizyFormEditgooglemaps.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(myButton());
         }
 
-        var self = this;
         this.map = window.GlizyFormEditgooglemaps.map;
         this.marker = window.GlizyFormEditgooglemaps.marker;
         this.geocoder = window.GlizyFormEditgooglemaps.geocoder;
@@ -97,7 +108,7 @@ Glizy.oop.declare("glizy.FormEdit.googlemaps", {
             self.search();
         } );
     },
-    
+
     trim: function (str)
     {
        var str = str.replace(/^\s\s*/, ''),
@@ -228,7 +239,7 @@ Glizy.oop.declare("glizy.FormEdit.googlemaps", {
         var self = this;
         var address = this.$element.val();
         if (address == ""){
-            alert("Inserire un indirizzo o le coordinate longitudine/latitudine.");
+            alert(GlizyLocale.GoogleMap.error_1);
         }else{
             if(this.isLngLat(address)){
                 this.openMap();
@@ -241,25 +252,25 @@ Glizy.oop.declare("glizy.FormEdit.googlemaps", {
                         );
                         self.openMap();
                     } else {
-                        alert("Geocode was not successful for the following reason: " + status);
+                        alert(GlizyLocale.GoogleMap.error_2+": " + status);
                     }
                 });
             }
             this.focus();
         }
     },
-    
+
     destroy: function() {
     },
-    
+
     isDisabled: function() {
         return this.$element.attr('disabled') == 'disabled';
     },
-    
+
     addClass: function(className) {
         this.$element.addClass(className);
     },
-    
+
     removeClass: function(className) {
         this.$element.removeClass(className);
     }

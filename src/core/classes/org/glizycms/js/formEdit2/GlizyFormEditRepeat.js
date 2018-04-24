@@ -414,12 +414,14 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
 
             var parents = element.parents('[data-type]');
 
+
             // se l'elemento è contenuto immediatamente nel repeater
             if (parents[0] == self.$element[0]) {
-                var addBtnId = containerId+'-'+$(this).attr('id');
+                var id = $(this).attr('id') ? $(this).attr('id') : $(this).attr('name');
+                var addBtnId = containerId+'-'+id;
                 self.createChild(id, element, addBtnId, containerId);
             }
-        });
+        }); 
 
         if (noVerifySelectWithTarget === undefined) {
             this.verifySelectWithTarget($container);
@@ -512,6 +514,11 @@ Glizy.oop.declare("glizy.FormEdit.repeat", {
     },
 
     setValue: function (value) {
+        if (this.children.length > 0) {
+            this.children = [];
+            this.$element.find('.GFERowDelete').trigger('click');
+        }
+
         value = this.convertFromOldFormat(value);
 
         if (value && value.length > 0) {

@@ -247,7 +247,7 @@ class org_glizy_application_Application extends GlizyObject
             {
                 org_glizy_helpers_Navigation::gotoUrl( __Link::makeUrl( 'link', array( 'pageId' => $error404Page ) ) );
             }
-            new org_glizy_Exception(__T('GLZ_ERR_404'), GLZ_E_404);
+            org_glizy_helpers_Navigation::notFound();
         }
 
         if (!empty($this->siteMapMenu->select)) {

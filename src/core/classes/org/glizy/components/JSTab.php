@@ -14,8 +14,8 @@ class org_glizy_components_JSTab extends org_glizy_components_ComponentContainer
 	{
 		// define the custom attributes
 		$this->defineAttribute('label', true, '', COMPONENT_TYPE_STRING);
-		$this->defineAttribute('cssClass', false, 'tab-pane', COMPONENT_TYPE_STRING);
-		$this->defineAttribute('cssClassTab', false, '', COMPONENT_TYPE_STRING);
+		$this->defineAttribute('cssClass', false, __Config::get('glizy.jstab.tab'), COMPONENT_TYPE_STRING);
+		$this->defineAttribute('cssClassTab', false, __Config::get('glizy.jstab.content'), COMPONENT_TYPE_STRING);
 		$this->defineAttribute('disabled', false, false, COMPONENT_TYPE_BOOLEAN);
 		$this->defineAttribute('dropdown', false, false, COMPONENT_TYPE_BOOLEAN);
 		$this->defineAttribute('routeUrl', false, NULL, COMPONENT_TYPE_STRING);

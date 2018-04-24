@@ -119,11 +119,12 @@ class org_glizycms_contents_models_proxy_ContentProxy extends GlizyObject
             $originalUrl = $menuDocument->url;
             $menuDocument->setDataFromContentVO($data);
 
-            if ($speakingUrlProxy && $originalUrl != $menuDocument->url) {
+            if (
+                ($speakingUrlProxy && $menuDocument->url && $originalUrl != $menuDocument->url) &&
+                !$speakingUrlProxy->validate($menuDocument->url, $languageId, $menuId, 'org.glizycms.core.models.Content')
+                ) {
                 //valida l'url
-                if (!$speakingUrlProxy->validate($menuDocument->url, $languageId, $menuId, 'org.glizycms.core.models.Content')) {
-                    return 'Url non valido perché già utilizzato';
-                }
+                return __T('Url already used');
             }
 
             try {
@@ -177,7 +178,7 @@ class org_glizycms_contents_models_proxy_ContentProxy extends GlizyObject
                 $menuProxy->invalidateSitemapCache();
             }
 
-            $evt = array('type' => org_glizycms_contents_events_Menu::SAVE_CONTENT);
+            $evt = array('type' => org_glizycms_contents_events_Menu::SAVE_CONTENT, 'data' => array('document' => $menuDocument, 'menu' => $menu));
             $this->dispatchEvent($evt);
 
             return true;

@@ -68,6 +68,7 @@ $strings = array (
     "Processing..." => "Elaborazione...",
     "No record found" => "Nessun record trovato",
     "No record found with current filters" => "Nessun record trovato per i filtri di ricerca indicati",
+    "Loading data from server" => "Caricamento dati dal server",
     // site properties
     "Google Analytics code" => "Chiave Google Analytics",
     "Add new language" => "Aggiungi una nuova lingua",
@@ -100,8 +101,9 @@ $strings = array (
     "GPS coordinates" => "Coordinate GPS",
     "GPS time" => "Orario GPS",
     "Select" => "Seleziona",
-    
+
     'MW_REGISTRATION_EMAIL_ALREADY_EXISTS' => 'L\'email è già presente nel database, usare un\'altra email o richiedere la password',
+    'Url already used' => 'Url non valido perché già utilizzato',
 );
 org_glizy_locale_Locale::append($strings);
 

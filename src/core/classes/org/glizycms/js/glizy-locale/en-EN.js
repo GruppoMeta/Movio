@@ -19,8 +19,6 @@ GlizyLocale.FormEdit = {
 	minRecordMsg: "The minimum number of records is ",
 	insertComment: "Insert a note",
 	search: "Search",
-	googleMapError_1: "Enter an address or coordinates",
-	googleMapError_2: "Geocode was not successful for the following reason",
 	unableToSave: "This document was not successfully saved because of the following errors:",
 	interruptProcess: "Warning: by coming out from this page, the process will be stopped.",
 	discardConfirmation: "There are some unsaved changes, you will discard them by proceeding. Do you wish to proceed?"
@@ -88,4 +86,11 @@ GlizyLocale.HotSpot = {
 GlizyLocale.selectfrom = {
     formatNoMatches: 'No matches found',
     formatSearching: 'Searching...'
+};
+
+GlizyLocale.GoogleMap = {
+	error_1: "Enter an address or coordinates",
+	error_2: "Geocode was not successful for the following reason",
+    search: "Search",
+    close: "Close"
 };

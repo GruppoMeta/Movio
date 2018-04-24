@@ -60,6 +60,9 @@ class org_glizycms_Glizycms extends GlizyObject
         return '../'.$templatePath;
     }
 
+    /**
+     * @return org_glizycms_mediaArchive_BridgeInterface
+     */
     static public function getMediaArchiveBridge()
     {
         return self::$mediaArchiveBridge;

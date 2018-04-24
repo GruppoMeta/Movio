@@ -23,11 +23,6 @@ body{
 	margin: 0 auto;
 	width: 960px;
 }
-.font-size-10{
-	font-size: 10em;
-	margin: 0;
-	color: #990;
-}
 .font-size-2{
 	font-size: 2em;
 	margin: 0;
@@ -39,7 +34,6 @@ body{
 </head>
 <body>
     <div id="content">
-		<p class="font-size-10"><?php echo $e['title'];?></p>
 		<p class="font-size-2"><?php echo $e['code'].' : '.$e['description'];?></p>
 		<?php if (isset($e['trace'])) { ?>
 			<p class="with-line">Stacktrace</p>
@@ -66,4 +60,3 @@ body{
 	</div>
 </body>
 </html>
-

@@ -23,7 +23,6 @@ class org_glizycms_contents_models_proxy_ModuleContentProxy extends GlizyObject
         if ($recordId) {
             if (!$document->load($recordId, $status)) {
                 $languageProxy = __ObjectFactory::createObject('org.glizycms.languages.models.proxy.LanguagesProxy');
-                //dd($recordId, $status, $languageProxy->getDefaultLanguageId());
                 $document->load($recordId, $status, $languageProxy->getDefaultLanguageId());
             }
         }
@@ -58,18 +57,18 @@ class org_glizycms_contents_models_proxy_ModuleContentProxy extends GlizyObject
 		return $names;
 	}
 
-    public function saveContent($data, $publish=true, $draft=false, $saveCurrentPublished=false)
+    public function saveContent($data, $saveHistory=true, $draft=false, $saveCurrentPublished=false, $publishDraft=false)
     {
         $recordId = $data->__id;
         $model = $data->__model;
 
         $document = org_glizy_objectFactory::createModel($model);
-        $result = $document->load($recordId, 'LAST_MODIFIED');
+        $result = $document->load($recordId, $draft ? 'DRAFT' : 'PUBLISHED');
 
         if (!$result) {
             $languageProxy = __ObjectFactory::createObject('org.glizycms.languages.models.proxy.LanguagesProxy');
             $defaultLanguageId = $languageProxy->getDefaultLanguageId();
-            $document->load($recordId, 'LAST_MODIFIED', $defaultLanguageId);
+            $document->load($recordId, 'PUBLISHED_DRAFT', $defaultLanguageId);
             $document->setDetailFromLanguageId($languageProxy->getLanguageId());
         }
 
@@ -87,16 +86,23 @@ class org_glizycms_contents_models_proxy_ModuleContentProxy extends GlizyObject
             $document->setVisible($data->document_detail_isVisible);
         }
 
+
         try {
             if ($saveCurrentPublished) {
                 $id = $document->saveCurrentPublished();
-            } else if ($publish && !$draft) {
+            } else if (($saveHistory && !$draft) || $publishDraft===true) {
                 $id = $document->publish();
-            } else if ($publish && $draft) {
+                if (!$saveHistory) {
+                    // delete all OLD
+                    $document->deleteStatus('OLD');
+                }
+            } else if ($saveHistory && !$draft) {
+                $id = $document->publish();
+            } else if ($saveHistory && $draft) {
                 $id = $document->saveHistory();
-            } else if (!$publish && !$draft) {
+            } else if (!$saveHistory && !$draft) {
                 $id = $document->save(null, false, 'PUBLISHED');
-            } else if (!$publish && $draft) {
+            } else if (!$saveHistory && $draft) {
                 $id = $document->save(null, false, 'DRAFT');
             }
 

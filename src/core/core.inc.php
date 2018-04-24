@@ -107,10 +107,9 @@ function glz_defineBaseHost()
 			$protocol = @$_SERVER["HTTPS"] === true || @$_SERVER["HTTPS"] === 'on' ? 'https://' : 'http://';
 			$host = $protocol.$_SERVER['HTTP_HOST'].$_SERVER["PHP_SELF"];
 			$host = substr( $host, 0, strrpos( $host, '/' ) );
-		} else {
-			__Config::set( 'GLZ_HOST', $host );
 		}
 
+		__Config::set( 'GLZ_HOST', $host );
 		define('GLZ_HOST', $host);
 	} else {
         $host = GLZ_HOST;

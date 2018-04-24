@@ -6,6 +6,6 @@ Glizy.oop.declare("glizy.FormEdit.checkbox", {
     },
 
     setValue: function (value) {
-        this.$element[0].checked = (value===true || value==='true' || value==='1');
+        this.$element[0].checked = (value===true || value==='true' || value==='1' || value===1);
     },
 });

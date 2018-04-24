@@ -19,6 +19,7 @@ interface org_glizycms_mediaArchive_BridgeInterface
     public function imageResizeTemplateUrl($width='#w#', $height='#h#', $crop=false, $cropOffset=1);
     public function mediaIdFromJson($json);
     public function mediaInfo($id);
+    public function mediaInfoAll($id);
     public function serveMedia($id);
     public function serveImage($id, $width, $height, $crop=false, $cropOffset=1, $forceSize=false, $useThumbnail=false);
 }

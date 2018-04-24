@@ -815,29 +815,18 @@ class org_glizy_dataAccessDoctrine_ActiveRecordDocument extends org_glizy_dataAc
                     continue;
                 }
 
-                $updateOld = false;
-
                 if ($newStatus === self::STATUS_PUBLISHED) {
                     // setta a OLD tutti i record precedenti
                     $identifier = array(
                         self::DOCUMENT_DETAIL_FK_DOCUMENT => $id,
                         self::DOCUMENT_DETAIL_FK_LANGUAGE => $languageId
                     );
-                    $updateOld = true;
+                    $this->refreshDetailsOnOLD($id, $languageId);
                 } else if ($currentStatus !== self::STATUS_PUBLISHED) {
                     // setta a OLD lo stato della versione precedente del record da modificare
                     $identifier = array(self::DOCUMENT_DETAIL_ID => $documentDetailId);
-                    $updateOld = true;
-                }
-
-                if ($updateOld) {
-                    /*
-                    //Questa versione è commentata perché provocava lentezze enormi sul DB
                     $oldStatus = array(self::DOCUMENT_DETAIL_STATUS => self::STATUS_OLD);
                     $this->connection->update($this->getDocumentDetailTableName(), $oldStatus, $identifier);
-                    */
-
-                    $this->refreshDetailsOnOLD($id, $languageId);
                 }
 
                 $newDetailId = $this->insertValues($id, $valArray, $newStatus, $languageId, $comment);

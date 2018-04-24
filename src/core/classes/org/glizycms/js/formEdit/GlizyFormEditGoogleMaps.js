@@ -1,20 +1,14 @@
 jQuery.GlizyRegisterType('googlemaps', {
 
     __construct: function () {
-        // var self = $(this).data('formEdit');
-        // self.element = $(this);
-        // self.render();
-
         var self = this;
         self.element = $(this);
-        // el.removeAttr('value');
-
 
         self.render = function() {
             var self = this;
             if (this.element.data('isInit')!==true) {
                 var name = this.element.attr('name'),
-                html = jQuery('<input id="'+name+'-search" class="btn" type="button" value="'+GlizyLocale.FormEdit.search+'"/>');
+                html = jQuery('<input id="'+name+'-search" class="btn" type="button" value="'+GlizyLocale.GoogleMap.search+'"/>');
                 this.element.after(html);
                 this.element.addClass("span10");
                 this.element.data('isInit', true);
@@ -45,6 +39,16 @@ jQuery.GlizyRegisterType('googlemaps', {
                                     title: "Trascinami",
                                     draggable: true
                                 });
+
+                function myButton(){
+                    var btn = $('<div class="close-button">'+GlizyLocale.GoogleMap.close+'</div>');
+                    btn.bind('click', function(){
+                        self.setPositionValues();
+                        self.closeMap();
+                    });
+                    return btn[0];
+                }
+                window.GlizyFormEditgooglemaps.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(myButton());
             }
 
             this.map = window.GlizyFormEditgooglemaps.map;
@@ -140,8 +144,8 @@ jQuery.GlizyRegisterType('googlemaps', {
             if ( viewport )
             {
                 this.map.fitBounds( viewport );
-                this.map.setZoom( this.map.getZoom() + 2);
-                zoom = this.map.getZoom() + 2;
+                this.map.setZoom( this.map.getZoom() + 5);
+                zoom = this.map.getZoom() + 5;
             }
             else
             {
@@ -150,7 +154,6 @@ jQuery.GlizyRegisterType('googlemaps', {
             }
             this.map.setZoom( zoom );
             this.element.val(lat + "," + lng+","+zoom);
-            // this.setValue( lat + "," + lng+","+zoom );
         },
 
         self.setPositionValues = function()
@@ -160,7 +163,6 @@ jQuery.GlizyRegisterType('googlemaps', {
                 var pos = this.getDefaultCurrentPosition();
                 pos[ 2 ] = this.map.getZoom();
                 this.element.val( pos.join( "," ) );
-                //this.setValue( pos.join( "," ) );
             }
         },
 
@@ -222,14 +224,10 @@ jQuery.GlizyRegisterType('googlemaps', {
             var self = this;
             var address = this.element.val();
             if(address == ""){
-                alert(GlizyLocale.FormEdit.googleMapError_1);
+                alert(GlizyLocale.GoogleMap.error_1);
             }else{
                 if(this.isLngLat(address)){
                     self.getCurrentPosition();
-                    // self.setPosition(
-                    //             results[0].geometry.location,
-                    //             results[0].geometry.viewport
-                    //         );
                     this.openMap();
                 }else{
                     this.geocoder.geocode( {'address': address.replace(/\'/g, '\\\'')}, function(results, status) {
@@ -240,7 +238,7 @@ jQuery.GlizyRegisterType('googlemaps', {
                             );
                             self.openMap();
                         } else {
-                            alert(GlizyLocale.FormEdit.googleMapError_1+": " + status);
+                            alert(GlizyLocale.GoogleMap.error_1+": " + status);
                         }
                     });
                 }

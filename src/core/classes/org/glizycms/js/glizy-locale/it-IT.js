@@ -19,8 +19,6 @@ GlizyLocale.FormEdit = {
     minRecordMsg: "Il numero minimo di records è ",
     insertComment: "Inserisci un commento",
     search: "Cerca",
-    googleMapError_1: "Inserire un indirizzo o le coordinate longitudine/latitudine",
-    googleMapError_2: "Errore nella ricerca dell'indirizzo",
     interruptProcess: "Attenzione, uscendo da questa pagina verra\' interrotto il processo!",
     unableToSave: "Impossibile salvare questo documento, a causa dei seguenti errori:",
     discardConfirmation: "Proseguendo, si perdono le modifiche non salvate. Continuare?"
@@ -88,4 +86,11 @@ GlizyLocale.HotSpot = {
 GlizyLocale.selectfrom = {
     formatNoMatches: 'Nessun risultato',
     formatSearching: 'Ricerca in corso...'
+};
+
+GlizyLocale.GoogleMap = {
+    error_1: "Inserire un indirizzo o le coordinate longitudine/latitudine",
+    error_2: "Errore nella ricerca dell'indirizzo",
+    search: "Cerca",
+    close: "Chiudi"
 };

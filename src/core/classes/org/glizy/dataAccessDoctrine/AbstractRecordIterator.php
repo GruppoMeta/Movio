@@ -215,7 +215,7 @@ abstract class org_glizy_dataAccessDoctrine_AbstractRecordIterator extends Glizy
         $or = $this->expr->orX();
         $added = false;
         foreach ($filters as $fieldName => $value) {
-            $value = $this->processUnionFields($fieldName, $value);
+            $value = is_int($fieldName) && is_array($value) ? $value : $this->processUnionFields($fieldName, $value);
 
             if ($value == '' /*|| (is_array($value) && $value['value'] == '')  || !$this->ar->fieldExists($fieldName)*/) {
                 continue;

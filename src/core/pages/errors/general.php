@@ -25,7 +25,7 @@ body{
 	text-align: center;
 }
 .font-size-10{
-	font-size: 10em;
+	font-size: 3em;
 	margin: 0.5em 0;
 	color: #990;
 }
