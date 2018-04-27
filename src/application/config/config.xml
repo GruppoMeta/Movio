@@ -7,4 +7,7 @@
 	<glz:Param name="DB_USER" value="root" />
 	<glz:Param name="DB_PSW" value="root" />
     <glz:Param name="DB_PREFIX" value="" />
+
+    <glz:Param name="glizy.maps.google.apiKey" value="" />
+    <glz:Param name="movio.europeana.apiKey" value="" />
 </glz:Config>
