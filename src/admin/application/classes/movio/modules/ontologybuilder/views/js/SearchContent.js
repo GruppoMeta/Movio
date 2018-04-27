@@ -53,7 +53,7 @@ Glizy.module('ontologybuilder.SearchContent', function(){
         self.resizeAdjust();
         target.css('height', '');
         $('#searchContentDiv').hide();
-        self.setResize()
+        self.setResize();
         $("#searchContentAction").on('click', function(e){
             e.preventDefault();
             self.searchActive = self.searchActive === false;

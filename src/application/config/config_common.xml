@@ -79,5 +79,41 @@
         </div>
     </div>
     ]]></glz:Param>
+     <glz:Param name="movio.search.content"><![CDATA[
+    [
+        {{movio.search.content.europeana}},
+        {{movio.search.content.wikipedia}}
+    ]
+    ]]></glz:Param>
+    <glz:Param name="movio.search.content.europeana"><![CDATA[
+    {
+        'name': 'Europeana',
+        'url': 'http://www.europeana.eu/portal/search.html?query=##SEARCH##',
+        'processResults': function(frameDocument, self) {
+            $('#query-full', frameDocument).hide();
+            $('[id*="cb-"]', frameDocument).on('click', function(e){
+                if($(this).prop('checked')) {
+                    link = $(this).parent().find('a').attr('href');
+                    self.goToLink(link)
+                }
+            })
+        },
+        'processLink': function(link) {
+            return link.indexOf('europeana.eu');
+        }
+    }
+    ]]></glz:Param>
+    <glz:Param name="movio.search.content.wikipedia"><![CDATA[
+    {
+        'name': 'Wikipedia',
+        'url': 'https://##LANGUAGE##.wikipedia.org/wiki/##SEARCH##',
+        'processResults': function(frameDocument, self) {
+            $('#p-search', frameDocument).hide();
+        },
+        'processLink': function(link) {
+            return link.indexOf('wikipedia.org');
+        }
+    }
+    ]]></glz:Param>
     <glz:Param name="glizy.maps.google.apiKey" value="" />
 </glz:Config>
