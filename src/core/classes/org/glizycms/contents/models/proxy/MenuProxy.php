@@ -181,6 +181,80 @@ class org_glizycms_contents_models_proxy_MenuProxy extends GlizyObject
         return $pageId;
     }
 
+    /**
+     * Duplicate a menu entry only of the language given
+     *
+     * @param int $menuId      the menu id to copy
+     * @param int $languageId  the main languague id
+     * @param int $parentId    the parentId of menu (optional)
+     * @return int             new menu id
+     */
+    public function duplicateMenuEntry($menuId, $languageId, $parentId = null, $duplicateId = null)
+    {
+        $menu = $this->getMenuFromId($menuId, $languageId);
+
+        $newMenu = org_glizy_ObjectFactory::createModel('org.glizycms.core.models.Menu');
+        if ($duplicateId) {
+            $newMenu->load($duplicateId);
+            $newMenu->setDetailId(null);
+        }
+
+        foreach ($menu->getValues() as $k => $v) {
+            if ( !in_array($k, array('menu_id', 'menudetail_id', 'menudetail_FK_menu_id')) ) {
+                $newMenu->$k = $v;
+            }
+        }
+
+        $title = __T('Copy of').' '.$menu->menudetail_title;
+        $parent = $parentId ? : $menu->menu_parentId;
+
+        $menus = org_glizy_ObjectFactory::createModelIterator('org.glizycms.core.models.Menu');
+        $menus->load('getChildrenMenuInOrder', array('params' => array('menuId' => $parent, 'isBlock' => $menu->menu_type != 'PAGE')));
+        $order = $menus->count()+1;
+
+        $newMenu->menu_parentId = $parent;
+        $newMenu->menu_order = $order;
+        $newMenu->menu_creationDate = new org_glizy_types_DateTime();
+
+        $newMenu->menudetail_title = $title;
+        $newMenu->menudetail_FK_language_id = $languageId;
+        $newMenu->menudetail_isVisible = 0; // la pagina duplicata è non visibile di default
+
+        $duplicateId = $newMenu->save();
+
+        return $duplicateId;
+    }
+
+    /**
+     * Duplicate a menu taking count of multilanguage settings
+     *
+     * @param int $menuId      the menu id to copy
+     * @param int $languageId  the main languague id
+     * @param int $parentId    the parentId of menu (optional)
+     * @return int             new menu id
+     */
+    public function duplicateMenu($menuId, $languageId, $parentId = null)
+    {
+        $menu = org_glizy_ObjectFactory::createModel('org.glizycms.core.models.Menu');
+
+        $duplicateId = $this->duplicateMenuEntry($menuId, $languageId, $parentId);
+
+        foreach ($menu->getLanguagesId() as $lang) {
+            if ($lang == $languageId) {
+                continue;
+            }
+            $this->duplicateMenuEntry($menuId, $lang, $parentId, $duplicateId);
+        }
+
+        $this->invalidateSitemapCache();
+
+        $evt = array('type' => org_glizycms_contents_events_Menu::MOVE, 'data' => $menuId);
+        $this->dispatchEvent($evt);
+
+        return $duplicateId;
+    }
+
+
     public function showHide($menuId, $languageId, $isShown)
     {
         $menus = $this->getChildMenusFromId($menuId, org_glizy_ObjectValues::get('org.glizy', 'languageId'), false);

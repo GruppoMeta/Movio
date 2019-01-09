@@ -88,8 +88,14 @@ function setLinkType(type) {
 	{
 		document.getElementById("protocol").disabled = "disabled";
 		document.getElementById("linkUrl").disabled = "disabled";
-		document.getElementById("preview").disabled = "disabled";
 		document.getElementById("internalLink").disabled = "";
+        if (parent.Glizy.tinyMCE_queryStringEnabled) {
+            document.getElementById("anchorQueryGroup").style.display = "table-row";
+            document.getElementById("anchor").disabled = "";
+        } else {
+            document.getElementById("anchorQueryGroup").style.display = "none";
+            document.getElementById("anchor").disabled = "disabled";
+        }
         document.getElementById("repeaterLink").style.display = "none";
 		document.getElementById("pickerPanel").style.display = "none";
 	}
@@ -97,8 +103,8 @@ function setLinkType(type) {
 	{
 		document.getElementById("protocol").disabled = "";
 		document.getElementById("linkUrl").disabled = "";
-		document.getElementById("preview").disabled = "";
-		//document.getElementById("internalLink").disabled = "disabled";
+        document.getElementById("anchorQueryGroup").style.display = "none";
+        document.getElementById("anchor").disabled = "disabled";
         document.getElementById("repeaterLink").style.display = "none";
 		document.getElementById("pickerPanel").style.display = "none";
 	}
@@ -117,6 +123,8 @@ function setLinkType(type) {
 		document.getElementById("pickerPanel").style.display = "block";
 		document.getElementById("linkUrl").disabled = "disabled";
 		document.getElementById("internalLink").disabled = "disabled";
+		document.getElementById("anchor").disabled = "disabled";
+        document.getElementById("anchorQueryGroup").style.display = "none";
         document.getElementById("repeaterLink").style.display = "none";
 		document.getElementById("protocol").disabled = "disabled";
         wSize = {w: $(parent.window).width() - 80, h: 530 }
@@ -126,17 +134,19 @@ function setLinkType(type) {
 	{
 		document.getElementById("protocol").disabled = "disabled";
 		document.getElementById("linkUrl").disabled = "";
-		document.getElementById("preview").disabled = "disabled";
 		document.getElementById("internalLink").disabled = "disabled";
-        document.getElementById("repeaterLink").style.display = "none";
+		document.getElementById("anchor").disabled = "disabled";
+        document.getElementById("anchorQueryGroup").style.display = "none";
+		document.getElementById("repeaterLink").style.display = "none";
 		document.getElementById("pickerPanel").style.display = "none";
 	}
 	else if (type=="5")
 	{
 		document.getElementById("protocol").disabled = "disabled";
 		document.getElementById("linkUrl").disabled = "disabled";
-		document.getElementById("preview").disabled = "disabled";
 		document.getElementById("internalLink").style.display = "none";
+		document.getElementById("anchor").disabled = "disabled";
+        document.getElementById("anchorQueryGroup").style.display = "none";
 		document.getElementById("glossaryLinks").style.display = "inline";
 		document.getElementById("pickerPanel").style.display = "none";
 	}
@@ -144,18 +154,20 @@ function setLinkType(type) {
 	{
 		document.getElementById("protocol").disabled = "disabled";
 		document.getElementById("linkUrl").disabled = "";
-		document.getElementById("preview").disabled = "disabled";
 		document.getElementById("internalLink").disabled = "disabled";
-        document.getElementById("repeaterLink").style.display = "none";
+		document.getElementById("anchor").disabled = "disabled";
+        document.getElementById("anchorQueryGroup").style.display = "none";
+		document.getElementById("repeaterLink").style.display = "none";
 		document.getElementById("pickerPanel").style.display = "none";
 	}
     else if (type=="7")
     {
         document.getElementById("protocol").disabled = "disabled";
         document.getElementById("linkUrl").disabled = "disabled";
-        document.getElementById("preview").disabled = "disabled";
         document.getElementById("internalLink").style.display = "none";
-        document.getElementById("repeaterLink").style.display = "inline";
+		document.getElementById("anchor").disabled = "disabled";
+        document.getElementById("anchorQueryGroup").style.display = "none";
+		document.getElementById("repeaterLink").style.display = "inline";
         document.getElementById("pickerPanel").style.display = "none";
     }
 
@@ -170,11 +182,6 @@ function resizeMe( newSize ) {
 	var left = parseInt( tinymce.DOM.getStyle( winID, 'left' ).replace( 'px', '' ) );
 	tinymce.DOM.setStyle( winID, 'left', ( left - (newSize.w - currentSize.w) / 2 ) + 'px' );
 	currentSize = newSize;
-}
-
-function previewLink() {
-    var url = document.getElementById("protocol").value+document.getElementById("linkUrl").value;
-    if (url) try {window.open(url,"urlTest","")} catch(err) {};
 }
 
 function init() {
@@ -264,7 +271,13 @@ function init() {
 
     var href = linkType==1 ? href:""
     var callback = function() {
-        setFormValue('internalLink', linkType==1 ? href:"");
+		if (href.indexOf('?') != -1 || href.indexOf('#') != -1) {
+			var splitChar = href.indexOf('?') != -1 ? '?' : '#';
+			var parts = href.split(splitChar);
+			href = parts[0];
+			$('#anchor').val(splitChar+parts[1]);
+		}
+		setFormValue('internalLink', linkType==1 ? href:"");
         setTimeout(function(){
             setLinkType(String(linkType));
         }, 100);
@@ -344,7 +357,7 @@ function setAllAttribs(elm) {
     var href;
     switch (formObj.linkType.value) {
     case "1":
-        href = formObj.internalLink.value;
+		href = formObj.internalLink.value+formObj.anchor.value;
         break;
     case "2":
         href = formObj.protocol.value+linkUrlObj.value;

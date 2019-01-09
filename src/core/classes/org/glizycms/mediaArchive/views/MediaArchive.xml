@@ -175,7 +175,7 @@ public function render_html_onStart()
                     <glz:Input id="media_download" label="{i18n:Downloads}" size="90" disabled="true"/>
                 </glz:JSTab>
                 <glz:JSTab id="exifData" label="{i18n:Exif data}" visible="{config:glizycms.mediaArchive.exifEnabled}">
-                    <ma:ShowExif imageId="{php:__Request::get(id)}"/>
+                    <ma:ShowExif imageId="{php:__Request::get('id')}"/>
                 </glz:JSTab>
             </glz:JSTabGroup>
             <cms:FormButtonsPanel>

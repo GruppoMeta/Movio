@@ -341,7 +341,8 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
     public function find($options=array()) {
         $options = array_merge(get_object_vars($this->data), $options);
         $qb = $this->createQueryBuilder()
-            ->select('*');
+            ->select('*')
+            ->setMaxResults(1);
 
         $conditionNumber = 0;
         foreach($options as $k=>$v) {
@@ -652,7 +653,8 @@ class org_glizy_dataAccessDoctrine_ActiveRecord extends GlizyObject
 
     public function isNew()
     {
-        return is_null( $this->{$this->primaryKeyName} );
+        $primaryKeyValue = $this->{$this->primaryKeyName};
+        return empty( $primaryKeyValue );
     }
 
     public function fieldExists($name)

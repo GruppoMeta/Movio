@@ -51,7 +51,11 @@ class org_glizy_components_EmptyComponent extends org_glizy_components_Component
 			for ($i=0; $i<count($this->childComponents);$i++)
 			{
 				$id = preg_replace('/([^\-]+)\-(.*)/', '$2', $this->childComponents[$i]->getId());
-				$result[$id] = $this->childComponents[$i]->getContent();
+				if (is_object($result)) {
+				    $result->$id = $this->childComponents[$i]->getContent();
+                } else {
+                    $result[$id] = $this->childComponents[$i]->getContent();
+                }
 			}
 		}
 

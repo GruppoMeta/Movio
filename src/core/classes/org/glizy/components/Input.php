@@ -95,7 +95,7 @@ class org_glizy_components_Input extends org_glizy_components_HtmlFormElement
 		$attributes['readonly'] 	= $this->getAttribute('readOnly') ? 'readonly' : '';
 		$attributes['title'] 		= $this->getAttributeString('title');
 		$attributes['placeholder'] 		= $this->getAttributeString('placeholder');
-		
+
 		if ( empty( $attributes['title'] ) )
 		{
 			$attributes['title'] 		= $this->getAttributeString('label');
@@ -170,6 +170,7 @@ class org_glizy_components_Input extends org_glizy_components_HtmlFormElement
 				$jsCode .= 'Glizy.tinyMCE_imgSizes = '.$imgSizes.';';
 				$jsCode .= 'Glizy.tinyMCE_templates = '.$templates.';';
 				$jsCode .= 'Glizy.tinyMCE_allowLinkTarget = '.(__Config::get( 'TINY_MCE_ALLOW_LINK_TARGET' ) ? 'true' : 'false').';';
+				$jsCode .= 'Glizy.tinyMCE_queryStringEnabled = '.(__Config::get( 'glizycms.pagePicker.queryStringEnabled' ) ? 'true' : 'false').';';
 				$validElements = __Config::get( 'TINY_MCE_VALID_ELEMENTS' );
         		$jsCode .= 'Glizy.tinyMCE_validElements = "'.($validElements ? : '').'";';
 				$plugins = __Config::get( 'TINY_MCE_PLUGINS' );
@@ -178,6 +179,10 @@ class org_glizy_components_Input extends org_glizy_components_HtmlFormElement
 				}
 				$tableClassList = __Config::get('TINY_MCE_TABLE_CLASS_LIST');
 				$jsCode .= 'Glizy.tinyMCE_tableClassList = "'.$tableClassList.'";';
+
+				$tinyMCEoptions = __Config::get('TINY_MCE_OPTIONS');
+				$jsCode .= 'Glizy.tinyMCE_customOptions = '.($tinyMCEoptions ? : '{}').';';
+
 				$rootComponent->addOutputCode(org_glizy_helpers_JS::JScode( $jsCode ), 'head');
 			}
 

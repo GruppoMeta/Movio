@@ -258,6 +258,7 @@ class org_glizy_Config
 		$configArray['REGISTRY_METANAVIGATION'] 	= '{{BASE_REGISTRY_PATH}}/metanavigation/';
 		$configArray['glizy.media.imageMagick'] 			= false;
         $configArray['glizy.media.image.unsharpMask']       = false;
+        $configArray['glizy.media.image.remoteCache.lifetime'] = 86400;
 		$configArray['glizy.routing.newParser'] 		    = true;
 		$configArray['glizy.form.cssClass'] 		= '';
 		$configArray['glizy.formElement.cssClass'] 	= '';
@@ -277,6 +278,7 @@ class org_glizy_Config
 		$configArray['glizy.dataAccess.document.enableComment'] 		= false;
 		$configArray['glizy.session.store'] 		= '';
 		$configArray['glizy.dataAccess.validate'] = true;
+		$configArray['glizy.dataAccess.sqlCount.new'] = false;
         $configArray['glizy.multisite.sitename'] = '';
 		$configArray['glizy.multisite.id'] = 0;
 		$configArray['glizy.helpers.FileServe.forceDownload'] = false;

@@ -81,6 +81,8 @@ class org_glizy_components_DataProvider extends org_glizy_components_Component
 
     function &loadQuery($queryName='', $options=array())
     {
+        $options['params'] = array();
+
         if (is_null($this->_recordIterator)) {
             $this->_recordIterator = &org_glizy_ObjectFactory::createModelIterator($this->getAttribute('recordClassName'));
 
@@ -107,8 +109,6 @@ class org_glizy_components_DataProvider extends org_glizy_components_Component
         }
 
 		if ($this->getAttribute('useQueryParams') && isset($options['filters'])) {
-            $options['params'] = array();
-
             if (count($options['filters'])) {
                 foreach($options['filters'] as $k=>$v) {
                     $options['params'][$k] = is_array($v) ? $v[1] : $v;
@@ -136,7 +136,7 @@ class org_glizy_components_DataProvider extends org_glizy_components_Component
         // TODO
         // if ($this->getAttribute('params')) $options['params'] = $this->getAttribute('params');
 
-        $it = $this->_recordIterator->load($queryName);
+        $it = $this->_recordIterator->load($queryName, $options['params']);
 
         if (!empty($options['filters'])) {
             if ($this->getAttribute('queryOperator') === 'OR') {

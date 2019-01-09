@@ -89,6 +89,8 @@ class org_glizycms_contents_controllers_siteTree_ajax_GetSiteTree extends org_gl
         $node['metadata']['lock'] = $this->user->acl($this->application->getPageId(),'lock');
         $node['metadata']['move'] = $this->user->acl($this->application->getPageId(),'move');
         $node['metadata']['add'] = true;
+        $node['metadata']['duplicatePage'] = $this->user->acl($this->application->getPageId(),'new');
+        $node['metadata']['duplicateBranch'] = $this->user->acl($this->application->getPageId(),'new');
 
         // stato della pagina
         $node['metadata']['isDraft'] = 0; //!$menu->menu_isPublished ? 1 : 0;
@@ -101,6 +103,8 @@ class org_glizycms_contents_controllers_siteTree_ajax_GetSiteTree extends org_gl
         if ( $menu->menu_type != 'PAGE' ) {
             $node['metadata']['delete'] = false;
             $node['metadata']['show'] = false;
+            $node['metadata']['duplicatePage'] = false;
+            $node['metadata']['duplicateBranch'] = false;
         }
 
         if ($this->pageTypes && $this->pageTypes[$menu->menu_pageType]) {

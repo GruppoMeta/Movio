@@ -213,8 +213,10 @@ class org_glizy_compilers_Routing extends org_glizy_compilers_Compiler
 								if ( $isApplicationDB )
 								{
 									if ($page->url) {
-										$urlPartValue =  strtolower('('.$page->url.'[^\/]*?)');
-										$staticValues[ 'pageId' ] = $page->id;
+										$pageUrl = preg_replace('/^(\w{2}\/)/', '', $page->url);
+										$pageUrl = str_replace('/', '\/', $pageUrl);
+                                        $urlPartValue =  strtolower('('.$pageUrl.'[^\/]*?)');
+                                        $staticValues[ 'pageId' ] = $page->id;
 									} else {
 										$urlPartValue =  strtolower('('.$page->id.'\/[^\/]*?)');
 									}

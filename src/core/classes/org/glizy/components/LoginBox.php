@@ -117,7 +117,7 @@ class org_glizy_components_LoginBox extends org_glizy_components_Component
 		}
 	}
 
-	private function redirectAfterLogin()
+	protected function redirectAfterLogin()
 	{
 		$destPage = '';
 		$accessPageId = $this->getAttribute('accessPageId');

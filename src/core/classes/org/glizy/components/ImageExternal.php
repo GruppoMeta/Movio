@@ -121,18 +121,6 @@ class org_glizy_components_ImageExternal extends org_glizy_components_Component
 			unset($attributes['size']);
 			unset($attributes['mediaType']);
 			$this->_content['__html__'] = '<img '.$this->_renderAttributes($attributes).'/>';
-
-			if ( $this->getAttribute( 'zoom' ) || $useZoom )
-			{
-				$this->_application->addLightboxJsCode();
-				$attributes = array();
-				$attributes['title'] = $this->_content['title'];
-				$thumbnail = $this->media->getResizeImage( __Config::get( 'IMG_WIDTH_ZOOM' ), __Config::get( 'IMG_HEIGHT_ZOOM' ) );
-				$attributes['href'] = $thumbnail['fileName'];
-				$attributes['rel'] = 'milkbox'.( $this->getAttribute( 'group' ) != '' ? '['.$this->getAttribute( 'group' ).']' : '' ) ;
-				$attributes['class'] = $zoomCssClass;
-				$this->_content['__html__'] = org_glizy_helpers_Html::renderTag( 'a', $attributes, true, $this->_content['__html__'] );
-			}
 		}
 		else
 		{

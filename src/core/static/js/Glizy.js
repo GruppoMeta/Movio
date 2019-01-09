@@ -200,6 +200,7 @@ Glizy.events = new(function() {
             if (eventMap===undefined) {
                 eventMap = {};
                 var triggeredFunction = function(e) {
+                    if (!e.data) return;
                     if (eventMap[e.data.type]!==undefined) {
                        $(eventMap[e.data.type]).each(function(index, el){
                             if (el) {

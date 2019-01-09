@@ -630,7 +630,11 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
         }
     }
 
-    // TODO
+    /**
+     * @param string|array $sql
+     * @param array $options
+     * @return void
+     */
     public function execSql($sql, $options=array())
     {
         if (is_string($sql)) {
@@ -639,8 +643,6 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
 
         $params = isset($options['params']) ? $options['params'] : ( is_array($options) ? $options : array());
         $params = isset($sql['params']) ? array_merge($sql['params'], $params) : $params;
-        $this->statement = $this->ar->getConnection()->executeQuery($sql['sql'], $params);
-// TODO implementare meglio
-        $this->count = $this->statement->rowCount();
+        $this->executeSqlWithRowsCount($sql['sql'], $params);
     }
 }

@@ -67,7 +67,7 @@ class org_glizycms_speakingUrl_PageResolver extends org_glizycms_speakingUrl_Abs
     {
         $info = $this->extractProtocolAndId($id);
         if ($info->protocol.':' === $this->protocol && is_numeric($info->id)) {
-            return $this->createResolvedVO($info->id);
+            return $this->createResolvedVO($info->id, $info->queryString);
         }
         return false;
     }
@@ -79,14 +79,15 @@ class org_glizycms_speakingUrl_PageResolver extends org_glizycms_speakingUrl_Abs
         return $resolvedVO->url;
     }
 
-    protected function createResolvedVO($id)
+    protected function createResolvedVO($id, $queryString='')
     {
         $siteMap = $this->application->getSiteMap();
         $menu = $siteMap->getNodeById($id);
-        if ($menu && $menu->isVisible) {
+
+        if ($menu) {
             $menuUrl = $menu->url;
             $menuTitle = $menu->title;
-            $url = $menuUrl ? GLZ_HOST.'/'.$menuUrl : __Link::makeUrl('link', array('pageId' => $id, 'title' => $menuTitle));
+            $url = ($menuUrl ? GLZ_HOST.'/'.$menuUrl : __Link::makeUrl('link', array('pageId' => $id, 'title' => $menuTitle))).$queryString;
 
             $resolvedVO = org_glizycms_speakingUrl_ResolvedVO::create(
                         $menu,

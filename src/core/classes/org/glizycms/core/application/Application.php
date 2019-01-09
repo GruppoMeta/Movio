@@ -165,21 +165,25 @@ class org_glizycms_core_application_Application extends org_glizy_mvc_core_Appli
         // TODO da risolvare in modo migliore
         // creando un nuovo menu_type
 
-        if ($this->siteMapMenu->pageType=='Empty')
-        {
+        if ($this->siteMapMenu->pageType=='Empty') {
             $currentPage = &$this->siteMapMenu;
-            while (true)
-            {
+            $childPos = 0;
+            while (true) {
                 $childNodes = $currentPage->childNodes();
-                if (!count($childNodes))
-                {
+                if (!count($childNodes)) {
                     org_glizy_helpers_Navigation::gotoUrl(GLZ_HOST);
-                    break;
+                    return;
                 }
-                $tempPage = &$childNodes[0];
+
+                $tempPage = &$childNodes[$childPos];
+                if ($tempPage->type=='BLOCK') {
+                    $childPos++;
+                    continue;
+                }
+
                 $currentPage = &$tempPage;
-                if ($currentPage->pageType!='Empty')
-                {
+                $childPos = 0;
+                if ($currentPage->pageType!='Empty') {
                     $this->siteMapMenu = &$currentPage;
                     $this->_pageId = $currentPage->id;
                     break;

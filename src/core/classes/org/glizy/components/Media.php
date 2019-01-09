@@ -132,6 +132,7 @@ class org_glizy_components_Media extends org_glizy_components_Component
             $this->_content['title']     = $this->media->title;
             $this->_content['size']     = $this->media->size;
             $this->_content['mediaType']= $this->media->type;
+            $this->_content['description'] = $this->media->description;
         }
     }
 

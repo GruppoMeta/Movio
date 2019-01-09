@@ -29,6 +29,7 @@ tinyMCE.addI18n('en.GLZ_link',{
 	rtl : 'Right to left',
     not_set: '-- Not set --',
     preview: 'Preview',
-	anchor: 'Anchor',
+    anchor: 'Anchor',
+	anchorQueryString: 'Anchor or Query string',
 	open_external : 'Open in a new page'
 });

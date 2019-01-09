@@ -45,11 +45,11 @@ class org_glizy_components_DataGridAjax extends org_glizy_components_Component
 
             $colSpan++;
             $headers .= '<th';
-            if ( !$column['visible'] ) $headers .= ' style="display:none;"';
             if ( $column['width'] ) $headers .= ' width="'.$column['width'].'%"';
             $headers .= '>'.$column['headerText'].'</th>';
 
             $aoColumnDefs[] = array (
+                'bVisible' => $column['visible'],
                 "bSortable" => $column['sortable'],
                 "bSearchable" => $column['searchable'],
                 "aTargets" => array($colSpan-1),
@@ -148,7 +148,7 @@ class org_glizy_components_DataGridAjax extends org_glizy_components_Component
 
     \$('.dataTables_filter input')
         .unbind()
-        .bind('keyup', function(e){
+        .bind('input', function(e){
             if (\$(this).val().length > 0 && \$(this).val().length < $minSearchLenght && e.keyCode != 13) return;
             table.fnFilter(\$(this).val());
         })
@@ -311,7 +311,7 @@ EOD;
      * @param  array $aColumns
      * @return array
      */
-    private function getModelIterator($sSearch, $aColumns)
+    protected function getModelIterator($sSearch, $aColumns)
     {
         $it = org_glizy_ObjectFactory::createModelIterator($this->getAttribute('recordClassName'));
 
@@ -379,6 +379,14 @@ EOD;
     }
 
     /**
+     * @return array
+     */
+    public function getColumn($i)
+    {
+        return $this->columns[$i];
+    }
+
+    /**
      * @param  string  $sSearch
      * @param  array  $aColumns
      * @param  boolean $withCondition
@@ -405,7 +413,7 @@ EOD;
      * @param  array $aColumns
      * @return array
      */
-    private function ordering($aColumns)
+    protected function ordering($aColumns)
     {
         if ( __Request::exists('iSortCol_0') ) {
             $iSortingCols = intval( __Request::get( 'iSortingCols' ));

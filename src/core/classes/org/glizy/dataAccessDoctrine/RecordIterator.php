@@ -76,21 +76,15 @@ class org_glizy_dataAccessDoctrine_RecordIterator extends org_glizy_dataAccessDo
         $params = isset($options['params']) ? $options['params'] : ( is_array($options) ? $options : array());
         $params = isset($sql['params']) ? array_merge($sql['params'], $params) : $params;
 
-        $connection = $this->ar->getConnection();
+        $this->executeSqlWithRowsCount($sql['sql'], $params);
+    }
 
-
-// ($this->sqlParts['orderBy'] ? ' ORDER BY ' . implode(', ', $this->sqlParts['orderBy']) : '');
-        $this->statement = $connection->executeQuery($sql['sql'], $params);
-// TODO implementare meglio
-        $this->count = $this->statement->rowCount();
-
-// TODO implementare meglio
-        $firstResult = $this->qb->getFirstResult();
-        $maxResults = $this->qb->getMaxResults();
-        if (!is_null($firstResult) && !is_null($maxResults)) {
-            $sql['sql'] = $connection->getDatabasePlatform()->modifyLimitQuery($sql['sql'], $maxResults, $firstResult);
-            $this->statement = $connection->executeQuery($sql['sql'], $params);
-        }
+    public function selectDistinct($fieldName)
+    {
+        $this->qb->resetQueryPart('select');
+        $this->qb->select('DISTINCT('.$fieldName.')');
+        $this->hasSelect = true;
+        return $this;
     }
 
     protected function whereCondition($fieldName, $value, $condition = null, $composite = null)
@@ -140,6 +134,22 @@ class org_glizy_dataAccessDoctrine_RecordIterator extends org_glizy_dataAccessDo
             $this->select('*');
         }
 
-        parent:: exec();
+        parent::exec();
+    }
+
+    /**
+     * @param string $sql
+     * @return string
+     */
+    protected function createCountQuery($sql) {
+        $sql = preg_replace('/(order\s*by\s*.*)\s*$/i', '', $sql);
+        preg_match_all('/^(\s*select\s*)(((distinct\s*[^,]*)|.*).*?)(\s*from.*)$/i', $sql, $match);
+        if (count($match[0])!==1) {
+            return 'SELECT count(*) as tot FROM ('.$sql.') as tempCountTable';
+        }
+
+        return $match[1][0].
+                ' count('.($match[4][0] ? $match[4][0] : '*').') as tot '.
+                $match[5][0];
     }
 }

@@ -311,7 +311,7 @@ class org_glizy_ObjectFactory
      * @param string $orig
      * @param string $dest
      */
-    function remapPageType($orig='', $dest='')
+    static function remapPageType($orig='', $dest='')
     {
         $orig = preg_replace('/\.xml$/i', '', $orig);
         $dest = preg_replace('/\.xml$/i', '', $dest);
@@ -323,7 +323,7 @@ class org_glizy_ObjectFactory
      * @param $pageTypePath
      * @return mixed
      */
-    function resolvePageType($pageTypePath)
+    static function resolvePageType($pageTypePath)
     {
         $pageTypeMap = &org_glizy_ObjectValues::get('org.glizy.ObjectFactory', 'PageTypeMap', array());
         return isset($pageTypeMap[$pageTypePath]) ? $pageTypeMap[$pageTypePath] : $pageTypePath;
@@ -333,7 +333,7 @@ class org_glizy_ObjectFactory
      * @param $cachedFile
      * @param $fileName
      */
-    function requireComponent( $cachedFile, $fileName )
+    static function requireComponent( $cachedFile, $fileName )
     {
         if ( !file_exists( $cachedFile ) )
         {

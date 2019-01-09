@@ -290,9 +290,9 @@ Glizy.oop.declare("glizy.FormEdit", {
                         }
                     }
                 },
+
                 onValid: function() {
                     if (self.customValidationInvalid && firstInvalidObj) {
-                        Glizy.events.broadcast("glizy.message.showError", {"title": self.lang.errorValidationMsg, "message": ""});
                         firstInvalidObj.focus();
                     }
                 }

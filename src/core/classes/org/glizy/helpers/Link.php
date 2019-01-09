@@ -359,7 +359,7 @@ class org_glizy_helpers_Link extends GlizyObject
 	static function parseInternalLinks($text, $absolute = false )
 	{
 		$serverUrl = $absolute ? GLZ_HOST_ROOT.'/' : '';
-		preg_match_all('/<a.*href=["\'](internal\:)(\d*)["\'].*/Ui', $text, $internalLinks);
+		preg_match_all('/<a.*href=["\'](internal:)(\d+)(\?.+)?(#\w+)?["\'].*/Ui', $text, $internalLinks);
 		if (count($internalLinks) && count($internalLinks[0]))
 		{
             $application = org_glizy_ObjectValues::get('org.glizy', 'application' );

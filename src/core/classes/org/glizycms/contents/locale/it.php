@@ -27,5 +27,9 @@ $strings = array (
   "Templates and colors" => "Template e colori",
   "History" => "Versioni",
   "Menu css class" => "Classe css menu",
+  "Duplicate" => "Duplica",
+  "Duplicate page" => "Duplica pagina",
+  "Duplicate branch" => "Duplica ramo",
+  "Copy of" => "Copia di",
 );
 org_glizy_locale_Locale::append($strings);

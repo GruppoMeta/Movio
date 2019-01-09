@@ -293,6 +293,7 @@ class org_glizy_Routing
 			if ( strpos( $url, 'http://' ) !== false ) return $url;
 
 			$pageId = 0;
+			$language = isset($queryVars['language']) ? $queryVars['language'] : $application->getLanguage();
 			preg_match_all("|\{(.*)\}|U", $url, $match, PREG_PATTERN_ORDER);
 			for($i=0; $i<count($match[0]); $i++)
 			{
@@ -303,7 +304,7 @@ class org_glizy_Routing
 				switch ($command[0])
 				{
 					case 'language':
-						$value = isset($queryVars['language']) ? $queryVars['language'] : $application->getLanguage();
+						$value = $language;
 						break;
 					case '*':
 					case 'currentMenu':
@@ -339,7 +340,7 @@ class org_glizy_Routing
 							}
 
 							if ($page->url) {
-								$value =  $page->url;
+								$value =  preg_replace('/^'.$language.'\//', '', $page->url);
 								$value2 = '';
 								$sanitize = false;
 							} else {

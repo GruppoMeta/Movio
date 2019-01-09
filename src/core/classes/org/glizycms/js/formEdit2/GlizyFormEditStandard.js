@@ -43,11 +43,32 @@ Glizy.oop.declare("glizy.FormEdit.standard", {
     },
 
     isValid: function() {
-        
         if (this.$element.hasClass('required') && this.$element.data('skip-validation')!==true) {
             return this.getValue() != '';
         } else {
             return true;
         }
+    },
+
+    setRequired: function() {
+        this.$element.data('skip-validation', false);
+        this.$element.parents('div.form-group,div.control-group').find('label').addClass('required');
+        return this;
+    },
+
+    setOptional: function() {
+        this.$element.data('skip-validation', true);
+        this.$element.parents('div.form-group,div.control-group').find('label').removeClass('required');
+        return this;
+    },
+
+    setReadOnly: function() {
+        this.$element.attr('disabled', true);
+        return this;
+    },
+
+    setEditable: function() {
+        this.$element.attr('disabled', false);
+        return this;
     }
 });

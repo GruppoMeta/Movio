@@ -33,10 +33,12 @@ class org_glizycms_speakingUrl_AbstractUrlResolver
 
     protected function extractProtocolAndId($id)
     {
-        list($protocol, $id) = explode(':', $id);
+        list($protocol, $id, $queryString) = explode(':', $id);
+        $queryString = urldecode($queryString);
         $result = new StdClass;
         $result->protocol = $protocol;
         $result->id = $id;
+        $result->queryString = $queryString;
         return $result;
     }
 

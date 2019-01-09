@@ -45,6 +45,7 @@ class org_glizy_components_NavigationMenu extends org_glizy_components_Component
 		$this->defineAttribute('type',				false, 	NULL, 	COMPONENT_TYPE_STRING);
 		$this->defineAttribute('title',				false, 	'', 	COMPONENT_TYPE_STRING);
 		$this->defineAttribute('headingTitle',		false, 	NULL, 	COMPONENT_TYPE_STRING);
+		$this->defineAttribute('headingTitleLink',	false,	false,	COMPONENT_TYPE_BOOLEAN);
 		$this->defineAttribute('headingCssClass',	false, 	NULL, 	COMPONENT_TYPE_STRING);
 		$this->defineAttribute('wrapTag',			false, 	NULL, 	COMPONENT_TYPE_STRING);
 		$this->defineAttribute('wrapTagCssClass',	false, 	NULL, 	COMPONENT_TYPE_STRING);
@@ -213,6 +214,17 @@ class org_glizy_components_NavigationMenu extends org_glizy_components_Component
 			{
 				$title = $this->getAttributeString('title');
 				if ( empty( $title ) ) $title = $this->_startMenu->title;
+				if ( $this->getAttribute('headingTitleLink') ) {
+					$siteMap = $this->_application->getSiteMap();
+					$hedingMenu = $siteMap->getNodeById($this->_startMenu->id);
+					$headingTitle = empty($hedingMenu->titleLink) ? $hedingMenu->title : $hedingMenu->titleLink;				
+					$linkParams = array('pageId' => $hedingMenu->id,
+										'title' => $headingTitle,
+										'label' => $headingTitle);
+					$headingUrl = org_glizy_helpers_Link::makeLink('link', $linkParams);
+					
+					$title = $headingUrl;
+				}
 				$tempOutput .= org_glizy_helpers_Html::renderTag($this->getAttribute('headingTitle'), array('class' => $this->getAttribute('headingCssClass')), true, $title );
 			}
 			$output = $tempOutput.$output;

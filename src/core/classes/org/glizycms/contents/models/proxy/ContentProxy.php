@@ -75,14 +75,15 @@ class org_glizycms_contents_models_proxy_ContentProxy extends GlizyObject
     public function readRawContentFromMenu($menuId, $languageId, $status)
     {
         $it = org_glizy_objectFactory::createModelIterator('org.glizycms.core.models.Content');
-        $options = array('type' => $status);
         if ($status==org_glizy_dataAccessDoctrine_ActiveRecordDocument::STATUS_PUBLISHED_DRAFT) {
-            $options['language'] = $languageId;
+            $it->setOptions(array('type' => $status, 'language' => $languageId));
         } else {
+            $it->whereStatusIs($status);
             $it->whereLanguageIs($languageId);
         }
-        $it->setOptions($options);
+
         $menuDocument = $it->where('id', $menuId)->first();
+
         if (!$menuDocument) {
             $it = org_glizy_objectFactory::createModelIterator('org.glizycms.core.models.Content');
             $it->setOptions(array('type' => $status=='PUBLISHED' ? 'DRAFT' : 'PUBLISHED'));
@@ -202,5 +203,43 @@ class org_glizycms_contents_models_proxy_ContentProxy extends GlizyObject
             $speakingUrlProxy = org_glizy_ObjectFactory::createObject('org.glizycms.speakingUrl.models.proxy.SpeakingUrlProxy');
             $speakingUrlProxy->deleteUrl(org_glizy_ObjectValues::get('org.glizy', 'editingLanguageId'), $menuId, 'org.glizycms.core.models.Content');
         }
+    }
+
+    /**
+     * Duplicate a menu and its contents
+     *
+     * @param int $menuId      the menu id to copy
+     * @param int $allBranch   copy all childs if true
+     * @param int $parentId    the parentId of menu (optional)
+     * @return int             new menu id
+     */
+    public function duplicateMenuAndContent($menuId, $allBranch = false, $parentId = null)
+    {
+        $languageId = __ObjectValues::get('org.glizy', 'editingLanguageId');
+        $menuProxy = __ObjectFactory::createObject('org.glizycms.contents.models.proxy.MenuProxy');
+        $duplicateId = $menuProxy->duplicateMenu($menuId, $languageId, $parentId);
+
+        $menu = org_glizy_ObjectFactory::createModel('org.glizycms.core.models.Menu');
+
+        foreach ($menu->getLanguagesId() as $langId) {
+            $menu = $menuProxy->getMenuFromId($menuId, $langId);
+            $title = __T('Copy of').' '.$menu->menudetail_title;
+
+            $contentVO = $this->readContentFromMenu($menuId, $langId);
+            $contentVO->setId($duplicateId);
+            $contentVO->setTitle($title);
+            $contentVO->setUrl('');
+            $this->saveContent($contentVO, $langId, __Config::get('glizycms.content.history'));
+        }
+
+        // duplica i figli
+        $itMenus = $menuProxy->getChildMenusFromId($menuId, $languageId, false);
+        foreach($itMenus as $subMenu) {
+            if ($subMenu->menu_type =='BLOCK' || $allBranch)  {
+                $this->duplicateMenuAndContent($subMenu->menu_id, $allBranch, $duplicateId);
+            }
+        }
+
+        return $duplicateId;
     }
 }

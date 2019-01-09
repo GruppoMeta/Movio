@@ -7,13 +7,12 @@ class org_glizycms_contents_controllers_autocomplete_ajax_FindTerm extends org_g
         $fieldName = array_pop($fieldName);
         if (!$proxy) {
             $it = org_glizy_objectFactory::createModelIterator($model, $query);
-
             if ($term != '') {
                 $it->where($fieldName, '%'.$term.'%', 'LIKE');
+            } else {
+                $it->where($fieldName, '', '<>');
             }
-
-            $it->where($fieldName, '', '<>')
-               ->orderBy($fieldName);
+            $it->orderBy($fieldName);
 
             $foundValues = array();
 

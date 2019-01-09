@@ -28,6 +28,8 @@ class org_glizy_components_Breadcrumbs extends org_glizy_components_Component
 		$this->defineAttribute('cssCurrent',	false, 	'current', 	COMPONENT_TYPE_STRING);
 		$this->defineAttribute('menuId',		false, 	NULL,	COMPONENT_TYPE_STRING);
 		$this->defineAttribute('drawIconLevel',		false, 	0,	COMPONENT_TYPE_INTEGER);
+		$this->defineAttribute('trim',	false,	false,	COMPONENT_TYPE_BOOLEAN);
+		$this->defineAttribute('trimLength',	false,	__Config::get('glizy.breadcrumbs.trimLength'),	COMPONENT_TYPE_INTEGER);
 
 		// call the superclass for validate the attributes
 		parent::init();
@@ -48,9 +50,10 @@ class org_glizy_components_Breadcrumbs extends org_glizy_components_Component
 		$siteMap 		= &$this->_application->getSiteMap();
 		$cssClassLink	= $this->getAttribute('cssClassLink');
 		$currentMenu 	= is_null($menuId) ? $this->_application->getCurrentMenu() : $siteMap->getNodeById($menuId);
+		$trimLength = $this->getAttribute('trim') ? ($this->getAttribute('trimLength') ?: 30) : null;
 
 		if ($this->extraItem) {
-			array_unshift($this->_content->records, '<span class="'.$this->getAttribute('cssCurrent').'">'.$this->extraItem.'</span>');
+			array_unshift($this->_content->records, '<span class="'.$this->getAttribute('cssCurrent').'">'.$this->trim($this->extraItem, $trimLength).'</span>');
 		}
 
 		while (true) {
@@ -67,15 +70,15 @@ class org_glizy_components_Breadcrumbs extends org_glizy_components_Component
 							array_unshift($this->_content->records, org_glizy_helpers_Link::makeLink('link', array(
 										'pageId' => $currentMenu->id,
 										'title' => $nodeDescription,
-										'label' => $nodeTitle,
+										'label' => $this->trim($nodeTitle, $trimLength),
 										'icon' => $icon,
 										'cssClass' => $cssClassLink)));
 						} else {
-							array_unshift($this->_content->records, org_glizy_helpers_Link::makeSimpleLink($nodeTitle, $currentMenu->url, $nodeDescription, $cssClassLink, '', array('icon' => $icon)));
+							array_unshift($this->_content->records, org_glizy_helpers_Link::makeSimpleLink($this->trim($nodeTitle, $trimLength), $currentMenu->url, $nodeDescription, $cssClassLink, '', array('icon' => $icon)));
 						}
 					}
 				} else {
-					array_unshift($this->_content->records, '<span class="'.$this->getAttribute('cssCurrent').'">'.$nodeTitle.'</span>');
+					array_unshift($this->_content->records, '<span class="'.$this->getAttribute('cssCurrent').'">'.$this->trim($nodeTitle, $trimLength).'</span>');
 				}
 			}
 			if ($currentMenu->parentId===0 || !$currentMenu->parentId) break;
@@ -125,6 +128,16 @@ class org_glizy_components_Breadcrumbs extends org_glizy_components_Component
 		}
 
 		return $skipCurrent;
+	}
+
+	/**
+	 * @param  string $value
+	 * @param  int $length
+	 * @return string
+	 */
+	private function trim($value, $length)
+	{
+		return $length ? glz_strtrim($value, $length) : $value;
 	}
 }
 

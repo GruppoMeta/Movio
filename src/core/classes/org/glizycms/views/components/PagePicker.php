@@ -18,6 +18,7 @@ class org_glizycms_views_components_PagePicker extends org_glizy_components_Inpu
         $this->defineAttribute('protocol',  false,  '', COMPONENT_TYPE_STRING);
         $this->defineAttribute('makeLink',  false,  false, COMPONENT_TYPE_BOOLEAN);
 		$this->defineAttribute('multiple',	false, 	false,	COMPONENT_TYPE_BOOLEAN);
+        $this->defineAttribute('queryString',  false,  __Config::get('glizycms.pagePicker.queryStringEnabled'),  COMPONENT_TYPE_BOOLEAN);
 		parent::init();
 
 	}
@@ -36,6 +37,7 @@ class org_glizycms_views_components_PagePicker extends org_glizy_components_Inpu
             $this->setAttribute('data', ';type=CmsPagePicker;controllername='.$this->getAttribute('ajaxController').
                                         ';filtertype='.$this->getAttribute('type').
                                         ';multiple='.($this->getAttribute('multiple') ? 'true':'false').
+                                        ';querystring='.($this->getAttribute('queryString') ? 'true':'false').
                                         ';protocol='.$this->getAttribute('protocol')
                                         , true);
         }

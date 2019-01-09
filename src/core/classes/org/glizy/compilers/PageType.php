@@ -125,7 +125,7 @@ class org_glizy_compilers_PageType extends org_glizy_compilers_Compiler
 		$methodName = 'compile_'.preg_replace('/[\-\#\:]/', '', $node->nodeName);
 		if (method_exists($this, $methodName))
 		{
-			$this->$methodName($node, $registredNameSpaces, $counter, $parent, $idPrefix);
+			$this->$methodName($node, $registredNameSpaces, $counter, $parent, $idPrefix, $idPrefixOriginal);
 			return;
 		}
 		else
@@ -242,12 +242,12 @@ class org_glizy_compilers_PageType extends org_glizy_compilers_Compiler
 		return $result;
 	}
 
-	function compile_cdatasection(&$node, &$registredNameSpaces, &$counter, $parent='NULL', $idPrefix='')
+	function compile_cdatasection(&$node, &$registredNameSpaces, &$counter, $parent='NULL', $idPrefix='', $idPrefixOriginal='')
 	{
 		$this->compile_text($node, $registredNameSpaces, $counter, $parent);
 	}
 
-	function compile_text(&$node, &$registredNameSpaces, &$counter, $parent='NULL', $idPrefix='')
+	function compile_text(&$node, &$registredNameSpaces, &$counter, $parent='NULL', $idPrefix='', $idPrefixOriginal='')
 	{
 		$this->_classSource .= '$tagContent = <<<EOD'.GLZ_COMPILER_NEWLINE2;
 		$this->_classSource .=  str_replace('$', '\$', $node->nodeValue).GLZ_COMPILER_NEWLINE2;
@@ -256,24 +256,24 @@ class org_glizy_compilers_PageType extends org_glizy_compilers_Compiler
 	}
 
 
-	function compile_glzif(&$node, &$registredNameSpaces, &$counter, $parent='NULL', $idPrefix='')
+	function compile_glzif(&$node, &$registredNameSpaces, &$counter, $parent='NULL', $idPrefix='', $idPrefixOriginal='')
 	{
 		$condition = $node->getAttribute( "condition" );
 		$condition = str_replace( array( '$application.', '$user.' ), array( '$application->', '$application->getCurrentUser()->' ), $condition );
 		$this->_classSource .= 'if ('.$condition.') {'.GLZ_COMPILER_NEWLINE2;
 		foreach( $node->childNodes as $nc )
 		{
-			$this->_compileXml($nc, $registredNameSpaces, $counter, $parent, $idPrefix);
+			$this->_compileXml($nc, $registredNameSpaces, $counter, $parent, $idPrefix, $idPrefixOriginal);
 		}
 		$this->_classSource .= '} // end if'.GLZ_COMPILER_NEWLINE2;
 	}
 
 
-	function compile_glztemplateDefine(&$node, &$registredNameSpaces, &$counter, $parent='NULL', $idPrefix='')
+	function compile_glztemplateDefine(&$node, &$registredNameSpaces, &$counter, $parent='NULL', $idPrefix='', $idPrefixOriginal='')
 	{
 	}
 
-	function compile_glzinclude(&$node, &$registredNameSpaces, &$counter, $parent='NULL', $idPrefix='')
+	function compile_glzinclude(&$node, &$registredNameSpaces, &$counter, $parent='NULL', $idPrefix='', $idPrefixOriginal='')
 	{
 		$origSrc = is_object( $node ) ? $node->getAttribute( 'src' ) : $node;
 		$src = $origSrc;
@@ -348,12 +348,18 @@ class org_glizy_compilers_PageType extends org_glizy_compilers_Compiler
 		$includeXML->loadXmlAndParseNS( $srcXml );
 		$newNameSpaces = $includeXML->namespaces;
 		$this->addNamespace($newNameSpaces, $registredNameSpaces);
-		if ( $includeXML->documentElement->hasAttribute( 'adm:editComponents' ) )
-		{
+		if ( $includeXML->documentElement->hasAttribute( 'adm:editComponents' ) ) {
 			$this->_classSource .= 'if ($n0) $n0->setAttribute( "adm:editComponents", "'.$includeXML->documentElement->getAttribute( 'adm:editComponents' ).'" )'.GLZ_COMPILER_NEWLINE;
 		}
 
-		$this->_compileXml($includeXML->documentElement, $registredNameSpaces, $counter, $parent, $idPrefix);
+		if ($includeXML->documentElement->nodeName=='glz:include') {
+			foreach($includeXML->documentElement->childNodes as $nc ) {
+				$counter++;
+				$this->_compileXml($nc, $registredNameSpaces, $counter, $parent, $idPrefix, $idPrefixOriginal);
+			}
+		} else {
+			$this->_compileXml($includeXML->documentElement, $registredNameSpaces, $counter, $parent, $idPrefix, $idPrefixOriginal);
+		}
 	}
 
 	function compile_baseTag(&$node, &$registredNameSpaces, &$counter, $parent='NULL', $idPrefix, $componentClassInfo, $componentId)

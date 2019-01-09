@@ -75,7 +75,11 @@ class org_glizy_components_Form extends org_glizy_components_ComponentContainer
 
 		if (!is_null($this->getAttribute('skin')) && $outputMode=='html') {
 			$this->acceptOutput = true;
-			$this->_content = new StdClass;
+			if ($this->_content && is_array($this->_content)) {
+				$this->_content = (object)$this->_content;
+			} else if (!is_object($this->_content)) {
+				$this->_content = new StdClass;
+			}
 
 			for ($i=0; $i<count($this->childComponents);$i++)
 			{

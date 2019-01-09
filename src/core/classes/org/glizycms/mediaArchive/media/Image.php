@@ -176,10 +176,13 @@ class org_glizycms_mediaArchive_media_Image extends org_glizycms_mediaArchive_me
 			if ( !is_null( $useSize ) ) {
 				$oldWatermark = $this->watermark;
 				$this->watermark = false;
+				$oldAllowDownload = $this->allowDownload;
+				$this->allowDownload = true;
 				$resizedPiramidImage =  $this->getResizeImage( $useSize[ 0 ], $useSize[ 1 ], false, 1, false, true, false);
 				$this->fileName = $resizedPiramidImage[ 'fileName' ];
 				$this->_imageInfo = null;
 				$this->watermark = $oldWatermark;
+				$this->allowDownload = $oldAllowDownload;
 			}
 		}
 		if (__Config::get('glizy.media.imageMagick')==true) {

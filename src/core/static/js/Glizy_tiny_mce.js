@@ -285,3 +285,5 @@ Glizy.tinyMCE_options = {
   Glizy.tinyMCE_validElements,
   table_styles : Glizy.tinyMCE_tableClassList
 };
+
+Glizy.tinyMCE_options = $.extend(Glizy.tinyMCE_options, Glizy.tinyMCE_customOptions);

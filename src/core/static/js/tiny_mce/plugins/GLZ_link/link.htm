@@ -32,12 +32,16 @@
 						<tr>
 							<td nowrap="nowrap"><label id="linkUrlLabel" for="linkUrl">{#GLZ_link.link_url}</label></td>
 							<td width="1%"><select id="protocol"><option selected="selected" value="http://">http://</option><option value="https://">https://</option><option value="ftp://">ftp://</option><option value="mailto:">mailto:</option></select></td>
-                            <td><input id="linkUrl" name="linkUrl" style="width:100%" type="text" value="" disabled="disabled" class="ja={suggest:{src:'../../../../../../../admin/ajax.php?pageId=AjaxCatalog&ajaxTarget=glossary',key:'t'}}"/></td>
-                            <td width="1%"><input type="button" id="preview" value="{#GLZ_link.preview}" disabled="disabled" onclick="previewLink()"/></td>
+                            <td colspan="2"><input id="linkUrl" name="linkUrl" style="width:100%" type="text" value="" disabled="disabled" class="ja={suggest:{src:'../../../../../../../admin/ajax.php?pageId=AjaxCatalog&ajaxTarget=glossary',key:'t'}}"/></td>
 						</tr>
 						<tr>
 							<td nowrap><label id="internalLinkLabel" for="internalLink">{#GLZ_link.internal_link}</label></td>
 							<td colspan="3" id="internalLinks">
+							</td>
+						</tr>
+						<tr id="anchorQueryGroup" style="display: none">
+							<td nowrap><label id="anchorLabel" for="anchor">{#GLZ_link.anchorQueryString}</label></td>
+							<td colspan="3"><input id="anchor" type="text" disabled="disabled" /></td>
 							</td>
 						</tr>
 						<tr>
@@ -118,5 +122,3 @@
     </form>
 </body>
 </html>
-
-

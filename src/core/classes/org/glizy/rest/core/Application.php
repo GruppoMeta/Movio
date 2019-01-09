@@ -63,6 +63,15 @@ class org_glizy_rest_core_Application extends org_glizy_mvc_core_Application
 		$directOutput = false;
         $result = array();
 
+        if (__Request::exists('__middleware__')) {
+            $middlewareObj = org_glizy_ObjectFactory::createObject(__Request::get('__middleware__'));
+            // verify the cache before page rendering
+            // this type of cache is available only for Static Page
+            if ($middlewareObj) {
+                $middlewareObj->beforeProcess($controller, null);
+            }
+        }
+
         if ( $method!='options' && $controller )
 		{
 			$actionClass = org_glizy_ObjectFactory::createObject( $controller, $this );
@@ -168,6 +177,11 @@ class org_glizy_rest_core_Application extends org_glizy_mvc_core_Application
 				echo $this->createXml( $result );
 			}
 		}
+
+        if ($middlewareObj) {
+            // verify the cache after content rendering
+            $middlewareObj->afterRender($output);
+        }
 	}
 
 	private function createXml( $data )

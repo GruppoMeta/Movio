@@ -11,6 +11,11 @@ class org_glizy_helpers_FileServe
 {
 	static public function serve($fileName, $originalFileName=null, $expires=null)
 	{
+		if (preg_match('/^(http:|https:)/', $fileName)) {
+			header('location: ' . $fileName);
+			exit;
+		}
+
 		$mime = !__Config::get('glizy.helpers.FileServe.forceDownload') ? org_glizy_helpers_FileServe::mimeType($fileName) : 'application/force-download';
 		$fileSize = filesize($fileName);
 		$gmdate_mod = gmdate('D, d M Y H:i:s', filemtime($fileName) );
@@ -19,6 +24,10 @@ class org_glizy_helpers_FileServe
 		}
 
 		$disposition = in_array($mime, array('application/pdf', 'image/gif', 'image/png', 'image/jpeg')) ? 'inline' : 'attachment';
+
+		if ($disposition == 'attachment') {
+			$mime = 'application/force-download';
+		}
 
 		if ($expires) {
 			$exp_gmt = gmdate("D, d M Y H:i:s", time() + $expires) . " GMT";
@@ -32,7 +41,7 @@ class org_glizy_helpers_FileServe
 		header('Last-Modified: ' . $gmdate_mod);
 		header('Content-Transfer-Encoding: binary');
     	if ($originalFileName) {
-		    header('Content-Disposition: '.$disposition.'; filename=' . $originalFileName);
+		    header('Content-Disposition: '.$disposition.'; filename="' . $originalFileName . '"');
 	    } else {
 		    header('Content-Disposition: '.$disposition);
 	    }

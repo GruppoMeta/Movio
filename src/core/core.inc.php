@@ -74,6 +74,8 @@ $errorlevel=error_reporting();
 error_reporting( $errorlevel & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT );
 
 if (!defined('GLZ_TESTS')) {
+	// set_error_handler('glz_exception_handler', E_ALL);
+	// register_shutdown_function('shutdownFunction');
 	GlizyErrorHandler::register();
 
 }
@@ -624,23 +626,28 @@ function glz_makeConfirmCode( $len=7, $id=NULL )
  */
 function glz_strtrim($str, $maxlen=200, $elli='...', $maxoverflow=15)
 {
-	$str = strip_tags( $str );
-	if ( strlen($str) > $maxlen)
-	{
-		$output = NULL;
-		$body = explode(" ", $str);
-		$body_count = count($body);
-
-		$i=0;
-		do {
-			$output .= $body[$i]." ";
-			$thisLen = strlen($output);
-			$cycle = ($thisLen < $maxlen && $i < $body_count-1 && ($thisLen+strlen($body[$i+1])) < $maxlen+$maxoverflow?true:false);
-			$i++;
-		} while ($cycle);
-		return $output.$elli;
+	$str = trim(html_entity_decode(strip_tags($str)));
+	$originalStrLen = strlen($str);
+	if ( $originalStrLen <= $maxlen) {
+		return $str;
 	}
-	else return $str;
+
+	$output = '';
+	$body = explode(" ", $str);
+	$body_count = count($body);
+
+	$i=0;
+	do {
+		$output .= $body[$i]." ";
+		$thisLen = strlen($output);
+		$cycle = ($thisLen < $maxlen && $i < $body_count-1 && ($thisLen+strlen($body[$i+1])) < $maxlen+$maxoverflow?true:false);
+		$i++;
+	} while ($cycle);
+
+	if ($originalStrLen > strlen($output)-1) {
+		$output .= $elli;
+	}
+	return $output;
 }
 
 /**

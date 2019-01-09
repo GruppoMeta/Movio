@@ -42,19 +42,42 @@ class org_glizycms_template_views_components_TemplateColorEdit extends org_glizy
             $ids = array_merge($ids, $result['id']);
         }
 
+        $presetOptions = $this->getPresetOptions($presets, $label);
+
         $presets = implode(',', $presets);
         $ids = implode(',', $ids);
         $output = <<<EOD
     <div class="control-group">
         <label class="control-label " for="{$idParent}{$id}">{$label}</label>
         <div class="controls">
-            <select data-elements="{$ids}" data-type="valuesPreset" class="span11" name="{$id}" id="{$idParent}{$id}"><option value="">-</option><option data-options="{$presets}" value="0">{$label} 1</option></select>
+            <select data-elements="{$ids}" data-type="valuesPreset" class="span11" name="{$id}" id="{$idParent}{$id}"><option value="">-</option>$presetOptions</select>
         </div>
     </div>
     {$output}
 EOD;
 
         return $output;
+    }
+
+    private function getPresetOptions($presets, $label)
+    {
+        $presetCount = count($presets[0]);
+        for ($i = 0; $i < $presetCount; $i++) {
+            $presetValues = $this->getPresetValues($presets, $i);
+            $presetOptions .= '<option data-options="' . $presetValues . '" value="' . $i . '">' . $label . ' ' . ($i + 1) . '</option>';
+        }
+
+        return $presetOptions;
+    }
+
+    private function getPresetValues($presets, $i)
+    {
+        $values = array();
+        foreach ($presets as $p) {
+            $values[] = $p[$i];
+        }
+
+        return implode(',', $values);
     }
 
     private function addColorPicker(&$data, $idParent)
@@ -65,7 +88,7 @@ EOD;
             $label = __T($k);
             $id = $v->id[0];
             $result['id'][] = $id;
-            $result['presets'][] = $v->preset[0];
+            $result['presets'][] = $v->preset;
             $result['output'][] = <<<EOD
 <div class="control-group">
     <label for="{$idParent}{$id}"  class="control-label ">{$label}</label>
@@ -78,11 +101,3 @@ EOD;
         return $result;
     }
 }
-
-
-
-
-
-
-
-

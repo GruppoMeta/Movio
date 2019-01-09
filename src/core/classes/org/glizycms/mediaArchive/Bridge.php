@@ -99,7 +99,7 @@ class org_glizycms_mediaArchive_Bridge implements org_glizycms_mediaArchive_Brid
 
         if ($media->allowDownload) {
             $media->addDownloadCount();
-            org_glizy_helpers_FileServe::serve($media->getFileName(), $media->originalFileName);
+            org_glizy_helpers_FileServe::serve($media->getFileNameOrRemoteUrl(), $media->originalFileName);
         } else {
             org_glizy_helpers_Navigation::accessDenied();
         }
@@ -124,7 +124,7 @@ class org_glizycms_mediaArchive_Bridge implements org_glizycms_mediaArchive_Brid
                 $originalSize = $media->getOriginalSizes();
                 $mediaInfo = $media->getResizeImage($originalSize['width'], $originalSize['height']);
             } else {
-                $mediaInfo = $media->getImageInfo();
+                $mediaInfo = array('fileName' => $media->getFileNameOrRemoteUrl());
             }
         } else {
             $mediaInfo = array('fileName' => $media->getIconFileName());

@@ -27,6 +27,8 @@ class org_glizycms_mediaArchive_media_Media extends GlizyObject
     var $watermark;
     var $ar;
 
+    private $remoteCacheLifetime;
+
     function __construct(&$ar)
     {
         if ( is_object( $ar ) )
@@ -67,6 +69,8 @@ class org_glizycms_mediaArchive_media_Media extends GlizyObject
             $this->allowDownload   = $ar['media_allowDownload'];
             $this->watermark        = $ar['media_watermark'];
         }
+
+        $this->remoteCacheLifetime = __Config::get('glizy.media.image.remoteCache.lifetime');
     }
 
     function isMapped()
@@ -77,7 +81,6 @@ class org_glizycms_mediaArchive_media_Media extends GlizyObject
     function getFileName( $checkIfExists=true )
     {
         $file = $this->resolveFileName();
-
         if ( !$checkIfExists ) {
             return $file;
         } else {
@@ -126,7 +129,12 @@ class org_glizycms_mediaArchive_media_Media extends GlizyObject
 
     private function resolveFileName()
     {
-         // gestione mapping delle cartelle
+        if ($this->isRemoteFile()) {
+            $file = $this->remoteMediaCacheFileName();
+            return $this->retrieveRemoteMedia($file) ? $file : false;
+        }
+
+        // gestione mapping delle cartelle
         if (__Config::get('glizycms.mediaArchive.mediaMappingEnabled') && preg_match('/([^:]+):\/\/(.+)/', $this->fileName, $m)) {
             $application = org_glizy_ObjectValues::get('org.glizy', 'application' );
             if ($application) {
@@ -146,4 +154,53 @@ class org_glizycms_mediaArchive_media_Media extends GlizyObject
 
         return $file;
     }
+
+    private function retrieveRemoteMedia($fileName)
+    {
+        if (file_exists($fileName) && time()-filemtime($fileName) < $this->remoteCacheLifetime) {
+            return true;
+        }
+
+        $folder = pathinfo($fileName, PATHINFO_DIRNAME);
+        if (!file_exists($folder)) {
+            @mkdir($folder, 0755, true);
+        }
+
+        try {
+            $remoteFileHandle = fopen($this->fileName, 'rb');
+            $localFileHandle = fopen($fileName, 'wb');
+            while ($buffer = fread($remoteFileHandle, 64*1024)) {
+                fwrite($localFileHandle, $buffer);
+            }
+
+            if (is_resource($remoteFileHandle)) fclose($remoteFileHandle);
+            if (is_resource($localFileHandle)) fclose($localFileHandle);
+
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    private function remoteMediaCacheFileName()
+    {
+        return org_glizy_Paths::get('CACHE_IMAGES').'/media/'.md5($this->fileName);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isRemoteFile()
+    {
+       return preg_match('/^(http:|https:)/', $this->fileName);
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileNameOrRemoteUrl()
+    {
+       return $this->isRemoteFile() ? $this->fileName : $this->getFileName();
+    }
+
 }

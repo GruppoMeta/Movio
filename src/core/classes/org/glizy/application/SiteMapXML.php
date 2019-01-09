@@ -148,7 +148,7 @@ class org_glizy_application_SiteMapXML extends org_glizy_application_SiteMap
             $menu['type']             = 'PAGE';
             $menu['creationDate']         = 0;
             $menu['modificationDate']     = 0;
-            $menu['url']                  = str_replace('%', '&', $currNode->getAttribute('url'));
+            $menu['url']                  = $currNode->getAttribute('url');
             if ( strpos( $menu['url'], '&' ) === 0 )
             {
                 $menu['url'] = __Link::scriptUrl( true ).$menu['url'];

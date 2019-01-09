@@ -90,6 +90,7 @@ class org_glizycms_Glizycms extends GlizyObject
             'glizycms.dublincore.enabled' => false,
             'glizycms.contents.templateEnabled' => false,
             'glizycms.mobile.template.enabled' => false,
+            'glizycms.pagePicker.queryStringEnabled' => true,
         );
 
         foreach($config as $k=>$v) {

@@ -4,7 +4,7 @@
  *
  * This file is part of the GLIZY framework.
  * Copyright (c) 2005-2006 Daniele Ugoletti <daniele@ugoletti.com>
- * 
+ *
  * For the full copyright and license information, please view the COPYRIGHT.txt
  * file that was distributed with this source code.
  *
@@ -24,7 +24,7 @@
 
 (function() {
 	tinymce.PluginManager.requireLangPack('GLZ_link');
-	
+
 	tinymce.create('tinymce.plugins.GlizyLinkPlugin', {
 		init : function(ed, url) {
 			this.editor = ed;
@@ -40,7 +40,7 @@
 				ed.windowManager.open({
 					file : url + '/link.htm',
 					width : 420 + parseInt(ed.getLang('GLZ_link.delta_width', 0)),
-					height : 530 + parseInt(ed.getLang('GLZ_link.delta_height', 0)),
+					height : 560 + parseInt(ed.getLang('GLZ_link.delta_height', 0)),
 					inline : 1
 				}, {
 					plugin_url : url

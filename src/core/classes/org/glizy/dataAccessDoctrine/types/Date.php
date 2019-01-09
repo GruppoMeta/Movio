@@ -11,6 +11,10 @@ class org_glizy_dataAccessDoctrine_types_Date extends \Doctrine\DBAL\Types\DateT
 
     public function convertToPHPValue($value, AbstractPlatform $platform = null)
     {
+        if ($value == '0000-00-00') {
+            return '';
+        }
+        
         return is_string($value) ? glz_defaultDate2locale(__T('GLZ_DATE_FORMAT'), $value) : $value;
     }
 }

@@ -9,7 +9,7 @@
 		width: 380px;
 }
         
-#linkType, #linkUrl, #internalLink, #title, #target, #id, #style, #classlist, #rel, #rev, #tabindex, #accesskey, #cssclass {
+#linkType, #linkUrl, #internalLink, #anchor, #title, #target, #id, #style, #classlist, #rel, #rev, #tabindex, #accesskey, #cssclass {
 	width: 100%;
 }
 

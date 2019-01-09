@@ -286,6 +286,24 @@ var GlizycmsSiteTree = dejavu.Class.declare({
                 }
             };
         }
+        if (node.data("duplicatePage") == "1") {
+            menu.duplicatePage = {
+                "label": "{i18n:Duplicate page}",
+                "icon": "icon-copy",
+                "action":  function(obj) {
+                    Glizy.events.broadcast("glizycms.treeCallAjaxForMenu", {"action": "duplicatePage", "menuId": obj.attr("id")});
+               }
+            };
+        }
+        if (node.data("duplicateBranch") == "1") {
+            menu.duplicateBranch = {
+                "label": "{i18n:Duplicate branch}",
+                "icon": "icon-folder-open",
+                "action":  function(obj) {
+                    Glizy.events.broadcast("glizycms.treeCallAjaxForMenu", {"action": "duplicateBranch", "menuId": obj.attr("id")});
+               }
+            };
+        }
         return menu;
     }
 });

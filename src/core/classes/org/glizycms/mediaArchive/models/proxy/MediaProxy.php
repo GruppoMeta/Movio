@@ -72,7 +72,7 @@ class org_glizycms_mediaArchive_models_proxy_MediaProxy extends GlizyObject
         return $mediaId;
     }
 
-    protected function copyFileInArchive($action, $filePath, $originalFileName, $fileType)
+    public function copyFileInArchive($action, $filePath, $originalFileName, $fileType)
     {
         $file_destname = md5(time()) . "_" . $originalFileName;
         $destinationFolder = org_glizy_Paths::get('APPLICATION_MEDIA_ARCHIVE').ucfirst(strtolower($fileType));

@@ -93,7 +93,11 @@ abstract class org_glizy_dataAccessDoctrine_AbstractRecordIterator extends Glizy
                                 (isset($params['params']) ? $params['params'] : $params)
                                 : array($params);
             $params['iterator'] = $this;
-            org_glizy_helpers_PhpScript::callMethodWithParams($this->ar, 'query_'.$query, $params);
+            $r = org_glizy_helpers_PhpScript::callMethodWithParams($this->ar, 'query_'.$query, $params);
+            if (is_a($r, 'org_glizy_dataAccessDoctrine_vo_SqlQueryVO')) {
+                $this->querySqlToExec = $r->toArray();
+            }
+
             unset($params['iterator']);
         } else if (method_exists($this->ar, 'querysql_'.$driverName.'_'.$query)) {
             $this->querySqlToExec = org_glizy_helpers_PhpScript::callMethodWithParams($this->ar, 'querysql_'.$driverName.'_'.$query);
@@ -502,4 +506,42 @@ abstract class org_glizy_dataAccessDoctrine_AbstractRecordIterator extends Glizy
             $this->statement->closeCursor();
         }
     }
+
+    /**
+     * @param string $sql
+     * @param array $params
+     * @return void
+     */
+    protected function executeSqlWithRowsCount($sql, $params)
+    {
+
+        $connection = $this->ar->getConnection();
+
+        if (__Config::get('glizy.dataAccess.sqlCount.new')) {
+            $sqlToExec = $sql;
+            if ($this->hasLimit) {
+                $firstResult = $this->qb->getFirstResult();
+                $maxResults = $this->qb->getMaxResults();
+                $sqlToExec = $connection->getDatabasePlatform()->modifyLimitQuery($sqlToExec, $maxResults, $firstResult);
+            }
+            $this->statement = $connection->executeQuery($sqlToExec, $params);
+
+            $sqlCount = $this->createCountQuery($sql);
+            $stmt = $connection->executeQuery($sqlCount, $params);
+            $row = $stmt->fetch();
+            $this->count = $row['tot'];
+            return;
+        }
+
+        $this->statement = $connection->executeQuery($sql, $params);
+        $this->count = $this->statement->rowCount();
+
+        $firstResult = $this->qb->getFirstResult();
+        $maxResults = $this->qb->getMaxResults();
+        if (!is_null($firstResult) && !is_null($maxResults)) {
+            $sql = $connection->getDatabasePlatform()->modifyLimitQuery($sql, $maxResults, $firstResult);
+            $this->statement = $connection->executeQuery($sql, $params);
+        }
+    }
+
 }

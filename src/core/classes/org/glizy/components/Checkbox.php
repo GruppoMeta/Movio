@@ -26,6 +26,7 @@ class org_glizy_components_Checkbox extends org_glizy_components_HtmlFormElement
 		$this->defineAttribute('required',			false, 	false,	COMPONENT_TYPE_BOOLEAN);
 		$this->defineAttribute('value',				false, 	NULL,	COMPONENT_TYPE_STRING);
 		$this->defineAttribute('defaultValue',		false, 	'0',	COMPONENT_TYPE_STRING);
+		$this->defineAttribute('adm:defaultValue',	false, 	'0',	COMPONENT_TYPE_STRING);
 		$this->defineAttribute('wrapLabel',			false, 	false,	COMPONENT_TYPE_BOOLEAN);
 		$this->defineAttribute('title',				false, 	false,	COMPONENT_TYPE_BOOLEAN);
 		$this->defineAttribute('checkedValue',		false, 	'1',	COMPONENT_TYPE_STRING);
@@ -59,7 +60,11 @@ class org_glizy_components_Checkbox extends org_glizy_components_HtmlFormElement
 		if (is_null($this->_content) || $this->_content=='')
 		{
 			// imposta il valore di default
-			$this->_content = $this->getAttribute('defaultValue');
+			if ($this->_application->isAdmin()) {
+				$this->_content = $this->getAttribute('adm:defaultValue');
+			} else {
+				$this->_content = $this->getAttribute('defaultValue');
+			}
 		}
 	}
 

@@ -65,20 +65,21 @@ class org_glizycms_speakingUrl_ModuleResolver extends org_glizycms_speakingUrl_A
     public function makeUrl($id)
     {
         $resolvedVO = $this->resolve($id);
-        return $resolvedVO ? $resolve->url : false;
+        return $resolvedVO ? $resolvedVO->url : false;
     }
 
     public function makeLink($id)
     {
         $resolvedVO = $this->resolve($id);
-        return $resolvedVO ? $resolve->link : false;
+        return $resolvedVO ? $resolvedVO->link : false;
     }
 
     public function resolve($id)
     {
         $info = $this->extractProtocolAndId($id);
+
         if ($info->protocol.':' === $this->protocol && is_numeric($info->id)) {
-            return $this->createResolvedVO($info->id);
+            return $this->createResolvedVO($info->id, $info->queryString);
         }
         return false;
     }
@@ -91,11 +92,11 @@ class org_glizycms_speakingUrl_ModuleResolver extends org_glizycms_speakingUrl_A
         return $resolvedVO->url;
     }
 
-    protected function createResolvedVO($id)
+    protected function createResolvedVO($id, $queryString='')
     {
         $ar = org_glizy_objectFactory::createModel($this->model);
         if ($id && $ar->load($id)) {
-            $url = __Link::makeUrl($this->routingUrl, array('document_id' => $id, 'title' => $ar->{$this->titleField}));
+            $url = (__Link::makeUrl($this->routingUrl, array('document_id' => $id, 'title' => $ar->{$this->titleField}))).$queryString;
             $link = __Link::makeSimpleLink($ar->{$this->titleField}, $url);
 
             $resolvedVO = org_glizycms_speakingUrl_ResolvedVO::create(

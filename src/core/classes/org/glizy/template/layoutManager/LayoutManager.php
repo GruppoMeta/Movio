@@ -63,7 +63,7 @@ class org_glizy_template_layoutManager_LayoutManager extends GlizyObject
 
 	function fixLanguages( $templateSource )
 	{
-		$templateSource = str_replace( '<head>', '<head><base href="'.GLZ_HOST.'/" />', $templateSource );
+		$templateSource = preg_replace('/(<head>|<head(\s[^>]*)>)/', '<head$2><base href="'.GLZ_HOST.'/" />', $templateSource );
 		$templateSource = preg_replace('/(\<html.*xml:lang=)"([^"]*)"/', '$1"'.$this->language.'"', $templateSource );
 		$templateSource = preg_replace('/(\<html.*lang=)"([^"]*)"/', '$1"'.$this->language.'"', $templateSource );
 

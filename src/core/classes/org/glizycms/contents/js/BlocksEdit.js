@@ -43,6 +43,21 @@ Glizy.module('glizycms.BlockEdit', function(){
                 });
             });
 
+            $(this.container).on('click', 'a.js-duplicate', function(e){
+                e.preventDefault();
+                var id = $(this).data("id");
+                $.ajax({
+                    type: 'POST',
+                    url: self.ajaxUrl.replace('pageEdit', 'treeview')+"DuplicatePage",
+                    data : {
+                        "menuId" : id
+                    },
+                    success : function (r) {
+                        self.loadChild();
+                    }
+                });
+            });
+
             $(this.container).on('click', 'a.js-show', function(e){
                 e.preventDefault();
                 var id = $(this).data("id");
@@ -149,6 +164,7 @@ Glizy.module('glizycms.BlockEdit', function(){
             '<% if (item.visible) { %><a alt="{i18n:Hide}" title="{i18n:Hide}" class="js-hide" href="#" data-id="<%= item.id %>"><span class="btn-icon icon-eye-open"></span></a><% } %>'+
             '<a alt="{i18n:Edit}" title="{i18n:Edit}" class="js-edit" href="#" data-id="<%= item.id %>"><span class="btn-icon icon-pencil"></span></a>'+
             '<a alt="{i18n:Delete}" title="{i18n:Delete}" class="js-delete" href="#" data-id="<%= item.id %>"><span class="btn-icon icon-trash"></span></a>'+
+            '<a alt="{i18n:Duplicate}" title="{i18n:Duplicate}" class="js-duplicate" href="#" data-id="<%= item.id %>"><span class="btn-icon icon-copy"></span></a>'+
             '</div>'+
             '</div>'+
             '<% }); %>'+
