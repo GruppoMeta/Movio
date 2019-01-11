@@ -28,6 +28,10 @@
           <dt tal:content="php: __T('Venue Geolocation')"></dt>
           <dd tal:content="Component/geo"></dd>
         </span>
+        <span tal:omit-tag="" tal:condition="Component/emailBooking">
+          <dt tal:content="php: __T('E-mail')"></dt>
+          <dd><a tal:attributes="href php:'mailto:'.Component['emailBooking']" tal:content="Component/emailBooking"/></dd>
+        </span>
         <span tal:omit-tag="" tal:condition="Component/targetUser">
           <dt tal:content="php: __T('Users')"></dt>
           <dd tal:content="Component/targetUser"></dd>
