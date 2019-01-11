@@ -8,7 +8,7 @@ class movio_modules_ontologybuilder_controllers_ajax_AddEntityLabel extends org_
         $language = $application->getEditingLanguage();
 
         $localeService = $this->application->retrieveProxy('movio.modules.ontologybuilder.service.LocaleService');
-        $keyLanguageCode = $localeService->keyAlreadyExists($lang, $key);
+        $keyLanguageCode = $localeService->keyAlreadyExists($language, $key);
         if ($keyLanguageCode) {
             $it = org_glizy_objectFactory::createModelIterator('movio.modules.ontologybuilder.models.EntityLabelsDocument')
                 ->where('key', $key);

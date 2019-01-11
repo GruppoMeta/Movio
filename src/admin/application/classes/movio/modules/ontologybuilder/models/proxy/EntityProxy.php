@@ -297,7 +297,6 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
         $entityTypeProperties = $entityTypeService->getEntityTypeProperties($documentEntityTypeId);
 
 		$localeService = $application->retrieveProxy('movio.modules.ontologybuilder.service.LocaleService');
-        $speakingUrlManager = $application->retrieveProxy('org.glizycms.speakingUrl.Manager');
         $language = $application->getLanguage();
 
         $relationId = 0;
@@ -318,7 +317,7 @@ class movio_modules_ontologybuilder_models_proxy_EntityProxy extends GlizyObject
 
                 if ($entityTypeProperty['entity_properties_type'] == 'attribute.internallink') {
                     if (is_object($document->$attribute)) continue;
-                    $value = $speakingUrlManager->makeUrl($document->$attribute);
+                    $value = $document->$attribute;
                 } else {
                     $value = $document->$attribute;
                 }

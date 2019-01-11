@@ -16,13 +16,24 @@ class movio_modules_ontologybuilder_controllers_ajax_GetRelationTypes extends or
         foreach($it as $ar) {
             $r = array(
                 'id' => $ar->key,
-                'name' => $ar->translation[$language] ? $ar->translation[$language] : $ar->key
+                'name' => $ar->translation[$language] ? $ar->translation[$language] : $this->getFirstAvailableTranslation($ar)
             );
 
             $relationTypes[$r['id']] = $r;
         }
 
         return $relationTypes;
+    }
+
+    private function getFirstAvailableTranslation($ar)
+    {
+        foreach ($ar->translation as $key => $value) {
+            if (!empty($value)) {
+                return $value;
+            }
+        }
+
+        return $ar->key;
     }
 }
 ?>
