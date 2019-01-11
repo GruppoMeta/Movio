@@ -31,7 +31,7 @@
                             </div>
                             <div class="input-prepend">
                                 <span class="add-on"><i class="icon-asterisk"></i></span>
-                                <select name="loginform_Language" class="span11">
+                                <select id="language" name="loginform_Language" class="span11">
                                     <option value="en">English</option>
                                     <option value="it">Italiano</option>
                                 </select>
@@ -51,6 +51,10 @@
 if (window.self !== window.top) {
     window.top.location.href = location.href;
 }
+$(function(){
+    var userLang = navigator.language || navigator.userLanguage;
+    $('#language').val(userLang.split('-')[0]);
+})
 </script>
  </body>
 </html>
