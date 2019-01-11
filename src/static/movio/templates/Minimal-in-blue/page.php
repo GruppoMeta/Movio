@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php print $docTitle?></title>
+    <?php print $metadata?>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/jquery-1.8.2.min.js"><\/script>')</script>
     <?php print $css?>
@@ -102,7 +103,7 @@
                 </div>
 
                 <div>
-                    <?php print $address;?>                        
+                    <?php print $address;?>
                     <p><?php print $copyright;?></p>
                 </div>
             </div>
