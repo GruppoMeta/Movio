@@ -23,7 +23,7 @@ class Template extends GlizyObject
 		// $templateProxy->invalidateCache();
         $cache = $templateProxy->getTemplateCache();
 
-		$cssFileName = __Paths::get('CACHE').md5($this->getClassName().'_'.$templateData->__id).'.css';
+		$cssFileName = __Paths::get('CACHE').md5(__DIR__.'_'.$templateData->__id.__Config::get('APP_VERSION')).'.css';
         $self = $this;
 		$templateData = $cache->get($cssFileName, array(), function() use ($self, $templateData, $cssFileName) {
 			$newTemplateData = new StdClass;
