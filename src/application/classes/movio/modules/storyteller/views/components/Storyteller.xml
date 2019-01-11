@@ -37,7 +37,8 @@
         <glz:Checkbox id="galleryImagePan" label="{i18n:Image pan}" defaultValue="1" />
         <glz:Input id="gallery" label="{i18n:Image category}" data="type=selectfrom;multiple=true;add_new_values=false;model=org.glizycms.models.Media;field=media_category;override=false" />
 
-        <cms:PagePicker id="documents" label="{i18n:Insights}" required="false" multiple="true" ajaxController="movio.modules.storyteller.controllers.ajax.PagePicker"/>
+        <cms:PagePicker id="documents" label="{i18n:Insights}" required="false" multiple="true" ajaxController="movio.modules.storyteller.controllers.ajax.PagePicker" protocol="movioContent:"/>
     </st:StorytellerCmp>
 </glz:Panel>
+
 
