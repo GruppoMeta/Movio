@@ -67,4 +67,12 @@
                  ->orderBy('year');
     ]]>
     </model:Query>
+
+    <model:Query name="filterCategory" type="function">
+    <![CDATA[
+        $iterator->selectIndex('category', 'DISTINCT document_index_text_value as k', 'document_index_text_value as v')
+                 ->where('startDate', (string)new org_glizy_types_Date(), '<=')
+                 ->where('endDate', (string)new org_glizy_types_Date(), '>=');
+    ]]>
+    </model:Query>
 </model:Model>

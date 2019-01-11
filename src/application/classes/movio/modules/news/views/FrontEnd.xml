@@ -16,7 +16,7 @@
         <cms:SearchFilters id="filters" cssClass="search my-form clearfix" label="{i18n:Show search form}">
             <glz:DataDictionary id="filterYearDP" recordClassName="movio.modules.news.models.Model" field="year" query="filterYear" />
             <glz:DataDictionary id="filterPlaceDP" recordClassName="movio.modules.news.models.Model" field="place" />
-            <glz:DataDictionary id="filterCategoryDP" recordClassName="movio.modules.news.models.Model" field="category" />
+            <glz:DataDictionary id="filterCategoryDP" recordClassName="movio.modules.news.models.Model" field="category" query="filterCategory" />
             <glz:Input id="filterTitle" label="{i18n:MW_NEWS_TITLE}" bindTo="title" value="{filters}"/>
 
                 <glz:List id="filterYear" label="{i18n:MW_EVENTS_YEAR}" bindTo="year" value="{filters}" dataProvider="{filterYearDP}" emptyValue="-" />
