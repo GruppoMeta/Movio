@@ -5,10 +5,6 @@
     xmlns:cms="org.glizycms.views.components.*"
     xmlns:m="movio.views.components.*">
 
-    <glz:Input id="title" label="{i18n:Title}" size="50" required="true" />
-    <glz:Input id="subtitle" label="{i18n:Subtitle}" size="50" />
-    <glz:Input id="startDate" label="{i18n:Timeline Start date (yyyy, yyyy/mm, yyyy/mm/dd)}" size="50" required="true" />
-
     <glz:Input id="width" label="{i18n:Width (default full width)}" size="50" />
     <glz:Input id="height" label="{i18n:Height (default 600px)}" size="50" />
     <glz:Input id="url" label="{i18n:Google Spreadsheet or other data source URL}" size="50" />

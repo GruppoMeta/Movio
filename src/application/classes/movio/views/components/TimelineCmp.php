@@ -1,22 +1,35 @@
 <?php
 class movio_views_components_TimelineCmp extends org_glizy_components_Groupbox
 {
+    function process()
+    {
+        parent::process();
+
+        $this->addOutputCode('<link title="timeline-styles" rel="stylesheet" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css">', 'head');
+        $this->addOutputCode('<script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>', 'head');
+    }
+
     function getContent() {
         $content = parent::getContent();
         $content = $this->stripIdFromContent($content);
 
+        $timelineCount = count($content['timelineDef']);
+
         $result = array();
-        $result['font'] = 'PT';
-        $result['maptype'] = 'ROADMAP';
-        $result['lang'] = $this->_application->getLanguage();
-        // $result['title'] = $content['title'];
-        // $result['subtitle'] = $content['subtitle'];
-        // $result['startDate'] = $content['startDate'];
-        $result['width'] = $content['width'] ? $content['width'] : '100%';
-        $result['height'] = $content['height'] ? $content['height'] : '600';
+        $result['language'] = $this->_application->getLanguage();
+        $result['width'] = $content['width'] ? (!is_numeric($content['width']) ? $content['width'] : $content['width'] . 'px') : '100%';
+        $result['height'] = $content['height'] ? (!is_numeric($content['height']) ? $content['height'] : $content['height'] . 'px') : '600px';
+        $result['dimensions'] = 'width: ' . $result['width'] . '; height: ' . $result['height'] . ';';
+        if (is_numeric($content['start'])) {
+            $result['start'] = intval($content['start']);
+            $result['start'] = ($result['start'] > 0 and $result['start'] < $timelineCount) ? intval($content['start']) - 1 : 0;
+        } else {
+            $result['start'] = 0;
+        }
+
         if ($content['url']) {
             $result['source'] = $content['url'];
-        } else {
+        } elseif ($timelineCount) {
            $result['source'] = GLZ_HOST.'/'.$this->getAjaxUrl().'&.json';
         }
 
