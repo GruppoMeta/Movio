@@ -1,7 +1,7 @@
 /**
  * Search form in top bar
  */
-form.top-search {
+ form.top-search {
     float:right;
 	position:relative;
     p {
@@ -74,6 +74,7 @@ form.top-search {
 	background:@box-background;	
 	margin-bottom:40px;
     padding:0;
+    overflow:hidden;
 
 	&.col-md-1 {
 		 .grid(4, 1, 4.5%);
@@ -123,7 +124,11 @@ form.top-search {
         font-size:18px;
         line-height:1.2em;
 		font-weight:600;
-		padding:10px;
+        padding:10px;
+        
+        &.imageLink {
+            padding-bottom: 30px;
+        }
 
 		a {
 
@@ -140,11 +145,14 @@ form.top-search {
         position:relative;
         width:auto;
 		margin:0 10px;
-		padding:10px 0;
+		padding:10px 0 25px;
 		border-top:1px solid @box-border;
     }
 
 	.wrapper-link {
+        position:absolute;
+        bottom:0;
+        width:100%;
 		height:23px;
 		background:#f0f0f0;
 		text-align:right;
@@ -1027,6 +1035,7 @@ figure.main-img {
 .row-fluid {
 
 	&.content-box {
+        clear:both;
 		padding:0 0;
 	}
 

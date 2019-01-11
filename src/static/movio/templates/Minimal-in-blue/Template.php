@@ -104,13 +104,11 @@ class Template extends GlizyObject
 		if ($templateData->headerLogo) {
 			$image = org_glizycms_mediaArchive_MediaManager::getMediaById($templateData->headerLogo->id);
 			$fileName = $image->getFileName();
-			$sizes = $image->getOriginalSizes();
-
+			
 			$templateData->customCss .= <<<EOD
 header .site-logo {
-    background: url("../{$fileName}") no-repeat ;
-    width: {$sizes['width']}px;
-    height: {$sizes['height']}px;
+	background-image: url("../{$fileName}");
+	background-repeat: no-repeat;
 }
 EOD;
 		}

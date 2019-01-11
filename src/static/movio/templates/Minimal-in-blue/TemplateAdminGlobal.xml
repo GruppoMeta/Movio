@@ -3,7 +3,7 @@
         xmlns:m="movio.views.components.*">
 
     <glz:Fieldset label="{i18n:Header logo}">
-        <glz:Image id="headerLogo" label="{i18n:Logo}" required="true" />
+        <glz:Image id="headerLogo" label="{i18n:Logo 350x100px}" required="true" />
     </glz:Fieldset>
 
     <glz:Fieldset label="{i18n:Footer logo}">
