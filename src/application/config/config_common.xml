@@ -57,12 +57,13 @@
     <glz:Param name="movio.home.width-size3" value="831" />
     <glz:Param name="movio.home.width-size4" value="1126" />
 
-    <glz:Param name="movio.europeana.apiKey" value="" />
+    <glz:Param name="movio.europeana.apiKey" value="Xt2S22tmc" />
     <glz:Param name="movio.europeana.apiSearchUrl" value="http://www.europeana.eu/api/v2/search.json" />
     <glz:Param name="movio.europeana.rows" value="18" />
     <glz:Param name="movio.europeana.searchFields" value="title,who,what,when,where,TYPE,LANGUAGE" />
     <glz:Param name="movio.europeana.searchFieldsLabels" value="Titles,Creators,Subjects,Dates,Places,Media type,Language" />
     <glz:Param name="movio.europeana.registry" value="europeana" />
+
     <glz:Param name="FORM_ITEM_TEMPLATE"><![CDATA[
     <div class="control-group">
         ##FORM_LABEL##
@@ -79,7 +80,8 @@
         </div>
     </div>
     ]]></glz:Param>
-     <glz:Param name="movio.search.content"><![CDATA[
+
+    <glz:Param name="movio.search.content"><![CDATA[
     [
         {{movio.search.content.europeana}},
         {{movio.search.content.wikipedia}}

@@ -15,7 +15,7 @@
     <glz:Param name="MULTILANGUAGE_ENABLED" value="false" />
     <glz:Param name="BASE_REGISTRY_PATH" value="movio" />
     <glz:Param name="SITEMAP_ID" value="glizycms_ContentsEdit" />
-    
+
     <glz:Param name="GLIZY_JQUERY" value="jquery-1.8.3.min.js" />
 
     <glz:Param name="GLIZY_ADD_JQUERY_JS" value="true" />
@@ -32,6 +32,8 @@
     <glz:Param name="glizy.formElement.cssClassLabel" value="control-label" />
     <glz:Param name="glizy.formElement.admCssClass" value="span11" />
     <glz:Param name="glizy.formElement.cssClass" value="span11" />
+    <glz:Param name="glizycms.content.draft" value="true" />
+    <glz:Param name="glizycms.pagePicker.queryStringEnabled" value="false" />
     <glz:Param name="glizy.acl.defaultIfNoDefined" value="true" />
 
     <glz:Param name="movio.modules.publishApp.mobileCodesTable" value="mobilecodes_tbl" />
@@ -43,13 +45,6 @@
     <glz:Param name="movio.noImage.src" value="{{path:STATIC_DIR}}movio/templates/Movio/img/various/img-not-disponible.jpg" />
     <glz:Param name="movio.graph.shapeColor" value="#cfced3" />
     <glz:Param name="movio.graph.backgroundColor" value="#ffffff" />
-
-    <glz:Param name="movio.europeana.apiKey" value="" />
-    <glz:Param name="movio.europeana.apiSearchUrl" value="http://www.europeana.eu/api/v2/search.json" />
-    <glz:Param name="movio.europeana.rows" value="18" />
-    <glz:Param name="movio.europeana.searchFields" value="title,who,what,when,where,TYPE,LANGUAGE" />
-    <glz:Param name="movio.europeana.searchFieldsLabels" value="Titles,Creators,Subjects,Dates,Places,Media type,Language" />
-    <glz:Param name="movio.europeana.registry" value="europeana" />
 
     <glz:Param name="FORM_ITEM_TEMPLATE"><![CDATA[
     <div class="control-group">
