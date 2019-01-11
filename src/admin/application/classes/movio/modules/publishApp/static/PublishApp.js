@@ -32,20 +32,22 @@ $(function(){
     function execStep() {
         if ( stepPos >= steps.length )
         {
-            alert( 'Esportazione completata' );
-            $button.removeAttr("disabled");
-            closeExportDialog();
-            if ( stepResult.status )
-            {
-                location.href = stepResult.result;
-            }
-            
+            $('#progress_bar .ui-progress').animateProgress(100);
+            setTimeout(function(){
+                alert( 'Esportazione completata' );
+                $button.removeAttr("disabled");
+                closeExportDialog();
+                if ( stepResult.status )
+                {
+                    location.href = stepResult.result;
+                }
+            }, 1000);
             return;
         }
-        progress += progressPart;
 
+        progress += progressPart;
         $('#progress_bar .ui-progress').animateProgress( progress );
-        
+
         // per ogni azione esegue una richiesta ajax
         jQuery.ajax( {
             url: Glizy.ajaxUrl+steps[ stepPos ].action,
@@ -54,10 +56,10 @@ $(function(){
             success: function( data ){
                 if (data.result) {
                     $("#graph").hide();
-                    
+
                     $.each(data.result, function( index, value ) {
                         $("#graph").html(value['code']);
-        
+
                         $.ajax({
                             url: Glizy.ajaxUrl+"saveSVG",
                             async: false,
@@ -79,17 +81,17 @@ $(function(){
                 execStep();
             } } );
     };
-    
+
     function getTreeData() {
         var menuIdArray = [];
-        
-        $("#js-glizycmsSiteTree").find(".jstree-undetermined").each(function(i, element){			
+
+        $("#js-glizycmsSiteTree").find(".jstree-undetermined").each(function(i, element){
         	menuIdArray.push($(element).attr("id"));
-        }); 
-        
-        $("#js-glizycmsSiteTree").find(".jstree-checked").each(function(i, element){			
+        });
+
+        $("#js-glizycmsSiteTree").find(".jstree-checked").each(function(i, element){
         	menuIdArray.push($(element).attr("id"));
-        }); 
+        });
 
         return menuIdArray;
     };
@@ -97,17 +99,17 @@ $(function(){
     $('input.js-publish-app').click(function(e){
         $button = $(this);
         $button.attr("disabled", "disabled");
-        
+
         e.preventDefault();
-        
+
         var menuIdArray = getTreeData();
-        
+
         if (menuIdArray.length == 0) {
             alert( 'Selezionare almeno una pagina da esportare.' );
             $button.removeAttr("disabled");
             return;
         }
-        
+
         $.ajax({
             url: Glizy.ajaxUrl+"getSteps",
             dataType: 'json',
