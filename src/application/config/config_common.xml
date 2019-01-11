@@ -2,7 +2,7 @@
 <glz:Config xmlns:glz="http://www.glizy.org/dtd/1.0/">
     <glz:Param name="CHARSET" value="UTF-8" />
     <glz:Param name="APP_NAME" value="MOVIO" />
-    <glz:Param name="APP_VERSION" value="2.0.7" />
+    <glz:Param name="APP_VERSION" value="2.1.0" />
     <glz:Param name="APP_AUTHOR">
         <![CDATA[Gruppo Meta <http://www.gruppometa.it>]]>
     </glz:Param>
