@@ -1,4 +1,4 @@
-<article class="slideshow big">
+<article class="slideshow big" tal:condition="php: count(Component)">
     <div class="slider single-item js-sliderhome" >
         <div class="slide" tal:attributes="style php:Template::homeSliderImage(item)" tal:repeat="item Component">
             <div class="description">

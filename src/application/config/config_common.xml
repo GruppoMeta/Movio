@@ -45,7 +45,7 @@
     <glz:Param name="movio.thumb.entityList.crop" value="false" />
     <glz:Param name="movio.thumb.homeSlider.width" value="1200" />
     <glz:Param name="movio.thumb.homeSlider.height" value="290" />
-    <glz:Param name="movio.thumb.homeSlider.crop" value="true" />
+    <glz:Param name="movio.thumb.homeSlider.crop" value="false" />
     <glz:Param name="movio.thumb.map.width" value="250" />
     <glz:Param name="movio.thumb.map.height" value="250" />
     <glz:Param name="movio.thumb.map.crop" value="false" />

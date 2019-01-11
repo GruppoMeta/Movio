@@ -17,6 +17,6 @@
     <glz:ConfigValue key="movio.thumb.entityList.crop" action="set" value="true" />
     <glz:ConfigValue key="movio.thumb.homeSlider.width" action="set" value="1200" />
     <glz:ConfigValue key="movio.thumb.homeSlider.height" action="set" value="1000" />
-    <glz:ConfigValue key="movio.thumb.homeSlider.crop" action="set" value="true" />
+    <glz:ConfigValue key="movio.thumb.homeSlider.crop" action="set" value="false" />
 
 </glz:EmptyComponent>

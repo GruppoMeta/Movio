@@ -6,7 +6,7 @@
     <glz:ConfigValue key="movio.thumb.entityList.crop" action="set" value="true" />
     <glz:ConfigValue key="movio.thumb.homeSlider.width" action="set" value="600" />
     <glz:ConfigValue key="movio.thumb.homeSlider.height" action="set" value="290" />
-    <glz:ConfigValue key="movio.thumb.homeSlider.crop" action="set" value="true" />
+    <glz:ConfigValue key="movio.thumb.homeSlider.crop" action="set" value="false" />
 
     <glz:Modifier target="navigation" attribute="editableRegion" value="navigation" />
     <glz:Modifier target="navigation" attribute="cssClass" value="nav nav-pills nav-stacked" />
