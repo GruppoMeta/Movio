@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php print $docTitle?></title>
+    <?php print $metadata?>
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
     <script src="js/jqxcore.js"></script>
@@ -106,7 +107,7 @@
                 <?php } ?>
                 <?php print $logoFooter; ?>
                 <a href="http://www.movio.beniculturali.it" title="Movio - Online Virtual Exhibition">
-                    <img src="img/logo_movio.png" alt="Movio - Online Virtual Exhibition" title="Movio - Online Virtual Exhibition" width="80" >
+                    <img src="img/logo_movio.png" alt="Movio - Online Virtual Exhibition" title="Movio - Online Virtual Exhibition">
                 </a>
             </div>
 

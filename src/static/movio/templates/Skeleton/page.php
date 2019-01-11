@@ -92,7 +92,7 @@
         <div class="clearfix">
             <div class="logo-footer">
                 <a href="http://www.movio.beniculturali.it" title="Movio - Online Virual Exhibition">
-                    <img src="img/logo_movio.png" alt="Movio - Online Virual Exhibition" title="Movio - Online Virual Exhibition" width="109" height="44">
+                    <img src="img/logo_movio.png" alt="Movio - Online Virual Exhibition" title="Movio - Online Virual Exhibition" width="109" height="81">
                 </a>
                 <?php print $logoFooter; ?>
             </div>
