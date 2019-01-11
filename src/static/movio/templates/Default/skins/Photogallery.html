@@ -6,8 +6,8 @@
 $(function() {
 	var data = [];
 <span tal:omit-tag="" tal:repeat="item Component/images">
-data.push({ "title": "<span tal:omit-tag="" tal:content="structure php:glz_stringToJs(item.image['title'])" />",
-            "description": "<span tal:omit-tag="" tal:content="structure php:glz_stringToJs(item.image['description'], true)" />",
+data.push({ "title": "<span tal:omit-tag="" tal:content="structure php:glz_stringToJs(item.text ?: item.image['title'])" />",
+			"description": "<span tal:omit-tag="" tal:content="structure php:glz_stringToJs(__Link::parseInternalLinks(item.image['description']), true)" />",
             "thumb": "<span tal:omit-tag="" tal:content="structure php:org_glizy_helpers_Media::getResizedImageUrlById(item.image['mediaId'], false, __Config::get('THUMB_WIDTH'), __Config::get('THUMB_HEIGHT'), true)" />",
             "image": "<span tal:omit-tag="" tal:content="structure php:(Component['imageResize']=='true' ? org_glizy_helpers_Media::getResizedImageUrlById(item.image['mediaId'], false, __Config::get('movio.photogallery.resize.width'), __Config::get('movio.photogallery.resize.height'), true) : org_glizy_helpers_Media::getUrlById(item.image['mediaId']))" />"
         });

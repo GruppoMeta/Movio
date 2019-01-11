@@ -42,6 +42,8 @@ class movio_views_components_PhotogalleryCmp extends org_glizy_components_Groupb
     }
 
     function render($outputMode = NULL, $skipChilds = false) {
+        $this->addOutputCode('<link rel="stylesheet" type="text/css" href="static/galleria/themes/movio/css/style.css">', 'head');
+
         if (!$this->_application->isAdmin()) {
             $this->setAttribute('skin', 'Photogallery.html');
         }
