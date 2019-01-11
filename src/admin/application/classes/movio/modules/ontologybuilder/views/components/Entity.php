@@ -98,8 +98,12 @@ class movio_modules_ontologybuilder_views_components_Entity extends org_glizy_co
                     break;
 
                 case 'attribute.externallink':
-                case 'attribute.internallink':
                     $c = &org_glizy_ObjectFactory::createComponent('org.glizy.components.LinkTo', $this->_application, $this, 'glz:LinkTo', $attribute, $attribute);
+                    $groupBox->addChild($c);
+                    break;
+
+                case 'attribute.internallink':
+                    $c = &org_glizy_ObjectFactory::createComponent('movio.views.components.LinkInternal', $this->_application, $this, 'm:LinkInternal', $attribute, $attribute);
                     $groupBox->addChild($c);
                     break;
 
