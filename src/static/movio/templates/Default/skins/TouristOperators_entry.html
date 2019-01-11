@@ -1,7 +1,6 @@
 <div class="col-md-5 block-inner-aside pull-right col-xs-12" tal:condition="php: Component.images[0]">
   <figure  class="main-img align-right" tal:content="structure php: Component.images[0].image['__html__']" />
 </div>
-
 <h3 tal:condition="php: Component.type || Component.externalUrl">
       <span tal:omit-tag="" tal:condition="Component/type" tal:content="Component/type" />
       <span tal:omit-tag="" tal:condition="php: Component.type && Component.externalUrl" tal:content="string:-" />
@@ -20,8 +19,12 @@
     </section>
   </div>
   <div class="col-md-7">
-      <span tal:omit-tag=""
+        <span tal:condition="php: __Config::get('glizy.maps.google.apiKey') != ''" tal:omit-tag=""
               metal:use-macro="GoogleMap_macro.html/map"
+              tal:define="Component Component/map" />
+
+        <span tal:condition="php: __Config::get('glizy.maps.google.apiKey') == ''" tal:omit-tag=""
+              metal:use-macro="LeafletMap_macro.html/map"
               tal:define="Component Component/map" />
 
   </div>

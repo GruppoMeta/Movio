@@ -1,5 +1,5 @@
 <?php
-class movio_views_components_GoogleMapCmp extends org_glizy_components_Groupbox
+class movio_modules_streetmap_views_components_StreetMapCmp extends org_glizy_components_Groupbox
 {
     function getContent()
     {
@@ -7,7 +7,6 @@ class movio_views_components_GoogleMapCmp extends org_glizy_components_Groupbox
         $markers = array();
         $geo = explode(',', $content['geo']);
         $content['geo'] = json_encode(array('lat' => $geo[0], 'long' => $geo[1], 'zoom' => intval($geo[2])));
-        $content['pathEnable'] = $content['pathEnable'];
         $markers[] = array('lat' => $geo[0], 'long' => $geo[1], 'title' => $content['text'], 'text' => '', 'image' => '', 'link' => '');
         foreach($content['markers'] as $poi) {
             $link = '';
@@ -28,29 +27,10 @@ class movio_views_components_GoogleMapCmp extends org_glizy_components_Groupbox
                 'link' => $link
             );
         }
-        $geo = $geo = explode(',', $content['geo']);
         $content['markers'] = json_encode($markers);
         $content['style'] = 'width: '.($content['width'] ? $content['width'].'px' : '100%').'; height: '.($content['height'] ? $content['height'].'px' : '600px');
 
-        $siteProp = $this->_application->getSiteProperty();
-        $apiKey = @$siteProp['googleMapsApiKey'] ?: __Config::get('glizy.maps.google.apiKey');
-
-        if (!$apiKey) {
-            //TODO: far presente all'utente che manca l'APIKey, in qualche modo
-            $this->logAndMessage("È necessario che ci sia impostata una APIKey per la libreria GoogleMaps, o nel config del sistema (.xml) o nelle proprietà del sito in questione!", '', GLZ_LOG_WARNING);
-        }
-
-        $content['jsSrc'] = 'https://maps.googleapis.com/maps/api/js?key='.$apiKey;
-
         return $content;
-    }
-
-    function render($outputMode = NULL, $skipChilds = false)
-    {
-        if (!$this->_application->isAdmin()) {
-            $this->setAttribute('skin', 'GoogleMap.html');
-        }
-        parent::render($outputMode, $skipChilds);
     }
 
     private function limitURL($url, $limit, $external)

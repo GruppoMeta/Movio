@@ -1,0 +1,194 @@
+<tal:block metal:define-macro="map">
+    <div id="leafletmap"
+         tal:attributes="style Component/style; data-text Component/text; data-geo Component/geo; data-poi Component/markers; data-path Component/pathEnable"></div>
+<script>
+// <![CDATA[
+jQuery(function () {
+    drawMap();
+
+    function findAddress(address, callback) {
+        $.ajax({
+            url: 'https://nominatim.openstreetmap.org/search?q=' + address + '&format=json&limit=1',
+            success: function(result) {
+                callback(result[0].lat, result[0].lon);
+            }
+        });
+    }
+
+    function checkPosition(lat, long) {
+        return String(lat).match(/^\d*\.\d*$/)===null || String(long).match(/^\d*\.\d*$/)===null ? false : true;
+    }
+
+    function drawMap() {
+        var geo = $('#leafletmap').data('geo');
+        if (!checkPosition(geo.lat, geo.long)) {
+            geo = findAddress(geo.lat, function(lat, long) {
+                $('#leafletmap').data('geo', {
+                    zoom: 20,
+                    lat: lat,
+                    long: long
+                });
+
+                var poi = $('#leafletmap').data('poi');
+                poi[0]['lat'] = lat;
+                poi[0]['long'] = long;
+                $('#leafletmap').data('poi', poi);
+
+                drawMap();
+            });
+            return;
+        }
+
+        if (checkPosition(geo.lat, geo.long)) {
+            var text = $('#leafletmap').data('text');
+            var map = L.map('leafletmap').setView([geo.lat, geo.long], geo.zoom);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            var marker = L.marker([geo.lat, geo.long]).addTo(map);
+            marker.bindPopup(text);
+
+            drawPoi(map);
+        }
+    }
+
+    function drawPoi(map) {
+        var poi = $('#leafletmap').data('poi'),
+            polyCoordinates = [],
+            path = $('#leafletmap').data('path');
+
+        if (!checkPoiPosition(map, poi)) {
+            return;
+        }
+
+        window.leafletMarkers = [];
+
+        jQuery(poi).each(function (i, item) {
+            var title = item.title,
+                content = (item.title ? '<h4>' + item.title + '</h4>' : '')+
+                        (item.text ? item.text : '')+
+                        (item.image ? '<p>' + item.image + '</p>' : '' )+
+                        (item.link ? '<p>' + item.link + '</p>' : '' );
+
+            var latlng = L.latLng(item.lat, item.long);
+
+            var marker = L.marker([item.lat, item.long]).addTo(map);
+            if (content) {
+                marker.bindPopup(content);
+
+                $('a.js-toggleMapMarker[data-item="' + i + '"]').click(function (e) {
+                    e.preventDefault();
+                    marker.openPopup();
+                });
+            }
+
+            polyCoordinates.push([item.lat, item.long]);
+            window.leafletMarkers.push(marker);
+        });
+
+        drawPath(map, path, poi, polyCoordinates);
+    }
+
+    function drawPath(map, path, poi, polyCoordinates) {
+        if (window.leafletMarkers.length > 1) {
+            setTimeout(function(){
+                var group = new L.featureGroup(window.leafletMarkers);
+                map.fitBounds(group.getBounds(), {'padding': [50, 50]});
+            }, 100);
+        }
+
+        var poiNumbers = poi.length, polyline;
+        if (path == 1 && poiNumbers > 1) {
+            polyline = L.polyline(polyCoordinates, {color: '#FF0000'}).addTo(map);
+        } else if (path > 1 && poiNumbers > 1) {
+            var travelModes = {
+                '2': 'bike',
+                '3': 'car',
+                '5': 'foot'
+            };
+
+            if (travelModes[path]==undefined) {
+                return;
+            }
+            var coords = getCoordinatesAsString(polyCoordinates);
+
+            $.ajax({
+                url: 'http://router.project-osrm.org/route/v1/' + travelModes[path] + '/' + coords + '?overview=false&steps=true&hints=;;',
+                success: function(result) {
+                    if (result) {
+                        var locations = getAllStepLocations(result);
+
+                        polyline = L.polyline(locations, {color: '#FF0000'}).addTo(map);
+                    }
+                }
+            });
+        }
+    }
+
+    function getAllStepLocations(result) {
+        var locations = [];
+        if (result.routes[0].legs.length) {
+            for (var i in result.routes[0].legs) {
+                var oneLeg = result.routes[0].legs[i];
+
+                if (oneLeg.steps.length) {
+                    for (var j in oneLeg.steps) {
+                        var oneStep = oneLeg.steps[j];
+
+                        if (oneStep.intersections.length) {
+                            for (var x in oneStep.intersections) {
+                                var oneIntersect = oneStep.intersections[x];
+
+                                if (oneIntersect.location.length) {
+                                    locations.push([oneIntersect.location[1], oneIntersect.location[0]]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return locations;
+    }
+
+    function getCoordinatesAsString(polyCoordinates) {
+        var string = [];
+
+        for (var i in polyCoordinates) {
+            string.push(polyCoordinates[i][1] + ',' + polyCoordinates[i][0]);
+        }
+
+        return string.join(';');
+    }
+
+    function checkPoiPosition(map, poi) {
+        var isValid = true;
+        var pending = 0;
+
+        jQuery(poi).each(function (i, item) {
+            if (checkPosition(item.lat, item.long)) {
+                return true;
+            }
+            isValid = false;
+            pending++;
+            findAddress(item.lat, function(lat, long){
+                pending--;
+                poi[i].zoom = 15;
+                poi[i].lat = lat;
+                poi[i].long = long;
+
+                if (!pending) {
+                    drawPoi(map);
+                }
+            });
+        });
+
+        return isValid;
+    }
+});
+// ]]>
+</script>
+</tal:block>

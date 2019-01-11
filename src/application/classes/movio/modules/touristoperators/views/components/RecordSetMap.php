@@ -6,7 +6,6 @@ class movio_modules_touristoperators_views_components_RecordSetMap extends org_g
         parent::process();
 
         $it = $this->_content->records;
-        $siteProp = $this->_application->getSiteProperty();
         $map = array();
         $map['title'] = $this->_content->title;
         $map['total'] = $this->_content->total;
@@ -15,8 +14,14 @@ class movio_modules_touristoperators_views_components_RecordSetMap extends org_g
         $map['text'] = '';
         $map['pathEnable'] = '0';
         $map['markers'] = array();
-        $map['jsSrc'] = 'https://maps.googleapis.com/maps/api/js'.
-                            (isset($siteProp['googleMapsApiKey']) ? '?key='.$siteProp['googleMapsApiKey'] : '');
+
+        $googleApiKey = __Config::get('glizy.maps.google.apiKey');
+        $map['jsSrc'] = 'http://maps.google.com/maps/api/js?key='.$googleApiKey;
+
+        if (empty($googleApiKey)) {
+            $this->addOutputCode('<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>', 'head');
+            $this->addOutputCode('<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>', 'head');
+        }
 
         $imageWidth = __Config::get('IMG_LIST_WIDTH');
         $imageHeight = __Config::get('IMG_LIST_HEIGHT');
@@ -30,8 +35,8 @@ class movio_modules_touristoperators_views_components_RecordSetMap extends org_g
                 }
             }
 
-            $localtions = org_glizy_helpers_Convert::formEditObjectToStdObject($ar->locations);
-            foreach($localtions as $l) {
+            $locations = org_glizy_helpers_Convert::formEditObjectToStdObject($ar->locations);
+            foreach($locations as $l) {
                 $geo = explode(',', $l->coordinates);
                 $map['markers'][] = array(
                     'lat' => $geo[0],
@@ -46,11 +51,10 @@ class movio_modules_touristoperators_views_components_RecordSetMap extends org_g
         }
 
         if (count($map['markers'])) {
-            $map['markers'] = json_encode($map['markers']);
             $map['geo'] = json_encode($map['markers'][0]);
-            $map['text'] = $map['markers'][0]->title;
+            $map['text'] = $map['markers'][0]['title'];
+            $map['markers'] = json_encode($map['markers']);
+            $this->_content->map = $map;
         }
-
-        $this->_content = $map;
     }
 }

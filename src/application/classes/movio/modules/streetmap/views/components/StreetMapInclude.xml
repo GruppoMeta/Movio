@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<m:GoogleMapCmp
-    label="{i18n:Google Map}"
+<glz:include
     xmlns:glz="http://www.glizy.org/dtd/1.0/"
-    xmlns:cms="org.glizycms.views.components.*"
-    xmlns:m="movio.views.components.*">
+    xmlns:cms="org.glizycms.views.components.*">
 
     <glz:Input id="width" label="{i18n:Width (default full width)}" size="50" />
     <glz:Input id="height" label="{i18n:Height (default 600px)}" size="50" />
@@ -31,4 +29,4 @@
         <cms:PagePicker id="internalLink" label="{i18n:Linked page}" required="false" />
     </glz:Repeater>
 
-</m:GoogleMapCmp>
+</glz:include>

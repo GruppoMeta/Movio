@@ -1,0 +1,5 @@
+<div tal:attributes="id id" tal:condition="Component/geo">
+    <span tal:omit-tag=""
+            metal:use-macro="LeafletMap_macro.html/map"
+            tal:define="Component Component" />
+</div>
