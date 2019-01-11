@@ -9,7 +9,7 @@ class movio_views_components_VideoCmp extends org_glizy_components_Groupbox
         $newContent['width'] = $content[$this->getId().'-width'];
         $newContent['height'] = $content[$this->getId().'-height'];
         $newContent['sizeMode'] = $content[$this->getId().'-sizeMode'];
-        $newContent['autostart'] = $content[$this->getId().'-autostart']['value'] == '1';
+        //$newContent['autostart'] = $content[$this->getId().'-autostart']['value'] == '1';
 
         return $newContent;
     }
