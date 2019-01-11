@@ -16,7 +16,18 @@
             <glz:ListItem value="{i18n:3}" key="3" />
             <glz:ListItem value="{i18n:4}" key="4" />
         </glz:List>
-        <glz:Input id="height" label="{i18n:Height}" size="10" required="false" />
+        <glz:List id="height_type" label="{i18n:Height type}" data="target=height,autoheight;val_0=1,0;val_1=0,1">
+            <glz:ListItem key="pixel" value="{i18n:Height in pixel}" />
+            <glz:ListItem key="auto" value="{i18n:Auto height}" />
+        </glz:List>
+        <glz:Input id="height" label="{i18n:Height in pixel}" size="10" required="false" />
+        <glz:List id="autoheight" label="{i18n:Auto height}">
+            <glz:ListItem value="{i18n:Auto}" key="auto" />
+            <glz:ListItem value="{i18n:1}" key="1" />
+            <glz:ListItem value="{i18n:2}" key="2" />
+            <glz:ListItem value="{i18n:3}" key="3" />
+            <glz:ListItem value="{i18n:4}" key="4" />
+        </glz:List>
 
         <glz:Input id="title" label="{i18n:Title}" size="50" required="false" />
         <glz:LongText id="text" label="{i18n:Text}" adm:rows="20" adm:cols="75" adm:htmlEditor="true" />

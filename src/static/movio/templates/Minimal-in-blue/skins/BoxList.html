@@ -1,21 +1,19 @@
 <span tal:omit-tag="" tal:repeat="item Component">
     <div class="content-box row-fluid ">
-        <span tal:omit-tag="" tal:repeat="subitem item">
-            <span tal:omit-tag="">
-                <article tal:attributes="style subitem/style; class php: 'box col-md-' . subitem.width/3">
-                    <a tal:condition="subitem/image/__html__" tal:attributes="href subitem/pageId; title subitem/title" tal:content="structure subitem/image/__html__"></a>
-                    <h1><a tal:attributes="href subitem/pageId; title subitem/title" tal:content="subitem/title"></a></h1>
-                    <div class="container" tal:condition="php: subitem.type == 'imageText'">
-                        <span tal:omit-tag="" tal:content="structure subitem/text" />
-                    </div>
-                    <div class="wrapper-link">
-                        <a tal:attributes="href subitem/pageId; title subitem/title">
-                            <span tal:condition="php: subitem.type == 'imageLink'" tal:omit-tag="" tal:content="subitem/linkTitle" />
-                            <i class="fa fa-arrow-right"></i>
-                        </a>
-                    </div>
-               </article>
-            </span>
-        </span>
+        <tal:block tal:omit-tag="" tal:repeat="subitem item">
+            <article tal:attributes="style subitem/style; class php: 'box col-md-' . subitem.width/3 . ' ' . subitem.cssClass">
+                <a tal:condition="subitem/image/__html__" tal:attributes="href subitem/pageId; title subitem/title" tal:content="structure subitem/image/__html__"></a>
+                <h1 class="" tal:attributes="class subitem/type"><a tal:attributes="href subitem/pageId; title subitem/title" tal:content="subitem/title"></a></h1>
+                <div class="container" tal:condition="php: subitem.type == 'imageText'">
+                    <span tal:omit-tag="" tal:content="structure subitem/text" />
+                </div>
+                <div class="wrapper-link">
+                    <a tal:attributes="href subitem/pageId; title subitem/title">
+                        <span tal:condition="php: subitem.type == 'imageLink'" tal:omit-tag="" tal:content="subitem/linkTitle" />
+                        <i class="fa fa-arrow-right"></i>
+                    </a>
+                </div>
+            </article>
+        </tal:block>
     </div>
 </span>

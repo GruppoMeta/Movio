@@ -15,7 +15,15 @@ class movio_views_components_BoxesRepeater extends org_glizy_components_Repeater
                 $tempContentContainer[] = $tempContent;
                 $tempContent = array();
             }
-            $item->style = $item->height ? 'height:'.$item->height.'px;' : '';
+
+            $height_type = $item->height_type;
+            $item->style = '';
+            if (empty($height_type) or $height_type == 'pixel') {
+                $item->style = $item->height ? 'height:' . $item->height . 'px;' : '';
+            } elseif ($item->autoheight != 'auto') {
+                $item->cssClass = 'box-height-' . $item->autoheight;
+            }
+            
             $tempContent[] = $item;
             $span += $item->width;
             $item->width *= 3;

@@ -2,7 +2,7 @@
     <div class="content-box row-fluid ">
         <span tal:omit-tag="" tal:repeat="subitem item">
             <span tal:omit-tag="" tal:condition="php: subitem.type == 'imageText'">
-                <article tal:attributes="style subitem/style; class php: 'box height-rid col-md-' . subitem.width">
+                <article tal:attributes="style subitem/style; class php: 'box height-rid col-md-' . subitem.width . ' ' . subitem.cssClass">
                     <h1><a tal:attributes="href subitem/pageId" tal:content="subitem/title"></a> <a tal:attributes="href subitem/pageId"><i class="ico-box fa fa-arrow-right"></i></a></h1>
                     <div class="container">
                         <a tal:attributes="href subitem/pageId" tal:content="structure subitem/image/__html__"></a>
@@ -12,7 +12,7 @@
             </span>
 
             <span tal:omit-tag="" tal:condition="php: subitem.type == 'imageLink'">
-                <article tal:attributes="style subitem/style; class php: 'box height-rid col-md-' . subitem.width">
+                <article tal:attributes="style subitem/style; class php: 'box height-rid col-md-' . subitem.width . ' ' . subitem.cssClass">
                     <h1><a tal:attributes="href subitem/pageId" tal:content="subitem/title"></a> <a tal:attributes="href subitem/pageId"><i class="ico-box fa fa-arrow-right"></i></a></h1>
                     <div class="container">
                         <a tal:attributes="href subitem/pageId" tal:content="structure subitem/image/__html__"></a>
@@ -22,7 +22,7 @@
             </span>
 
             <span tal:omit-tag="" tal:condition="php: subitem.type == 'timeline'">
-                <article tal:attributes="style subitem/style; class php: 'box height-rid col-md-' . subitem.width">
+                <article tal:attributes="style subitem/style; class php: 'box height-rid col-md-' . subitem.width . ' ' . subitem.cssClass">
                     <h1><a tal:attributes="href subitem/pageId" tal:content="subitem/title"></a> <a tal:attributes="href subitem/pageId"><i class="ico-box fa fa-arrow-right"></i></a></h1>
                     <div class="container">
 
@@ -31,7 +31,7 @@
             </span>
 
              <span tal:omit-tag="" tal:condition="php: subitem.type == 'text'">
-                <article tal:attributes="style subitem/style; class php: 'box height-rid col-md-' . subitem.width">
+                <article tal:attributes="style subitem/style; class php: 'box height-rid col-md-' . subitem.width . ' ' . subitem.cssClass">
                     <h1><a tal:attributes="href subitem/pageId" tal:content="subitem/title"></a> <a tal:attributes="href subitem/pageId"><i class="ico-box fa fa-arrow-right"></i></a></h1>
                     <div class="container">
 
