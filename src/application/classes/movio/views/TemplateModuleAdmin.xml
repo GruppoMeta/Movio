@@ -35,10 +35,11 @@
             ##form_fields##
 
             <cms:FormButtonsPanel>
-                <glz:HtmlButton label="{i18n:GLZ_PUBLISH}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
-                <glz:HtmlButton label="{i18n:GLZ_PUBLISH_CLOSE}" type="button" cssClass="btn js-glizycms-save" data="action=saveClose" />
-                <glz:HtmlButton label="{i18n:GLZ_SAVE_DRAFT}" type="button" cssClass="btn js-glizycms-save" data="action=saveDraft" />
-                <glz:HtmlButton label="{i18n:GLZ_SAVE_DRAFT_CLOSE}" type="button" cssClass="btn js-glizycms-save" data="action=saveDraftClose" />
+                <glz:HtmlButton id="save" label="{i18n:GLZ_SAVE}" type="button" cssClass="btn btn-primary js-glizycms-save" data="action=save" />
+                <glz:HtmlButton id="saveClose" label="{i18n:GLZ_SAVE_CLOSE}" type="button" cssClass="btn js-glizycms-save" data="action=saveClose" />
+                <glz:HtmlButton id="saveDraft" label="{i18n:GLZ_SAVE_DRAFT}" type="button" cssClass="btn js-glizycms-save" data="action=saveDraft" />
+                <glz:HtmlButton id="saveDraftClose" label="{i18n:GLZ_SAVE_DRAFT_CLOSE}" type="button" cssClass="btn js-glizycms-save" data="action=saveDraftClose" />
+                <glz:HtmlButton id="savePublish" label="{i18n:GLZ_PUBLISH}" type="button" cssClass="btn js-glizycms-save" data="action=savePublish" />
                 <glz:HtmlButton label="{i18n:GLZ_CANCEL}" type="button" routeUrl="link" cssClass="btn js-glizycms-cancel" data="action=cancel" />
 			</cms:FormButtonsPanel>
 		</cms:FormEdit>
