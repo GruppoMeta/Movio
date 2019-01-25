@@ -362,7 +362,7 @@ class org_glizy_application_Application extends GlizyObject
                 $headerErrorCode = __Request::get( 'glizyHeaderCode', '' );
                 if ( $headerErrorCode )
                 {
-					$message = $headerErrorCode.' '.org_glizy_helpers_HttpStatus::getStatusCodeMessage( $status );
+					$message = $headerErrorCode.' '.org_glizy_helpers_HttpStatus::getStatusCodeMessage( (int)$headerErrorCode );
 					header( "HTTP/1.1 ".$message );
 					header( "Status: ".$message );
                 }
