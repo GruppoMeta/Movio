@@ -79,10 +79,11 @@ class org_glizy_dataAccessDoctrine_RecordIterator extends org_glizy_dataAccessDo
         $this->executeSqlWithRowsCount($sql['sql'], $params);
     }
 
-    public function selectDistinct($fieldName)
+
+    public function selectDistinct($fieldName, $fields=array())
     {
         $this->qb->resetQueryPart('select');
-        $this->qb->select('DISTINCT('.$fieldName.')');
+        call_user_func_array(array($this->qb, "select"), array_merge(array('DISTINCT('.$fieldName.')'), $fields));
         $this->hasSelect = true;
         return $this;
     }

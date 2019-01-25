@@ -110,7 +110,7 @@ class org_glizy_components_DataDictionary extends org_glizy_components_Component
             }
 
             if (method_exists($this->iterator, 'selectDistinct')) {
-                $this->iterator->selectDistinct($v);
+                $this->iterator->selectDistinct($v, array($k));
             }
 
             $this->iterator->orderBy($v);

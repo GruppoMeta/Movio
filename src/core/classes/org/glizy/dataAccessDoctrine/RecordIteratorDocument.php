@@ -198,7 +198,8 @@ class org_glizy_dataAccessDoctrine_RecordIteratorDocument extends org_glizy_data
         return $this;
     }
 
-    public function selectDistinct($fieldName)
+
+    public function selectDistinct($fieldName, $fields=array())
     {
         $indexData = $this->addIndex($fieldName, $this->options['type']);
         $indexValue = $indexData['indexFieldPrefixAlias'].'_value';
