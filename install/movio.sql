@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.1
+-- version 4.8.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 12, 2017 at 02:33 PM
--- Server version: 5.6.35
--- PHP Version: 5.6.30
+-- Creato il: Gen 25, 2019 alle 13:10
+-- Versione del server: 5.7.21
+-- Versione PHP: 5.6.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -14,7 +14,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `movio`
@@ -23,18 +23,20 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `countries_tbl`
+-- Struttura della tabella `countries_tbl`
 --
 
-CREATE TABLE `countries_tbl` (
-  `country_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `countries_tbl`;
+CREATE TABLE IF NOT EXISTS `countries_tbl` (
+  `country_id` int(11) NOT NULL AUTO_INCREMENT,
   `country_name` varchar(255) DEFAULT NULL,
   `country_639_2` char(3) DEFAULT NULL,
-  `country_639_1` char(2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `country_639_1` char(2) DEFAULT NULL,
+  PRIMARY KEY (`country_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=161 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `countries_tbl`
+-- Dump dei dati per la tabella `countries_tbl`
 --
 
 INSERT INTO `countries_tbl` (`country_id`, `country_name`, `country_639_2`, `country_639_1`) VALUES
@@ -202,24 +204,28 @@ INSERT INTO `countries_tbl` (`country_id`, `country_name`, `country_639_2`, `cou
 -- --------------------------------------------------------
 
 --
--- Table structure for table `custom_code_mapping_tbl`
+-- Struttura della tabella `custom_code_mapping_tbl`
 --
 
-CREATE TABLE `custom_code_mapping_tbl` (
-  `custom_code_mapping_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `custom_code_mapping_tbl`;
+CREATE TABLE IF NOT EXISTS `custom_code_mapping_tbl` (
+  `custom_code_mapping_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `custom_code_mapping_description` text NOT NULL,
   `custom_code_mapping_code` varchar(100) NOT NULL DEFAULT '',
-  `custom_code_mapping_link` varchar(100) NOT NULL DEFAULT ''
+  `custom_code_mapping_link` varchar(100) NOT NULL DEFAULT '',
+  PRIMARY KEY (`custom_code_mapping_id`),
+  KEY `custom_code_mapping_code` (`custom_code_mapping_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `documents_detail_tbl`
+-- Struttura della tabella `documents_detail_tbl`
 --
 
-CREATE TABLE `documents_detail_tbl` (
-  `document_detail_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `documents_detail_tbl`;
+CREATE TABLE IF NOT EXISTS `documents_detail_tbl` (
+  `document_detail_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `document_detail_FK_document_id` int(10) UNSIGNED NOT NULL,
   `document_detail_FK_language_id` int(10) UNSIGNED NOT NULL,
   `document_detail_FK_user_id` int(10) UNSIGNED NOT NULL,
@@ -228,11 +234,16 @@ CREATE TABLE `documents_detail_tbl` (
   `document_detail_translated` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `document_detail_object` longtext NOT NULL,
   `document_detail_isVisible` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
-  `document_detail_note` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `document_detail_note` text,
+  PRIMARY KEY (`document_detail_id`),
+  KEY `document_detail_fk_document_id` (`document_detail_FK_document_id`),
+  KEY `document_detail_fk_language_id` (`document_detail_FK_language_id`),
+  KEY `document_detail_fk_user_id` (`document_detail_FK_user_id`),
+  KEY `document_detail_status` (`document_detail_status`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `documents_detail_tbl`
+-- Dump dei dati per la tabella `documents_detail_tbl`
 --
 
 INSERT INTO `documents_detail_tbl` (`document_detail_id`, `document_detail_FK_document_id`, `document_detail_FK_language_id`, `document_detail_FK_user_id`, `document_detail_modificationDate`, `document_detail_status`, `document_detail_translated`, `document_detail_object`, `document_detail_isVisible`, `document_detail_note`) VALUES
@@ -256,44 +267,58 @@ INSERT INTO `documents_detail_tbl` (`document_detail_id`, `document_detail_FK_do
 -- --------------------------------------------------------
 
 --
--- Table structure for table `documents_index_datetime_tbl`
+-- Struttura della tabella `documents_index_datetime_tbl`
 --
 
-CREATE TABLE `documents_index_datetime_tbl` (
-  `document_index_datetime_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `documents_index_datetime_tbl`;
+CREATE TABLE IF NOT EXISTS `documents_index_datetime_tbl` (
+  `document_index_datetime_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `document_index_datetime_FK_document_detail_id` int(10) UNSIGNED NOT NULL,
   `document_index_datetime_name` varchar(100) NOT NULL,
-  `document_index_datetime_value` datetime NOT NULL
+  `document_index_datetime_value` datetime NOT NULL,
+  PRIMARY KEY (`document_index_datetime_id`),
+  KEY `document_index_datetime_fk` (`document_index_datetime_FK_document_detail_id`),
+  KEY `document_index_datetime_name` (`document_index_datetime_name`),
+  KEY `document_index_datetime_value` (`document_index_datetime_value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `documents_index_date_tbl`
+-- Struttura della tabella `documents_index_date_tbl`
 --
 
-CREATE TABLE `documents_index_date_tbl` (
-  `document_index_date_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `documents_index_date_tbl`;
+CREATE TABLE IF NOT EXISTS `documents_index_date_tbl` (
+  `document_index_date_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `document_index_date_FK_document_detail_id` int(10) UNSIGNED NOT NULL,
   `document_index_date_name` varchar(100) NOT NULL,
-  `document_index_date_value` date NOT NULL
+  `document_index_date_value` date NOT NULL,
+  PRIMARY KEY (`document_index_date_id`),
+  KEY `document_index_date_name` (`document_index_date_name`),
+  KEY `document_index_date_value` (`document_index_date_value`),
+  KEY `document_index_date_fk` (`document_index_date_FK_document_detail_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `documents_index_fulltext_tbl`
+-- Struttura della tabella `documents_index_fulltext_tbl`
 --
 
-CREATE TABLE `documents_index_fulltext_tbl` (
-  `document_index_fulltext_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `documents_index_fulltext_tbl`;
+CREATE TABLE IF NOT EXISTS `documents_index_fulltext_tbl` (
+  `document_index_fulltext_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `document_index_fulltext_FK_document_detail_id` int(10) UNSIGNED NOT NULL,
   `document_index_fulltext_name` varchar(100) NOT NULL,
-  `document_index_fulltext_value` longtext NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `document_index_fulltext_value` longtext NOT NULL,
+  PRIMARY KEY (`document_index_fulltext_id`),
+  KEY `document_index_fulltext_name` (`document_index_fulltext_name`),
+  KEY `document_index_fulltext_fk` (`document_index_fulltext_FK_document_detail_id`) USING BTREE
+) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `documents_index_fulltext_tbl`
+-- Dump dei dati per la tabella `documents_index_fulltext_tbl`
 --
 
 INSERT INTO `documents_index_fulltext_tbl` (`document_index_fulltext_id`, `document_index_fulltext_FK_document_detail_id`, `document_index_fulltext_name`, `document_index_fulltext_value`) VALUES
@@ -317,18 +342,23 @@ INSERT INTO `documents_index_fulltext_tbl` (`document_index_fulltext_id`, `docum
 -- --------------------------------------------------------
 
 --
--- Table structure for table `documents_index_int_tbl`
+-- Struttura della tabella `documents_index_int_tbl`
 --
 
-CREATE TABLE `documents_index_int_tbl` (
-  `document_index_int_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `documents_index_int_tbl`;
+CREATE TABLE IF NOT EXISTS `documents_index_int_tbl` (
+  `document_index_int_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `document_index_int_FK_document_detail_id` int(10) UNSIGNED NOT NULL,
   `document_index_int_name` varchar(100) NOT NULL,
-  `document_index_int_value` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `document_index_int_value` int(10) NOT NULL,
+  PRIMARY KEY (`document_index_int_id`),
+  KEY `document_index_int_fk` (`document_index_int_FK_document_detail_id`),
+  KEY `document_index_int_name` (`document_index_int_name`),
+  KEY `document_index_int_value` (`document_index_int_value`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `documents_index_int_tbl`
+-- Dump dei dati per la tabella `documents_index_int_tbl`
 --
 
 INSERT INTO `documents_index_int_tbl` (`document_index_int_id`, `document_index_int_FK_document_detail_id`, `document_index_int_name`, `document_index_int_value`) VALUES
@@ -352,44 +382,58 @@ INSERT INTO `documents_index_int_tbl` (`document_index_int_id`, `document_index_
 -- --------------------------------------------------------
 
 --
--- Table structure for table `documents_index_text_tbl`
+-- Struttura della tabella `documents_index_text_tbl`
 --
 
-CREATE TABLE `documents_index_text_tbl` (
-  `document_index_text_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `documents_index_text_tbl`;
+CREATE TABLE IF NOT EXISTS `documents_index_text_tbl` (
+  `document_index_text_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `document_index_text_FK_document_detail_id` int(10) UNSIGNED NOT NULL,
   `document_index_text_name` varchar(100) NOT NULL,
-  `document_index_text_value` varchar(255) NOT NULL
+  `document_index_text_value` varchar(255) NOT NULL,
+  PRIMARY KEY (`document_index_text_id`),
+  KEY `document_index_text_fk` (`document_index_text_FK_document_detail_id`),
+  KEY `document_index_text_name` (`document_index_text_name`),
+  KEY `document_index_text_value` (`document_index_text_value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `documents_index_time_tbl`
+-- Struttura della tabella `documents_index_time_tbl`
 --
 
-CREATE TABLE `documents_index_time_tbl` (
-  `document_index_time_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `documents_index_time_tbl`;
+CREATE TABLE IF NOT EXISTS `documents_index_time_tbl` (
+  `document_index_time_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `document_index_time_FK_document_detail_id` int(10) UNSIGNED NOT NULL,
   `document_index_time_name` varchar(100) NOT NULL,
-  `document_index_time_value` time NOT NULL
+  `document_index_time_value` time NOT NULL,
+  PRIMARY KEY (`document_index_time_id`),
+  KEY `document_index_time_fk` (`document_index_time_FK_document_detail_id`),
+  KEY `document_index_time_name` (`document_index_time_name`),
+  KEY `document_index_time_value` (`document_index_time_value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `documents_tbl`
+-- Struttura della tabella `documents_tbl`
 --
 
-CREATE TABLE `documents_tbl` (
-  `document_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `documents_tbl`;
+CREATE TABLE IF NOT EXISTS `documents_tbl` (
+  `document_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `document_type` varchar(255) DEFAULT NULL,
   `document_creationDate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `document_FK_site_id` int(10) UNSIGNED DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `document_FK_site_id` int(10) UNSIGNED DEFAULT NULL,
+  PRIMARY KEY (`document_id`),
+  KEY `document_type` (`document_type`),
+  KEY `document_FK_site_id` (`document_FK_site_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `documents_tbl`
+-- Dump dei dati per la tabella `documents_tbl`
 --
 
 INSERT INTO `documents_tbl` (`document_id`, `document_type`, `document_creationDate`, `document_FK_site_id`) VALUES
@@ -413,11 +457,12 @@ INSERT INTO `documents_tbl` (`document_id`, `document_type`, `document_creationD
 -- --------------------------------------------------------
 
 --
--- Table structure for table `entity_properties_tbl`
+-- Struttura della tabella `entity_properties_tbl`
 --
 
-CREATE TABLE `entity_properties_tbl` (
-  `entity_properties_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `entity_properties_tbl`;
+CREATE TABLE IF NOT EXISTS `entity_properties_tbl` (
+  `entity_properties_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `entity_properties_FK_entity_id` int(10) UNSIGNED NOT NULL,
   `entity_properties_type` varchar(100) NOT NULL,
   `entity_properties_target_FK_entity_id` int(10) UNSIGNED DEFAULT NULL,
@@ -428,53 +473,69 @@ CREATE TABLE `entity_properties_tbl` (
   `entity_properties_reference_relation_show` int(11) NOT NULL DEFAULT '0' COMMENT '0 = Show, 1 = Hide',
   `entity_properties_dublic_core` varchar(100) DEFAULT NULL,
   `entity_properties_row_index` int(10) NOT NULL,
-  `entity_properties_params` varchar(255) DEFAULT NULL
+  `entity_properties_params` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`entity_properties_id`),
+  KEY `entity_properties_fk_entity_id` (`entity_properties_FK_entity_id`),
+  KEY `entity_properties_target_fk_entity_id` (`entity_properties_target_FK_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `entity_tbl`
+-- Struttura della tabella `entity_tbl`
 --
 
-CREATE TABLE `entity_tbl` (
-  `entity_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `entity_tbl`;
+CREATE TABLE IF NOT EXISTS `entity_tbl` (
+  `entity_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `entity_name` varchar(255) NOT NULL,
   `entity_show_relations_graph` tinyint(1) NOT NULL DEFAULT '1',
-  `entity_skin_attributes` text NOT NULL
+  `entity_skin_attributes` text NOT NULL,
+  PRIMARY KEY (`entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `joins_tbl`
+-- Struttura della tabella `joins_tbl`
 --
 
-CREATE TABLE `joins_tbl` (
-  `join_id` int(1) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `joins_tbl`;
+CREATE TABLE IF NOT EXISTS `joins_tbl` (
+  `join_id` int(1) UNSIGNED NOT NULL AUTO_INCREMENT,
   `join_FK_source_id` int(10) UNSIGNED NOT NULL,
   `join_FK_dest_id` int(10) UNSIGNED NOT NULL,
-  `join_objectName` varchar(50) NOT NULL
+  `join_objectName` varchar(50) NOT NULL,
+  PRIMARY KEY (`join_id`),
+  KEY `join_FK_source_id` (`join_FK_source_id`),
+  KEY `join_FK_dest_id` (`join_FK_dest_id`),
+  KEY `join_objectName` (`join_objectName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `languages_tbl`
+-- Struttura della tabella `languages_tbl`
 --
 
-CREATE TABLE `languages_tbl` (
-  `language_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `languages_tbl`;
+CREATE TABLE IF NOT EXISTS `languages_tbl` (
+  `language_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `language_FK_site_id` int(10) UNSIGNED DEFAULT NULL,
   `language_name` varchar(100) NOT NULL DEFAULT '',
   `language_code` varchar(10) NOT NULL DEFAULT '',
   `language_FK_country_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `language_isDefault` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `language_order` int(4) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `language_order` int(4) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`language_id`),
+  KEY `language_FK_country_id` (`language_FK_country_id`),
+  KEY `language_isDefault` (`language_isDefault`),
+  KEY `language_order` (`language_order`),
+  KEY `language_FK_site_id` (`language_FK_site_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `languages_tbl`
+-- Dump dei dati per la tabella `languages_tbl`
 --
 
 INSERT INTO `languages_tbl` (`language_id`, `language_FK_site_id`, `language_name`, `language_code`, `language_FK_country_id`, `language_isDefault`, `language_order`) VALUES
@@ -483,11 +544,12 @@ INSERT INTO `languages_tbl` (`language_id`, `language_FK_site_id`, `language_nam
 -- --------------------------------------------------------
 
 --
--- Table structure for table `logs_tbl`
+-- Struttura della tabella `logs_tbl`
 --
 
-CREATE TABLE `logs_tbl` (
-  `log_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `logs_tbl`;
+CREATE TABLE IF NOT EXISTS `logs_tbl` (
+  `log_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `log_level` varchar(100) NOT NULL DEFAULT '',
   `log_date` datetime NOT NULL,
   `log_ip` varchar(20) DEFAULT NULL,
@@ -495,17 +557,23 @@ CREATE TABLE `logs_tbl` (
   `log_group` varchar(50) NOT NULL DEFAULT '',
   `log_message` text NOT NULL,
   `log_FK_user_id` int(10) DEFAULT '0',
-  `log_FK_site_id` int(10) UNSIGNED DEFAULT NULL
+  `log_FK_site_id` int(10) UNSIGNED DEFAULT NULL,
+  PRIMARY KEY (`log_id`),
+  KEY `log_level` (`log_level`),
+  KEY `log_group` (`log_group`),
+  KEY `log_FK_user_id` (`log_FK_user_id`),
+  KEY `log_FK_site_id` (`log_FK_site_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `mediadetails_tbl`
+-- Struttura della tabella `mediadetails_tbl`
 --
 
-CREATE TABLE `mediadetails_tbl` (
-  `mediadetail_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `mediadetails_tbl`;
+CREATE TABLE IF NOT EXISTS `mediadetails_tbl` (
+  `mediadetail_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `mediadetail_FK_media_id` int(10) UNSIGNED NOT NULL,
   `media_FK_language_id` int(10) UNSIGNED NOT NULL,
   `media_FK_user_id` int(10) UNSIGNED NOT NULL,
@@ -514,17 +582,22 @@ CREATE TABLE `mediadetails_tbl` (
   `media_category` varchar(255) DEFAULT NULL,
   `media_date` varchar(100) DEFAULT NULL,
   `media_copyright` varchar(255) DEFAULT NULL,
-  `media_description` text
+  `media_description` text,
+  PRIMARY KEY (`mediadetail_id`),
+  KEY `mediadetail_FK_media_id` (`mediadetail_FK_media_id`),
+  KEY `media_FK_language_id` (`media_FK_language_id`),
+  KEY `media_FK_user_id` (`media_FK_user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `media_tbl`
+-- Struttura della tabella `media_tbl`
 --
 
-CREATE TABLE `media_tbl` (
-  `media_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `media_tbl`;
+CREATE TABLE IF NOT EXISTS `media_tbl` (
+  `media_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `media_FK_site_id` int(10) UNSIGNED DEFAULT NULL,
   `media_creationDate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `media_fileName` varchar(255) NOT NULL DEFAULT '',
@@ -536,17 +609,21 @@ CREATE TABLE `media_tbl` (
   `media_download` int(10) NOT NULL DEFAULT '0',
   `media_watermark` tinyint(1) NOT NULL DEFAULT '0',
   `media_allowDownload` tinyint(1) NOT NULL DEFAULT '1',
-  `media_thumbFileName` varchar(255) DEFAULT NULL
+  `media_thumbFileName` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`media_id`),
+  KEY `media_FK_site_id` (`media_FK_site_id`),
+  KEY `media_type` (`media_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `menudetails_tbl`
+-- Struttura della tabella `menudetails_tbl`
 --
 
-CREATE TABLE `menudetails_tbl` (
-  `menudetail_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `menudetails_tbl`;
+CREATE TABLE IF NOT EXISTS `menudetails_tbl` (
+  `menudetail_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `menudetail_FK_menu_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `menudetail_FK_language_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `menudetail_title` text NOT NULL,
@@ -563,11 +640,14 @@ CREATE TABLE `menudetails_tbl` (
   `menudetail_coverage` text NOT NULL,
   `menudetail_isVisible` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `menudetail_titleLink` varchar(255) NOT NULL DEFAULT '',
-  `menudetail_linkDescription` varchar(255) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `menudetail_linkDescription` varchar(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (`menudetail_id`),
+  KEY `menudetail_FK_menu_id` (`menudetail_FK_menu_id`),
+  KEY `menudetail_FK_language_id` (`menudetail_FK_language_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `menudetails_tbl`
+-- Dump dei dati per la tabella `menudetails_tbl`
 --
 
 INSERT INTO `menudetails_tbl` (`menudetail_id`, `menudetail_FK_menu_id`, `menudetail_FK_language_id`, `menudetail_title`, `menudetail_keywords`, `menudetail_description`, `menudetail_subject`, `menudetail_creator`, `menudetail_publisher`, `menudetail_contributor`, `menudetail_type`, `menudetail_identifier`, `menudetail_source`, `menudetail_relation`, `menudetail_coverage`, `menudetail_isVisible`, `menudetail_titleLink`, `menudetail_linkDescription`) VALUES
@@ -594,11 +674,12 @@ INSERT INTO `menudetails_tbl` (`menudetail_id`, `menudetail_FK_menu_id`, `menude
 -- --------------------------------------------------------
 
 --
--- Table structure for table `menus_tbl`
+-- Struttura della tabella `menus_tbl`
 --
 
-CREATE TABLE `menus_tbl` (
-  `menu_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `menus_tbl`;
+CREATE TABLE IF NOT EXISTS `menus_tbl` (
+  `menu_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `menu_FK_site_id` int(10) UNSIGNED DEFAULT NULL,
   `menu_parentId` int(10) UNSIGNED DEFAULT '0',
   `menu_pageType` varchar(100) NOT NULL DEFAULT '',
@@ -612,11 +693,16 @@ CREATE TABLE `menus_tbl` (
   `menu_hasComment` tinyint(1) NOT NULL DEFAULT '0',
   `menu_printPdf` tinyint(1) NOT NULL DEFAULT '0',
   `menu_extendsPermissions` tinyint(1) NOT NULL DEFAULT '0',
-  `menu_cssClass` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `menu_cssClass` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`menu_id`),
+  KEY `menu_FK_site_id` (`menu_FK_site_id`),
+  KEY `menu_parentId` (`menu_parentId`),
+  KEY `menu_pageType` (`menu_pageType`),
+  KEY `menu_type` (`menu_type`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `menus_tbl`
+-- Dump dei dati per la tabella `menus_tbl`
 --
 
 INSERT INTO `menus_tbl` (`menu_id`, `menu_FK_site_id`, `menu_parentId`, `menu_pageType`, `menu_order`, `menu_hasPreview`, `menu_creationDate`, `menu_modificationDate`, `menu_type`, `menu_url`, `menu_isLocked`, `menu_hasComment`, `menu_printPdf`, `menu_extendsPermissions`, `menu_cssClass`) VALUES
@@ -643,61 +729,76 @@ INSERT INTO `menus_tbl` (`menu_id`, `menu_FK_site_id`, `menu_parentId`, `menu_pa
 -- --------------------------------------------------------
 
 --
--- Table structure for table `mobilecodes_tbl`
+-- Struttura della tabella `mobilecodes_tbl`
 --
 
-CREATE TABLE `mobilecodes_tbl` (
-  `mobilecode_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `mobilecodes_tbl`;
+CREATE TABLE IF NOT EXISTS `mobilecodes_tbl` (
+  `mobilecode_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `mobilecode_code` varchar(100) NOT NULL,
-  `mobilecode_link` varchar(100) NOT NULL
+  `mobilecode_link` varchar(100) NOT NULL,
+  PRIMARY KEY (`mobilecode_id`),
+  KEY `mobilecode_code` (`mobilecode_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `mobilecontents_tbl`
+-- Struttura della tabella `mobilecontents_tbl`
 --
 
-CREATE TABLE `mobilecontents_tbl` (
-  `content_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `mobilecontents_tbl`;
+CREATE TABLE IF NOT EXISTS `mobilecontents_tbl` (
+  `content_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `content_menuId` int(10) UNSIGNED NOT NULL,
   `content_documentId` int(10) UNSIGNED NOT NULL,
   `content_pageType` varchar(100) NOT NULL DEFAULT '',
   `content_parent` int(10) UNSIGNED DEFAULT '0',
   `content_type` varchar(100) NOT NULL DEFAULT '',
   `content_title` text NOT NULL,
-  `content_content` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `content_content` text NOT NULL,
+  PRIMARY KEY (`content_id`),
+  KEY `content_menuId` (`content_menuId`),
+  KEY `content_documentId` (`content_documentId`),
+  KEY `content_parent` (`content_parent`)
+) ENGINE=InnoDB AUTO_INCREMENT=221 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `mobilefulltext_tbl`
+-- Struttura della tabella `mobilefulltext_tbl`
 --
 
-CREATE TABLE `mobilefulltext_tbl` (
-  `mobilefulltext_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `mobilefulltext_tbl`;
+CREATE TABLE IF NOT EXISTS `mobilefulltext_tbl` (
+  `mobilefulltext_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `mobilefulltext_FK_content_id` int(10) UNSIGNED NOT NULL,
   `mobilefulltext_text` longtext NOT NULL,
   `mobilefulltext_title` varchar(255) NOT NULL,
-  `mobilefulltext_subtitle` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `mobilefulltext_subtitle` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`mobilefulltext_id`),
+  KEY `mobilefulltext_FK_content_id` (`mobilefulltext_FK_content_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=206 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `registry_tbl`
+-- Struttura della tabella `registry_tbl`
 --
 
-CREATE TABLE `registry_tbl` (
-  `registry_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `registry_tbl`;
+CREATE TABLE IF NOT EXISTS `registry_tbl` (
+  `registry_id` int(11) NOT NULL AUTO_INCREMENT,
   `registry_FK_site_id` int(10) UNSIGNED DEFAULT NULL,
   `registry_path` varchar(255) NOT NULL DEFAULT '',
-  `registry_value` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `registry_value` text NOT NULL,
+  PRIMARY KEY (`registry_id`),
+  KEY `registry_path` (`registry_path`),
+  KEY `registry_FK_site_id` (`registry_FK_site_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `registry_tbl`
+-- Dump dei dati per la tabella `registry_tbl`
 --
 
 INSERT INTO `registry_tbl` (`registry_id`, `registry_FK_site_id`, `registry_path`, `registry_value`) VALUES
@@ -711,125 +812,167 @@ INSERT INTO `registry_tbl` (`registry_id`, `registry_FK_site_id`, `registry_path
 -- --------------------------------------------------------
 
 --
--- Table structure for table `simple_documents_index_datetime_tbl`
+-- Struttura della tabella `simple_documents_index_datetime_tbl`
 --
 
-CREATE TABLE `simple_documents_index_datetime_tbl` (
-  `simple_document_index_datetime_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `simple_documents_index_datetime_tbl`;
+CREATE TABLE IF NOT EXISTS `simple_documents_index_datetime_tbl` (
+  `simple_document_index_datetime_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `simple_document_index_datetime_FK_simple_document_id` int(10) UNSIGNED NOT NULL,
   `simple_document_index_datetime_name` varchar(100) NOT NULL,
-  `simple_document_index_datetime_value` datetime NOT NULL
+  `simple_document_index_datetime_value` datetime NOT NULL,
+  PRIMARY KEY (`simple_document_index_datetime_id`),
+  KEY `simple_document_index_datetime_name` (`simple_document_index_datetime_name`) USING BTREE,
+  KEY `simple_document_index_datetime_value` (`simple_document_index_datetime_value`) USING BTREE,
+  KEY `simple_document_index_datetime_fk` (`simple_document_index_datetime_FK_simple_document_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `simple_documents_index_date_tbl`
+-- Struttura della tabella `simple_documents_index_date_tbl`
 --
 
-CREATE TABLE `simple_documents_index_date_tbl` (
-  `simple_document_index_date_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `simple_documents_index_date_tbl`;
+CREATE TABLE IF NOT EXISTS `simple_documents_index_date_tbl` (
+  `simple_document_index_date_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `simple_document_index_date_FK_simple_document_id` int(10) UNSIGNED NOT NULL,
   `simple_document_index_date_name` varchar(100) NOT NULL,
-  `simple_document_index_date_value` date NOT NULL
+  `simple_document_index_date_value` date NOT NULL,
+  PRIMARY KEY (`simple_document_index_date_id`),
+  KEY `simple_document_index_date_fk` (`simple_document_index_date_FK_simple_document_id`),
+  KEY `simple_document_index_date_value` (`simple_document_index_date_value`),
+  KEY `simple_document_index_date_name` (`simple_document_index_date_name`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `simple_documents_index_fulltext_tbl`
+-- Struttura della tabella `simple_documents_index_fulltext_tbl`
 --
 
-CREATE TABLE `simple_documents_index_fulltext_tbl` (
-  `simple_document_index_fulltext_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `simple_documents_index_fulltext_tbl`;
+CREATE TABLE IF NOT EXISTS `simple_documents_index_fulltext_tbl` (
+  `simple_document_index_fulltext_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `simple_document_index_fulltext_FK_simple_document_id` int(10) UNSIGNED NOT NULL,
   `simple_document_index_fulltext_name` varchar(100) NOT NULL,
-  `simple_document_index_fulltext_value` text NOT NULL
+  `simple_document_index_fulltext_value` text NOT NULL,
+  PRIMARY KEY (`simple_document_index_fulltext_id`),
+  KEY `simple_document_index_fulltext_name` (`simple_document_index_fulltext_name`),
+  KEY `simple_document_index_fulltext_fk` (`simple_document_index_fulltext_FK_simple_document_id`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `simple_documents_index_int_tbl`
+-- Struttura della tabella `simple_documents_index_int_tbl`
 --
 
-CREATE TABLE `simple_documents_index_int_tbl` (
-  `simple_document_index_int_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `simple_documents_index_int_tbl`;
+CREATE TABLE IF NOT EXISTS `simple_documents_index_int_tbl` (
+  `simple_document_index_int_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `simple_document_index_int_FK_simple_document_id` int(10) UNSIGNED NOT NULL,
   `simple_document_index_int_name` varchar(100) NOT NULL,
-  `simple_document_index_int_value` int(10) NOT NULL
+  `simple_document_index_int_value` int(10) NOT NULL,
+  PRIMARY KEY (`simple_document_index_int_id`),
+  KEY `simple_document_index_int_fk` (`simple_document_index_int_FK_simple_document_id`),
+  KEY `simple_document_index_int_value` (`simple_document_index_int_value`),
+  KEY `simple_document_index_int_name` (`simple_document_index_int_name`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `simple_documents_index_text_tbl`
+-- Struttura della tabella `simple_documents_index_text_tbl`
 --
 
-CREATE TABLE `simple_documents_index_text_tbl` (
-  `simple_document_index_text_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `simple_documents_index_text_tbl`;
+CREATE TABLE IF NOT EXISTS `simple_documents_index_text_tbl` (
+  `simple_document_index_text_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `simple_document_index_text_FK_simple_document_id` int(10) UNSIGNED NOT NULL,
   `simple_document_index_text_name` varchar(100) NOT NULL,
-  `simple_document_index_text_value` varchar(255) DEFAULT NULL
+  `simple_document_index_text_value` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`simple_document_index_text_id`),
+  KEY `simple_document_index_text_fk` (`simple_document_index_text_FK_simple_document_id`),
+  KEY `simple_document_index_text_value` (`simple_document_index_text_value`),
+  KEY `simple_document_index_text_name` (`simple_document_index_text_name`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `simple_documents_index_time_tbl`
+-- Struttura della tabella `simple_documents_index_time_tbl`
 --
 
-CREATE TABLE `simple_documents_index_time_tbl` (
-  `simple_document_index_time_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `simple_documents_index_time_tbl`;
+CREATE TABLE IF NOT EXISTS `simple_documents_index_time_tbl` (
+  `simple_document_index_time_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `simple_document_index_time_FK_simple_document_id` int(10) UNSIGNED NOT NULL,
   `simple_document_index_time_name` varchar(100) NOT NULL,
-  `simple_document_index_time_value` time NOT NULL
+  `simple_document_index_time_value` time NOT NULL,
+  PRIMARY KEY (`simple_document_index_time_id`),
+  KEY `simple_document_index_time_fk` (`simple_document_index_time_FK_simple_document_id`),
+  KEY `simple_document_index_time_name` (`simple_document_index_time_name`) USING BTREE,
+  KEY `simple_document_index_time_value` (`simple_document_index_time_value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `simple_documents_tbl`
+-- Struttura della tabella `simple_documents_tbl`
 --
 
-CREATE TABLE `simple_documents_tbl` (
-  `simple_document_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `simple_documents_tbl`;
+CREATE TABLE IF NOT EXISTS `simple_documents_tbl` (
+  `simple_document_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `simple_document_FK_site_id` int(10) UNSIGNED DEFAULT NULL,
   `simple_document_type` varchar(255) NOT NULL,
-  `simple_document_object` text NOT NULL
+  `simple_document_object` text NOT NULL,
+  PRIMARY KEY (`simple_document_id`),
+  KEY `simple_document_type` (`simple_document_type`),
+  KEY `simple_document_FK_site_id` (`simple_document_FK_site_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `speakingurls_tbl`
+-- Struttura della tabella `speakingurls_tbl`
 --
 
-CREATE TABLE `speakingurls_tbl` (
-  `speakingurl_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `speakingurls_tbl`;
+CREATE TABLE IF NOT EXISTS `speakingurls_tbl` (
+  `speakingurl_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `speakingurl_FK_language_id` int(10) UNSIGNED NOT NULL,
   `speakingurl_FK_site_id` int(10) UNSIGNED DEFAULT NULL,
   `speakingurl_FK` int(10) UNSIGNED NOT NULL,
   `speakingurl_type` varchar(255) NOT NULL,
   `speakingurl_value` varchar(255) NOT NULL,
-  `speakingurl_option` varchar(255) DEFAULT NULL
+  `speakingurl_option` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`speakingurl_id`),
+  KEY `speakingurl_FK_language_id` (`speakingurl_FK_language_id`),
+  KEY `speakingurl_FK` (`speakingurl_FK`),
+  KEY `speakingurl_type` (`speakingurl_type`),
+  KEY `speakingurl_FK_site_id` (`speakingurl_FK_site_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `usergroups_tbl`
+-- Struttura della tabella `usergroups_tbl`
 --
 
-CREATE TABLE `usergroups_tbl` (
-  `usergroup_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `usergroups_tbl`;
+CREATE TABLE IF NOT EXISTS `usergroups_tbl` (
+  `usergroup_id` int(11) NOT NULL AUTO_INCREMENT,
   `usergroup_name` varchar(50) NOT NULL DEFAULT '',
   `usergroup_backEndAccess` tinyint(1) NOT NULL DEFAULT '0',
-  `usergroup_FK_site_id` int(10) UNSIGNED DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `usergroup_FK_site_id` int(10) UNSIGNED DEFAULT NULL,
+  PRIMARY KEY (`usergroup_id`),
+  KEY `usergroup_FK_site_id` (`usergroup_FK_site_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `usergroups_tbl`
+-- Dump dei dati per la tabella `usergroups_tbl`
 --
 
 INSERT INTO `usergroups_tbl` (`usergroup_id`, `usergroup_name`, `usergroup_backEndAccess`, `usergroup_FK_site_id`) VALUES
@@ -841,27 +984,32 @@ INSERT INTO `usergroups_tbl` (`usergroup_id`, `usergroup_name`, `usergroup_backE
 -- --------------------------------------------------------
 
 --
--- Table structure for table `userlogs_tbl`
+-- Struttura della tabella `userlogs_tbl`
 --
 
-CREATE TABLE `userlogs_tbl` (
-  `userlog_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `userlogs_tbl`;
+CREATE TABLE IF NOT EXISTS `userlogs_tbl` (
+  `userlog_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `userlog_FK_user_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `userlog_FK_site_id` int(10) UNSIGNED DEFAULT NULL,
   `userlog_session` varchar(50) NOT NULL DEFAULT '',
   `userlog_ip` varchar(50) NOT NULL DEFAULT '',
   `userlog_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `userlog_lastAction` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
+  `userlog_lastAction` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`userlog_id`),
+  UNIQUE KEY `userlog_FK_user_id` (`userlog_FK_user_id`),
+  KEY `userlog_FK_site_id` (`userlog_FK_site_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users_tbl`
+-- Struttura della tabella `users_tbl`
 --
 
-CREATE TABLE `users_tbl` (
-  `user_id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `users_tbl`;
+CREATE TABLE IF NOT EXISTS `users_tbl` (
+  `user_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_FK_usergroup_id` int(10) UNSIGNED NOT NULL DEFAULT '2',
   `user_FK_site_id` int(10) UNSIGNED DEFAULT NULL,
   `user_dateCreation` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -892,477 +1040,33 @@ CREATE TABLE `users_tbl` (
   `user_position` varchar(255) DEFAULT NULL,
   `user_department` varchar(255) DEFAULT NULL,
   `user_fiscalCode` varchar(32) NOT NULL DEFAULT '',
-  `user_vat` varchar(32) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `user_vat` varchar(32) NOT NULL DEFAULT '',
+  PRIMARY KEY (`user_id`),
+  KEY `user_FK_usergroup_id` (`user_FK_usergroup_id`),
+  KEY `user_FK_site_id` (`user_FK_site_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `users_tbl`
+-- Dump dei dati per la tabella `users_tbl`
 --
 
 INSERT INTO `users_tbl` (`user_id`, `user_FK_usergroup_id`, `user_FK_site_id`, `user_dateCreation`, `user_isActive`, `user_loginId`, `user_password`, `user_firstName`, `user_lastName`, `user_title`, `user_companyName`, `user_address`, `user_city`, `user_zip`, `user_state`, `user_country`, `user_FK_country_id`, `user_phone`, `user_phone2`, `user_mobile`, `user_fax`, `user_email`, `user_www`, `user_birthday`, `user_sex`, `user_confirmCode`, `user_wantNewsletter`, `user_isInMailinglist`, `user_position`, `user_department`, `user_fiscalCode`, `user_vat`) VALUES
 (1, 1, NULL, '2015-01-01 12:00:00', 1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Admin', 'Admin', '', '', '', '', '', '', NULL, 0, '', '', '', '', 'admin', '', '2015-01-01', 'M', '', 1, 1, '', '', '', '');
 
 --
--- Indexes for dumped tables
+-- Indici per le tabelle scaricate
 --
 
 --
--- Indexes for table `countries_tbl`
+-- Indici per le tabelle `documents_index_fulltext_tbl`
 --
-ALTER TABLE `countries_tbl`
-  ADD PRIMARY KEY (`country_id`);
-
---
--- Indexes for table `custom_code_mapping_tbl`
---
-ALTER TABLE `custom_code_mapping_tbl`
-  ADD PRIMARY KEY (`custom_code_mapping_id`);
-
---
--- Indexes for table `documents_detail_tbl`
---
-ALTER TABLE `documents_detail_tbl`
-  ADD PRIMARY KEY (`document_detail_id`),
-  ADD KEY `document_detail_fk_document_id` (`document_detail_FK_document_id`),
-  ADD KEY `document_detail_fk_language_id` (`document_detail_FK_language_id`),
-  ADD KEY `document_detail_fk_user_id` (`document_detail_FK_user_id`),
-  ADD KEY `document_detail_status` (`document_detail_status`);
-
---
--- Indexes for table `documents_index_datetime_tbl`
---
-ALTER TABLE `documents_index_datetime_tbl`
-  ADD PRIMARY KEY (`document_index_datetime_id`),
-  ADD KEY `document_index_datetime_fk` (`document_index_datetime_FK_document_detail_id`),
-  ADD KEY `document_index_datetime_name` (`document_index_datetime_name`),
-  ADD KEY `document_index_datetime_value` (`document_index_datetime_value`);
-
---
--- Indexes for table `documents_index_date_tbl`
---
-ALTER TABLE `documents_index_date_tbl`
-  ADD PRIMARY KEY (`document_index_date_id`),
-  ADD KEY `document_index_date_name` (`document_index_date_name`),
-  ADD KEY `document_index_date_value` (`document_index_date_value`),
-  ADD KEY `document_index_date_fk` (`document_index_date_FK_document_detail_id`) USING BTREE;
-
---
--- Indexes for table `documents_index_fulltext_tbl`
---
-ALTER TABLE `documents_index_fulltext_tbl`
-  ADD PRIMARY KEY (`document_index_fulltext_id`),
-  ADD KEY `document_index_fulltext_name` (`document_index_fulltext_name`),
-  ADD KEY `document_index_fulltext_fk` (`document_index_fulltext_FK_document_detail_id`) USING BTREE;
 ALTER TABLE `documents_index_fulltext_tbl` ADD FULLTEXT KEY `document_index_fulltext_value` (`document_index_fulltext_value`);
 
 --
--- Indexes for table `documents_index_int_tbl`
+-- Indici per le tabelle `simple_documents_index_fulltext_tbl`
 --
-ALTER TABLE `documents_index_int_tbl`
-  ADD PRIMARY KEY (`document_index_int_id`),
-  ADD KEY `document_index_int_fk` (`document_index_int_FK_document_detail_id`),
-  ADD KEY `document_index_int_name` (`document_index_int_name`),
-  ADD KEY `document_index_int_value` (`document_index_int_value`);
-
---
--- Indexes for table `documents_index_text_tbl`
---
-ALTER TABLE `documents_index_text_tbl`
-  ADD PRIMARY KEY (`document_index_text_id`),
-  ADD KEY `document_index_text_fk` (`document_index_text_FK_document_detail_id`),
-  ADD KEY `document_index_text_name` (`document_index_text_name`),
-  ADD KEY `document_index_text_value` (`document_index_text_value`);
-
---
--- Indexes for table `documents_index_time_tbl`
---
-ALTER TABLE `documents_index_time_tbl`
-  ADD PRIMARY KEY (`document_index_time_id`),
-  ADD KEY `document_index_time_fk` (`document_index_time_FK_document_detail_id`),
-  ADD KEY `document_index_time_name` (`document_index_time_name`),
-  ADD KEY `document_index_time_value` (`document_index_time_value`);
-
---
--- Indexes for table `documents_tbl`
---
-ALTER TABLE `documents_tbl`
-  ADD PRIMARY KEY (`document_id`),
-  ADD KEY `document_type` (`document_type`),
-  ADD KEY `document_FK_site_id` (`document_FK_site_id`);
-
---
--- Indexes for table `entity_properties_tbl`
---
-ALTER TABLE `entity_properties_tbl`
-  ADD PRIMARY KEY (`entity_properties_id`),
-  ADD KEY `entity_properties_fk_entity_id` (`entity_properties_FK_entity_id`),
-  ADD KEY `entity_properties_target_fk_entity_id` (`entity_properties_target_FK_entity_id`);
-
---
--- Indexes for table `entity_tbl`
---
-ALTER TABLE `entity_tbl`
-  ADD PRIMARY KEY (`entity_id`);
-
---
--- Indexes for table `joins_tbl`
---
-ALTER TABLE `joins_tbl`
-  ADD PRIMARY KEY (`join_id`),
-  ADD KEY `join_FK_source_id` (`join_FK_source_id`),
-  ADD KEY `join_FK_dest_id` (`join_FK_dest_id`),
-  ADD KEY `join_objectName` (`join_objectName`);
-
---
--- Indexes for table `languages_tbl`
---
-ALTER TABLE `languages_tbl`
-  ADD PRIMARY KEY (`language_id`),
-  ADD KEY `language_FK_country_id` (`language_FK_country_id`),
-  ADD KEY `language_isDefault` (`language_isDefault`),
-  ADD KEY `language_order` (`language_order`);
-
---
--- Indexes for table `logs_tbl`
---
-ALTER TABLE `logs_tbl`
-  ADD PRIMARY KEY (`log_id`),
-  ADD KEY `log_level` (`log_level`),
-  ADD KEY `log_group` (`log_group`),
-  ADD KEY `log_FK_user_id` (`log_FK_user_id`),
-  ADD KEY `log_FK_site_id` (`log_FK_site_id`);
-
---
--- Indexes for table `mediadetails_tbl`
---
-ALTER TABLE `mediadetails_tbl`
-  ADD PRIMARY KEY (`mediadetail_id`),
-  ADD KEY `mediadetail_FK_media_id` (`mediadetail_FK_media_id`),
-  ADD KEY `media_FK_language_id` (`media_FK_language_id`),
-  ADD KEY `media_FK_user_id` (`media_FK_user_id`);
-
---
--- Indexes for table `media_tbl`
---
-ALTER TABLE `media_tbl`
-  ADD PRIMARY KEY (`media_id`),
-  ADD KEY `media_FK_site_id` (`media_FK_site_id`),
-  ADD KEY `media_type` (`media_type`);
-
---
--- Indexes for table `menudetails_tbl`
---
-ALTER TABLE `menudetails_tbl`
-  ADD PRIMARY KEY (`menudetail_id`),
-  ADD KEY `menudetail_FK_menu_id` (`menudetail_FK_menu_id`),
-  ADD KEY `menudetail_FK_language_id` (`menudetail_FK_language_id`);
-
---
--- Indexes for table `menus_tbl`
---
-ALTER TABLE `menus_tbl`
-  ADD PRIMARY KEY (`menu_id`),
-  ADD KEY `menu_FK_site_id` (`menu_FK_site_id`),
-  ADD KEY `menu_parentId` (`menu_parentId`),
-  ADD KEY `menu_pageType` (`menu_pageType`);
-
---
--- Indexes for table `mobilecodes_tbl`
---
-ALTER TABLE `mobilecodes_tbl`
-  ADD PRIMARY KEY (`mobilecode_id`);
-
---
--- Indexes for table `mobilecontents_tbl`
---
-ALTER TABLE `mobilecontents_tbl`
-  ADD PRIMARY KEY (`content_id`),
-  ADD KEY `content_menuId` (`content_menuId`),
-  ADD KEY `content_documentId` (`content_documentId`),
-  ADD KEY `content_parent` (`content_parent`);
-
---
--- Indexes for table `mobilefulltext_tbl`
---
-ALTER TABLE `mobilefulltext_tbl`
-  ADD PRIMARY KEY (`mobilefulltext_id`);
-
---
--- Indexes for table `registry_tbl`
---
-ALTER TABLE `registry_tbl`
-  ADD PRIMARY KEY (`registry_id`),
-  ADD KEY `registry_path` (`registry_path`);
-
---
--- Indexes for table `simple_documents_index_datetime_tbl`
---
-ALTER TABLE `simple_documents_index_datetime_tbl`
-  ADD PRIMARY KEY (`simple_document_index_datetime_id`),
-  ADD KEY `simple_document_index_datetime_name` (`simple_document_index_datetime_name`) USING BTREE,
-  ADD KEY `simple_document_index_datetime_value` (`simple_document_index_datetime_value`) USING BTREE,
-  ADD KEY `simple_document_index_datetime_fk` (`simple_document_index_datetime_FK_simple_document_id`) USING BTREE;
-
---
--- Indexes for table `simple_documents_index_date_tbl`
---
-ALTER TABLE `simple_documents_index_date_tbl`
-  ADD PRIMARY KEY (`simple_document_index_date_id`),
-  ADD KEY `simple_document_index_date_fk` (`simple_document_index_date_FK_simple_document_id`),
-  ADD KEY `simple_document_index_date_value` (`simple_document_index_date_value`),
-  ADD KEY `simple_document_index_date_name` (`simple_document_index_date_name`) USING BTREE;
-
---
--- Indexes for table `simple_documents_index_fulltext_tbl`
---
-ALTER TABLE `simple_documents_index_fulltext_tbl`
-  ADD PRIMARY KEY (`simple_document_index_fulltext_id`),
-  ADD KEY `simple_document_index_fulltext_name` (`simple_document_index_fulltext_name`),
-  ADD KEY `simple_document_index_fulltext_fk` (`simple_document_index_fulltext_FK_simple_document_id`) USING BTREE;
 ALTER TABLE `simple_documents_index_fulltext_tbl` ADD FULLTEXT KEY `simple_document_index_fulltext_value` (`simple_document_index_fulltext_value`);
 
---
--- Indexes for table `simple_documents_index_int_tbl`
---
-ALTER TABLE `simple_documents_index_int_tbl`
-  ADD PRIMARY KEY (`simple_document_index_int_id`),
-  ADD KEY `simple_document_index_int_fk` (`simple_document_index_int_FK_simple_document_id`),
-  ADD KEY `simple_document_index_int_value` (`simple_document_index_int_value`),
-  ADD KEY `simple_document_index_int_name` (`simple_document_index_int_name`) USING BTREE;
-
---
--- Indexes for table `simple_documents_index_text_tbl`
---
-ALTER TABLE `simple_documents_index_text_tbl`
-  ADD PRIMARY KEY (`simple_document_index_text_id`),
-  ADD KEY `simple_document_index_text_fk` (`simple_document_index_text_FK_simple_document_id`),
-  ADD KEY `simple_document_index_text_value` (`simple_document_index_text_value`),
-  ADD KEY `simple_document_index_text_name` (`simple_document_index_text_name`) USING BTREE;
-
---
--- Indexes for table `simple_documents_index_time_tbl`
---
-ALTER TABLE `simple_documents_index_time_tbl`
-  ADD PRIMARY KEY (`simple_document_index_time_id`),
-  ADD KEY `simple_document_index_time_fk` (`simple_document_index_time_FK_simple_document_id`),
-  ADD KEY `simple_document_index_time_name` (`simple_document_index_time_name`) USING BTREE,
-  ADD KEY `simple_document_index_time_value` (`simple_document_index_time_value`);
-
---
--- Indexes for table `simple_documents_tbl`
---
-ALTER TABLE `simple_documents_tbl`
-  ADD PRIMARY KEY (`simple_document_id`),
-  ADD KEY `simple_document_type` (`simple_document_type`),
-  ADD KEY `simple_document_FK_site_id` (`simple_document_FK_site_id`);
-
---
--- Indexes for table `speakingurls_tbl`
---
-ALTER TABLE `speakingurls_tbl`
-  ADD PRIMARY KEY (`speakingurl_id`),
-  ADD KEY `speakingurl_FK_language_id` (`speakingurl_FK_language_id`),
-  ADD KEY `speakingurl_FK` (`speakingurl_FK`),
-  ADD KEY `speakingurl_type` (`speakingurl_type`),
-  ADD KEY `speakingurl_FK_site_id` (`speakingurl_FK_site_id`);
-
---
--- Indexes for table `usergroups_tbl`
---
-ALTER TABLE `usergroups_tbl`
-  ADD PRIMARY KEY (`usergroup_id`),
-  ADD KEY `usergroup_FK_site_id` (`usergroup_FK_site_id`);
-
---
--- Indexes for table `userlogs_tbl`
---
-ALTER TABLE `userlogs_tbl`
-  ADD PRIMARY KEY (`userlog_id`),
-  ADD UNIQUE KEY `userlog_FK_user_id` (`userlog_FK_user_id`),
-  ADD KEY `userlog_FK_site_id` (`userlog_FK_site_id`);
-
---
--- Indexes for table `users_tbl`
---
-ALTER TABLE `users_tbl`
-  ADD PRIMARY KEY (`user_id`),
-  ADD KEY `user_FK_usergroup_id` (`user_FK_usergroup_id`),
-  ADD KEY `user_FK_site_id` (`user_FK_site_id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `countries_tbl`
---
-ALTER TABLE `countries_tbl`
-  MODIFY `country_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=161;
---
--- AUTO_INCREMENT for table `custom_code_mapping_tbl`
---
-ALTER TABLE `custom_code_mapping_tbl`
-  MODIFY `custom_code_mapping_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `documents_detail_tbl`
---
-ALTER TABLE `documents_detail_tbl`
-  MODIFY `document_detail_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
---
--- AUTO_INCREMENT for table `documents_index_datetime_tbl`
---
-ALTER TABLE `documents_index_datetime_tbl`
-  MODIFY `document_index_datetime_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `documents_index_date_tbl`
---
-ALTER TABLE `documents_index_date_tbl`
-  MODIFY `document_index_date_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `documents_index_fulltext_tbl`
---
-ALTER TABLE `documents_index_fulltext_tbl`
-  MODIFY `document_index_fulltext_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
---
--- AUTO_INCREMENT for table `documents_index_int_tbl`
---
-ALTER TABLE `documents_index_int_tbl`
-  MODIFY `document_index_int_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
---
--- AUTO_INCREMENT for table `documents_index_text_tbl`
---
-ALTER TABLE `documents_index_text_tbl`
-  MODIFY `document_index_text_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `documents_index_time_tbl`
---
-ALTER TABLE `documents_index_time_tbl`
-  MODIFY `document_index_time_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `documents_tbl`
---
-ALTER TABLE `documents_tbl`
-  MODIFY `document_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
---
--- AUTO_INCREMENT for table `entity_properties_tbl`
---
-ALTER TABLE `entity_properties_tbl`
-  MODIFY `entity_properties_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `entity_tbl`
---
-ALTER TABLE `entity_tbl`
-  MODIFY `entity_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `joins_tbl`
---
-ALTER TABLE `joins_tbl`
-  MODIFY `join_id` int(1) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `languages_tbl`
---
-ALTER TABLE `languages_tbl`
-  MODIFY `language_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
---
--- AUTO_INCREMENT for table `logs_tbl`
---
-ALTER TABLE `logs_tbl`
-  MODIFY `log_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `mediadetails_tbl`
---
-ALTER TABLE `mediadetails_tbl`
-  MODIFY `mediadetail_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `media_tbl`
---
-ALTER TABLE `media_tbl`
-  MODIFY `media_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `menudetails_tbl`
---
-ALTER TABLE `menudetails_tbl`
-  MODIFY `menudetail_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
---
--- AUTO_INCREMENT for table `menus_tbl`
---
-ALTER TABLE `menus_tbl`
-  MODIFY `menu_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
---
--- AUTO_INCREMENT for table `mobilecodes_tbl`
---
-ALTER TABLE `mobilecodes_tbl`
-  MODIFY `mobilecode_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `mobilecontents_tbl`
---
-ALTER TABLE `mobilecontents_tbl`
-  MODIFY `content_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=221;
---
--- AUTO_INCREMENT for table `mobilefulltext_tbl`
---
-ALTER TABLE `mobilefulltext_tbl`
-  MODIFY `mobilefulltext_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=206;
---
--- AUTO_INCREMENT for table `registry_tbl`
---
-ALTER TABLE `registry_tbl`
-  MODIFY `registry_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
---
--- AUTO_INCREMENT for table `simple_documents_index_datetime_tbl`
---
-ALTER TABLE `simple_documents_index_datetime_tbl`
-  MODIFY `simple_document_index_datetime_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `simple_documents_index_date_tbl`
---
-ALTER TABLE `simple_documents_index_date_tbl`
-  MODIFY `simple_document_index_date_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `simple_documents_index_fulltext_tbl`
---
-ALTER TABLE `simple_documents_index_fulltext_tbl`
-  MODIFY `simple_document_index_fulltext_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `simple_documents_index_int_tbl`
---
-ALTER TABLE `simple_documents_index_int_tbl`
-  MODIFY `simple_document_index_int_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `simple_documents_index_text_tbl`
---
-ALTER TABLE `simple_documents_index_text_tbl`
-  MODIFY `simple_document_index_text_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `simple_documents_index_time_tbl`
---
-ALTER TABLE `simple_documents_index_time_tbl`
-  MODIFY `simple_document_index_time_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `simple_documents_tbl`
---
-ALTER TABLE `simple_documents_tbl`
-  MODIFY `simple_document_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `speakingurls_tbl`
---
-ALTER TABLE `speakingurls_tbl`
-  MODIFY `speakingurl_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `usergroups_tbl`
---
-ALTER TABLE `usergroups_tbl`
-  MODIFY `usergroup_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
---
--- AUTO_INCREMENT for table `userlogs_tbl`
---
-ALTER TABLE `userlogs_tbl`
-  MODIFY `userlog_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `users_tbl`
---
-ALTER TABLE `users_tbl`
-  MODIFY `user_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
