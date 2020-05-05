@@ -174,9 +174,9 @@ EOD;
 		$font1 = $templateData->font1 == 'default' ? 'Titillium Web' : $templateData->font1;
 		$font2 = $templateData->font2 == 'default' ? 'Open Sans' : $templateData->font2;
 
-		$fonts = '@import url(http://fonts.googleapis.com/css?family='.str_replace(' ', '+', $font1).':300,600);'.PHP_EOL.
+		$fonts = '@import url(https://fonts.googleapis.com/css?family='.str_replace(' ', '+', $font1).':300,600);'.PHP_EOL.
 				 '@font-1: \''.$font1.'\', sans-serif;'.PHP_EOL.
-				 '@import url(http://fonts.googleapis.com/css?family='.str_replace(' ', '+', $font2).':400,700,600);'.PHP_EOL.
+				 '@import url(https://fonts.googleapis.com/css?family='.str_replace(' ', '+', $font2).':400,700,600);'.PHP_EOL.
 			     '@font-2: \''.$font2.'\', sans-serif;'.PHP_EOL;
 		return $css.PHP_EOL.$fonts;
 	}
